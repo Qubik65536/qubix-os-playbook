@@ -23,3 +23,4 @@ Changes are grouped by release. Bootstrap has no release tag.
 - Fixed standalone SDDM detection, conflicting-manager rejection and redirected factory theme preflight.
 - Added optional measured CachyOS Polkit agent startup to the separate Qubix Niri session.
 - Fixed Starship default selection to preserve existing user configuration precedence.
+- Added a read-only VM information collector and target evidence guide.
