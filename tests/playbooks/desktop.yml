@@ -36,6 +36,31 @@
             (qubix_niri_resources | selectattr('path', 'equalto', '/etc/qubix/waybar.json')
             | first).content | from_json is mapping
 
+    - name: Require no assumed authentication agent in the initial candidate
+      ansible.builtin.assert:
+        that: ["'polkit-kde-authentication-agent-1' not in qubix_niri_resources[-2].content"]
+
+    - name: Add measured CachyOS authentication agent
+      ansible.builtin.set_fact:
+        qubix_discovery_report:
+          evidence:
+            binaries:
+              niri: true
+              foot: true
+              fuzzel: true
+              waybar: true
+              mako: true
+              swaybg: true
+              polkit-kde-agent: true
+
+    - name: Render measured optional agent integration
+      ansible.builtin.include_role:
+        name: qubix_niri
+
+    - name: Require the measured agent startup
+      ansible.builtin.assert:
+        that: ["'spawn-at-startup \"/usr/lib/polkit-kde-authentication-agent-1\"' in qubix_niri_resources[-2].content"]
+
     - name: Reset missing companion outcome
       ansible.builtin.set_fact:
         qubix_test_rejected: false

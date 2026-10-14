@@ -21,3 +21,4 @@ Changes are grouped by release. Bootstrap has no release tag.
 - Added a Qubix Plymouth script theme, dracut/mkinitcpio integration, conditional verified regeneration and kernel-aware image recovery.
 - Added auditable pending/failure state alongside last verified deployment revision.
 - Fixed standalone SDDM detection, conflicting-manager rejection and redirected factory theme preflight.
+- Added optional measured CachyOS Polkit agent startup to the separate Qubix Niri session.

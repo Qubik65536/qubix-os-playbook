@@ -9,6 +9,9 @@ input {
 spawn-at-startup "/usr/bin/swaybg" "-i" "/usr/share/qubix/wallpaper.png" "-m" "fill"
 spawn-at-startup "/usr/bin/waybar" "-c" "/etc/qubix/waybar.json" "-s" "/etc/qubix/waybar.css"
 spawn-at-startup "/usr/bin/mako" "--config" "/etc/qubix/mako.conf"
+{% if qubix_discovery_report.evidence.binaries.get('polkit-kde-agent', false) %}
+spawn-at-startup "/usr/lib/polkit-kde-authentication-agent-1"
+{% endif %}
 binds {
     Mod+Return { spawn "/usr/bin/foot" "--config=/etc/qubix/foot.ini"; }
     Mod+D { spawn "/usr/bin/fuzzel" "--config=/etc/qubix/fuzzel.ini"; }
