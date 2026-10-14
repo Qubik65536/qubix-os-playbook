@@ -65,9 +65,8 @@ qubix_test_profiles:
     input: {shell: {enabled: true}}
   - name: supported login component
     input: {login: {enabled: true}}
-  - name: planned bootloader component
+  - name: bootloader schema accepts explicit selection
     input: {bootloader: {enabled: true}}
-    error: are Planned
   - name: planned splash component
     input: {plymouth: {enabled: true}}
     error: are Planned

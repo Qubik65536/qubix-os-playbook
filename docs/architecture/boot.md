@@ -1,6 +1,6 @@
 # Boot and splash architecture
 
-Status: **Planned**. Both GRUB and Limine are mandatory MVP components; neither is a bootstrap host operation.
+Status: **Bootloader adapters Implemented as a test candidate; Plymouth In Progress**. Both GRUB and Limine are mandatory MVP components; neither is a bootstrap host operation.
 
 ```mermaid
 flowchart TD
@@ -25,3 +25,5 @@ GRUB installs a Qubix theme and changes supported appearance settings or an isol
 Plymouth owns splash selection independently of the loader. dracut and mkinitcpio adapters add only required Plymouth integration. Rebuild affected images only after changed integration/theme inputs, and verify required generated resources. Never take ownership of unrelated hooks, modules, compression, kernel, root, encryption, or hardware settings.
 
 Every boot change requires pre-change content/metadata backups, a known bootable fallback, explicit VM tests, and documented live-media recovery. Recovery must reverse minimal edits and regenerate only necessary outputs using the original platform tools. Host boot and initramfs operations need explicit authorization; static tests cannot authorize or prove them.
+
+The candidate requires operator confirmation of active loader configuration and Limine major version. Auto never guesses from installed tools. Boot-plan reads may need privilege escalation for private configuration; deployment remains opt-in. See [adapter contracts](../components/bootloader.md). Native GRUB generated configurations are preserved; activation uses the existing custom hook.

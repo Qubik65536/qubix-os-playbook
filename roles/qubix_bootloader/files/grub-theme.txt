@@ -1,0 +1,17 @@
+# Qubix named theme. Existing GRUB entries and kernel arguments supply the menu.
+desktop-color: "#1B242C"
+title-text: "Qubix OS"
+title-color: "#CFDAE2"
+message-color: "#94A9BA"
+message-bg-color: "#1B242C"
++ boot_menu {
+    left = 10%
+    top = 25%
+    width = 80%
+    height = 60%
+    item_color = "#CFDAE2"
+    selected_item_color = "#94A9BA"
+    item_height = 32
+    item_padding = 12
+    item_spacing = 4
+}

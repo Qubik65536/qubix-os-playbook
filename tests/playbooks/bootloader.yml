@@ -1,0 +1,161 @@
+---
+- name: Test GRUB and Limine preservation independently in a disposable root
+  hosts: localhost
+  gather_facts: false
+  vars:
+    qubix_discovery_report:
+      evidence:
+        binaries: {grub-mkconfig: true, grub-script-check: true, limine: true}
+        packages: []
+  tasks:
+    - name: Create boot fixture root
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-boot-
+      register: qubix_test_tmp
+
+    - name: Use disposable boot paths
+      ansible.builtin.set_fact:
+        qubix_root: '{{ qubix_test_tmp.path }}'
+
+    - name: Exercise both adapters and rejection with guaranteed cleanup
+      block:
+        - name: Create fake boot configuration directories
+          ansible.builtin.file:
+            path: '{{ qubix_root }}/boot/grub'
+            state: directory
+            mode: '0755'
+
+        - name: Seed GRUB active configuration, hook and Limine entries
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}{{ item.path }}'
+            content: '{{ item.content }}'
+            mode: '0644'
+          loop:
+            - path: /boot/grub/grub.cfg
+              content: |
+                menuentry 'CachyOS' {
+                  linux /vmlinuz root=UUID=keep cryptdevice=UUID=keep:root quiet splash
+                }
+                source $prefix/custom.cfg
+            - path: /boot/grub/custom.cfg
+              content: |
+                # unrelated operator hook
+                set operator_setting=preserve
+            - path: /boot/limine.conf
+              content: |
+                timeout: 5
+                interface_branding: CachyOS
+                /CachyOS
+                    protocol: linux
+                    path: boot():/vmlinuz-linux-cachyos
+                    cmdline: root=UUID=keep cryptdevice=UUID=keep:root quiet splash
+                    module_path: boot():/initramfs-linux-cachyos.img
+
+        - name: Select confirmed GRUB fixture
+          ansible.builtin.set_fact:
+            qubix_profile_resolved:
+              bootloader:
+                backend: grub
+                confirm_active: true
+                config_path: /boot/grub/grub.cfg
+                limine_version: 0
+
+        - name: Prepare GRUB appearance
+          ansible.builtin.include_role:
+            name: qubix_bootloader
+
+        - name: Retain first hook result
+          ansible.builtin.set_fact:
+            qubix_test_grub_hook: '{{ qubix_bootloader_resources[-1].content }}'
+
+        - name: Require unrelated hook content and existing boot args to survive
+          ansible.builtin.assert:
+            that:
+              - "'set operator_setting=preserve' in qubix_test_grub_hook"
+              - qubix_bootloader_resources | length == 2
+              - qubix_bootloader_resources[-1].path == '/boot/grub/custom.cfg'
+              - "'cryptdevice=UUID=keep:root' in qubix_bootloader_text"
+
+        - name: Simulate installed GRUB hook in the fixture
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/boot/grub/custom.cfg'
+            content: '{{ qubix_test_grub_hook }}'
+            mode: '0644'
+
+        - name: Prepare GRUB again
+          ansible.builtin.include_role:
+            name: qubix_bootloader
+
+        - name: Require stable repeated hook generation
+          ansible.builtin.assert:
+            that:
+              - qubix_bootloader_resources[-1].content == qubix_test_grub_hook
+
+        - name: Select confirmed Limine fixture
+          ansible.builtin.set_fact:
+            qubix_profile_resolved:
+              bootloader:
+                backend: limine
+                confirm_active: true
+                config_path: /boot/limine.conf
+                limine_version: 10
+
+        - name: Prepare Limine appearance independently
+          ansible.builtin.include_role:
+            name: qubix_bootloader
+
+        - name: Save first Limine result
+          ansible.builtin.set_fact:
+            qubix_test_limine: '{{ qubix_bootloader_resources[0].content }}'
+
+        - name: Require entry preservation and unique branding
+          ansible.builtin.assert:
+            that:
+              - qubix_test_limine.split('/CachyOS')[1] == qubix_bootloader_text.split('/CachyOS')[1]
+              - "'timeout: 5' in qubix_test_limine"
+              - qubix_test_limine | regex_findall('(?m)^interface_branding:') | length == 1
+
+        - name: Simulate installed Limine appearance in the fixture
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/boot/limine.conf'
+            content: '{{ qubix_test_limine }}'
+            mode: '0644'
+
+        - name: Prepare Limine again
+          ansible.builtin.include_role:
+            name: qubix_bootloader
+
+        - name: Require stable repeated Limine appearance generation
+          ansible.builtin.assert:
+            that:
+              - qubix_bootloader_resources[0].content == qubix_test_limine
+
+        - name: Introduce unsupported firmware version
+          ansible.builtin.set_fact:
+            qubix_profile_resolved:
+              bootloader: {backend: limine, confirm_active: true, config_path: /boot/limine.conf, limine_version: 7}
+            qubix_test_rejected: false
+
+        - name: Require version rejection
+          block:
+            - name: Attempt unsupported Limine activation
+              ansible.builtin.include_role:
+                name: qubix_bootloader
+          rescue:
+            - name: Require a version compatibility diagnostic
+              ansible.builtin.assert:
+                that: ["'confirmed major' in ansible_failed_result.msg"]
+            - name: Record expected rejection
+              ansible.builtin.set_fact:
+                qubix_test_rejected: true
+
+        - name: Require unsupported version to fail
+          ansible.builtin.assert:
+            that: [qubix_test_rejected]
+      always:
+        - name: Remove only disposable boot fixtures
+          ansible.builtin.file:
+            path: '{{ qubix_test_tmp.path }}'
+            state: absent

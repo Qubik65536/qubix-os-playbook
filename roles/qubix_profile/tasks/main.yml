@@ -86,3 +86,9 @@
       Requested components {{ qubix_profile_enabled | difference(qubix_profile_implemented) }} are Planned.
       Only branding, Niri, shell and login components are supported at this revision.
 
+- name: Require typed boot safety confirmation and version
+  ansible.builtin.assert:
+    that:
+      - qubix_profile_resolved.bootloader.confirm_active is boolean
+      - qubix_profile_resolved.bootloader.config_path is string
+      - qubix_profile_resolved.bootloader.limine_version is integer

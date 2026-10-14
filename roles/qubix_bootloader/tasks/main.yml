@@ -1,0 +1,35 @@
+---
+- name: Require explicit confirmed bootloader activation
+  ansible.builtin.assert:
+    that:
+      - qubix_profile_resolved.bootloader.backend in ['grub', 'limine']
+      - qubix_profile_resolved.bootloader.confirm_active is boolean
+      - qubix_profile_resolved.bootloader.confirm_active
+      - qubix_profile_resolved.bootloader.config_path is string
+      - qubix_profile_resolved.bootloader.config_path is match('^/(boot|efi)/[A-Za-z0-9_./-]+$')
+      - "'..' not in qubix_profile_resolved.bootloader.config_path.split('/')"
+    fail_msg: 'Boot branding requires an explicit backend, active configuration path and confirm_active=true.'
+
+- name: Inspect confirmed active configuration without following redirects
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}{{ qubix_profile_resolved.bootloader.config_path }}'
+    follow: false
+  register: qubix_bootloader_active_stat
+
+- name: Require regular active configuration
+  ansible.builtin.assert:
+    that: [qubix_bootloader_active_stat.stat.isreg | default(false)]
+    fail_msg: 'Confirmed boot configuration is absent or redirected.'
+
+- name: Read confirmed active configuration
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}{{ qubix_profile_resolved.bootloader.config_path }}'
+  register: qubix_bootloader_active
+
+- name: Resolve read-only boot configuration evidence
+  ansible.builtin.set_fact:
+    qubix_bootloader_text: '{{ qubix_bootloader_active.content | b64decode }}'
+    qubix_bootloader_directory: '{{ qubix_profile_resolved.bootloader.config_path | dirname }}'
+
+- name: Prepare adapter for the confirmed backend
+  ansible.builtin.include_tasks: '{{ qubix_profile_resolved.bootloader.backend }}.yml'

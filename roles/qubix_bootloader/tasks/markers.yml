@@ -1,0 +1,17 @@
+---
+- name: Require well-formed single managed appearance block
+  ansible.builtin.assert:
+    that:
+      - qubix_bootloader_base | regex_findall('(?m)^# BEGIN QUBIX BOOT$') | length <= 1
+      - >-
+        qubix_bootloader_base | regex_findall('(?m)^# BEGIN QUBIX BOOT$') | length ==
+        qubix_bootloader_base | regex_findall('(?m)^# END QUBIX BOOT$') | length
+      - >-
+        qubix_bootloader_base | regex_findall('(?m)^# BEGIN QUBIX BOOT$') | length ==
+        qubix_bootloader_base | regex_findall('(?ms)^# BEGIN QUBIX BOOT\n.*?^# END QUBIX BOOT(?:\n|$)') | length
+    fail_msg: 'Malformed or duplicate Qubix boot markers; refusing a destructive rewrite.'
+
+- name: Remove only the old well-formed managed block
+  ansible.builtin.set_fact:
+    qubix_bootloader_preserved: >-
+      {{ qubix_bootloader_base | regex_replace('(?ms)^# BEGIN QUBIX BOOT\n.*?^# END QUBIX BOOT(?:\n|$)', '') }}

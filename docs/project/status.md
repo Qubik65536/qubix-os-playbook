@@ -12,7 +12,7 @@ Updated: 2026-10-13. Stage: **MVP candidate implementation In Progress**.
 | Branding installation and file verification | Tested | Licensed assets; isolated filesystem; preview/idempotency/repair/preservation; missing/corrupt/symlink rejection |
 | Niri/appearance/shell | Implemented | Definitions and missing-companion fixtures pass; native parser/session pending VM |
 | Login | Implemented | Native Breeze clone and unsupported-manager fixtures; VM login pending |
-| GRUB and Limine | Planned | Both required for MVP; opt-in; no host boot changes |
+| GRUB and Limine | Implemented | Independent preservation/idempotency and unsupported-version fixtures; reboot acceptance pending |
 | Plymouth/dracut/mkinitcpio | Planned | Opt-in; no image changes |
 | Backups/restoration/revision state | Implemented | Baselines, receipts, conflict/restore fixtures; deployment revision recorded last |
 

@@ -20,6 +20,9 @@ qubix:
   bootloader:
     enabled: false
     backend: auto
+    config_path: ''
+    confirm_active: false
+    limine_version: 0
   plymouth:
     enabled: false
     initramfs_backend: auto
@@ -40,3 +43,5 @@ Booleans must be YAML booleans, not strings. Each nested mapping allows only doc
 Existing non-Qubix system defaults require backup and an explicit activation policy before replacement. Additive fragments are preferred. A file's presence does not prove the application loaded it.
 
 Login currently supports already-active SDDM with `theme_source: breeze` and validated background/type options. Other managers and incompatible source themes are rejected before configuration writes. Native authentication QML is copied unchanged; no PAM or service replacement/restart occurs.
+
+Boot activation requires `backend: grub|limine`, confirmed `config_path` and `confirm_active: true`. Limine additionally requires the observed booted major `limine_version` (8–12). Auto/unknown configurations fail before writes. Native configs and boot entries remain preserved except minimal supported appearance changes.

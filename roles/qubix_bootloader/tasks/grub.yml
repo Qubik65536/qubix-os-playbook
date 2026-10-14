@@ -1,0 +1,47 @@
+---
+- name: Require GRUB tools and an existing sourced custom hook
+  ansible.builtin.assert:
+    that:
+      - qubix_profile_resolved.bootloader.config_path in ['/boot/grub/grub.cfg', '/boot/grub2/grub.cfg']
+      - qubix_discovery_report.evidence.binaries.get('grub-mkconfig', false)
+      - qubix_discovery_report.evidence.binaries.get('grub-script-check', false)
+      - qubix_bootloader_text is regex('(?m)^[ \t]*source[ \t]+[^\n]*custom\.cfg')
+    fail_msg: 'GRUB requires its existing generated config to source custom.cfg and installed validation tools.'
+
+- name: Inspect current appearance hook
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}{{ qubix_bootloader_directory }}/custom.cfg'
+    follow: false
+  register: qubix_bootloader_hook_stat
+
+- name: Reject redirected hook
+  ansible.builtin.assert:
+    that: [not qubix_bootloader_hook_stat.stat.islnk | default(false)]
+
+- name: Read existing hook without replacing unrelated content
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}{{ qubix_bootloader_directory }}/custom.cfg'
+  register: qubix_bootloader_hook
+  when: qubix_bootloader_hook_stat.stat.exists
+
+- name: Resolve original custom hook
+  ansible.builtin.set_fact:
+    qubix_bootloader_base: '{{ qubix_bootloader_hook.content | default("") | b64decode }}'
+
+- name: Check and strip only prior Qubix markers
+  ansible.builtin.import_tasks: markers.yml
+
+- name: Prepare GRUB theme and minimal isolated activation
+  ansible.builtin.set_fact:
+    qubix_bootloader_resources:
+      - path: '{{ qubix_bootloader_directory }}/themes/qubix/theme.txt'
+        component: bootloader
+        content: '{{ lookup("file", role_path ~ "/files/grub-theme.txt", rstrip=false) }}'
+      - path: '{{ qubix_bootloader_directory }}/custom.cfg'
+        component: bootloader
+        content: >-
+          {{ qubix_bootloader_preserved ~
+          ('' if not qubix_bootloader_preserved or qubix_bootloader_preserved.endswith(qubix_bootloader_newline)
+          else qubix_bootloader_newline) ~
+          lookup('file', role_path ~ '/files/grub-hook.cfg', rstrip=false) }}
+        validate: '{{ qubix_bootloader_grub_checker | default("/usr/bin/grub-script-check") }} %s'

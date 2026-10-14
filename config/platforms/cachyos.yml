@@ -19,6 +19,7 @@ qubix_discovery_binary_paths:
   fish: /usr/bin/fish
   starship: /usr/bin/starship
   grub-mkconfig: /usr/bin/grub-mkconfig
+  grub-script-check: /usr/bin/grub-script-check
   limine: /usr/bin/limine
   dracut: /usr/bin/dracut
   mkinitcpio: /usr/bin/mkinitcpio

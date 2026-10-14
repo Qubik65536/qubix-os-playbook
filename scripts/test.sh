@@ -48,3 +48,9 @@ if ! ansible-playbook tests/playbooks/login.yml >.cache/tests/login.log 2>&1; th
   exit 1
 fi
 printf '%s\n' 'SDDM clone and unsupported-manager fixtures passed.'
+
+if ! ansible-playbook tests/playbooks/bootloader.yml >.cache/tests/bootloader.log 2>&1; then
+  cat .cache/tests/bootloader.log
+  exit 1
+fi
+printf '%s\n' 'Independent GRUB/Limine preservation and reapplication fixtures passed; actual boot pending VM.'

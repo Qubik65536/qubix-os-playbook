@@ -4,7 +4,7 @@ qubix_profile_keys:
   niri: [enabled, user_config]
   shell: [enabled, change_default_shell]
   login: [enabled, backend, theme_source]
-  bootloader: [enabled, backend]
+  bootloader: [enabled, backend, config_path, confirm_active, limine_version]
   plymouth: [enabled, initramfs_backend]
 qubix_profile_choices:
   - component: niri
@@ -19,4 +19,4 @@ qubix_profile_choices:
   - component: plymouth
     key: initramfs_backend
     values: [auto, dracut, mkinitcpio]
-qubix_profile_implemented: [branding, niri, shell, login]
+qubix_profile_implemented: [branding, niri, shell, login, bootloader]

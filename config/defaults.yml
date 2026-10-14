@@ -15,6 +15,9 @@ login:
 bootloader:
   enabled: false
   backend: auto
+  config_path: ""
+  confirm_active: false
+  limine_version: 0
 plymouth:
   enabled: false
   initramfs_backend: auto

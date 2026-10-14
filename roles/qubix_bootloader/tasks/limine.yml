@@ -1,0 +1,36 @@
+---
+- name: Require supported confirmed Limine version and native config format
+  ansible.builtin.assert:
+    that:
+      - qubix_profile_resolved.bootloader.config_path is match('^/(boot|efi)/.*limine\.conf$')
+      - qubix_profile_resolved.bootloader.limine_version is integer
+      - qubix_profile_resolved.bootloader.limine_version in [8, 9, 10, 11, 12]
+      - >-
+        qubix_discovery_report.evidence.binaries.get('limine', false) or
+        qubix_discovery_report.evidence.packages | select('match', '^limine ') | list | length > 0
+      - qubix_bootloader_text is regex('(?m)^/[^\n]+')
+    fail_msg: 'Limine requires confirmed major 8–12, package/tool evidence and a native limine.conf containing entries.'
+
+- name: Initialize existing Limine content
+  ansible.builtin.set_fact:
+    qubix_bootloader_base: '{{ qubix_bootloader_text }}'
+
+- name: Preserve all content outside the Qubix appearance block
+  ansible.builtin.import_tasks: markers.yml
+
+- name: Reject duplicate existing appearance directives
+  ansible.builtin.assert:
+    that:
+      - qubix_bootloader_preserved | regex_findall('(?im)^[ \t]*' ~ item ~ '[ \t]*:') | length <= 1
+    fail_msg: 'Ambiguous repeated Limine {{ item }} directive; refusing guessed precedence.'
+  loop: [interface_branding, term_foreground, term_background]
+
+- name: Prepare only version-shared Limine appearance directives
+  ansible.builtin.set_fact:
+    qubix_bootloader_resources:
+      - path: '{{ qubix_profile_resolved.bootloader.config_path }}'
+        component: bootloader
+        content: >-
+          {{ lookup('file', role_path ~ '/files/limine.conf', rstrip=false) ~
+          (qubix_bootloader_preserved | regex_replace(
+          '(?im)^[ \t]*(interface_branding|term_foreground|term_background)[ \t]*:[^\n]*(?:\n|$)', '')) }}
