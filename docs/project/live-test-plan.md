@@ -1,0 +1,23 @@
+# Physical-target desktop test proposal
+
+Status: Planned execution; native read-only inspection and Niri grammar test are complete. Privileged desktop installation requires explicit operator authorization. This plan excludes login, bootloader and Plymouth activation; boot acceptance uses disposable VMs.
+
+## Observed prerequisites
+
+The target is a physical CachyOS ThinkPad running Niri 26.04 with Noctalia 5.2.1/Alacritty, active SDDM, Limine 12.9.3 and mkinitcpio 42.2. The classic Qubix companions are missing. Native Niri accepts the production KDL; the invalid-file control fails as intended. Existing dotfiles and system configuration have not been deployed over.
+
+## Proposed package preparation
+
+Install foot, fuzzel, waybar, mako, swaybg and starship with native Pacman. The current read-only resolution includes 17 dependencies (23 packages total); no kernel, loader or initramfs package is selected. Recheck the transaction immediately before execution.
+
+The machine has native snap-pac pre/post hooks on every transaction and Limine snapshot integration. Normal package installation may create snapshots and refresh snapshot-related menu entries. Do not disable existing hooks to conceal these effects. This must be included in operator approval for physical-machine package preparation; use a disposable VM if those effects are not acceptable.
+
+## Proposed deployment
+
+Enable only branding, niri and shell. Install five attributed branding files, wallpaper, /etc/niri/qubix defaults, five /etc/qubix companion configurations, an additional Qubix Niri session, Bash/Zsh fragments and Starship defaults: 17 named resources plus protected backup/receipt/revision state. Native/personal Niri files, Noctalia/Alacritty and default shell remain preserved.
+
+Preview first, then apply/verify the selected profile. Do not restart the display manager or interrupt the current session. The operator chooses Qubix Niri after logout when convenient. Record observed wallpaper/bar/launcher/notifications/terminal/navigation, original-file hashes, second-run zero managed changes and restoration. GUI privilege prompts remain an acceptance item: the optional KDE authentication agent is absent and must not be assumed available.
+
+## Remaining independent work
+
+Breeze is absent; the current login adapter cannot be selected on this target without further preparation or a validated adapter for an installed factory theme. Do not replace SDDM or install a desktop environment just to obtain a theme. GRUB is absent; both bootloaders and both image generators still need disposable-VM acceptance. No physical-machine loader theme, image rebuild or reboot is included here.

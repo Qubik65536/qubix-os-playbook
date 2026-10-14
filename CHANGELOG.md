@@ -32,3 +32,4 @@ Changes are grouped by release. Bootstrap has no release tag.
 - Added pre-authentication SSH timeout diagnostics and clarified password authentication with the pinned controller.
 - Added explicit privileged metadata discovery for private boot directories.
 - Corrected Niri validator option order and added a reusable native temporary-file grammar test, passing on Niri 26.04.
+- Prepared a physical desktop test proposal with explicit package-hook and deployment scope for operator review.

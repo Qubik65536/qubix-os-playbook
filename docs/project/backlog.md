@@ -73,3 +73,9 @@ Objective: complete scope evidence. Scope: end-to-end desktop/login/loader/splas
 Status: Implemented; links/syntax checked, VM walkthrough pending.
 
 Objective: make the candidate usable/reviewable. Scope: operator/developer guides, target collector, recovery/checklist. Acceptance: desktop independent of boot, opt-ins/evidence clear. Depends on candidate contracts. Tests: static links, ShellCheck, collector help/controller refusal; native walkthrough pending. Docs: README/onboarding/status.
+
+## T02 — Physical desktop test authorization (Testing)
+
+Status: Planned execution; [reviewable plan](live-test-plan.md) prepared from native inspection.
+
+Objective: test the desktop while preserving the physical host. Scope: approved native package preparation and branding/Niri/shell only; preserve existing Noctalia/Alacritty and personal files. Acceptance: native Foot/Niri validation, observed companions, original hashes, zero managed changes on reapplication and restoration. Depends on operator authorization including native Snapper/Limine package-hook effects. Tests: preview, target verification and operator-selected session; no boot/splash activation. Docs: status, compatibility and acceptance evidence.
