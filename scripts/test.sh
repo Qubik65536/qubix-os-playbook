@@ -20,3 +20,13 @@ for mode in normal check; do
   fi
   printf 'Framework tests passed (%s mode, zero changes).\n' "$mode"
 done
+
+for mode in normal check; do
+  set --
+  if [[ "$mode" == check ]]; then set -- --check; fi
+  if ! ansible-playbook tests/playbooks/branding.yml "$@" >".cache/tests/branding-$mode.log" 2>&1; then
+    cat ".cache/tests/branding-$mode.log"
+    exit 1
+  fi
+  printf 'Branding tests passed (%s mode, isolated filesystem).\n' "$mode"
+done

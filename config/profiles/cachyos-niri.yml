@@ -2,4 +2,4 @@
 # Components are enabled only after a working implementation is validated.
 profile: cachyos-niri
 branding:
-  enabled: false
+  enabled: true

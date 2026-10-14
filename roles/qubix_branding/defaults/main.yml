@@ -1,0 +1,5 @@
+---
+# Internal role variables; tests override them for an isolated filesystem.
+qubix_branding_destination: /usr/share/qubix/branding
+qubix_branding_owner: root
+qubix_branding_group: root

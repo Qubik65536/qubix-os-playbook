@@ -1,14 +1,24 @@
 ---
-- name: Validate Qubix deployment prerequisites
+- name: Deploy supported Qubix customizations
   hosts: qubix_targets
   gather_facts: false
   become: false
   roles:
-    - qubix_profile
-    - qubix_discovery
+    - role: qubix_profile
+      tags: [always]
+    - role: qubix_discovery
+      tags: [always]
   tasks:
-    - name: Report completed preflight without claiming a deployment
+    - name: Install and verify enabled Qubix branding
+      ansible.builtin.include_role:
+        name: qubix_branding
+        apply:
+          become: true
+          tags: [branding]
+      when: qubix_profile_resolved.branding.enabled
+      tags: [branding]
+
+    - name: Report disabled deployment selection
       ansible.builtin.debug:
-        msg: >-
-          Profile and CachyOS Niri compatibility passed.
-          No customization components are implemented at this revision; no configuration was deployed.
+        msg: 'No components enabled; completed preflight without customization writes.'
+      when: qubix_profile_enabled | length == 0

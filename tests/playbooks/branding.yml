@@ -1,0 +1,62 @@
+---
+- name: Test branding in an isolated temporary filesystem
+  hosts: localhost
+  gather_facts: true
+  gather_subset:
+    - '!all'
+    - min
+  become: false
+  vars_files:
+    - ../fixtures/framework.yml
+  roles:
+    - qubix_profile
+  tasks:
+    - name: Classify supported synthetic host evidence
+      ansible.builtin.include_role:
+        name: qubix_discovery
+        tasks_from: classify
+      vars:
+        qubix_discovery_evidence: '{{ qubix_test_host }}'
+
+    - name: Create disposable fixture root even when testing preview
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-branding-
+      register: qubix_test_temp
+      check_mode: false
+
+    - name: Restrict all branding writes to the fixture
+      ansible.builtin.set_fact:
+        qubix_branding_destination: '{{ qubix_test_temp.path }}/branding'
+        qubix_branding_owner: '{{ ansible_facts.user_id }}'
+        qubix_branding_group: '{{ ansible_facts.user_gid | string }}'
+
+    - name: Exercise install or check-mode preview with guaranteed cleanup
+      block:
+        - name: Apply production branding tasks in the isolated namespace
+          ansible.builtin.include_role:
+            name: qubix_branding
+
+        - name: Inspect namespace after preview
+          ansible.builtin.stat:
+            path: '{{ qubix_branding_destination }}'
+            get_checksum: false
+          register: qubix_test_preview
+          when: ansible_check_mode
+
+        - name: Require preview to leave the destination absent
+          ansible.builtin.assert:
+            that:
+              - not qubix_test_preview.stat.exists
+          when: ansible_check_mode
+
+        - name: Test real asset installation and rejection cases
+          ansible.builtin.include_tasks: ../tasks/branding_normal.yml
+          when: not ansible_check_mode
+      always:
+        - name: Remove only the Ansible-created fixture directory
+          ansible.builtin.file:
+            path: '{{ qubix_test_temp.path }}'
+            state: absent
+          check_mode: false

@@ -1,8 +1,8 @@
 # Installation
 
-The controller tooling and inspection workflow are **Implemented**. A live CachyOS target has not yet been integration-tested. Use an existing CachyOS Niri installation; this project does not install Linux or build an ISO.
+The controller tooling, inspection workflow, and additive artwork deployment are **Implemented**. A live CachyOS target has not yet been integration-tested. Use an existing CachyOS Niri installation; this project does not install Linux or build an ISO.
 
-Clone the repository, enter its root, and follow [controller setup](../development/environment.md). The default inventory selects localhost. The target needs Python, Linux/systemd, exact CachyOS identity, and executable `/usr/bin/pacman` and `/usr/bin/niri`. No package installation is automatic.
+Clone the repository, enter its root, and follow [controller setup](../development/environment.md). The default inventory selects localhost. The target needs Python, Linux/systemd, exact CachyOS identity, and executable `/usr/bin/pacman` and `/usr/bin/niri`. No package installation is automatic. Artwork deployment needs target privilege escalation; inspection does not.
 
 For a remote target, create an operator-owned inventory (example; replace the hostname):
 

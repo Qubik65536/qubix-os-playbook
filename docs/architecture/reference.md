@@ -4,7 +4,7 @@ Reviewed 2026-10-13 against [Qubix OS BlueBuild revision `56c57ac`](https://gith
 
 Useful designs include separately named Qubix artwork, a slate-blue Niri palette (`#56728B`), a separate theme include, content-validated GRUB assets, and additive shell defaults. The reference separates technical and user documentation and records important design rationale. Its KDE splash layout can inform future KDE work, but no KDE adapter is part of bootstrap.
 
-Reuse candidates are the Qubix logo SVG/PNG and banner. Preserve the repository's Apache-2.0 license, source revision, original paths, and checksums. No artwork is imported during the documentation phase. Asset provenance must be added with any actual import.
+Reuse candidates are the Qubix logo SVG/PNG and banner. Preserve the repository's Apache-2.0 license, source revision, original paths, and checksums. No artwork is imported during the documentation phase. The branding implementation imports those three assets with [provenance](../../assets/branding/README.md), retained notices and checksums.
 
 Do not copy BlueBuild recipes, image/ISO publishing, Fedora identity rewrites, automatic shell changes, inherited display-manager assumptions, or boot activation scripts wholesale. Those mechanisms have a different deployment and safety boundary.
 

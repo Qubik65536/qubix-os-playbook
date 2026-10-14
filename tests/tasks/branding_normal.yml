@@ -1,0 +1,91 @@
+---
+- name: Require the initial install to have created assets
+  ansible.builtin.assert:
+    that:
+      - qubix_branding_copy_result.changed
+
+- name: Create an unowned file to prove preservation
+  ansible.builtin.copy:
+    dest: '{{ qubix_branding_destination }}/unowned.txt'
+    content: 'preserve this unrelated file'
+    mode: '0644'
+
+- name: Reapply the same branding
+  ansible.builtin.include_role:
+    name: qubix_branding
+
+- name: Require idempotent file and directory reconciliation
+  ansible.builtin.assert:
+    that:
+      - not qubix_branding_directory_result.changed
+      - not qubix_branding_copy_result.changed
+
+- name: Read the preserved unowned file
+  ansible.builtin.slurp:
+    src: '{{ qubix_branding_destination }}/unowned.txt'
+  register: qubix_test_unowned
+
+- name: Require unrelated content to survive reapplication
+  ansible.builtin.assert:
+    that:
+      - qubix_test_unowned.content | b64decode == 'preserve this unrelated file'
+
+- name: Corrupt one managed asset for diagnostic testing
+  ansible.builtin.copy:
+    dest: '{{ qubix_branding_destination }}/logo.png'
+    content: damaged
+    mode: '0644'
+
+- name: Require checksum verification to reject damaged content
+  ansible.builtin.include_tasks: branding_rejection.yml
+  vars:
+    qubix_test_expected_error: is missing, damaged
+
+- name: Repair managed artwork with reapplication
+  ansible.builtin.include_role:
+    name: qubix_branding
+
+- name: Remove one fixture asset to test missing-resource diagnostics
+  ansible.builtin.file:
+    path: '{{ qubix_branding_destination }}/logo.svg'
+    state: absent
+
+- name: Require verification to reject an absent asset
+  ansible.builtin.include_tasks: branding_rejection.yml
+  vars:
+    qubix_test_expected_error: is missing, damaged
+
+- name: Redirect the fixture asset to unowned content
+  ansible.builtin.file:
+    path: '{{ qubix_branding_destination }}/logo.svg'
+    src: '{{ qubix_branding_destination }}/unowned.txt'
+    state: link
+
+- name: Require deployment to reject a symlinked managed file
+  ansible.builtin.include_tasks: branding_rejection.yml
+  vars:
+    qubix_test_expected_error: Unsafe branding resource
+    qubix_test_branding_task: main
+
+- name: Read content after rejected redirected writes
+  ansible.builtin.slurp:
+    src: '{{ qubix_branding_destination }}/unowned.txt'
+  register: qubix_test_unowned
+
+- name: Require symlink rejection to preserve its target
+  ansible.builtin.assert:
+    that:
+      - qubix_test_unowned.content | b64decode == 'preserve this unrelated file'
+
+- name: Create a redirected fixture namespace
+  ansible.builtin.file:
+    path: '{{ qubix_test_temp.path }}/redirected'
+    src: '{{ qubix_branding_destination }}'
+    state: link
+
+- name: Require deployment to reject a symlinked namespace
+  ansible.builtin.include_tasks: branding_rejection.yml
+  vars:
+    qubix_branding_destination: '{{ qubix_test_temp.path }}/redirected'
+    qubix_test_expected_error: Unsafe branding namespace
+    qubix_test_branding_task: main

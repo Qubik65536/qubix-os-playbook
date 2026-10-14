@@ -1,6 +1,6 @@
 # Deployment lifecycle
 
-Status: **Implemented profile resolution, discovery, compatibility validation and preflight**. Component mutation, backups, state and restoration remain Planned; see [status](../project/status.md).
+Status: **Implemented profile resolution, discovery, compatibility validation and preflight**. Branding mutation and checksum verification are Implemented. Backups, state, restoration and other component activation remain Planned; see [status](../project/status.md).
 
 ```mermaid
 flowchart TD
@@ -19,8 +19,10 @@ flowchart TD
 
 There is no multi-component atomic transaction. Ansible check mode is an approximation; read-only probes should still run, and missing resources can limit downstream previews. Do not claim planned writes were verified. Do not record a successful deployment before verification.
 
-Inventory and privilege escalation are standard Ansible operator inputs. The local inventory is explicit, with no implicit deployment to arbitrary hosts. Verification must not require privilege escalation for ordinary readable facts; permission failures must be actionable, not interpreted as absent components.
+Inventory and privilege escalation are standard Ansible operator inputs. The local inventory is explicit, with no implicit deployment to arbitrary hosts. Standalone verification must not require privilege escalation for ordinary readable facts; permission failures must be actionable, not interpreted as absent components.
 
 Bootstrap profile resolution loads defaults, the allowlisted profile, and an optional operator mapping (`qubix`), in that order with recursive dictionary merge. Scalar/list replacement is deliberate. Unknown keys and malformed types are rejected, so a misspelled opt-out cannot accidentally activate another component.
 
 Future recovery stores content, metadata, original absence, target paths, and source revision before overwriting default resources. Owned assets are reconciled idempotently; unrelated files must remain untouched. Revision tracking includes Git commit and effective configuration digest, with dirty-tree detection. It is not whole-system rollback.
+
+Current deployment validates all selections first, then escalates only for the branding installation block and verifies its five files. `verify` inspects by default; `verify --tags branding` explicitly checks deployed assets. Preflight roles carry `always` tags so ordinary component selection does not bypass them. Never skip safety preflight when deploying. No deployment revision manifest is recorded yet.

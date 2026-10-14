@@ -1,0 +1,25 @@
+---
+repository: https://github.com/Qubik65536/qubix-os-bluebuild
+revision: 56c57acafb9c3305b201a83255c0007cf4b398bd
+license: Apache-2.0
+files:
+  - filename: logo.svg
+    source: assets/branding/logo.svg
+    original_path: files/system/usr/share/pixmaps/qubixos-logo.svg
+    sha256: 3ccc88c39203c471de09ecd61333845047b1438438951f354a36a7ef79be5194
+  - filename: logo.png
+    source: assets/branding/logo.png
+    original_path: files/system/usr/share/pixmaps/qubixos-logo.png
+    sha256: f7448d0339ba049120fb54b5a08d43b63036220f1eba99971067e76d4a259c05
+  - filename: banner.svg
+    source: assets/branding/banner.svg
+    original_path: files/system/usr/share/pixmaps/qubixos-banner.svg
+    sha256: 46d7526f6658ce7e72e50cead5990d02183f6d982a98d185fed4bb3488049750
+  - filename: LICENSE
+    source: LICENSE
+    original_path: LICENSE
+    sha256: c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4
+  - filename: NOTICE
+    source: NOTICE
+    original_path: Local provenance notice
+    sha256: 293a79eec944ffb9cf5b3f55ed1511df882d97eb95868bb76b3d3fd5e2d02999

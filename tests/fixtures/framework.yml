@@ -12,6 +12,8 @@ qubix_test_profiles:
         enabled: false
       login:
         backend: sddm
+  - name: branding can be disabled
+    input: {branding: {enabled: false}}
   - name: unknown profile
     input: {profile: fedora-kde}
     error: Only profile cachyos-niri
@@ -60,15 +62,20 @@ qubix_test_profiles:
   - name: planned desktop component
     input: {niri: {enabled: true}}
     error: are Planned
+  - name: planned shell component
+    input: {shell: {enabled: true}}
+    error: are Planned
+  - name: planned login component
+    input: {login: {enabled: true}}
+    error: are Planned
   - name: planned bootloader component
     input: {bootloader: {enabled: true}}
     error: are Planned
   - name: planned splash component
     input: {plymouth: {enabled: true}}
     error: are Planned
-  - name: planned branding component
+  - name: supported branding component
     input: {branding: {enabled: true}}
-    error: are Planned
 qubix_test_host:
   system: Linux
   distribution_id: cachyos

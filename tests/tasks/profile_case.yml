@@ -31,6 +31,7 @@
   ansible.builtin.assert:
     that:
       - qubix_profile_resolved.profile == 'cachyos-niri'
+      - qubix_profile_resolved.branding.enabled == qubix_test_case.input.get('branding', {}).get('enabled', true)
       - qubix_profile_resolved.niri.user_config == 'preserve'
       - not qubix_profile_resolved.shell.change_default_shell
       - not qubix_profile_resolved.bootloader.enabled

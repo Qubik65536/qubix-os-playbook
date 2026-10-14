@@ -1,0 +1,12 @@
+Qubix OS Playbook includes unmodified Qubix artwork from:
+https://github.com/Qubik65536/qubix-os-bluebuild
+Revision: 56c57acafb9c3305b201a83255c0007cf4b398bd
+
+Original files:
+files/system/usr/share/pixmaps/qubixos-logo.svg
+files/system/usr/share/pixmaps/qubixos-logo.png
+files/system/usr/share/pixmaps/qubixos-banner.svg
+
+The reference repository distributes these assets under Apache License 2.0.
+The accompanying LICENSE is retained. This notice records provenance and
+makes no claim of authorship over the original artwork.

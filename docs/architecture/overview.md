@@ -1,6 +1,6 @@
 # Architecture overview
 
-Status: **Implemented definition/discovery/preflight layers; customization and state remain Planned**. Implementation evidence lives in [status](../project/status.md).
+Status: **Implemented definition/discovery/preflight layers and branding; other customization and state remain Planned**. Implementation evidence lives in [status](../project/status.md).
 
 Five conceptual layers use ordinary Ansible roles, task files, and variables. Definitions express intent; discovery measures capabilities; orchestration resolves and validates a profile; components own a narrow resource set; adapters translate component needs to the installed platform. Avoid abstract base classes, plugins, and a separate CLI.
 

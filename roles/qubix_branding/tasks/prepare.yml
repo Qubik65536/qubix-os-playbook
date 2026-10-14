@@ -1,0 +1,54 @@
+---
+- name: Require validated host and enabled branding
+  ansible.builtin.assert:
+    that:
+      - qubix_discovery_report.profile_compatible | default(false)
+      - qubix_profile_resolved.branding.enabled
+    fail_msg: 'Branding requires supported-host preflight and an enabled component.'
+
+- name: Load licensed asset manifest
+  ansible.builtin.include_vars:
+    file: '{{ role_path }}/../../assets/branding/manifest.yml'
+    name: qubix_branding_manifest
+
+- name: Inspect namespace directories without following symlinks
+  ansible.builtin.stat:
+    path: '{{ item }}'
+    follow: false
+    get_checksum: false
+    get_mime: false
+  loop:
+    - '{{ qubix_branding_destination | dirname }}'
+    - '{{ qubix_branding_destination }}'
+  register: qubix_branding_namespace
+
+- name: Reject redirected or non-directory namespaces
+  ansible.builtin.assert:
+    that:
+      - not item.stat.islnk | default(false)
+      - not item.stat.exists or item.stat.isdir | default(false)
+    fail_msg: 'Unsafe branding namespace: {{ item.item }} must be a real directory, not a symlink.'
+  loop: '{{ qubix_branding_namespace.results }}'
+  loop_control:
+    label: '{{ item.item }}'
+
+- name: Inspect named managed files without following symlinks
+  ansible.builtin.stat:
+    path: '{{ qubix_branding_destination }}/{{ item.filename }}'
+    follow: false
+    get_checksum: false
+    get_mime: false
+  loop: '{{ qubix_branding_manifest.files }}'
+  loop_control:
+    label: '{{ item.filename }}'
+  register: qubix_branding_existing
+
+- name: Reject redirected or non-file managed resources
+  ansible.builtin.assert:
+    that:
+      - not item.stat.islnk | default(false)
+      - not item.stat.exists or item.stat.isreg | default(false)
+    fail_msg: 'Unsafe branding resource: {{ item.item.filename }} must be a regular file, not a symlink.'
+  loop: '{{ qubix_branding_existing.results }}'
+  loop_control:
+    label: '{{ item.item.filename }}'

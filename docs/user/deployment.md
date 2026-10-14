@@ -1,17 +1,25 @@
 # Deployment
 
-Status: **Implemented preflight only**. No customization resources are installed by this revision.
+Status: **Implemented additive artwork deployment; fixture-tested**. Live CachyOS deployment remains unverified. No desktop, login, bootloader or splash activation is performed.
 
-From the repository root after [controller setup](../development/environment.md):
+From the root after [controller setup](../development/environment.md), inspect without escalation:
 
 ```bash
 ./bootstrap.sh verify
-./bootstrap.sh deploy --check --diff
-./bootstrap.sh deploy
 ```
 
-Use `-i inventory.ini` for a remote `qubix_targets` group and `-e @config/local.yml` for overrides. Both playbooks validate the schema and measured host compatibility. `deploy` explicitly reports inspection-only status. Enabled Planned components fail, and unsupported targets are rejected.
+Preview and deploy to a supported CachyOS Niri target (local commands shown):
 
-No privilege escalation is used. Read-only package, version and systemd probes run even in check mode. Temporary Ansible module transport/cache files are used; target configuration is not modified. Check/diff is an approximation, not a complete transaction plan.
+```bash
+./bootstrap.sh deploy --check --diff --ask-become-pass
+./bootstrap.sh deploy --ask-become-pass
+./bootstrap.sh verify --tags branding
+```
 
-The eventual [lifecycle](../architecture/deployment.md) includes backup, component deployment, verification and revision state. A desktop milestone does not depend on boot work. No bootstrap procedure rebuilds initramfs or activates boot themes.
+Add `-i inventory.ini` for remote `qubix_targets` and `-e @config/local.yml` for overrides. `--ask-become-pass` requests the target's privilege-escalation password; omit it only if escalation is already configured. The wrapper never installs dependencies. Real deployment is an operator action; bootstrap validation runs only disposable fixtures.
+
+Schema and supported-host preflight run unprivileged with `always` tags. Only the selected branding installation block uses escalation. It copies five named Managed files and verifies bytes/modes/ownership. Standalone verification is read-only. Enabling any other component fails before writes. Disabling branding yields preflight only. Use `--tags branding` to select branding; never skip `always` preflight.
+
+Read-only package/version/systemd probes run in check mode. On a fresh namespace, directory changes are previewed, file-copy preview is deferred until the directory exists, and proposed filenames are reported. Post-install verification is skipped during preview; no appearance success is claimed. Check/diff is an approximation, not a complete transaction plan.
+
+The eventual [lifecycle](../architecture/deployment.md) includes backups and revision state, which remain Planned. Artwork availability is not graphical activation. The desktop milestone remains independent of boot work.

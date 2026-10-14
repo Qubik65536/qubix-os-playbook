@@ -1,15 +1,28 @@
 ---
-- name: Inspect Qubix target compatibility without changing configuration
+- name: Inspect Qubix compatibility and optionally verify installed branding
   hosts: qubix_targets
   gather_facts: false
   become: false
   roles:
-    - qubix_profile
-    - qubix_discovery
+    - role: qubix_profile
+      tags: [always]
+    - role: qubix_discovery
+      tags: [always]
   tasks:
     - name: Report resolved configuration and measured capabilities
       ansible.builtin.debug:
         msg:
           configuration: '{{ qubix_profile_resolved }}'
           discovery: '{{ qubix_discovery_report }}'
-          implementation: 'Inspection only; customization components are Planned.'
+          implementation: 'Branding files supported; desktop and boot activation are Planned.'
+      tags: [always]
+
+    - name: Verify explicitly selected installed branding without writes
+      ansible.builtin.include_role:
+        name: qubix_branding
+        tasks_from: verify
+        apply:
+          become: false
+          tags: [branding]
+      when: qubix_profile_resolved.branding.enabled
+      tags: [never, branding]

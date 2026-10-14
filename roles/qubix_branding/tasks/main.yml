@@ -1,0 +1,40 @@
+---
+- name: Validate branding namespace before writes
+  ansible.builtin.import_tasks: prepare.yml
+
+- name: Create Qubix asset namespace directories
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+    owner: '{{ qubix_branding_owner }}'
+    group: '{{ qubix_branding_group }}'
+    mode: '0755'
+  loop:
+    - '{{ qubix_branding_destination | dirname }}'
+    - '{{ qubix_branding_destination }}'
+  register: qubix_branding_directory_result
+
+- name: Install named artwork and retained license notices
+  ansible.builtin.copy:
+    src: '{{ role_path }}/../../{{ item.source }}'
+    dest: '{{ qubix_branding_destination }}/{{ item.filename }}'
+    owner: '{{ qubix_branding_owner }}'
+    group: '{{ qubix_branding_group }}'
+    mode: '0644'
+  loop: '{{ qubix_branding_manifest.files }}'
+  loop_control:
+    label: '{{ item.filename }}'
+  register: qubix_branding_copy_result
+  when: not ansible_check_mode or qubix_branding_namespace.results[-1].stat.exists
+
+- name: Explain limited preview when the namespace does not exist
+  ansible.builtin.debug:
+    msg: >-
+      Check mode proposes namespace creation. Copy preview is deferred until the directory exists;
+      the named proposed assets are {{ qubix_branding_manifest.files | map(attribute='filename') | list }}.
+      No installed content or appearance was verified.
+  when: ansible_check_mode and not qubix_branding_namespace.results[-1].stat.exists
+
+- name: Verify installed asset bytes and metadata
+  ansible.builtin.include_tasks: verify.yml
+  when: not ansible_check_mode

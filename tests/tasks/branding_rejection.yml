@@ -1,0 +1,25 @@
+---
+- name: Reset expected branding rejection
+  ansible.builtin.set_fact:
+    qubix_test_failed: false
+
+- name: Test asset safety or verification failure
+  block:
+    - name: Run production safety or verification tasks
+      ansible.builtin.include_role:
+        name: qubix_branding
+        tasks_from: '{{ qubix_test_branding_task | default("verify") }}'
+  rescue:
+    - name: Require the intended failure diagnostic
+      ansible.builtin.assert:
+        that:
+          - qubix_test_expected_error in (ansible_failed_result | to_json)
+
+    - name: Record expected rejection
+      ansible.builtin.set_fact:
+        qubix_test_failed: true
+
+- name: Reject an unexpected successful operation
+  ansible.builtin.assert:
+    that:
+      - qubix_test_failed

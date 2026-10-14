@@ -1,6 +1,6 @@
 # Component boundaries
 
-Status: **Discovery and profile validation are Implemented; customization components remain Planned**. See [status](../project/status.md) for evidence.
+Status: **Discovery, profile validation and branding are Implemented; other customization components remain Planned**. See [status](../project/status.md) for evidence.
 
 | Component | Responsibility | Ownership | Required dependencies |
 |---|---|---|---|

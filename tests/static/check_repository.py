@@ -1,5 +1,6 @@
 """Repository-only documentation and definition consistency checks; not a runtime app."""
 from pathlib import Path
+import hashlib
 import re
 import yaml
 
@@ -46,6 +47,18 @@ def main():
     example = re.search(r"```yaml\n(.*?)```", documentation, re.S)
     assert example, "Missing authoritative configuration example"
     assert yaml.safe_load(example[1])["qubix"] == expected, "Documented defaults differ from the profile"
+    manifest = load("assets/branding/manifest.yml")
+    assert manifest["license"] == "Apache-2.0"
+    assert len(manifest["revision"]) == 40
+    names = [asset["filename"] for asset in manifest["files"]]
+    assert len(names) == len(set(names)), "Duplicate managed asset filename"
+    assert set(names) == {"logo.svg", "logo.png", "banner.svg", "LICENSE", "NOTICE"}
+    for asset in manifest["files"]:
+        source = Path(asset["source"])
+        assert not source.is_absolute() and ".." not in source.parts, "Unsafe source asset path"
+        assert Path(asset["filename"]).name == asset["filename"], "Unsafe destination filename"
+        digest = hashlib.sha256((ROOT / source).read_bytes()).hexdigest()
+        assert digest == asset["sha256"], f"Changed source asset without manifest update: {source}"
     print(f"Repository consistency passed ({len(documents)} Markdown files, profile/default/schema agreement).")
 
 

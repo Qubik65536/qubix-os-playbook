@@ -1,0 +1,33 @@
+---
+- name: Validate namespace safety for read-only verification
+  ansible.builtin.import_tasks: prepare.yml
+
+- name: Read installed asset checksums and metadata
+  ansible.builtin.stat:
+    path: '{{ qubix_branding_destination }}/{{ item.filename }}'
+    follow: false
+    checksum_algorithm: sha256
+    get_mime: false
+  loop: '{{ qubix_branding_manifest.files }}'
+  loop_control:
+    label: '{{ item.filename }}'
+  register: qubix_branding_verified
+
+- name: Require exact managed asset bytes and metadata
+  ansible.builtin.assert:
+    that:
+      - item.stat.isreg | default(false)
+      - item.stat.checksum | default('') == item.item.sha256
+      - item.stat.mode | default('') == '0644'
+      - item.stat.pw_name | default('') == qubix_branding_owner
+      - >-
+        item.stat.gr_name | default('') == qubix_branding_group or
+        item.stat.gid | default(-1) | string == qubix_branding_group | string
+    fail_msg: 'Branding asset {{ item.item.filename }} is missing, damaged, or has incorrect metadata.'
+  loop: '{{ qubix_branding_verified.results }}'
+  loop_control:
+    label: '{{ item.item.filename }}'
+
+- name: Report asset availability without claiming visual activation
+  ansible.builtin.debug:
+    msg: 'Five named branding files verified. Desktop, login, bootloader and splash activation remain Planned.'
