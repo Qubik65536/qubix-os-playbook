@@ -24,3 +24,4 @@ Changes are grouped by release. Bootstrap has no release tag.
 - Added optional measured CachyOS Polkit agent startup to the separate Qubix Niri session.
 - Fixed Starship default selection to preserve existing user configuration precedence.
 - Added a read-only VM information collector and target evidence guide.
+- Extended each bootloader fixture through real baseline installation, reapplication and exact restoration.

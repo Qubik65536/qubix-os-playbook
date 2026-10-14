@@ -1,8 +1,12 @@
 ---
 - name: Test GRUB and Limine preservation independently in a disposable root
   hosts: localhost
-  gather_facts: false
+  gather_facts: true
+  gather_subset: ['!all', min]
+  become: false
   vars:
+    # Controller dispatch stub; native GRUB parsing is explicitly a VM gate.
+    qubix_bootloader_grub_checker: /usr/bin/true
     qubix_discovery_report:
       evidence:
         binaries: {grub-mkconfig: true, grub-script-check: true, limine: true}
@@ -18,6 +22,8 @@
     - name: Use disposable boot paths
       ansible.builtin.set_fact:
         qubix_root: '{{ qubix_test_tmp.path }}'
+        qubix_files_owner: '{{ ansible_facts.user_id }}'
+        qubix_files_group: '{{ ansible_facts.user_gid | string }}'
 
     - name: Exercise both adapters and rejection with guaranteed cleanup
       block:
@@ -53,6 +59,13 @@
                     cmdline: root=UUID=keep cryptdevice=UUID=keep:root quiet splash
                     module_path: boot():/initramfs-linux-cachyos.img
 
+        - name: Record original boot fixture hashes before activation
+          ansible.builtin.stat:
+            path: '{{ qubix_root }}{{ item }}'
+            checksum_algorithm: sha256
+          loop: [/boot/grub/grub.cfg, /boot/grub/custom.cfg, /boot/limine.conf]
+          register: qubix_test_original_boot
+
         - name: Select confirmed GRUB fixture
           ansible.builtin.set_fact:
             qubix_profile_resolved:
@@ -78,11 +91,21 @@
               - qubix_bootloader_resources[-1].path == '/boot/grub/custom.cfg'
               - "'cryptdevice=UUID=keep:root' in qubix_bootloader_text"
 
-        - name: Simulate installed GRUB hook in the fixture
-          ansible.builtin.copy:
-            dest: '{{ qubix_root }}/boot/grub/custom.cfg'
-            content: '{{ qubix_test_grub_hook }}'
-            mode: '0644'
+        - name: Install GRUB resources through the real baseline engine in the fixture
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_resources: '{{ qubix_bootloader_resources }}'
+
+        - name: Reapply unchanged GRUB resources through the engine
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_resources: '{{ qubix_bootloader_resources }}'
+
+        - name: Require unchanged GRUB activation copy
+          ansible.builtin.assert:
+            that: [not qubix_files_write.changed]
 
         - name: Prepare GRUB again
           ansible.builtin.include_role:
@@ -117,11 +140,21 @@
               - "'timeout: 5' in qubix_test_limine"
               - qubix_test_limine | regex_findall('(?m)^interface_branding:') | length == 1
 
-        - name: Simulate installed Limine appearance in the fixture
-          ansible.builtin.copy:
-            dest: '{{ qubix_root }}/boot/limine.conf'
-            content: '{{ qubix_test_limine }}'
-            mode: '0644'
+        - name: Install Limine through its independent recorded baseline
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_resources: '{{ qubix_bootloader_resources }}'
+
+        - name: Reapply unchanged Limine resource through the engine
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_resources: '{{ qubix_bootloader_resources }}'
+
+        - name: Require unchanged Limine activation copy
+          ansible.builtin.assert:
+            that: [not qubix_files_write.changed]
 
         - name: Prepare Limine again
           ansible.builtin.include_role:
@@ -154,6 +187,37 @@
         - name: Require unsupported version to fail
           ansible.builtin.assert:
             that: [qubix_test_rejected]
+        - name: Restore both adapters from their real file baselines
+          ansible.builtin.include_role:
+            name: qubix_files
+            tasks_from: restore
+
+        - name: Read restored activation files and preserved generated entries
+          ansible.builtin.stat:
+            path: '{{ qubix_root }}{{ item.item }}'
+            checksum_algorithm: sha256
+          loop: '{{ qubix_test_original_boot.results }}'
+          register: qubix_test_restored_boot
+          loop_control:
+            label: '{{ item.item }}'
+
+        - name: Require exact original bytes for both adapters and untouched generated GRUB
+          ansible.builtin.assert:
+            that:
+              - item.stat.checksum == item.item.stat.checksum
+              - item.stat.mode == item.item.stat.mode
+          loop: '{{ qubix_test_restored_boot.results }}'
+          loop_control:
+            label: '{{ item.item.item }}'
+
+        - name: Inspect originally absent GRUB theme resource
+          ansible.builtin.stat:
+            path: '{{ qubix_root }}/boot/grub/themes/qubix/theme.txt'
+          register: qubix_test_removed_theme
+
+        - name: Require restoration removes only the newly added theme file
+          ansible.builtin.assert:
+            that: [not qubix_test_removed_theme.stat.exists]
       always:
         - name: Remove only disposable boot fixtures
           ansible.builtin.file:
