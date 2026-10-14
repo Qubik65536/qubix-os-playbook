@@ -4,7 +4,11 @@ An Ansible framework for deploying Qubix branding and desktop defaults onto exis
 
 **Status: MVP candidate ready for disposable-VM testing.** Branding, a separate Qubix Niri session, wallpaper/companions, shell defaults, SDDM branding, both GRUB and Limine, and Plymouth with both dracut and mkinitcpio are implemented. Static checks and isolated fixtures pass. Native sessions, authentication, image generation, reboots and recovery remain unverified until the VM matrix passes. See [actual evidence](docs/project/status.md).
 
-Start with the [user getting-started guide](docs/user/getting-started.md). Use the [human developer getting-started guide](docs/development/getting-started.md) to understand or change the code. The [target information guide](docs/user/collecting-target-info.md) explains what to collect when the VM finishes installing.
+Get started:
+
+- [User getting-started guide](docs/user/getting-started.md): prepare the target, deploy and test the desktop, then opt into login/boot/splash tests.
+- [Human developer getting-started guide](docs/development/getting-started.md): set up tools, understand the code and run fixtures.
+- [SSH access and target information](docs/user/collecting-target-info.md): share connection details so the agent can inspect your test machine.
 
 After controller setup and a remote inventory with a `qubix_targets` group:
 

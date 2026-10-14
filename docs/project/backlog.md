@@ -64,7 +64,7 @@ Objective: startup splash independent of loader. Scope: Qubix theme, dracut/mkin
 
 ## T01 — MVP acceptance (Testing)
 
-Status: In Progress; VM installing. Next gate is native acceptance, not new adapter implementation.
+Status: In Progress; test machine available, SSH details pending. Next gate is native acceptance, not new adapter implementation.
 
 Objective: complete scope evidence. Scope: end-to-end desktop/login/loader/splash, reapplication, configuration preservation, diagnostics and recovery. Acceptance: all [MVP criteria](scope.md) pass with recorded versions and evidence. Depends on F03–F09. Tests: disposable VM matrix. Docs: compatibility/status, release readiness and changelog.
 

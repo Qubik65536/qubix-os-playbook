@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM testing**. Full MVP acceptance remains In Progress; the disposable CachyOS VM is still installing.
+Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM testing**. Full MVP acceptance remains In Progress; a test machine is available, with SSH connection details pending.
 
 | Capability | Status | Actual evidence |
 |---|---|---|

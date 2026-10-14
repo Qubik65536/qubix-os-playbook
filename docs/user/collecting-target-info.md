@@ -1,12 +1,36 @@
-# Collect information from the test VM
+# Share SSH access and collect target information
 
-Status: **Read-only collector Implemented; supported-host output needs the VM**. Collect this when installation is complete. No boot or image generation command is needed to inspect the environment.
+Status: **Read-only collector Implemented; supported-host output needs the VM**. A connection endpoint is sufficient to begin read-only inspection; system details can be collected afterward. No boot or image generation command is needed to inspect the environment.
 
 ## Connection details
 
-In the VM, run `whoami` and `ip -brief address`. Send the ordinary SSH user, reachable IP/hostname, SSH port and whether that account can use sudo. Do not send the sudo password or private key. NAT may require port forwarding; confirm `ssh USER@HOST` from the controller before sharing the endpoint.
+Send this template with your actual values:
 
-You may instead provide your existing Ansible inventory path. Its group must be `qubix_targets`. Keep credentials and host-specific inventory out of Git.
+```text
+Host/IP or configured SSH alias:
+SSH username:
+SSH port: 22
+Authentication: existing SSH agent, or local private-key file path
+Sudo: passwordless, password required, or unavailable
+Machine: disposable VM or physical machine
+Snapshot/backup and console access: available or unavailable
+```
+
+The address must be reachable from the controller running this repository. In the target, `whoami` gives the account and `ip -brief address` lists addresses. NAT may need a forwarded SSH port; mention any required VPN or jump host. A configured SSH alias can supply those settings instead.
+
+Use an existing local key or SSH agent; send only its local path or alias, never the private-key contents, passphrase or sudo password. If SSH currently uses a password, say so: prepare key access before automated tests. No new key or personal SSH configuration is needed when working key access already exists.
+
+From this Mac, first confirm ordinary SSH login, completing host-key verification and any key-unlock prompt yourself:
+
+```bash
+ssh -p PORT USER@HOST
+```
+
+If needed, obtain the target's public host-key fingerprint from its console using `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub`, then compare it with the SSH prompt. If that key type is absent, use the existing host public key. Do not disable host-key checking.
+
+You can alternatively provide an existing local Ansible inventory path; its group must be `qubix_targets`. Host-specific inventory and credentials stay out of Git. See the [user guide](getting-started.md) for an ignored inventory example.
+
+Once access is available, the agent can run the collector and Ansible inspection. Reports below are optional if the agent can connect. Initial work is read-only inspection and validation. After inspection, prepare a target-specific deployment plan for review. Boot-critical tests require an explicitly authorized disposable VM with recovery access, following the [project safety rules](../../AGENTS.md).
 
 ## Read-only report
 
@@ -57,4 +81,4 @@ Collect manager unit activity from the report. For SDDM, confirm `/usr/share/sdd
 
 In the graphical session, collect `systemctl --user list-units --type=service --state=running` and application failures if there are duplicate panels/notifications. SSH desktop environment hints may be absent. Tell us whether wallpaper, bar, launcher, terminal, notifications and authentication prompts work visually.
 
-Start by sending connection details and the two reports. Active loader/generator confirmation is needed only before their opt-in tests.
+Start by sending connection details; send reports only if direct inspection is unavailable. Active loader/generator confirmation is needed only before their opt-in tests.
