@@ -63,6 +63,8 @@
               - "'HaltCommand=/usr/bin/systemctl poweroff' in qubix_login_resources[-1].content"
               - "'Current=qubix' in qubix_login_resources[-1].content"
               - qubix_login_resources | length == 5
+              - qubix_login_appearance[0].content.splitlines() | length == 3
+              - qubix_login_appearance[1].content.splitlines() == ['[Theme]', 'Current=qubix']
 
         - name: Seed unsupported active manager evidence
           ansible.builtin.set_fact:

@@ -107,12 +107,24 @@
   loop_control:
     label: '{{ item.path }}'
 
-- name: Prepare branded background and drop-in selection after cloned UI resources
+- name: Define native INI appearance files with actual newlines
   ansible.builtin.set_fact:
-    qubix_login_resources: >-
-      {{ qubix_login_resources + [{'path': '/usr/share/sddm/themes/qubix/theme.conf.user', 'component': 'login',
-      'content': '[General]\nbackground=/usr/share/qubix/branding/logo.png\ntype=image\n'},
-      {'path': '/etc/sddm.conf.d/zz-qubix.conf', 'component': 'login', 'content': '[Theme]\nCurrent=qubix\n'}] }}
+    qubix_login_appearance:
+      - path: /usr/share/sddm/themes/qubix/theme.conf.user
+        component: login
+        content: |
+          [General]
+          background=/usr/share/qubix/branding/logo.png
+          type=image
+      - path: /etc/sddm.conf.d/zz-qubix.conf
+        component: login
+        content: |
+          [Theme]
+          Current=qubix
+
+- name: Place activation after cloned authentication resources
+  ansible.builtin.set_fact:
+    qubix_login_resources: '{{ qubix_login_resources + qubix_login_appearance }}'
 
 - name: Preserve main configuration while resolving its higher precedence theme setting
   ansible.builtin.set_fact:
