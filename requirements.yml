@@ -1,0 +1,3 @@
+---
+# Bootstrap uses only ansible.builtin modules bundled with ansible-core.
+collections: []

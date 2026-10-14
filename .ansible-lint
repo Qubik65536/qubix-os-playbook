@@ -1,0 +1,6 @@
+---
+profile: production
+exclude_paths:
+  - .venv/
+  - .cache/
+# No blanket rule exclusions; fixture tasks follow production conventions.

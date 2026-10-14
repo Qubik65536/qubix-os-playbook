@@ -1,11 +1,11 @@
 # Project status
 
-Updated: 2026-10-13. Stage: **Phase 0, documentation foundation**.
+Updated: 2026-10-13. Stage: **Phase 1, controller tooling**.
 
 | Capability | Status | Evidence |
 |---|---|---|
 | Scope, architecture, decisions and workflow | Implemented | Documentation review; no source implementation |
-| Tooling/CI | Planned | Tools absent on controller except Python/uv/Git |
+| Controller tooling | Implemented | Local virtual environment and locked tools; CI remains Planned |
 | Discovery/profile/orchestration | Planned | No executable playbooks |
 | Branding | Planned | Reuse source inspected; no assets imported |
 | Niri/appearance/shell/login | Planned | No graphical target inspected |
