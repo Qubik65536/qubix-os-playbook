@@ -16,19 +16,19 @@ Objective: repeatable local/CI checks. Scope: pinned controller dependencies, YA
 
 ## F02 — Shared artwork (Feature)
 
-Status: Implemented; isolated filesystem and normal/check-mode acceptance Tested. Live target deployment remains unverified.
+Status: Implemented; isolated filesystem and normal/check-mode acceptance Tested. Native CachyOS installation, verification, idempotency and original-absence restoration pass.
 
 Objective: first useful safe mutation. Scope: canonical Qubix assets, attribution/checksums, fixed destination files, read-only verification. Acceptance: isolated install/checksum/idempotency/preview tests, unrelated files preserved, no identity changes. Depends on F01/M01. Tests: temporary filesystem, corruption and absence failures. Docs: branding, restoration and status.
 
 ## F03 — CachyOS Niri default activation (Feature)
 
-Status: Implemented candidate; Niri 26.04 production/invalid-control grammar Tested on physical target; companion/session/preservation/idempotency gate open.
+Status: Implemented candidate; Niri/Foot/Fuzzel syntax, native file preservation/idempotency and isolated nested companions Tested; primary-session gate open.
 
 Objective: begin a usable Qubix desktop on an actual target. Scope: live report, supported KDL candidate, theme include, detected companion commands and preservation policy. Acceptance: `niri validate`, user/system originals preserved, actual wallpaper/launcher/bar/notifications/terminal work in VM, second run unchanged. Depends on F02, F06 backup preparation for default activation, and live VM evidence. Tests: parser + preservation + VM graphical session. Docs: Niri, compatibility, user deployment and recovery.
 
 ## F04 — Shell/terminal defaults (Feature)
 
-Status: Implemented; shell precedence fixture Tested; native interactive startup gate open.
+Status: Implemented; shell precedence fixtures and temporary-home native Bash/Starship initialization Tested; normal account startup gate open.
 
 Objective: Qubix terminal experience. Scope: detected applications and additive defaults, no automatic shell change. Acceptance: working terminal/shell with personal files preserved. Depends on F03 target evidence. Tests: parsing/startup/idempotency. Docs: component ownership and user override/recovery.
 
@@ -40,7 +40,7 @@ Objective: brand supported active manager without changing authentication/sessio
 
 ## F06 — Revision state and recovery (Feature)
 
-Status: Implemented; fault/drift/restore/state fixtures Tested; live recovery gate open.
+Status: Implemented; fault/drift/restore/state fixtures plus native desktop absence/state lifecycle Tested; boot/image recovery gate open.
 
 Objective: auditable resource-level restoration. Scope: manifests, backups before existing-default mutation, original absence/metadata, revision/config digest and dirty detection. Acceptance: success state only after verify; conflict-safe repeated restoration and interrupted failure diagnosis. Depends on F01; needed before default/boot activation. Tests: fault injection, restore and preservation fixtures. Docs: lifecycle/restoration.
 
@@ -64,18 +64,18 @@ Objective: startup splash independent of loader. Scope: Qubix theme, dracut/mkin
 
 ## T01 — MVP acceptance (Testing)
 
-Status: In Progress; SSH details supplied, connected after service/firewall setup; privileged read-only discovery passes. Physical desktop deployment permission and VM boot tests pending. Next gate is native acceptance, not new adapter implementation.
+Status: In Progress; SSH details supplied, connected after service/firewall setup; privileged read-only discovery passes. Approved physical desktop deployment, reapplication, absence restoration and nested rendering pass; primary-session/login/VM boot tests pending. Next gate is native acceptance, not new adapter implementation.
 
 Objective: complete scope evidence. Scope: end-to-end desktop/login/loader/splash, reapplication, configuration preservation, diagnostics and recovery. Acceptance: all [MVP criteria](scope.md) pass with recorded versions and evidence. Depends on F03–F09. Tests: disposable VM matrix. Docs: compatibility/status, release readiness and changelog.
 
 ## D01 — Human onboarding (Documentation)
 
-Status: Implemented; links/syntax checked, VM walkthrough pending.
+Status: Implemented; links/syntax checked and native desktop procedure Tested; main-session/VM walkthrough pending.
 
-Objective: make the candidate usable/reviewable. Scope: operator/developer guides, target collector, recovery/checklist. Acceptance: desktop independent of boot, opt-ins/evidence clear. Depends on candidate contracts. Tests: static links, ShellCheck, collector help/controller refusal; native walkthrough pending. Docs: README/onboarding/status.
+Objective: make the candidate usable/reviewable. Scope: operator/developer guides, target collector, recovery/checklist. Acceptance: desktop independent of boot, opt-ins/evidence clear. Depends on candidate contracts. Tests: static links, ShellCheck, collector help/controller refusal; native desktop CLI walkthrough passes; main-session/boot walkthrough pending. Docs: README/onboarding/status.
 
 ## T02 — Physical desktop test authorization (Testing)
 
-Status: Planned execution; [reviewable plan](live-test-plan.md) prepared from native inspection.
+Status: Desktop preparation/file lifecycle/nested rendering Tested; primary-session acceptance In Progress. See [results](desktop-test-results.md) and [authorized plan](live-test-plan.md).
 
-Objective: test the desktop while preserving the physical host. Scope: approved native package preparation and branding/Niri/shell only; preserve existing Noctalia/Alacritty and personal files. Acceptance: native Foot/Niri validation, observed companions, original hashes, zero managed changes on reapplication and restoration. Depends on operator authorization including native Snapper/Limine package-hook effects. Tests: preview, target verification and operator-selected session; no boot/splash activation. Docs: status, compatibility and acceptance evidence.
+Objective: test the desktop while preserving the physical host. Scope: approved native package preparation and branding/Niri/shell only; preserve existing Noctalia/Alacritty and personal files. Acceptance: native Foot/Niri validation, observed companions, original hashes, zero managed changes on reapplication and restoration. Operator authorization included native Snapper/Limine package-hook effects. Remaining tests require operator-selected main-session evidence. Tests: preview, target verification and operator-selected session; no boot/splash activation. Docs: status, compatibility and acceptance evidence.

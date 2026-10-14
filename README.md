@@ -2,7 +2,7 @@
 
 An Ansible framework for deploying Qubix branding and desktop defaults onto existing Linux installations. The first target is **CachyOS with Niri**. Qubix reproduces its managed configuration, not the complete operating system.
 
-**Status: MVP candidate ready for disposable-VM testing.** Branding, a separate Qubix Niri session, wallpaper/companions, shell defaults, SDDM branding, both GRUB and Limine, and Plymouth with both dracut and mkinitcpio are implemented. Static checks and isolated fixtures pass. Native sessions, authentication, image generation, reboots and recovery remain unverified until the VM matrix passes. See [actual evidence](docs/project/status.md).
+**Status: MVP candidate ready for disposable-VM testing.** Branding, a separate Qubix Niri session, wallpaper/companions, shell defaults, SDDM branding, both GRUB and Limine, and Plymouth with both dracut and mkinitcpio are implemented. Static checks and isolated fixtures pass. Native desktop installation, syntax, preservation, zero-change reapplication, file restoration and isolated nested rendering pass. Main-session, authentication, native image generation and reboot recovery remain VM acceptance gates. See [actual evidence](docs/project/status.md).
 
 Get started:
 
@@ -10,19 +10,20 @@ Get started:
 - [Human developer getting-started guide](docs/development/getting-started.md): set up tools, understand the code and run fixtures.
 - [SSH access and target information](docs/user/collecting-target-info.md): share connection details so the agent can inspect your test machine.
 
-After controller setup and a remote inventory with a `qubix_targets` group:
+After controller setup, a remote inventory with a `qubix_targets` group and the guide’s `config/local.yml`:
 
 ```bash
-./bootstrap.sh verify -i inventory/target.local.ini
-./bootstrap.sh deploy -i inventory/target.local.ini --check --diff --ask-become-pass
-./bootstrap.sh deploy -i inventory/target.local.ini --ask-become-pass
-./bootstrap.sh verify -i inventory/target.local.ini --tags installed
+./bootstrap.sh verify -i inventory/target.local.ini -e @config/local.yml --ask-become-pass
+./bootstrap.sh deploy -i inventory/target.local.ini -e @config/local.yml --check --diff --ask-become-pass
+./bootstrap.sh deploy -i inventory/target.local.ini -e @config/local.yml --ask-become-pass
+./bootstrap.sh verify -i inventory/target.local.ini -e @config/local.yml --tags installed --ask-become-pass
 ```
 
-The default profile deploys the desktop only. Choose **Qubix Niri** at login or start it from a free TTY. Native Niri, personal dotfiles, distribution identity, boot entries and kernel arguments remain preserved. Login/boot/splash are opt-in; explicit boot paths/version/image mappings are required. Candidate commits are local and have not been pushed.
+Add --ask-pass with password SSH. The guide includes explicit read privilege for private /boot metadata. The default profile deploys the desktop only. Choose **Qubix Niri** at login or start it from a free TTY. Native Niri, personal dotfiles, distribution identity, boot entries and kernel arguments remain preserved. Login/boot/splash are opt-in; explicit boot paths/version/image mappings are required. Candidate commits are local and have not been pushed.
 
 - [Scope and acceptance](docs/project/scope.md), [roadmap](docs/project/roadmap.md), [backlog](docs/project/backlog.md)
 - [Architecture](docs/architecture/overview.md), [configuration](docs/architecture/configuration.md), [candidate boundaries](docs/architecture/mvp-candidate.md)
+- [Native desktop test results](docs/project/desktop-test-results.md)
 - [Verification checklist](docs/user/verification.md), [restoration](docs/user/restoration.md), [troubleshooting](docs/user/troubleshooting.md)
 - [Contributing](CONTRIBUTING.md), [agent instructions](AGENTS.md), [testing](docs/development/testing.md)
 

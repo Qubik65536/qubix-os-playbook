@@ -1,6 +1,6 @@
 # Get started: test Qubix on CachyOS Niri
 
-Status: **Implemented MVP candidate; live VM acceptance pending**. This guide is for someone deploying and trying the desktop. Start with a disposable CachyOS Niri VM and a snapshot. You can test the desktop before touching login, bootloader or splash settings.
+Status: **Implemented MVP candidate; desktop file lifecycle and nested rendering Tested on CachyOS; primary-session/full VM acceptance pending**. This guide is for someone deploying and trying the desktop. Start with a disposable CachyOS Niri VM and a snapshot. You can test the desktop before touching login, bootloader or splash settings.
 
 ## 1. Prepare your controller and VM
 
@@ -14,7 +14,17 @@ python3 -m venv .venv
 ./bootstrap.sh --help
 ```
 
-On the VM, keep its existing Niri installation and display manager. Install the selected desktop companions and SSH prerequisites yourself:
+On the VM, keep its existing Niri installation and display manager.
+
+Preview the selected desktop transaction before installation, especially on a physical machine:
+
+```bash
+pacman -Sp --needed --print-format '%n %v' foot fuzzel waybar mako swaybg starship
+```
+
+Native CachyOS Snapper/Limine package hooks can create snapshots and refresh menu entries. Those effects occurred in the [recorded native desktop test](../project/desktop-test-results.md); they are package preparation effects, independently of Qubix boot branding. Review the actual transaction and keep normal hooks enabled.
+
+Install the selected desktop companions and SSH prerequisites yourself:
 
 ```bash
 sudo pacman -S --needed python openssh foot fuzzel waybar mako swaybg starship
@@ -57,6 +67,8 @@ If help is needed, use [collecting target information](collecting-target-info.md
 The `cachyos-niri` profile enables branding, Niri and shell defaults. Login, bootloader and Plymouth are disabled. You may save explicit overrides in ignored `config/local.yml`:
 
 ```yaml
+# Explicit metadata read privilege for stock CachyOS private /boot.
+qubix_discovery_privileged: true
 qubix:
   profile: cachyos-niri
   branding:
@@ -75,12 +87,15 @@ qubix:
     enabled: false
 ```
 
+The discovery flag is an operational override, default false; it permits metadata reads and does not enable boot/splash components. The commands below use password SSH. Omit --ask-pass when using keys. SSH pipelining reduces round trips and was used in the native test.
+
 Run from the controller:
 
 ```bash
-./bootstrap.sh deploy -i inventory/target.local.ini -e @config/local.yml --check --diff --ask-become-pass
-./bootstrap.sh deploy -i inventory/target.local.ini -e @config/local.yml --ask-become-pass
-./bootstrap.sh verify -i inventory/target.local.ini -e @config/local.yml --tags installed
+export ANSIBLE_PIPELINING=true
+./bootstrap.sh deploy -i inventory/target.local.ini -e @config/local.yml --check --diff --ask-pass --ask-become-pass
+./bootstrap.sh deploy -i inventory/target.local.ini -e @config/local.yml --ask-pass --ask-become-pass
+./bootstrap.sh verify -i inventory/target.local.ini -e @config/local.yml --tags installed --ask-pass --ask-become-pass
 ```
 
 Missing prerequisites stop deployment before component writes. The native Niri, Foot and Fuzzel parsers validate candidate files before activation. A parser failure may leave earlier inert files installed; backups support recovery. Check mode performs no backup/state writes and cannot validate files it has not installed.
@@ -89,7 +104,7 @@ Existing personal dotfiles and `/etc/niri/config.kdl` remain intact. The additio
 
 ## 4. Try the Qubix session
 
-Log out and select **Qubix Niri** in a login manager that offers Wayland session selection. Keep native Niri available as a fallback.
+After deployment, log out when convenient and select **Qubix Niri** in a login manager that offers Wayland session selection. Keep native Niri available as a fallback.
 
 If your existing manager, such as a fixed-command greetd setup, does not expose a session picker, log out, open a free VM TTY, sign in as your ordinary user and run:
 
@@ -97,7 +112,7 @@ If your existing manager, such as a fixed-command greetd setup, does not expose 
 niri --session --config /etc/niri/qubix/config.kdl
 ```
 
-Run this from a free TTY, not inside an existing graphical session. Qubix does not rewrite greetd's session command.
+Run this from a free TTY, not inside an existing graphical session. In a temporary nested preview the Mod key is Alt; the main session uses Super. Qubix does not rewrite greetd's session command.
 
 | Key | Action |
 |---|---|
@@ -112,6 +127,15 @@ Run this from a free TTY, not inside an existing graphical session. Qubix does n
 Check wallpaper, bar, notifications, launcher, terminal and keyboard navigation visually. A successful file install is not graphical verification. Review session logs if companions fail. Native user services may start a second bar or notification service; collect their status before changing anything.
 
 If a KDE Polkit agent executable is measured, it starts in the Qubix session; otherwise GUI privilege prompts need manual preparation and native testing. Foot starts a login shell. Bash receives additive system defaults; existing user Starship configuration takes precedence and personal initialization runs normally. For Zsh, optional adoption is a manual decision: after backing up your own `.zshrc`, you can add `source /usr/share/qubix/shell/qubix.zsh`. The playbook never edits it or runs `chsh`.
+
+Fish remains your existing shell when it is the account default; automatic Fish prompt integration is not implemented. To explicitly try the Qubix Starship prompt in one Fish terminal after deployment, without editing dotfiles:
+
+```fish
+set -gx STARSHIP_CONFIG /etc/qubix/starship.toml
+starship init fish | source
+```
+
+This changes that terminal's prompt; closing it returns to your normal startup configuration. Existing personal prompt configuration remains available. For persistent manual adoption, back it up and review [Starship's Fish setup](https://starship.rs/guide/#step-2-set-up-your-shell-to-use-starship) first.
 
 Run deployment again with the same revision and configuration. Expect zero managed configuration changes. Record the recap and actual session behaviour using the [acceptance checklist](verification.md).
 
@@ -197,11 +221,13 @@ Reboot and observe the splash. If encryption is in use, verify that the existing
 The supported restore returns the first pre-Qubix state of recorded files/images, not the whole OS:
 
 ```bash
-./bootstrap.sh restore -i inventory/target.local.ini --check --diff --ask-become-pass
-./bootstrap.sh restore -i inventory/target.local.ini --ask-become-pass
+./bootstrap.sh restore -i inventory/target.local.ini -e @config/local.yml --check --diff --ask-pass --ask-become-pass
+./bootstrap.sh restore -i inventory/target.local.ini -e @config/local.yml --ask-pass --ask-become-pass
 ```
 
-Review [restoration](restoration.md) first. Drift requires deliberate consent; changed kernels prohibit stale image restoration. A VM snapshot is the reliable fallback for boot failure.
+Review [restoration](restoration.md) first. Drift requires deliberate consent; changed kernels prohibit stale image restoration, and changed preserved boot entries/settings prohibit stale activation restoration even after reapplication or force. A VM snapshot is the reliable fallback for boot failure.
+
+File restoration keeps prerequisite packages, protected baselines and empty/unlisted directories. The native desktop test removed all 17 named resources and verified preservation. See the [actual results and limits](../project/desktop-test-results.md).
 
 Inspect both `/var/lib/qubix/deployment.json` and `deployment-pending.json` as root: the first is the last completed file deployment; a pending failed attempt can coexist with it. Neither asserts graphical or reboot success.
 

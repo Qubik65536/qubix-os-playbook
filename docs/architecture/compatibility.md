@@ -1,10 +1,10 @@
 # Compatibility and discovery
 
-Status: **Candidate adapters Implemented; fixtures Tested; live compatibility unverified**.
+Status: **Candidate adapters Implemented; fixtures Tested; native desktop file lifecycle/nested rendering Tested; full acceptance pending**.
 
 | Selection | Supported candidate contract | Pending native acceptance |
 |---|---|---|
-| CachyOS Niri | Exact ID=cachyos, Linux/systemd/Pacman/Niri; measured Foot/Fuzzel/Waybar/Mako/Swaybg | Parsers, companions, session |
+| CachyOS Niri | Exact ID=cachyos, Linux/systemd/Pacman/Niri; measured Foot/Fuzzel/Waybar/Mako/Swaybg | Main-session keys/default shell/portals/Polkit/lock/unlock |
 | Login | Unambiguously active SDDM, regular compatible Breeze tree | Preview/authentication/sessions/restore |
 | GRUB | Confirmed /boot/grub[2]/grub.cfg sourcing custom.cfg; native checker/tools | Checker/menu/original-entry boot/restore |
 | Limine | Confirmed regular limine.conf under /boot or /efi, observed major 8–12 | Menu/original-entry boot/restore |
@@ -16,9 +16,9 @@ UKIs/signing and complex/alternate mkinitcpio outputs are unsupported. Other man
 
 Discovery measures identity/version, binaries/packages, kernel arguments, alias/standalone manager activity, paths and hints. SSH hints can be absent. Tools alone cannot establish firmware selection or image ownership; operator confirmation is required.
 
-Reviewed CachyOS uses Noctalia/Quickshell and the reference uses DMS. This candidate supplies a separate classic companion session after measuring prerequisites, preserving native configuration. The CachyOS KDE authentication agent starts only if measured. Actual target services/versions still need inspection.
+Reviewed CachyOS uses Noctalia/Quickshell and the reference uses DMS. This candidate supplies a separate classic companion session after measuring prerequisites, preserving native configuration. The CachyOS KDE authentication agent starts only if measured. The observed target below was inspected before companion selection.
 
-Probe failures stay errors, not absence. Record combinations here only after [VM acceptance](../user/verification.md). No live combination has been verified yet.
+Probe failures stay errors, not absence. Record combinations here only after [VM acceptance](../user/verification.md). Partial native desktop evidence is recorded below; no full MVP combination has passed yet.
 
 ## Protected discovery metadata
 
@@ -26,4 +26,4 @@ A stock CachyOS target may mount /boot mode 0700. Ordinary discovery must fail p
 
 Use a typed extra variable with --ask-become-pass for privileged inspection. All other discovery probes remain ordinary user reads. Native acceptance requires zero reported changes and accurate candidate evidence on a real protected /boot target.
 
-Observed physical target: CachyOS with Niri 26.04, Noctalia 5.2.1, Alacritty 0.17.0, SDDM 0.21.0, Limine 12.9.3 and mkinitcpio 42.2. Privileged read-only discovery passes with zero changes. This establishes collection compatibility, not deployment, graphical or boot acceptance. The selected classic companions and Breeze source theme are absent.
+Observed physical target: CachyOS with Niri 26.04, Noctalia 5.2.1, Alacritty 0.17.0, SDDM 0.21.0, Limine 12.9.3 and mkinitcpio 42.2. Privileged read-only discovery passes with zero changes. Desktop install/verify/reapplication/absence restoration and isolated nested rendering also pass with Foot 1.28.0, Fuzzel 1.15.0, Waybar 0.15.0, Mako 1.11.0, Swaybg 1.2.2 and Starship 1.26.0. Native Fish/Noctalia/Alacritty configuration remains preserved. Breeze and the optional KDE agent are absent, so login is disabled and GUI privilege prompts remain unverified. Main-session and independent boot acceptance remain open. See [actual test evidence](../project/desktop-test-results.md).

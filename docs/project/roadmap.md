@@ -13,4 +13,4 @@
 
 The first desktop milestone does not depend on phases 4–5. Track actual completion in [status](status.md) and actionable work in [backlog](backlog.md).
 
-Phases 0–1 are complete locally. Candidate implementation for phases 2–5 exists; their native gates remain open. While the VM installs, offline adapters are complete. First live gate remains the desktop, followed by login and the independent boot/splash matrix.
+Phases 0–1 are complete locally. Candidate implementation for phases 2–5 exists; their native gates remain open. Native desktop file lifecycle and isolated nested rendering now pass. The next live gate is primary-session acceptance, followed by login and the independent boot/splash matrix.

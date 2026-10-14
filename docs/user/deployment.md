@@ -1,6 +1,6 @@
 # Deployment
 
-Status: Implemented MVP candidate. File engine recovery is fixture-tested; actual Niri parsing/session verification requires the installing CachyOS VM.
+Status: Implemented MVP candidate. Native desktop installation, syntax, zero-change reapplication, absence recovery and nested rendering pass; primary-session/login/boot acceptance remains pending. See [actual results](../project/desktop-test-results.md).
 
 After controller setup and target prerequisites, use:
 
@@ -11,7 +11,7 @@ After controller setup and target prerequisites, use:
 ./bootstrap.sh verify --tags installed
 ```
 
-Add `-i inventory.ini` and `-e @config/local.yml` as appropriate. The profile enables branding, Qubix Niri and shell defaults; login/boot/Plymouth remain disabled until selected and validated. Missing companion binaries fail before deployment writes. Configuration is the component selection interface: deployment/restore tags are rejected by the wrapper, avoiding accidental skipped checks or activation. Verification tags remain supported.
+Add `-i inventory.ini` and `-e @config/local.yml` as appropriate. Private /boot requires the explicit typed discovery privilege override and sudo prompting; password SSH also needs --ask-pass. The [operator guide](getting-started.md) provides the tested remote procedure. The profile enables branding, Qubix Niri and shell defaults; login/boot/Plymouth remain disabled until selected and validated. Missing companion binaries fail before deployment writes. Configuration is the component selection interface: deployment/restore tags are rejected by the wrapper, avoiding accidental skipped checks or activation. Verification tags remain supported.
 
 Deployment builds all enabled component definitions first, then installs named files with protected first-baseline backups, atomic file validation, checksum verification and receipts. Source revision, dirty state and effective configuration digest are recorded only after verification. A failed validation/rebuild may leave earlier resources installed; pending diagnostics coexist with last-success state. Use baselines or the VM snapshot for recovery. Concurrent deployments are unsupported.
 

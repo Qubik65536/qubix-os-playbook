@@ -1,10 +1,10 @@
 # Physical-target desktop test proposal
 
-Status: In Progress; the operator explicitly authorized the package transaction, its native hook effects, desktop-only deployment and tests. Package preparation, native Niri/Foot/Fuzzel grammars and desktop preview pass. This plan excludes login, bootloader and Plymouth activation; boot acceptance uses disposable VMs.
+Status: In Progress; the operator explicitly authorized the package transaction, its native hook effects, desktop-only deployment and tests. Package preparation, native parsers, installation/verification, zero-change reapplication, nested rendering and original-absence recovery pass. See [actual results](desktop-test-results.md). Main-session acceptance remains open. This plan excludes login, bootloader and Plymouth activation; boot acceptance uses disposable VMs.
 
 ## Observed prerequisites
 
-The target is a physical CachyOS ThinkPad running Niri 26.04 with Noctalia 5.2.1/Alacritty, active SDDM, Limine 12.9.3 and mkinitcpio 42.2. The classic Qubix companions were initially missing and are now installed. Native Niri accepts the production KDL; the invalid-file control fails as intended. Existing dotfiles and system configuration have not been deployed over.
+The target is a physical CachyOS ThinkPad running Niri 26.04 with Noctalia 5.2.1/Alacritty, active SDDM, Limine 12.9.3 and mkinitcpio 42.2. The classic Qubix companions were initially missing and are now installed. Native Niri accepts the production KDL; the invalid-file control fails as intended. Existing dotfiles and native system configuration remain preserved.
 
 ## Authorized package preparation
 

@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM testing**. Full MVP acceptance remains In Progress; SSH is connected to a physical CachyOS ThinkPad after service/firewall setup and host-key confirmation. Desktop deployment, installed verification, zero-change reapplication and isolated nested rendering pass. Restoration and primary-session/VM acceptance remain pending.
+Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM testing**. Full MVP acceptance remains In Progress; SSH is connected to a physical CachyOS ThinkPad after service/firewall setup and host-key confirmation. Desktop deployment, installed verification, zero-change reapplication and isolated nested rendering pass. Native desktop restoration passes; primary-session/VM acceptance remains pending.
 
 | Capability | Status | Actual evidence |
 |---|---|---|
@@ -14,7 +14,7 @@ Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM t
 | SDDM | Implemented | UI clone, actual INI lines, standalone/ambiguous/unsupported activity fixtures; authentication pending |
 | GRUB and Limine | Implemented | Independent preservation/reapplication/private-mode/absent-hook/stale-restore fixtures; native checker, boot/restore pending |
 | Plymouth/dracut/mkinitcpio | Implemented | Simulated dispatch/rebuild skip/archive failure, kernel restore and no-write preview; native generation/splash pending |
-| Backup/restore/state | Tested in fixtures | Bytes/modes/absence, drift/repeated restore, failed validator and pending/last-success records |
+| Backup/restore/state | Fixtures and native desktop absence lifecycle Tested | Original-byte/mode/drift faults in fixtures; 17 private live baselines remain intact through restore; boot/image recovery pending |
 
 ## Commands and outcomes
 
@@ -35,7 +35,7 @@ Native nested rendering is Tested; no primary-session, authentication or reboot 
 
 Backups record bytes, UID/GID/mode and absence, not ACLs/xattrs or complete system state. Restore is per resource; changed kernels block stale images. Check mode cannot validate uninstalled files or regenerated archives. Concurrent deployment is unsupported.
 
-The operator authorized desktop-only preparation, including native Snapper/Limine package hooks. Pacman installed Foot 1.28.0, Fuzzel 1.15.0, Waybar 0.15.0, Mako 1.11.0, Swaybg 1.2.2 and Starship 1.26.0 plus 17 dependencies. The preview passed (280 tasks, 17 proposed changes, zero failures). Native package hooks changed limine.conf; the other 75 audited resources and default Fish shell were preserved. Desktop deployment (373 tasks, 58 changes), installed verification (58 tasks, zero changes) and same-revision reapplication (352 tasks, zero changes) pass. All 76 audited native/personal resources match the post-package baseline. Next: complete restoration/redeployment for the [approved desktop scope](live-test-plan.md). Breeze is absent. Then independently test login, both loaders and both generators. See [T01](backlog.md) and [operator guide](../user/getting-started.md).
+The operator authorized desktop-only preparation, including native Snapper/Limine package hooks. Pacman installed Foot 1.28.0, Fuzzel 1.15.0, Waybar 0.15.0, Mako 1.11.0, Swaybg 1.2.2 and Starship 1.26.0 plus 17 dependencies. The preview passed (280 tasks, 17 proposed changes, zero failures). Native package hooks changed limine.conf; the other 75 audited resources and default Fish shell were preserved. Desktop deployment (373 tasks, 58 changes), installed verification (58 tasks, zero changes) and same-revision reapplication (352 tasks, zero changes) pass. All 76 audited native/personal resources match the post-package baseline. Native restore passes (249 tasks, 18 changes); all 17 resources are removed, original hashes/default Fish shell and baseline hashes remain intact, and pending state clears. The [native results](desktop-test-results.md) provide the authoritative command/acceptance record. Next operator gate: select the tested Qubix Niri main session after successful desktop deployment. Breeze is absent. Then independently test login, both loaders and both generators. See [T01](backlog.md) and [operator guide](../user/getting-started.md).
 
 ## Repeatable native desktop evidence
 

@@ -1,6 +1,6 @@
 # Shared branding
 
-Status: **Implemented; Tested in an isolated filesystem**. Live CachyOS deployment and graphical activation are unverified.
+Status: **Implemented; Tested in isolated filesystems and native desktop deployment/reapplication/restoration**. Login/boot/splash activation remains separately unverified.
 
 Own five exact filenames under `/usr/share/qubix/branding/`: `logo.svg`, `logo.png`, `banner.svg`, `LICENSE`, and `NOTICE`. The logo/banner are unmodified Apache-2.0 artwork from the pinned BlueBuild revision; an asset manifest records original paths and SHA-256 values. Preserve upstream distribution logos and identity files. This deployment initially requires CachyOS Niri although the artwork is platform-independent. No package or graphical-session dependency is needed to install inert artwork.
 
