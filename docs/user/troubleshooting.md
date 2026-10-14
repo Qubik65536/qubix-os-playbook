@@ -19,6 +19,6 @@ Status: Candidate diagnostics Implemented; [status](../project/status.md) define
 | Archive resource failure | Retain pending marker; inspect native generation before repair/retry |
 | Restore drift refusal | Review baseline/local edit before explicit force |
 | Changed-kernel image refusal | Snapshot or reviewed native current-kernel recovery; force cannot bypass |
-| Probe permission failure | Retain error; failure does not establish absence |
+| Probe permission failure under /boot | Use explicit typed qubix_discovery_privileged=true with --ask-become-pass for read-only metadata; failure does not establish absence |
 
 Report revision, options, target versions, command, pending state and redacted output using the [collection guide](collecting-target-info.md). Never include passwords/private keys/backup images or repair appearance by replacing entries, PAM, encryption or dotfiles.

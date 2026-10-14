@@ -3,6 +3,7 @@ qubix_discovery_binary_paths:
   pacman: /usr/bin/pacman
   polkit-kde-agent: /usr/lib/polkit-kde-authentication-agent-1
   niri: /usr/bin/niri
+  noctalia: /usr/bin/noctalia
   qs: /usr/bin/qs
   dms: /usr/bin/dms
   waybar: /usr/bin/waybar

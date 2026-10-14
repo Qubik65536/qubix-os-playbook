@@ -42,6 +42,14 @@ Test `ssh YOUR_VM_USER@192.168.64.10`. With password-only SSH, add `--ask-pass` 
 
 The report must show CachyOS, Linux/systemd, Pacman and Niri. It lists measured companion binaries and manager activity. Bootloader and image generator stay `unresolved` until you confirm them. Package presence is insufficient proof of the firmware's active loader.
 
+If /boot metadata is private, repeat inspection with explicit read-only privilege:
+
+```bash
+./bootstrap.sh verify -i inventory/target.local.ini -e '{"qubix_discovery_privileged": true}' --ask-become-pass
+```
+
+Keep that typed extra variable on later commands when boot paths need sudo. This permits metadata reads only; deployment still requires its selected component settings.
+
 If help is needed, use [collecting target information](collecting-target-info.md). That guide explains how to identify active paths and what to send back.
 
 ## 3. Preview and deploy the desktop

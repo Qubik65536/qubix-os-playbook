@@ -4,7 +4,7 @@ Local bootstrap planning; later mirror substantial tasks to GitHub Issues. Categ
 
 ## F01 — Read-only foundation (Feature)
 
-Status: Implemented; fixture contracts Tested. Live CachyOS collection acceptance remains open.
+Status: Implemented; fixture contracts and actual CachyOS read-only collection Tested. Protected boot metadata requires explicit privilege; the live run reports zero changes.
 
 Objective: safely inspect CachyOS Niri and resolve the profile. Scope: schema, read-only evidence, compatibility, verify/deploy preflight, minimal wrapper. Acceptance: supported fixtures pass; unsupported hosts, malformed inputs and unsupported enabled selections fail before writes; ambiguities remain unresolved. Depends on documentation. Tests: real Ansible fixture runs, macOS rejection, syntax/lint. Docs: configuration, deployment, compatibility, status.
 
@@ -64,7 +64,7 @@ Objective: startup splash independent of loader. Scope: Qubix theme, dracut/mkin
 
 ## T01 — MVP acceptance (Testing)
 
-Status: In Progress; SSH details supplied, connection timeout before authentication even after sshd start; listener/address/firewall confirmation pending. Next gate is native acceptance, not new adapter implementation.
+Status: In Progress; SSH details supplied, connected after service/firewall setup; privileged read-only discovery passes. Physical desktop deployment permission and VM boot tests pending. Next gate is native acceptance, not new adapter implementation.
 
 Objective: complete scope evidence. Scope: end-to-end desktop/login/loader/splash, reapplication, configuration preservation, diagnostics and recovery. Acceptance: all [MVP criteria](scope.md) pass with recorded versions and evidence. Depends on F03–F09. Tests: disposable VM matrix. Docs: compatibility/status, release readiness and changelog.
 

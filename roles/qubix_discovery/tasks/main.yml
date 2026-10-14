@@ -73,12 +73,26 @@
   changed_when: false
   check_mode: false
 
+- name: Require explicit typed discovery privilege
+  ansible.builtin.assert:
+    that: [qubix_discovery_privileged is boolean]
+    fail_msg: 'qubix_discovery_privileged must be a YAML boolean; use a typed extra-vars mapping.'
+
+- name: Explain protected metadata inspection boundary
+  ansible.builtin.debug:
+    msg: >-
+      Candidate-path metadata is read with sudo only for selected boot/splash components
+      or explicit qubix_discovery_privileged=true. No boot configuration is changed.
+
 - name: Inspect boot and desktop configuration candidates
   ansible.builtin.stat:
     path: '{{ item }}'
     follow: true
     get_checksum: false
     get_mime: false
+  become: >-
+    {{ qubix_discovery_privileged or qubix_profile_resolved.bootloader.enabled or
+    qubix_profile_resolved.plymouth.enabled }}
   loop: '{{ qubix_discovery_evidence_paths }}'
   register: qubix_discovery_path_stats
 
