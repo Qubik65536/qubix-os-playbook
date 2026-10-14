@@ -1,0 +1,33 @@
+---
+name: Project task
+description: Propose a focused task with reviewable acceptance criteria.
+title: '[Task] '
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options: [Feature, Bug, Documentation, Refactor, Testing, Maintenance]
+    validations:
+      required: true
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective and scope
+      description: What should change, and which resources/components does it own?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria and required tests
+      description: Include preservation, idempotency, verification level and recovery where relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and documentation implications
+      description: Link related tasks and the authoritative design/user documents.
+    validations:
+      required: true

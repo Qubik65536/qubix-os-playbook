@@ -1,6 +1,8 @@
 # Testing strategy
 
-Status: **Implemented local static and Ansible fixture checks; CI is Planned**. From the root with the virtual environment active:
+Status: **Implemented local checks and GitHub Actions workflow**. Run `./scripts/validate.sh` for all static checks and `./scripts/test.sh` for normal/check-mode fixtures. The scripts prefer `.venv/bin` and keep controller caches in `.cache/`. GitHub Actions runs the same scripts on Ubuntu/Python 3.13 with locked tools; the remote workflow has not run during bootstrap.
+
+Equivalent individual commands, with the virtual environment active:
 
 ```bash
 yamllint .
@@ -8,13 +10,14 @@ ANSIBLE_HOME="$PWD/.cache/ansible" ansible-lint --offline playbooks roles tests/
 ansible-playbook playbooks/verify.yml --syntax-check
 ansible-playbook playbooks/deploy.yml --syntax-check
 ansible-playbook tests/playbooks/framework.yml --syntax-check
-shellcheck bootstrap.sh
+shellcheck bootstrap.sh scripts/*.sh
+python3 tests/static/check_repository.py
 ansible-playbook tests/playbooks/framework.yml
 ```
 
 The suite exercises 22 profile, 11 host, seven exact-identity cases and evidence normalization, with zero changes. Expected failures are rescued only when the matching diagnostic appears. macOS `./bootstrap.sh verify` rejects the real controller as unsupported with zero changes. In a restricted sandbox Ansible local RPC may require execution approval; fixtures do not deploy to the host.
 
-Basic Markdown/link and configuration consistency automation will accompany CI. No privileged deployment belongs in CI.
+Basic Markdown checks validate local links, fences, final newlines and whitespace. Consistency checks require schema, profile and authoritative documented defaults to agree and boot/splash to remain opt-in. No privileged deployment belongs in CI.
 
 Meaningful fixture tests must exercise discovery classification, profile merging, invalid profile/options/types, unsupported platforms, missing Niri/Pacman, and planned enabled components. Tests may inject evidence into classification task files, but production discovery must read the host. Fictional fixture facts cannot establish real host compatibility.
 

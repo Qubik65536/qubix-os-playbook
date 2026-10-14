@@ -10,6 +10,8 @@ Objective: safely inspect CachyOS Niri and resolve the profile. Scope: schema, r
 
 ## M01 — Tooling and CI (Maintenance)
 
+Status: Implemented; local scripts Tested. GitHub workflow execution pending.
+
 Objective: repeatable local/CI checks. Scope: pinned controller dependencies, YAML/Ansible/ShellCheck/Markdown consistency checks and Actions. Acceptance: local commands and workflow agree; checks pass. Depends on documentation. Tests: execute available validators and record missing tools explicitly. Docs: environment/testing/installation.
 
 ## F02 — Shared artwork (Feature)
