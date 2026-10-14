@@ -1,0 +1,17 @@
+---
+- name: Read completed resource checksum
+  ansible.builtin.stat:
+    path: '{{ qubix_files_target }}'
+    follow: false
+    checksum_algorithm: sha256
+    get_mime: false
+  register: qubix_files_completed
+
+- name: Persist applied checksum receipt
+  ansible.builtin.copy:
+    dest: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.receipt'
+    content: '{{ qubix_files_completed.stat.checksum }}
+'
+    owner: '{{ qubix_files_owner }}'
+    group: '{{ qubix_files_group }}'
+    mode: '0600'

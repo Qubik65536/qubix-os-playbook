@@ -1,0 +1,50 @@
+---
+- name: Validate named resource boundary
+  ansible.builtin.assert:
+    that:
+      - qubix_files_resource.path is match('^/(etc/|usr/share/|boot/)')
+      - "'..' not in qubix_files_resource.path.split('/')"
+      - "'//' not in qubix_files_resource.path"
+      - qubix_files_resource.path not in ['/etc/os-release', '/etc/passwd', '/etc/shadow']
+      - not qubix_files_resource.path is match('^/etc/pam.d/')
+    fail_msg: 'Refusing resource outside Qubix customization boundaries.'
+
+- name: Resolve file and protected state paths
+  ansible.builtin.set_fact:
+    qubix_files_target: '{{ qubix_files_root }}{{ qubix_files_resource.path }}'
+    qubix_files_state_dir: '{{ qubix_files_root }}/var/lib/qubix/backup'
+    qubix_files_id: '{{ qubix_files_resource.path | hash("sha256") }}'
+
+- name: Inspect all target ancestor directories
+  ansible.builtin.stat:
+    path: '{{ qubix_files_target.split("/")[:item] | join("/") }}'
+    follow: false
+    get_checksum: false
+    get_mime: false
+  loop: '{{ range(2, qubix_files_target.split("/") | length) | list }}'
+  register: qubix_files_ancestor_stats
+
+- name: Require real ancestor directories
+  ansible.builtin.assert:
+    that:
+      - not item.stat.islnk | default(false)
+      - not item.stat.exists or item.stat.isdir | default(false)
+    fail_msg: 'Refusing symlinked or non-directory target ancestor {{ item.stat.path | default(item.item) }}.'
+  loop: '{{ qubix_files_ancestor_stats.results }}'
+  loop_control:
+    label: '{{ item.item }}'
+
+- name: Inspect target without following redirects
+  ansible.builtin.stat:
+    path: '{{ qubix_files_target }}'
+    follow: false
+    checksum_algorithm: sha256
+    get_mime: false
+  register: qubix_files_before
+
+- name: Require a regular file or original absence
+  ansible.builtin.assert:
+    that:
+      - not qubix_files_before.stat.islnk | default(false)
+      - not qubix_files_before.stat.exists or qubix_files_before.stat.isreg | default(false)
+    fail_msg: 'Refusing redirected/non-file resource {{ qubix_files_target }}.'

@@ -1,0 +1,116 @@
+---
+- name: Exercise backups, receipts and drift-safe restoration in a disposable root
+  hosts: localhost
+  gather_facts: true
+  gather_subset: ['!all', min]
+  become: false
+  tasks:
+    - name: Create disposable resource fixture
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-recovery-
+      register: qubix_test_root
+
+    - name: Set isolated engine paths and ownership
+      ansible.builtin.set_fact:
+        qubix_root: '{{ qubix_test_root.path }}'
+        qubix_files_owner: '{{ ansible_facts.user_id }}'
+        qubix_files_group: '{{ ansible_facts.user_gid | string }}'
+        qubix_files_resources:
+          - path: /etc/qubix-existing.conf
+            component: fixture
+            content: 'desired content'
+          - path: /etc/qubix-new.conf
+            component: fixture
+            content: 'new file'
+
+    - name: Exercise resource lifecycle and guarantee cleanup
+      block:
+        - name: Create pre-existing fixture directory
+          ansible.builtin.file:
+            path: '{{ qubix_root }}/etc'
+            state: directory
+            mode: '0750'
+
+        - name: Create pre-existing user-owned fixture default
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/etc/qubix-existing.conf'
+            content: 'original content'
+            mode: '0600'
+
+        - name: Apply named files with snapshots
+          ansible.builtin.include_role:
+            name: qubix_files
+
+        - name: Reapply same files
+          ansible.builtin.include_role:
+            name: qubix_files
+
+        - name: Require idempotent copy on reapplication
+          ansible.builtin.assert:
+            that: [not qubix_files_write.changed]
+
+        - name: Introduce local drift
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/etc/qubix-existing.conf'
+            content: 'local customization'
+            mode: '0644'
+
+        - name: Reset rejection result
+          ansible.builtin.set_fact:
+            qubix_test_rejected: false
+
+        - name: Require drift rejection
+          block:
+            - name: Attempt safe restoration
+              ansible.builtin.include_role:
+                name: qubix_files
+                tasks_from: restore
+          rescue:
+            - name: Require drift-specific diagnostic
+              ansible.builtin.assert:
+                that: ["'Local drift' in ansible_failed_result.msg"]
+            - name: Record expected rejection
+              ansible.builtin.set_fact:
+                qubix_test_rejected: true
+
+        - name: Require unexpected success to fail the test
+          ansible.builtin.assert:
+            that: [qubix_test_rejected]
+
+        - name: Restore with explicit conflict consent
+          ansible.builtin.include_role:
+            name: qubix_files
+            tasks_from: restore
+          vars:
+            qubix_files_force_restore: true
+
+        - name: Repeat restoration safely
+          ansible.builtin.include_role:
+            name: qubix_files
+            tasks_from: restore
+
+        - name: Read restored original
+          ansible.builtin.slurp:
+            src: '{{ qubix_root }}/etc/qubix-existing.conf'
+          register: qubix_test_original
+
+        - name: Inspect restored mode and original absence
+          ansible.builtin.stat:
+            path: '{{ qubix_root }}{{ item }}'
+          loop: [/etc/qubix-existing.conf, /etc/qubix-new.conf, /etc]
+          register: qubix_test_restored
+
+        - name: Require bytes, permissions, absence and untouched ancestor metadata
+          ansible.builtin.assert:
+            that:
+              - qubix_test_original.content | b64decode == 'original content'
+              - qubix_test_restored.results[0].stat.mode == '0600'
+              - not qubix_test_restored.results[1].stat.exists
+              - qubix_test_restored.results[2].stat.mode == '0750'
+      always:
+        - name: Remove only the disposable resource fixture
+          ansible.builtin.file:
+            path: '{{ qubix_test_root.path }}'
+            state: absent

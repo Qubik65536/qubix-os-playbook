@@ -1,0 +1,6 @@
+---
+qubix_files_root: '{{ qubix_root | default("") }}'
+qubix_files_owner: root
+qubix_files_group: root
+qubix_files_resources: []
+qubix_files_force_restore: false

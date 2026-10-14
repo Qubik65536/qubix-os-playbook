@@ -1,0 +1,53 @@
+---
+- name: Snapshot original resource without overwriting its baseline
+  ansible.builtin.import_tasks: snapshot.yml
+
+- name: Create resource parent
+  ansible.builtin.file:
+    path: '{{ qubix_files_target | dirname }}'
+    state: directory
+    owner: '{{ qubix_files_owner }}'
+    group: '{{ qubix_files_group }}'
+    mode: '0755'
+  when: not qubix_files_ancestor_stats.results[-1].stat.exists
+
+- name: Install and validate desired file atomically
+  ansible.builtin.copy:
+    dest: '{{ qubix_files_target }}'
+    src: '{{ qubix_files_resource.source | default(omit) }}'
+    remote_src: '{{ qubix_files_resource.remote_source | default(false) }}'
+    content: '{{ qubix_files_resource.content | default(omit) }}'
+    validate: '{{ qubix_files_resource.validate | default(omit) }}'
+    owner: '{{ qubix_files_owner }}'
+    group: '{{ qubix_files_group }}'
+    mode: '{{ qubix_files_resource.mode | default("0644") }}'
+  register: qubix_files_write
+  when: not ansible_check_mode or qubix_files_ancestor_stats.results[-1].stat.exists
+
+- name: Read applied bytes for verification
+  ansible.builtin.stat:
+    path: '{{ qubix_files_target }}'
+    checksum_algorithm: sha256
+    follow: false
+    get_mime: false
+  register: qubix_files_after
+  when: not ansible_check_mode
+
+- name: Require installed desired bytes and mode
+  ansible.builtin.assert:
+    that:
+      - qubix_files_after.stat.isreg
+      - >-
+        qubix_files_after.stat.checksum ==
+        qubix_files_resource.sha256 | default(qubix_files_resource.content | default('') | hash('sha256'))
+      - qubix_files_after.stat.mode == qubix_files_resource.mode | default('0644')
+  when: not ansible_check_mode
+
+- name: Record installed receipt for drift-safe restoration
+  ansible.builtin.import_tasks: receipt.yml
+  when: not ansible_check_mode
+
+- name: Explain preview boundary
+  ansible.builtin.debug:
+    msg: 'Proposed {{ qubix_files_target }}; no backup, receipt, or installed-content verification in check mode.'
+  when: ansible_check_mode

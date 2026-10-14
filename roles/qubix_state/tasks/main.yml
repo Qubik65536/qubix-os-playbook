@@ -1,0 +1,37 @@
+---
+- name: Read controller source revision
+  ansible.builtin.command:
+    argv: [git, rev-parse, HEAD]
+    chdir: '{{ role_path }}/../..'
+  delegate_to: localhost
+  become: false
+  check_mode: false
+  changed_when: false
+  register: qubix_state_revision
+
+- name: Detect uncommitted source modifications
+  ansible.builtin.command:
+    argv: [git, status, --porcelain]
+    chdir: '{{ role_path }}/../..'
+  delegate_to: localhost
+  become: false
+  check_mode: false
+  changed_when: false
+  register: qubix_state_dirty
+
+- name: Record verified deployment revision and configuration
+  ansible.builtin.copy:
+    dest: '{{ qubix_root | default("") }}/var/lib/qubix/deployment.json'
+    content: '{{ qubix_state_manifest | to_nice_json }}
+'
+    mode: '0600'
+  vars:
+    qubix_state_manifest:
+      revision: '{{ qubix_state_revision.stdout }}'
+      dirty: '{{ qubix_state_dirty.stdout | length > 0 }}'
+      configuration_sha256: '{{ qubix_profile_resolved | to_json | hash("sha256") }}'
+      components: '{{ qubix_profile_enabled }}'
+      status: files-verified
+      graphical_session_verified: false
+      boot_verified: false
+  when: not ansible_check_mode

@@ -1,0 +1,79 @@
+---
+- name: Validate resource before taking a baseline
+  ansible.builtin.import_tasks: guard.yml
+
+- name: Inspect protected backup namespace ancestors
+  ansible.builtin.stat:
+    path: '{{ item }}'
+    follow: false
+    get_checksum: false
+  loop:
+    - '{{ qubix_files_root }}/var'
+    - '{{ qubix_files_root }}/var/lib'
+    - '{{ qubix_files_root }}/var/lib/qubix'
+    - '{{ qubix_files_state_dir }}'
+  register: qubix_files_backup_dirs
+
+- name: Reject redirected backup storage
+  ansible.builtin.assert:
+    that:
+      - not item.stat.islnk | default(false)
+      - not item.stat.exists or item.stat.isdir | default(false)
+  loop: '{{ qubix_files_backup_dirs.results }}'
+  loop_control:
+    label: '{{ item.item }}'
+
+- name: Create private baseline storage
+  ansible.builtin.file:
+    path: '{{ qubix_files_state_dir }}'
+    state: directory
+    owner: '{{ qubix_files_owner }}'
+    group: '{{ qubix_files_group }}'
+    mode: '0700'
+  when: not ansible_check_mode
+
+- name: Inspect existing first-baseline manifest
+  ansible.builtin.stat:
+    path: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.json'
+    follow: false
+    get_checksum: false
+  register: qubix_files_manifest_stat
+
+- name: Reject a redirected baseline manifest
+  ansible.builtin.assert:
+    that:
+      - not qubix_files_manifest_stat.stat.islnk | default(false)
+
+- name: Preserve first original bytes before mutation
+  ansible.builtin.copy:
+    src: '{{ qubix_files_target }}'
+    dest: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.original'
+    remote_src: true
+    owner: '{{ qubix_files_owner }}'
+    group: '{{ qubix_files_group }}'
+    mode: '0600'
+    force: false
+  when:
+    - not ansible_check_mode
+    - not qubix_files_manifest_stat.stat.exists
+    - qubix_files_before.stat.exists
+
+- name: Persist first-baseline metadata and absence record
+  ansible.builtin.copy:
+    dest: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.json'
+    content: '{{ qubix_files_baseline | to_nice_json }}
+'
+    owner: '{{ qubix_files_owner }}'
+    group: '{{ qubix_files_group }}'
+    mode: '0600'
+    force: false
+  vars:
+    qubix_files_baseline:
+      path: '{{ qubix_files_resource.path }}'
+      component: '{{ qubix_files_resource.component }}'
+      existed: '{{ qubix_files_before.stat.exists }}'
+      checksum: '{{ qubix_files_before.stat.checksum | default("") }}'
+      uid: '{{ qubix_files_before.stat.uid | default(0) }}'
+      gid: '{{ qubix_files_before.stat.gid | default(0) }}'
+      mode: '{{ qubix_files_before.stat.mode | default("0644") }}'
+  when: not ansible_check_mode and not qubix_files_manifest_stat.stat.exists

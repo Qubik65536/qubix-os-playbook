@@ -1,6 +1,10 @@
 # Restoration and recovery
 
-Status: **Manual managed-artwork removal is documented; automated recovery is Planned**. There is no `restore` playbook or automatic backup/revision-state facility yet.
+Status: **Implemented named-file recovery; isolated fixtures Tested**. The shared file engine snapshots bytes, original absence and UID/GID/mode before mutation. Baselines and applied-checksum receipts are under `/var/lib/qubix/backup/`, readable only by root. New components use this engine; the original bootstrap branding role is being migrated with deployment orchestration.
+
+Run `./bootstrap.sh restore --check --diff --ask-become-pass` to preview and `./bootstrap.sh restore --ask-become-pass` to restore. Add the same remote inventory used for deployment. Restore needs a readable recorded baseline and supported CachyOS host; an empty backup set fails explicitly. It restores the first pre-Qubix state, retains baselines, removes only originally absent recorded files, and leaves unlisted resources/directories alone.
+
+Local drift fails safely. Inspect the target and backup before deliberately passing `-e qubix_files_force_restore=true`. Restoration is per resource; a later conflict can leave earlier resources already restored. Original ACLs/xattrs are not recorded, concurrent deployments are unsupported, and automated boot-image recovery is still being implemented. Snapshot the test VM before deployment.
 
 Branding owns only `/usr/share/qubix/branding/{logo.svg,logo.png,banner.svg,LICENSE,NOTICE}`. It reconciles these files on reapplication. Unlisted files, distribution assets and personal defaults are untouched. To remove branding, first disable `branding.enabled` in operator configuration, then remove only the five owned files:
 

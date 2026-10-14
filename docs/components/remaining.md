@@ -1,6 +1,6 @@
 # Remaining component contracts
 
-All components here are **Planned**. [Component boundaries](../architecture/components.md) specify ownership and dependency relationships.
+State/recovery is **Implemented with isolated fixture tests**; the remaining components here are Planned. [Component boundaries](../architecture/components.md) specify ownership and dependency relationships.
 
 | Component | Concrete next requirement | Verification and restoration |
 |---|---|---|

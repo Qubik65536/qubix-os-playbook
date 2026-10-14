@@ -1,0 +1,19 @@
+---
+- name: Locate recorded resource baselines
+  ansible.builtin.find:
+    paths: '{{ qubix_files_root }}/var/lib/qubix/backup'
+    patterns: '*.json'
+    file_type: file
+  register: qubix_files_baselines
+
+- name: Require recorded baselines rather than reporting an empty restoration
+  ansible.builtin.assert:
+    that: [qubix_files_baselines.matched > 0]
+    fail_msg: 'No recorded Qubix baselines found; no restoration was performed.'
+
+- name: Restore recorded resources independently
+  ansible.builtin.include_tasks: restore_resource.yml
+  loop: '{{ qubix_files_baselines.files | sort(attribute="path") }}'
+  loop_control:
+    loop_var: qubix_files_baseline_file
+    label: '{{ qubix_files_baseline_file.path }}'

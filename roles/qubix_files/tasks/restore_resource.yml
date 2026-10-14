@@ -1,0 +1,65 @@
+---
+- name: Read original resource metadata
+  ansible.builtin.slurp:
+    src: '{{ qubix_files_baseline_file.path }}'
+  register: qubix_files_baseline_bytes
+
+- name: Resolve original resource metadata
+  ansible.builtin.set_fact:
+    qubix_files_resource: '{{ qubix_files_baseline_bytes.content | b64decode | from_json }}'
+
+- name: Validate restoration target and reject redirected resources
+  ansible.builtin.import_tasks: guard.yml
+
+- name: Read last applied checksum if available
+  ansible.builtin.stat:
+    path: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.receipt'
+    follow: false
+  register: qubix_files_receipt_stat
+
+- name: Read last application receipt
+  ansible.builtin.slurp:
+    src: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.receipt'
+  register: qubix_files_receipt_bytes
+  when: qubix_files_receipt_stat.stat.exists
+
+- name: Refuse to overwrite local drift or unreceipted partial changes
+  ansible.builtin.assert:
+    that:
+      - >-
+        qubix_files_force_restore or not qubix_files_before.stat.exists or
+        qubix_files_before.stat.checksum == qubix_files_resource.checksum or
+        (qubix_files_receipt_bytes.content | default('') | b64decode | trim) == qubix_files_before.stat.checksum
+    fail_msg: 'Local drift at {{ qubix_files_target }}; inspect backups before explicit qubix_files_force_restore=true.'
+
+- name: Verify retained original bytes before restoring
+  ansible.builtin.stat:
+    path: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.original'
+    follow: false
+    checksum_algorithm: sha256
+  register: qubix_files_original
+  when: qubix_files_resource.existed
+
+- name: Require intact original backup
+  ansible.builtin.assert:
+    that:
+      - qubix_files_original.stat.isreg | default(false)
+      - qubix_files_original.stat.checksum | default('') == qubix_files_resource.checksum
+    fail_msg: 'Missing or damaged original backup; restoration stopped.'
+  when: qubix_files_resource.existed
+
+- name: Restore original bytes and ownership
+  ansible.builtin.copy:
+    src: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.original'
+    dest: '{{ qubix_files_target }}'
+    remote_src: true
+    owner: '{{ qubix_files_resource.uid | string }}'
+    group: '{{ qubix_files_resource.gid | string }}'
+    mode: '{{ qubix_files_resource.mode }}'
+  when: qubix_files_resource.existed
+
+- name: Remove only a resource recorded as originally absent
+  ansible.builtin.file:
+    path: '{{ qubix_files_target }}'
+    state: absent
+  when: not qubix_files_resource.existed

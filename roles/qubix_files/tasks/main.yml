@@ -1,0 +1,7 @@
+---
+- name: Reconcile each selected named resource
+  ansible.builtin.include_tasks: resource.yml
+  loop: '{{ qubix_files_resources }}'
+  loop_control:
+    loop_var: qubix_files_resource
+    label: '{{ qubix_files_resource.path }}'

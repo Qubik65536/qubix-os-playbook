@@ -6,12 +6,12 @@ cd -- "$repo_dir"
 export ANSIBLE_CONFIG="$repo_dir/ansible.cfg"
 
 usage() {
-  printf '%s\n' 'Usage: ./bootstrap.sh verify|deploy [ansible-playbook arguments]'
+  printf '%s\n' 'Usage: ./bootstrap.sh verify|deploy|restore [ansible-playbook arguments]'
   printf '%s\n' 'Default inventory is local. Override with -i inventory.ini; verify never escalates privileges.'
 }
 
 case "${1:---help}" in
-  verify|deploy) action=$1; shift ;;
+  verify|deploy|restore) action=$1; shift ;;
   -h|--help) usage; exit 0 ;;
   *) usage >&2; exit 2 ;;
 esac

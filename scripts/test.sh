@@ -30,3 +30,9 @@ for mode in normal check; do
   fi
   printf 'Branding tests passed (%s mode, isolated filesystem).\n' "$mode"
 done
+
+if ! ansible-playbook tests/playbooks/recovery.yml >.cache/tests/recovery.log 2>&1; then
+  cat .cache/tests/recovery.log
+  exit 1
+fi
+printf '%s\n' 'Backup/restore fixtures passed.'

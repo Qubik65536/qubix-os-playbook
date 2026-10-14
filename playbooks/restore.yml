@@ -1,0 +1,23 @@
+---
+- name: Restore recorded Qubix resources to the first pre-deployment baseline
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  roles:
+    - qubix_discovery
+  tasks:
+    - name: Restore recorded bytes, metadata and original absence
+      ansible.builtin.include_role:
+        name: qubix_files
+        tasks_from: restore
+        apply:
+          become: true
+
+    - name: Mark deployment as restored after successful recovery
+      ansible.builtin.copy:
+        dest: /var/lib/qubix/deployment.json
+        content: '{"status": "restored", "graphical_session_verified": false, "boot_verified": false}
+'
+        mode: '0600'
+      become: true
+      when: not ansible_check_mode
