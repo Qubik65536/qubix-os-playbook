@@ -1,0 +1,24 @@
+---
+- name: Read selected installed resource metadata
+  ansible.builtin.stat:
+    path: '{{ qubix_files_root }}{{ item.path }}'
+    follow: false
+    checksum_algorithm: sha256
+    get_mime: false
+  loop: '{{ qubix_files_resources }}'
+  loop_control:
+    label: '{{ item.path }}'
+  register: qubix_files_checks
+
+- name: Require exact installed resource content and modes
+  ansible.builtin.assert:
+    that:
+      - item.stat.isreg | default(false)
+      - >-
+        item.stat.checksum | default('') ==
+        item.item.sha256 | default(item.item.content | default('') | hash('sha256'))
+      - item.stat.mode | default('') == item.item.mode | default('0644')
+    fail_msg: 'Missing, redirected, damaged or incorrect-mode file: {{ item.item.path }}.'
+  loop: '{{ qubix_files_checks.results }}'
+  loop_control:
+    label: '{{ item.item.path }}'

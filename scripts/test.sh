@@ -36,3 +36,9 @@ if ! ansible-playbook tests/playbooks/recovery.yml >.cache/tests/recovery.log 2>
   exit 1
 fi
 printf '%s\n' 'Backup/restore fixtures passed.'
+
+if ! ansible-playbook tests/playbooks/desktop.yml >.cache/tests/desktop.log 2>&1; then
+  cat .cache/tests/desktop.log
+  exit 1
+fi
+printf '%s\n' 'Desktop definition and prerequisite fixtures passed (native Niri parser pending VM).'

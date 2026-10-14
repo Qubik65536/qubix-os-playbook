@@ -1,0 +1,17 @@
+---
+- name: Resolve selected expected resources
+  ansible.builtin.import_tasks: plan.yml
+
+- name: Verify selected installed files without mutation
+  ansible.builtin.include_role:
+    name: qubix_files
+    tasks_from: verify
+  vars:
+    qubix_files_resources: '{{ qubix_deployment_resources }}'
+
+- name: Validate installed Niri configuration with the target parser
+  ansible.builtin.command:
+    argv: [/usr/bin/niri, --config, /etc/niri/qubix/config.kdl, validate]
+  changed_when: false
+  check_mode: false
+  when: qubix_profile_resolved.niri.enabled

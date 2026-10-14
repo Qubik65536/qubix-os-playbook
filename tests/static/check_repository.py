@@ -59,6 +59,8 @@ def main():
         assert Path(asset["filename"]).name == asset["filename"], "Unsafe destination filename"
         digest = hashlib.sha256((ROOT / source).read_bytes()).hexdigest()
         assert digest == asset["sha256"], f"Changed source asset without manifest update: {source}"
+    wallpaper = load("assets/wallpaper/manifest.yml")
+    assert hashlib.sha256((ROOT / "assets/wallpaper/qubix.png").read_bytes()).hexdigest() == wallpaper["sha256"]
     print(f"Repository consistency passed ({len(documents)} Markdown files, profile/default/schema agreement).")
 
 

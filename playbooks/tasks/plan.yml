@@ -1,0 +1,27 @@
+---
+- name: Initialize selected resource definitions
+  ansible.builtin.set_fact:
+    qubix_deployment_resources: []
+    qubix_branding_resources: []
+    qubix_niri_resources: []
+    qubix_shell_resources: []
+
+- name: Prepare enabled branding
+  ansible.builtin.include_role:
+    name: qubix_branding
+    tasks_from: plan
+  when: qubix_profile_resolved.branding.enabled
+
+- name: Validate and prepare enabled Niri session
+  ansible.builtin.include_role:
+    name: qubix_niri
+  when: qubix_profile_resolved.niri.enabled
+
+- name: Prepare enabled shell defaults
+  ansible.builtin.include_role:
+    name: qubix_shell
+  when: qubix_profile_resolved.shell.enabled
+
+- name: Resolve ordered deployment resources after all capability checks
+  ansible.builtin.set_fact:
+    qubix_deployment_resources: '{{ qubix_branding_resources + qubix_niri_resources + qubix_shell_resources }}'

@@ -12,6 +12,7 @@ Changes are grouped by release. Bootstrap has no release tag.
 - Added focused Issue and PR templates.
 - Added licensed shared artwork, safe named-file deployment, checksum/metadata verification and explicit installed-branding verification.
 - Tested branding preview, idempotency, repair, corruption/missing diagnostics, symlink rejection and unrelated-file preservation in temporary filesystems.
-- Niri appearance, shell/login, boot adapters, Plymouth and automated recovery remain Planned.
+- Login, boot adapters and Plymouth remain Planned.
 
 - Added first-baseline file backups, applied checksums, drift-safe restoration and revision-state tasks.
+- Added an isolated Qubix Niri session, detected companion prerequisites, wallpaper and Bash/terminal defaults.

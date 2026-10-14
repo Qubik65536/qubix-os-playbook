@@ -1,0 +1,18 @@
+---
+- name: Load branding definitions for backed-up deployment
+  ansible.builtin.include_vars:
+    file: '{{ role_path }}/../../assets/branding/manifest.yml'
+    name: qubix_branding_manifest
+
+- name: Initialize named branding definitions
+  ansible.builtin.set_fact:
+    qubix_branding_resources: []
+
+- name: Prepare licensed named branding resources
+  ansible.builtin.set_fact:
+    qubix_branding_resources: >-
+      {{ qubix_branding_resources + [{'path': '/usr/share/qubix/branding/' ~ item.filename,
+      'source': role_path ~ '/../../' ~ item.source, 'sha256': item.sha256, 'component': 'branding'}] }}
+  loop: '{{ qubix_branding_manifest.files }}'
+  loop_control:
+    label: '{{ item.filename }}'

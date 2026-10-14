@@ -1,6 +1,6 @@
 # Restoration and recovery
 
-Status: **Implemented named-file recovery; isolated fixtures Tested**. The shared file engine snapshots bytes, original absence and UID/GID/mode before mutation. Baselines and applied-checksum receipts are under `/var/lib/qubix/backup/`, readable only by root. New components use this engine; the original bootstrap branding role is being migrated with deployment orchestration.
+Status: **Implemented named-file recovery; isolated fixtures Tested**. The shared file engine snapshots bytes, original absence and UID/GID/mode before mutation. Baselines and applied-checksum receipts are under `/var/lib/qubix/backup/`, readable only by root. Desktop and branding deployment use this engine.
 
 Run `./bootstrap.sh restore --check --diff --ask-become-pass` to preview and `./bootstrap.sh restore --ask-become-pass` to restore. Add the same remote inventory used for deployment. Restore needs a readable recorded baseline and supported CachyOS host; an empty backup set fails explicitly. It restores the first pre-Qubix state, retains baselines, removes only originally absent recorded files, and leaves unlisted resources/directories alone.
 

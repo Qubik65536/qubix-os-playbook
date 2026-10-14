@@ -1,0 +1,10 @@
+{
+  "layer": "top", "position": "top", "height": 32,
+  "modules-left": ["custom/qubix", "niri/workspaces"],
+  "modules-center": ["clock"],
+  "modules-right": ["cpu", "memory", "tray"],
+  "custom/qubix": {"format": "Qubix OS", "on-click": "/usr/bin/fuzzel --config=/etc/qubix/fuzzel.ini"},
+  "clock": {"format": "{:%a %d %b  %H:%M}"},
+  "cpu": {"format": "CPU {usage}%"},
+  "memory": {"format": "RAM {}%"}
+}

@@ -11,7 +11,7 @@ ansible-lint --offline playbooks roles tests/playbooks tests/tasks
 for playbook in playbooks/*.yml tests/playbooks/*.yml; do
   ansible-playbook "$playbook" --syntax-check
 done
-shellcheck bootstrap.sh scripts/*.sh
+shellcheck bootstrap.sh scripts/*.sh roles/qubix_shell/files/qubix.sh
 python3 tests/static/check_repository.py
 git diff --check
 printf '%s\n' 'Static validation passed.'

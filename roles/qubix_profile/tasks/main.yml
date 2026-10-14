@@ -81,7 +81,7 @@
 - name: Reject enabled components without an implementation
   ansible.builtin.assert:
     that:
-      - qubix_profile_enabled | difference(['branding']) | length == 0
+      - qubix_profile_enabled | difference(['branding', 'niri', 'shell']) | length == 0
     fail_msg: >-
-      Requested components {{ qubix_profile_enabled | difference(["branding"]) }} are Planned.
-      Only branding files are currently supported; disable these components.
+      Requested components {{ qubix_profile_enabled | difference(["branding", "niri", "shell"]) }} are Planned.
+      Only branding, Niri and shell components are supported at this revision.

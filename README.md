@@ -2,7 +2,7 @@
 
 An Ansible framework for deploying Qubix branding and desktop defaults onto existing Linux installations. The first target is **CachyOS with Niri**. Qubix manages its own configuration, not the complete operating system.
 
-**Status: bootstrap foundation with additive branding.** Strict profile validation, read-only CachyOS Niri discovery, and shared artwork installation are implemented and fixture-tested. No graphical or boot integration has been verified. Follow [project status](docs/project/status.md) for evidence.
+**Status: desktop MVP candidate In Progress.** Strict profile validation, read-only CachyOS Niri discovery, shared artwork installation, file recovery, and an additional Qubix Niri session are implemented. No graphical or boot integration has been verified. Follow [project status](docs/project/status.md) for evidence.
 
 Set up [controller tools](docs/development/environment.md), then run from the repository root:
 
@@ -11,7 +11,7 @@ Set up [controller tools](docs/development/environment.md), then run from the re
 ./bootstrap.sh deploy --check --diff --ask-become-pass
 ```
 
-These commands inspect an existing CachyOS Niri host and reject unsupported systems. Deployment installs five named artwork/license files under `/usr/share/qubix/branding/` after preflight; `--check` previews without installing. Other desktop and boot components remain Planned. Use `-i inventory.ini` for a remote `qubix_targets` group and `-e @config/local.yml` for overrides. See [installation](docs/user/installation.md).
+These commands inspect an existing CachyOS Niri host and reject unsupported systems. Deployment prepares measured desktop prerequisites, backs up named resources, and installs an additional Qubix Niri session, wallpaper, companion and shell defaults. Native and personal Niri configuration remain preserved. Login and boot components are being implemented. Use `-i inventory.ini` for a remote `qubix_targets` group and `-e @config/local.yml` for overrides. See [installation](docs/user/installation.md).
 
 The MVP includes a working Niri desktop, login branding, **both GRUB and Limine adapters**, and Plymouth with both dracut and mkinitcpio. Boot work remains opt-in and follows the first desktop milestone. Fedora Workstation and KDE are post-MVP.
 

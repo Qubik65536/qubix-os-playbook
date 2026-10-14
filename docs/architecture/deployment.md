@@ -1,6 +1,6 @@
 # Deployment lifecycle
 
-Status: **Implemented profile resolution, discovery, compatibility validation and preflight**. Branding mutation and checksum verification are Implemented. Backups, state, restoration and other component activation remain Planned; see [status](../project/status.md).
+Status: **Implemented profile resolution, discovery, compatibility validation and preflight**. Branding mutation and checksum verification are Implemented. Named-file backups, receipts, restoration and revision state are Implemented; remaining adapters are In Progress; see [status](../project/status.md).
 
 ```mermaid
 flowchart TD
@@ -25,4 +25,4 @@ Bootstrap profile resolution loads defaults, the allowlisted profile, and an opt
 
 Future recovery stores content, metadata, original absence, target paths, and source revision before overwriting default resources. Owned assets are reconciled idempotently; unrelated files must remain untouched. Revision tracking includes Git commit and effective configuration digest, with dirty-tree detection. It is not whole-system rollback.
 
-Current deployment validates all selections first, then escalates only for the branding installation block and verifies its five files. `verify` inspects by default; `verify --tags branding` explicitly checks deployed assets. Preflight roles carry `always` tags so ordinary component selection does not bypass them. Never skip safety preflight when deploying. No deployment revision manifest is recorded yet.
+Current deployment validates all selected component prerequisites first, then escalates for backed-up named file installation and verification. `verify` inspects by default; `verify --tags branding` explicitly checks deployed assets. The wrapper reserves tags for verification; configure enabled components in YAML. A successful file deployment records revision and configuration digest; graphical and boot verification remain false until actual acceptance.

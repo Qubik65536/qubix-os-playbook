@@ -1,0 +1,35 @@
+// Qubix Niri session: native /etc/niri and personal dotfiles remain preserved.
+input {
+    keyboard {
+        xkb {}
+    }
+    touchpad { tap; natural-scroll; }
+}
+{% include 'theme.kdl.j2' %}
+spawn-at-startup "/usr/bin/swaybg" "-i" "/usr/share/qubix/wallpaper.png" "-m" "fill"
+spawn-at-startup "/usr/bin/waybar" "-c" "/etc/qubix/waybar.json" "-s" "/etc/qubix/waybar.css"
+spawn-at-startup "/usr/bin/mako" "--config" "/etc/qubix/mako.conf"
+binds {
+    Mod+Return { spawn "/usr/bin/foot" "--config=/etc/qubix/foot.ini"; }
+    Mod+D { spawn "/usr/bin/fuzzel" "--config=/etc/qubix/fuzzel.ini"; }
+    Mod+Q { close-window; }
+    Mod+Shift+E { quit; }
+    Mod+O { toggle-overview; }
+    Mod+H { focus-column-left; }
+    Mod+L { focus-column-right; }
+    Mod+J { focus-window-down; }
+    Mod+K { focus-window-up; }
+    Mod+Shift+H { move-column-left; }
+    Mod+Shift+L { move-column-right; }
+    Mod+Shift+J { move-window-down; }
+    Mod+Shift+K { move-window-up; }
+    Mod+Page_Down { focus-workspace-down; }
+    Mod+Page_Up { focus-workspace-up; }
+    Mod+Shift+Page_Down { move-column-to-workspace-down; }
+    Mod+Shift+Page_Up { move-column-to-workspace-up; }
+    Mod+R { switch-preset-column-width; }
+    Mod+F { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+V { toggle-window-floating; }
+    Mod+Shift+S { screenshot; }
+}

@@ -1,0 +1,14 @@
+---
+- name: Prepare additive shell resources
+  ansible.builtin.set_fact:
+    qubix_shell_resources:
+      - path: /etc/profile.d/qubix.sh
+        component: shell
+        content: '{{ lookup("file", role_path ~ "/files/qubix.sh", rstrip=false) }}'
+        validate: /usr/bin/bash -n %s
+      - path: /usr/share/qubix/shell/qubix.zsh
+        component: shell
+        content: '{{ lookup("file", role_path ~ "/files/qubix.zsh", rstrip=false) }}'
+      - path: /etc/qubix/starship.toml
+        component: shell
+        content: '{{ lookup("file", role_path ~ "/files/starship.toml", rstrip=false) }}'

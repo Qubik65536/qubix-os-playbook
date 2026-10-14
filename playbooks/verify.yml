@@ -26,3 +26,10 @@
           tags: [branding]
       when: qubix_profile_resolved.branding.enabled
       tags: [never, branding]
+
+    - name: Verify explicitly selected full installed configuration
+      ansible.builtin.include_tasks:
+        file: tasks/verify-installed.yml
+        apply:
+          tags: [installed]
+      tags: [never, installed]

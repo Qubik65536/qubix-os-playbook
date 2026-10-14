@@ -16,6 +16,16 @@ case "${1:---help}" in
   *) usage >&2; exit 2 ;;
 esac
 
+if [[ "$action" == deploy || "$action" == restore ]]; then
+  for argument in "$@"; do
+    case "$argument" in
+      --tags|--tags=*|-t|--skip-tags|--skip-tags=*)
+        printf '%s\n' 'Select deployment components in qubix configuration; tags are reserved for verification.' >&2
+        exit 2 ;;
+    esac
+  done
+fi
+
 if [[ -x "$repo_dir/.venv/bin/ansible-playbook" ]]; then
   ansible_bin="$repo_dir/.venv/bin/ansible-playbook"
 elif command -v ansible-playbook >/dev/null 2>&1; then

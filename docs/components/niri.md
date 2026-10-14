@@ -1,13 +1,11 @@
 # Niri desktop and appearance
 
-Status: **Planned**. Niri is the first complete desktop component; boot themes are independent.
+Status: Implemented candidate. Native parser/session verification needs the CachyOS VM.
 
-Provide a readable system default, a reusable Qubix colour include, and wallpaper/startup integration suited to discovered applications. Responsibilities include optional bindings/rules and companion application defaults. Niri itself supplies no wallpaper service, notification daemon, launcher, or status bar.
+The role measures Niri, Foot, Fuzzel, Waybar, Mako and Swaybg before defining resources. Missing tools fail before deployment writes. Noctalia/DMS/native desktop settings remain preserved; Qubix uses its own additional session rather than replacing the native session. Install missing prerequisites explicitly as described in the user guide.
 
-Support initially targets CachyOS Niri. Dependencies: branding assets, a working Niri executable, and measured companions. `niri.enabled` selects this component; `niri.user_config: preserve` is the only bootstrap policy. Existing personal files are always Preserved. Existing `/etc/niri/config.kdl` also needs backup and a reviewed activation policy; do not silently replace a distribution's complete defaults.
+Qubix manages `/etc/niri/qubix/{config,theme}.kdl`, `/etc/qubix/` companion defaults, an attributed wallpaper and `/usr/share/wayland-sessions/qubix-niri.desktop`. The system's `/etc/niri/config.kdl`, personal configuration and output/hardware settings are not replaced. The candidate is validated using `niri --config %s validate` by Ansible before the session entry is installed. Parser failure leaves earlier inert resources recoverable from recorded baselines.
 
-Install and validate a candidate before activation. Use `/etc/niri/` where appropriate and validate with `niri validate` against the selected file. Personal configuration can override the system file entirely, so report whether the current session is actually using Qubix defaults. Future personal adoption must be explicitly selected and backed up.
+Select **Qubix Niri** at login; native Niri remains available. The session uses explicit configuration paths, so its supplied defaults do not automatically inherit personal Niri settings. Existing personal files are untouched; using the separate session is explicit operator consent. From a free TTY after logout, `niri --session --config /etc/niri/qubix/config.kdl` provides a test entrypoint.
 
-Verification levels: installed files; parser success; companion commands available; actual graphical session with wallpaper, launcher, notifications, bar, terminal, and keybindings functioning. The first two levels alone do not satisfy the desktop milestone.
-
-Restoration removes additive Qubix fragments and restores prior default content/metadata using a manifest. No Niri deployment or restoration procedure is operational yet. Next implementation must use an actual CachyOS target report to select companions and supported directives.
+Mod+Return starts Foot, Mod+D Fuzzel, Mod+Q closes, Mod+O toggles overview, Mod+H/J/K/L navigates, and Mod+Shift+E exits. Waybar, Mako and Swaybg start explicitly. Configuration file availability and parser success are separate from graphical acceptance. Verify observed wallpaper, notifications, launcher, bar, terminal, keyboard navigation and second-deploy idempotency before recording desktop acceptance. Restore returns the pre-deployment resource baseline using the file engine.

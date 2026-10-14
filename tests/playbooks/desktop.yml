@@ -1,0 +1,64 @@
+---
+- name: Test desktop definitions and prerequisites without a graphical session
+  hosts: localhost
+  gather_facts: false
+  vars:
+    qubix_profile_resolved:
+      branding: {enabled: true}
+    qubix_discovery_report:
+      profile_compatible: true
+      evidence:
+        binaries: {niri: true, foot: true, fuzzel: true, waybar: true, mako: true, swaybg: true}
+  tasks:
+    - name: Render complete desktop candidate
+      ansible.builtin.include_role:
+        name: qubix_niri
+
+    - name: Render additive shell defaults
+      ansible.builtin.include_role:
+        name: qubix_shell
+
+    - name: Require complete explicit session definitions and preserved native configuration
+      ansible.builtin.assert:
+        that:
+          - qubix_niri_resources | length == 9
+          - "'/etc/niri/config.kdl' not in (qubix_niri_resources | map(attribute='path') | list)"
+          - qubix_niri_resources[-2].validate == '/usr/bin/niri --config %s validate'
+          - "'--config /etc/niri/qubix/config.kdl' in qubix_niri_resources[-1].content"
+          - "'/usr/bin/swaybg' in qubix_niri_resources[-2].content"
+          - "'/usr/bin/waybar' in qubix_niri_resources[-2].content"
+          - qubix_shell_resources | length == 3
+
+    - name: Confirm native JSON companion configuration parses
+      ansible.builtin.assert:
+        that:
+          - >-
+            (qubix_niri_resources | selectattr('path', 'equalto', '/etc/qubix/waybar.json')
+            | first).content | from_json is mapping
+
+    - name: Reset missing companion outcome
+      ansible.builtin.set_fact:
+        qubix_test_rejected: false
+
+    - name: Remove Foot from synthetic evidence
+      ansible.builtin.set_fact:
+        qubix_discovery_report:
+          evidence:
+            binaries: {niri: true}
+
+    - name: Require missing companion detection
+      block:
+        - name: Attempt desktop with unavailable Foot
+          ansible.builtin.include_role:
+            name: qubix_niri
+      rescue:
+        - name: Require dependency-specific rejection
+          ansible.builtin.assert:
+            that: ["'requires installed foot' in (ansible_failed_result | to_json)"]
+        - name: Record expected rejection
+          ansible.builtin.set_fact:
+            qubix_test_rejected: true
+
+    - name: Require missing tools to prevent a success report
+      ansible.builtin.assert:
+        that: [qubix_test_rejected]

@@ -1,0 +1,7 @@
+add_newline = true
+format = "[Qubix](bold blue) $directory$git_branch$git_status$character"
+[directory]
+style = "bold blue"
+[character]
+success_symbol = "[❯](bold blue)"
+error_symbol = "[❯](bold red)"

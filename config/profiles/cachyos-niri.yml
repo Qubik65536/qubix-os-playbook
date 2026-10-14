@@ -3,3 +3,7 @@
 profile: cachyos-niri
 branding:
   enabled: true
+niri:
+  enabled: true
+shell:
+  enabled: true

@@ -10,10 +10,11 @@ Updated: 2026-10-13. Stage: **MVP candidate implementation In Progress**.
 | Live inspection | Implemented | Real macOS rejection with zero changes; supported CachyOS collection still unverified |
 | CI workflow | Implemented | Same local scripts pass; GitHub execution pending because no commits were pushed |
 | Branding installation and file verification | Tested | Licensed assets; isolated filesystem; preview/idempotency/repair/preservation; missing/corrupt/symlink rejection |
-| Niri/appearance/shell/login | Planned | No graphical target inspected; profile leaves them disabled |
+| Niri/appearance/shell | Implemented | Definitions and missing-companion fixtures pass; native parser/session pending VM |
+| Login | In Progress | SDDM adapter next |
 | GRUB and Limine | Planned | Both required for MVP; opt-in; no host boot changes |
 | Plymouth/dracut/mkinitcpio | Planned | Opt-in; no image changes |
-| Backups/restoration/revision state | Planned | Manual named-artwork removal documented; no automated recovery |
+| Backups/restoration/revision state | Implemented | Baselines, receipts, conflict/restore fixtures; deployment revision recorded last |
 
 ## Actual validation
 

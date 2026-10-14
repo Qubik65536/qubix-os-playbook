@@ -59,12 +59,10 @@ qubix_test_profiles:
   - name: personal adoption rejected
     input: {niri: {user_config: replace}}
     error: niri.user_config must be one of
-  - name: planned desktop component
+  - name: supported desktop component
     input: {niri: {enabled: true}}
-    error: are Planned
-  - name: planned shell component
+  - name: supported shell component
     input: {shell: {enabled: true}}
-    error: are Planned
   - name: planned login component
     input: {login: {enabled: true}}
     error: are Planned
