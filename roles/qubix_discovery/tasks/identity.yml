@@ -1,0 +1,9 @@
+---
+- name: Require one exact CachyOS identity declaration
+  ansible.builtin.assert:
+    that:
+      - qubix_discovery_os_text.splitlines() | select('match', '^ID=') | list | length == 1
+      - >-
+        (qubix_discovery_os_text.splitlines() | select('match', '^ID=') | first)
+        in ['ID=cachyos', 'ID="cachyos"', "ID='cachyos'"]
+    fail_msg: 'Unsupported distribution: /etc/os-release must identify CachyOS (ID=cachyos).'

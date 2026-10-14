@@ -1,0 +1,14 @@
+---
+- name: Validate Qubix deployment prerequisites
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  roles:
+    - qubix_profile
+    - qubix_discovery
+  tasks:
+    - name: Report completed preflight without claiming a deployment
+      ansible.builtin.debug:
+        msg: >-
+          Profile and CachyOS Niri compatibility passed.
+          No customization components are implemented at this revision; no configuration was deployed.

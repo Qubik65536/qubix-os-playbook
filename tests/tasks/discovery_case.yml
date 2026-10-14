@@ -1,0 +1,38 @@
+---
+- name: Reset discovery evidence and outcome
+  ansible.builtin.set_fact:
+    qubix_discovery_evidence: '{{ qubix_test_host | combine(qubix_test_case.input, recursive=true) }}'
+    qubix_test_failed: false
+
+- name: Evaluate host compatibility
+  block:
+    - name: Classify fixture evidence with production tasks
+      ansible.builtin.include_role:
+        name: qubix_discovery
+        tasks_from: classify
+  rescue:
+    - name: Require expected unsupported-host rejection
+      ansible.builtin.assert:
+        that:
+          - qubix_test_case.error | default(false)
+          - "'Unsupported evidence' in ansible_failed_result.msg"
+
+    - name: Record expected host rejection
+      ansible.builtin.set_fact:
+        qubix_test_failed: true
+
+- name: Require expected discovery outcome
+  ansible.builtin.assert:
+    that:
+      - qubix_test_failed == (qubix_test_case.error | default(false))
+
+- name: Require unresolved active backends even when tools are installed
+  ansible.builtin.assert:
+    that:
+      - qubix_discovery_report.bootloader.active_backend == 'unresolved'
+      - qubix_discovery_report.initramfs.active_backend == 'unresolved'
+      - not qubix_discovery_report.graphical_session_verified
+      - not qubix_discovery_report.boot_verified
+      - qubix_discovery_report.bootloader.installed_candidates | sort == qubix_test_case.loaders | sort
+      - qubix_discovery_report.initramfs.installed_candidates | sort == qubix_test_case.generators | sort
+  when: not qubix_test_failed

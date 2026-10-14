@@ -1,9 +1,17 @@
 # Deployment
 
-Status: **Planned procedure**. No deployment commands are operational yet.
+Status: **Implemented preflight only**. No customization resources are installed by this revision.
 
-The intended order is inspect, validate profile/capabilities, preview, prepare needed backups, deploy selected components, verify, then record state. See [lifecycle](../architecture/deployment.md). A desktop deployment must not depend on boot work.
+From the repository root after [controller setup](../development/environment.md):
 
-Ansible check/diff will be supported where practical; it is not a complete transaction plan. Read-only probes may run in check mode. Do not interpret skipped writes as installed resources or successful graphical integration.
+```bash
+./bootstrap.sh verify
+./bootstrap.sh deploy --check --diff
+./bootstrap.sh deploy
+```
 
-Use a disposable CachyOS Niri VM first. Any later privileged deployment is an explicit operator action. No procedure in bootstrap should rebuild the development host's initramfs or activate boot themes.
+Use `-i inventory.ini` for a remote `qubix_targets` group and `-e @config/local.yml` for overrides. Both playbooks validate the schema and measured host compatibility. `deploy` explicitly reports inspection-only status. Enabled Planned components fail, and unsupported targets are rejected.
+
+No privilege escalation is used. Read-only package, version and systemd probes run even in check mode. Temporary Ansible module transport/cache files are used; target configuration is not modified. Check/diff is an approximation, not a complete transaction plan.
+
+The eventual [lifecycle](../architecture/deployment.md) includes backup, component deployment, verification and revision state. A desktop milestone does not depend on boot work. No bootstrap procedure rebuilds initramfs or activates boot themes.

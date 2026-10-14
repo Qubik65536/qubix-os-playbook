@@ -2,7 +2,16 @@
 
 An Ansible framework for deploying Qubix branding and desktop defaults onto existing Linux installations. The first target is **CachyOS with Niri**. Qubix manages its own configuration, not the complete operating system.
 
-**Status: documentation foundation; implementation is Planned.** Follow [project status](docs/project/status.md) for verified capabilities. Bootstrap will introduce read-only discovery, profile validation, and then additive branding. No deployment command is operational yet.
+**Status: executable inspection foundation.** Strict profile validation and read-only CachyOS Niri discovery are implemented and fixture-tested. No graphical or boot integration has been verified. Follow [project status](docs/project/status.md) for evidence.
+
+Set up [controller tools](docs/development/environment.md), then run from the repository root:
+
+```bash
+./bootstrap.sh verify
+./bootstrap.sh deploy --check --diff
+```
+
+These commands inspect an existing CachyOS Niri host and reject unsupported systems. Deployment currently performs preflight only and explicitly reports that no customization is installed. Use `-i inventory.ini` for a remote `qubix_targets` group and `-e @config/local.yml` for overrides. See [installation](docs/user/installation.md).
 
 The MVP includes a working Niri desktop, login branding, **both GRUB and Limine adapters**, and Plymouth with both dracut and mkinitcpio. Boot work remains opt-in and follows the first desktop milestone. Fedora Workstation and KDE are post-MVP.
 

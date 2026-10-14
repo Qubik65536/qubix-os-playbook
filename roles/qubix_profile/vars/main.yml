@@ -1,0 +1,21 @@
+---
+qubix_profile_keys:
+  branding: [enabled]
+  niri: [enabled, user_config]
+  shell: [enabled, change_default_shell]
+  login: [enabled, backend]
+  bootloader: [enabled, backend]
+  plymouth: [enabled, initramfs_backend]
+qubix_profile_choices:
+  - component: niri
+    key: user_config
+    values: [preserve]
+  - component: login
+    key: backend
+    values: [auto, sddm, greetd, gdm, lightdm]
+  - component: bootloader
+    key: backend
+    values: [auto, grub, limine]
+  - component: plymouth
+    key: initramfs_backend
+    values: [auto, dracut, mkinitcpio]

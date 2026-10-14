@@ -4,6 +4,8 @@ Local bootstrap planning; later mirror substantial tasks to GitHub Issues. Categ
 
 ## F01 — Read-only foundation (Feature)
 
+Status: Implemented; fixture contracts Tested. Live CachyOS collection acceptance remains open.
+
 Objective: safely inspect CachyOS Niri and resolve the profile. Scope: schema, read-only evidence, compatibility, verify/deploy preflight, minimal wrapper. Acceptance: supported fixtures pass; unsupported hosts, malformed inputs and planned enabled components fail before writes; ambiguities remain unresolved. Depends on documentation. Tests: real Ansible fixture runs, macOS rejection, syntax/lint. Docs: configuration, deployment, compatibility, status.
 
 ## M01 — Tooling and CI (Maintenance)

@@ -1,0 +1,21 @@
+---
+- name: Normalize live evidence for the report
+  ansible.builtin.set_fact:
+    qubix_discovery_evidence:
+      system: '{{ ansible_facts.system }}'
+      distribution_id: cachyos
+      distribution_version: '{{ ansible_facts.distribution_version }}'
+      service_manager: '{{ ansible_facts.service_mgr }}'
+      binaries: '{{ qubix_discovery_binaries }}'
+      niri_version: '{{ qubix_discovery_niri_version.stdout }}'
+      packages: >-
+        {{ qubix_discovery_packages.stdout_lines
+           | select('match', '^(' ~ qubix_discovery_package_names | join('|') ~ ')([- ]|$)')
+           | list }}
+      paths: >-
+        {{ qubix_discovery_path_stats.results | selectattr('stat.exists') | map(attribute='item') | list }}
+      desktop_hint: '{{ ansible_facts.env.XDG_CURRENT_DESKTOP | default("unknown") }}'
+      session_hint: '{{ ansible_facts.env.XDG_SESSION_TYPE | default("unknown") }}'
+      display_manager:
+        configured_unit: '{{ qubix_discovery_display_link.stat.lnk_source | default("unknown") }}'
+        activity: '{{ qubix_discovery_display_status.stdout_lines }}'

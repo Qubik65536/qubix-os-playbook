@@ -18,4 +18,4 @@ Alternatively use `python3 -m venv .venv` and `.venv/bin/python -m pip install -
 
 `ansible.cfg` sets the explicit local inventory and roles path; run from the root so it is loaded. Host-key checking stays enabled. No automatic `sudo`, target package installation, or privilege escalation occurs during tooling setup.
 
-Use an existing CachyOS Niri disposable VM for live inspection and later desktop tests. macOS can run controller/static/fixture tests but cannot prove graphical or boot behaviour. [Testing](testing.md) will list validation commands alongside the implemented playbooks.
+Use an existing CachyOS Niri disposable VM for live inspection and later desktop tests. macOS can run controller/static/fixture tests but cannot prove graphical or boot behaviour. [Testing](testing.md) lists equivalent local validation commands.

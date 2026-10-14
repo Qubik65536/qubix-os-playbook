@@ -1,6 +1,6 @@
 # Deployment lifecycle
 
-Status: **Planned**. Bootstrap implements only a subset, described in [status](../project/status.md).
+Status: **Implemented profile resolution, discovery, compatibility validation and preflight**. Component mutation, backups, state and restoration remain Planned; see [status](../project/status.md).
 
 ```mermaid
 flowchart TD

@@ -1,6 +1,20 @@
 # Testing strategy
 
-Status: **Planned tooling**. Bootstrap CI and equivalent local commands will run YAML lint, Ansible syntax/lint, ShellCheck, basic Markdown/link checks, and configuration consistency checks. No privileged deployment belongs in CI.
+Status: **Implemented local static and Ansible fixture checks; CI is Planned**. From the root with the virtual environment active:
+
+```bash
+yamllint .
+ANSIBLE_HOME="$PWD/.cache/ansible" ansible-lint --offline playbooks roles tests/playbooks tests/tasks
+ansible-playbook playbooks/verify.yml --syntax-check
+ansible-playbook playbooks/deploy.yml --syntax-check
+ansible-playbook tests/playbooks/framework.yml --syntax-check
+shellcheck bootstrap.sh
+ansible-playbook tests/playbooks/framework.yml
+```
+
+The suite exercises 22 profile, 11 host, seven exact-identity cases and evidence normalization, with zero changes. Expected failures are rescued only when the matching diagnostic appears. macOS `./bootstrap.sh verify` rejects the real controller as unsupported with zero changes. In a restricted sandbox Ansible local RPC may require execution approval; fixtures do not deploy to the host.
+
+Basic Markdown/link and configuration consistency automation will accompany CI. No privileged deployment belongs in CI.
 
 Meaningful fixture tests must exercise discovery classification, profile merging, invalid profile/options/types, unsupported platforms, missing Niri/Pacman, and planned enabled components. Tests may inject evidence into classification task files, but production discovery must read the host. Fictional fixture facts cannot establish real host compatibility.
 

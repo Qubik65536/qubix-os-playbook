@@ -1,0 +1,27 @@
+---
+- name: Reset identity input and outcome
+  ansible.builtin.set_fact:
+    qubix_discovery_os_text: '{{ qubix_test_case.input }}'
+    qubix_test_failed: false
+
+- name: Evaluate native identity
+  block:
+    - name: Validate fixture identity with production tasks
+      ansible.builtin.include_role:
+        name: qubix_discovery
+        tasks_from: identity
+  rescue:
+    - name: Require expected identity rejection
+      ansible.builtin.assert:
+        that:
+          - qubix_test_case.error | default(false)
+          - "'Unsupported distribution' in ansible_failed_result.msg"
+
+    - name: Record expected identity rejection
+      ansible.builtin.set_fact:
+        qubix_test_failed: true
+
+- name: Require the expected identity outcome
+  ansible.builtin.assert:
+    that:
+      - qubix_test_failed == (qubix_test_case.error | default(false))

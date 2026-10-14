@@ -1,0 +1,38 @@
+---
+- name: Reset operator overrides and failure result for this case
+  ansible.builtin.set_fact:
+    qubix: '{{ qubix_test_case.input }}'
+    qubix_test_failed: false
+
+- name: Evaluate profile validation
+  block:
+    - name: Resolve and validate the case input
+      ansible.builtin.include_role:
+        name: qubix_profile
+  rescue:
+    - name: Require the expected validation error
+      ansible.builtin.assert:
+        that:
+          - qubix_test_case.error is defined
+          - qubix_test_case.error in (ansible_failed_result | to_json)
+        fail_msg: 'Unexpected failure in {{ qubix_test_case.name }}: {{ ansible_failed_result.msg }}'
+
+    - name: Record expected rejection
+      ansible.builtin.set_fact:
+        qubix_test_failed: true
+
+- name: Require the expected case outcome
+  ansible.builtin.assert:
+    that:
+      - qubix_test_failed == (qubix_test_case.error is defined)
+    fail_msg: 'Case {{ qubix_test_case.name }} did not reject invalid input.'
+
+- name: Confirm recursive merge retained sibling defaults
+  ansible.builtin.assert:
+    that:
+      - qubix_profile_resolved.profile == 'cachyos-niri'
+      - qubix_profile_resolved.niri.user_config == 'preserve'
+      - not qubix_profile_resolved.shell.change_default_shell
+      - not qubix_profile_resolved.bootloader.enabled
+      - not qubix_profile_resolved.plymouth.enabled
+  when: not qubix_test_failed

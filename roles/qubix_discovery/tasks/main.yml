@@ -1,0 +1,111 @@
+---
+- name: Gather minimal platform facts without privilege escalation
+  ansible.builtin.setup:
+    gather_subset:
+      - '!all'
+      - min
+
+- name: Require a Linux systemd target
+  ansible.builtin.assert:
+    that:
+      - ansible_facts.system == 'Linux'
+      - ansible_facts.service_mgr == 'systemd'
+    fail_msg: 'Unsupported host: the initial target is CachyOS Niri on Linux with systemd.'
+
+- name: Read native distribution identity without executing it
+  ansible.builtin.slurp:
+    src: /etc/os-release
+  register: qubix_discovery_os_release
+
+- name: Decode distribution identity
+  ansible.builtin.set_fact:
+    qubix_discovery_os_text: '{{ qubix_discovery_os_release.content | b64decode }}'
+
+- name: Validate native distribution identity
+  ansible.builtin.import_tasks: identity.yml
+
+- name: Load CachyOS evidence locations
+  ansible.builtin.include_vars:
+    file: '{{ role_path }}/../../config/platforms/cachyos.yml'
+
+- name: Inspect executable capabilities
+  ansible.builtin.stat:
+    path: '{{ item.value }}'
+    follow: true
+    get_checksum: false
+    get_mime: false
+  loop: '{{ qubix_discovery_binary_paths | dict2items }}'
+  loop_control:
+    label: '{{ item.key }}'
+  register: qubix_discovery_binary_stats
+
+- name: Initialize executable evidence
+  ansible.builtin.set_fact:
+    qubix_discovery_binaries: {}
+
+- name: Classify executable evidence
+  ansible.builtin.set_fact:
+    qubix_discovery_binaries: >-
+      {{ qubix_discovery_binaries | combine({item.item.key:
+         (item.stat.exists and item.stat.isreg | default(false) and item.stat.executable | default(false))}) }}
+  loop: '{{ qubix_discovery_binary_stats.results }}'
+  loop_control:
+    label: '{{ item.item.key }}'
+
+- name: Require the installed desktop and package manager
+  ansible.builtin.assert:
+    that:
+      - qubix_discovery_binaries.pacman
+      - qubix_discovery_binaries.niri
+    fail_msg: 'CachyOS Niri requires executable /usr/bin/pacman and /usr/bin/niri; nothing is installed automatically.'
+
+- name: Read installed package versions
+  ansible.builtin.command:
+    argv: [/usr/bin/pacman, -Q]
+  register: qubix_discovery_packages
+  changed_when: false
+  check_mode: false
+
+- name: Read Niri version
+  ansible.builtin.command:
+    argv: [/usr/bin/niri, --version]
+  register: qubix_discovery_niri_version
+  changed_when: false
+  check_mode: false
+
+- name: Inspect boot and desktop configuration candidates
+  ansible.builtin.stat:
+    path: '{{ item }}'
+    follow: true
+    get_checksum: false
+    get_mime: false
+  loop: '{{ qubix_discovery_evidence_paths }}'
+  register: qubix_discovery_path_stats
+
+- name: Read configured display-manager link
+  ansible.builtin.stat:
+    path: /etc/systemd/system/display-manager.service
+    follow: false
+    get_checksum: false
+    get_mime: false
+  register: qubix_discovery_display_link
+
+- name: Read display-manager unit activity
+  ansible.builtin.command:
+    argv:
+      - /usr/bin/systemctl
+      - show
+      - display-manager.service
+      - --property=Id,LoadState,ActiveState
+  register: qubix_discovery_display_status
+  failed_when: >-
+    qubix_discovery_display_status.rc != 0 and
+    'LoadState=not-found' not in qubix_discovery_display_status.stdout_lines
+  changed_when: false
+  check_mode: false
+
+- name: Normalize live evidence for the report
+  ansible.builtin.import_tasks: normalize.yml
+
+- name: Classify host capabilities
+  ansible.builtin.import_tasks: classify.yml

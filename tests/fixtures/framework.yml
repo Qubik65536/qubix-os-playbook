@@ -1,0 +1,149 @@
+---
+qubix_test_profiles:
+  - name: defaults
+    input: {}
+  - name: partial recursive override
+    input:
+      qubix_unused: false
+    error: documented qubix keys
+  - name: valid partial override
+    input:
+      niri:
+        enabled: false
+      login:
+        backend: sddm
+  - name: unknown profile
+    input: {profile: fedora-kde}
+    error: Only profile cachyos-niri
+  - name: profile traversal
+    input: {profile: ../../private}
+    error: Only profile cachyos-niri
+  - name: root list
+    input: []
+    error: qubix must be a YAML mapping
+  - name: null root
+    input: null
+    error: qubix must be a YAML mapping
+  - name: null component
+    input: {niri: null}
+    error: niri must be a YAML mapping
+  - name: scalar component
+    input: {bootloader: false}
+    error: bootloader must be a YAML mapping
+  - name: unknown nested key
+    input: {branding: {enable: false}}
+    error: Unknown option in branding
+  - name: string selection
+    input: {branding: {enabled: 'false'}}
+    error: branding.enabled must be a YAML boolean
+  - name: numeric selection
+    input: {niri: {enabled: 1}}
+    error: niri.enabled must be a YAML boolean
+  - name: default shell string
+    input: {shell: {change_default_shell: 'false'}}
+    error: Automatic default-shell changes
+  - name: default shell change
+    input: {shell: {change_default_shell: true}}
+    error: Automatic default-shell changes
+  - name: invalid login backend
+    input: {login: {backend: unsafe}}
+    error: login.backend must be one of
+  - name: invalid boot backend
+    input: {bootloader: {backend: systemd-boot}}
+    error: bootloader.backend must be one of
+  - name: invalid initramfs backend
+    input: {plymouth: {initramfs_backend: auto-guess}}
+    error: plymouth.initramfs_backend must be one of
+  - name: personal adoption rejected
+    input: {niri: {user_config: replace}}
+    error: niri.user_config must be one of
+  - name: planned desktop component
+    input: {niri: {enabled: true}}
+    error: are Planned
+  - name: planned bootloader component
+    input: {bootloader: {enabled: true}}
+    error: are Planned
+  - name: planned splash component
+    input: {plymouth: {enabled: true}}
+    error: are Planned
+  - name: planned branding component
+    input: {branding: {enabled: true}}
+    error: are Planned
+qubix_test_host:
+  system: Linux
+  distribution_id: cachyos
+  distribution_version: rolling-fixture
+  service_manager: systemd
+  binaries: {pacman: true, niri: true}
+  niri_version: fixture
+  packages: []
+  paths: []
+  desktop_hint: unknown
+  session_hint: unknown
+  display_manager: {configured_unit: unknown, activity: []}
+qubix_test_discovery:
+  - name: supported desktop with no boot candidates
+    input: {}
+    loaders: []
+    generators: []
+  - name: GRUB and dracut installed
+    input:
+      binaries: {grub-mkconfig: true, dracut: true}
+    loaders: [grub]
+    generators: [dracut]
+  - name: Limine and mkinitcpio installed
+    input:
+      binaries: {limine: true, mkinitcpio: true}
+    loaders: [limine]
+    generators: [mkinitcpio]
+  - name: conflicting installed tools remain unresolved
+    input:
+      binaries: {grub-mkconfig: true, limine: true, dracut: true, mkinitcpio: true}
+    loaders: [grub, limine]
+    generators: [dracut, mkinitcpio]
+  - name: unknown candidate paths do not select loader
+    input:
+      paths: [/boot/grub/grub.cfg, /efi/limine.conf]
+    loaders: []
+    generators: []
+  - name: native Arch identity is unsupported
+    input: {distribution_id: arch}
+    error: true
+  - name: Fedora identity is unsupported
+    input: {distribution_id: fedora}
+    error: true
+  - name: macOS is unsupported
+    input: {system: Darwin}
+    error: true
+  - name: non-systemd host
+    input: {service_manager: openrc}
+    error: true
+  - name: missing Pacman
+    input: {binaries: {pacman: false}}
+    error: true
+  - name: missing Niri
+    input: {binaries: {niri: false}}
+    error: true
+qubix_test_identities:
+  - name: unquoted exact identity
+    input: 'ID=cachyos'
+  - name: double quoted exact identity
+    input: 'ID="cachyos"'
+  - name: single quoted exact identity
+    input: "ID='cachyos'"
+  - name: inherited identity cannot imply CachyOS
+    input: |
+      ID=arch
+      ID_LIKE=cachyos
+    error: true
+  - name: missing identity
+    input: 'NAME=CachyOS'
+    error: true
+  - name: duplicate conflicting identity
+    input: |
+      ID=cachyos
+      ID=arch
+    error: true
+  - name: suffixed identity
+    input: 'ID=cachyos-fake'
+    error: true

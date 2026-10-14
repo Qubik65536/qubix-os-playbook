@@ -1,12 +1,12 @@
 # Configuration contract
 
-Status: **Planned**. `qubix` is the operator input; resolved configuration is an internal fact. Only profile `cachyos-niri` is initially allowed.
+Status: **Implemented and fixture-tested schema**. `qubix` is the operator input; resolved configuration is an internal fact. Only profile `cachyos-niri` is initially allowed.
 
 ```yaml
 qubix:
   profile: cachyos-niri
   branding:
-    enabled: true
+    enabled: false
   niri:
     enabled: false
     user_config: preserve

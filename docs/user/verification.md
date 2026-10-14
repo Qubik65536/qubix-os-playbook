@@ -1,7 +1,9 @@
 # Verification
 
-Status: **Planned procedure**. Executable read-only inspection will be the first foundation capability.
+Status: **Implemented inspection, fixture-tested**. Run `./bootstrap.sh verify` after [setup](installation.md); add inventory/overrides as described in [deployment](deployment.md).
 
-Check OS/Pacman/Niri compatibility and report available companions, display-manager evidence, loader configuration candidates, and initramfs tools. Preserve unknown or ambiguous active state; do not guess.
+The report includes resolved configuration, native CachyOS/version evidence, executable capabilities, relevant package versions, Niri version, desktop/session environment hints, configured display-manager link and systemd activity, existing candidate paths, and installed loader/initramfs tools. Detection never changes host configuration. Unknown/ambiguous active loader and image generator are reported as `unresolved`, even when one tool is installed.
 
-Report evidence separately: asset installation/checksums, Niri parser validation, observed graphical session, booted loader, and booted Plymouth. The last three require a live target or disposable VM. Read-only discovery does not prove a deployment is active.
+Permission/probe failures stop execution rather than being treated as missing capabilities. Session hints may be unknown under SSH. The initial supported path still needs live CachyOS VM evidence; fixtures exercise production classification/normalization/identity tasks.
+
+Asset installation, Niri parser validation, graphical session, bootloader boot, and Plymouth boot are separate future verification levels. None is established by successful inspection. There is no managed-resource verification at this revision.

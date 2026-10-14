@@ -1,0 +1,87 @@
+---
+- name: Validate operator configuration mapping
+  ansible.builtin.assert:
+    that:
+      - qubix | default({}) is mapping
+    fail_msg: 'qubix must be a YAML mapping.'
+
+- name: Reject unknown profile and top-level keys
+  ansible.builtin.assert:
+    that:
+      - (qubix | default({})).get('profile', 'cachyos-niri') == 'cachyos-niri'
+      - >-
+        (qubix | default({})).keys() | difference(['profile'] + qubix_profile_keys.keys() | list) | length == 0
+    fail_msg: 'Only profile cachyos-niri and documented qubix keys are supported.'
+
+- name: Validate component option mappings
+  ansible.builtin.assert:
+    that:
+      - (qubix | default({})).get(item.key, {}) is mapping
+    fail_msg: '{{ item.key }} must be a YAML mapping.'
+  loop: '{{ qubix_profile_keys | dict2items }}'
+  loop_control:
+    label: '{{ item.key }}'
+
+- name: Reject unknown component options
+  ansible.builtin.assert:
+    that:
+      - (qubix | default({})).get(item.key, {}).keys() | difference(item.value) | length == 0
+    fail_msg: 'Unknown option in {{ item.key }}; allowed keys: {{ item.value }}.'
+  loop: '{{ qubix_profile_keys | dict2items }}'
+  loop_control:
+    label: '{{ item.key }}'
+
+- name: Load shared configuration defaults
+  ansible.builtin.include_vars:
+    file: '{{ role_path }}/../../config/defaults.yml'
+    name: qubix_profile_base
+
+- name: Load allowlisted CachyOS Niri profile
+  ansible.builtin.include_vars:
+    file: '{{ role_path }}/../../config/profiles/cachyos-niri.yml'
+    name: qubix_profile_definition
+
+- name: Resolve defaults then profile then operator overrides
+  ansible.builtin.set_fact:
+    qubix_profile_resolved: >-
+      {{ qubix_profile_base | combine(qubix_profile_definition, recursive=true)
+         | combine(qubix | default({}), recursive=true) }}
+
+- name: Require actual YAML boolean component selections
+  ansible.builtin.assert:
+    that:
+      - qubix_profile_resolved[item.key].enabled is boolean
+    fail_msg: '{{ item.key }}.enabled must be a YAML boolean, not a string.'
+  loop: '{{ qubix_profile_keys | dict2items }}'
+  loop_control:
+    label: '{{ item.key }}'
+
+- name: Validate enum options
+  ansible.builtin.assert:
+    that:
+      - qubix_profile_resolved[item.component][item.key] in item['values']
+    fail_msg: '{{ item.component }}.{{ item.key }} must be one of {{ item["values"] }}.'
+  loop: '{{ qubix_profile_choices }}'
+  loop_control:
+    label: '{{ item.component }}.{{ item.key }}'
+
+- name: Preserve the default shell
+  ansible.builtin.assert:
+    that:
+      - qubix_profile_resolved.shell.change_default_shell is boolean
+      - not qubix_profile_resolved.shell.change_default_shell
+    fail_msg: 'Automatic default-shell changes are unsupported; use false.'
+
+- name: Identify requested components
+  ansible.builtin.set_fact:
+    qubix_profile_enabled: >-
+      {{ qubix_profile_resolved | dict2items | rejectattr('key', 'equalto', 'profile')
+         | selectattr('value.enabled', 'equalto', true) | map(attribute='key') | list }}
+
+- name: Reject enabled components without an implementation
+  ansible.builtin.assert:
+    that:
+      - qubix_profile_enabled | length == 0
+    fail_msg: >-
+      Requested components {{ qubix_profile_enabled }} are Planned.
+      This revision provides inspection only; disable these components.

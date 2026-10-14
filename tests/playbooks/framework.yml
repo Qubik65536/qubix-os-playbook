@@ -1,0 +1,39 @@
+---
+- name: Test profile and host evidence contracts without host mutation
+  hosts: localhost
+  gather_facts: false
+  become: false
+  vars_files:
+    - ../fixtures/framework.yml
+  tasks:
+    - name: Exercise profile validation and merge cases
+      ansible.builtin.include_tasks: ../tasks/profile_case.yml
+      loop: '{{ qubix_test_profiles }}'
+      loop_control:
+        loop_var: qubix_test_case
+        label: '{{ qubix_test_case.name }}'
+
+    - name: Exercise supported and unsupported discovery evidence
+      ansible.builtin.include_tasks: ../tasks/discovery_case.yml
+      loop: '{{ qubix_test_discovery }}'
+      loop_control:
+        loop_var: qubix_test_case
+        label: '{{ qubix_test_case.name }}'
+
+    - name: Validate native identity parsing
+      ansible.builtin.include_tasks: ../tasks/identity_case.yml
+      loop: '{{ qubix_test_identities }}'
+      loop_control:
+        loop_var: qubix_test_case
+        label: '{{ qubix_test_case.name }}'
+
+    - name: Test live evidence normalization expressions
+      ansible.builtin.include_tasks: ../tasks/normalize.yml
+
+    - name: Report fixture coverage without claiming live host validation
+      ansible.builtin.debug:
+        msg: >-
+          Passed {{ qubix_test_profiles | length }} profile cases and
+          {{ qubix_test_discovery | length }} discovery cases,
+          {{ qubix_test_identities | length }} identity cases, and evidence normalization;
+          no live CachyOS acceptance implied.

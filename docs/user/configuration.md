@@ -1,7 +1,16 @@
 # User configuration
 
-Status: **Planned procedure**. The [configuration contract](../architecture/configuration.md) is authoritative for keys and defaults.
+Status: **Implemented and fixture-tested**. The [configuration contract](../architecture/configuration.md) is authoritative for keys and defaults.
 
-Operator overrides use a YAML mapping named `qubix` and recursive merging with the selected profile. Prefer a small overrides file so new safe defaults are inherited. Unknown keys and malformed types will fail before writes. Never put credentials in committed configuration.
+Write optional overrides to ignored `config/local.yml`:
 
-Personal configuration is preserved. Bootstrap supports no user-file adoption or default-shell change. Enabling planned components will report an error rather than silently succeed. Backend names express intent but do not establish active boot-chain evidence.
+```yaml
+qubix:
+  profile: cachyos-niri
+  branding:
+    enabled: false
+```
+
+Run `./bootstrap.sh verify -e @config/local.yml` (add `-i inventory.ini` for remote targets). Defaults, allowlisted profile, then overrides are recursively merged. Unknown keys, malformed types, unsupported profiles and enabled Planned components fail before host configuration writes. Omitted siblings retain defaults; YAML booleans must be unquoted.
+
+All components are currently disabled because this revision implements inspection only. Personal configuration is preserved. There is no adoption mechanism or automatic default-shell change. Backend names express intent; they do not establish active boot-chain evidence. Never commit credentials.

@@ -1,9 +1,10 @@
 # Troubleshooting
 
-Status: **Planned workflow**; use [project status](../project/status.md) for actual support.
+Status: **Implemented inspection diagnostics**; use [project status](../project/status.md) for actual support.
 
 | Symptom | Interpretation and next step |
 |---|---|
+| Local RPC server fails in a restricted sandbox | Allow the non-destructive fixture/inspection process to use local IPC; do not change target compatibility checks |
 | Unsupported host | Confirm exact CachyOS identity, Linux/systemd, executable Pacman and Niri; Fedora/KDE are not yet supported |
 | Planned component enabled | Disable it and consult the backlog; do not treat schema support as implementation |
 | Unknown or invalid option | Compare overrides to the configuration contract; use YAML booleans |

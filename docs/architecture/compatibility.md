@@ -1,6 +1,6 @@
 # Compatibility and discovery
 
-Status: **Planned**; no host combination is integration-tested yet.
+Status: **Implemented discovery with fixture tests**; no live CachyOS combination is integration-tested yet.
 
 | Target | Bootstrap contract | MVP validation |
 |---|---|---|

@@ -1,0 +1,19 @@
+---
+profile: cachyos-niri
+branding:
+  enabled: false
+niri:
+  enabled: false
+  user_config: preserve
+shell:
+  enabled: false
+  change_default_shell: false
+login:
+  enabled: false
+  backend: auto
+bootloader:
+  enabled: false
+  backend: auto
+plymouth:
+  enabled: false
+  initramfs_backend: auto

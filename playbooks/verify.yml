@@ -1,0 +1,15 @@
+---
+- name: Inspect Qubix target compatibility without changing configuration
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  roles:
+    - qubix_profile
+    - qubix_discovery
+  tasks:
+    - name: Report resolved configuration and measured capabilities
+      ansible.builtin.debug:
+        msg:
+          configuration: '{{ qubix_profile_resolved }}'
+          discovery: '{{ qubix_discovery_report }}'
+          implementation: 'Inspection only; customization components are Planned.'

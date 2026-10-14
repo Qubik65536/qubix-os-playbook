@@ -1,0 +1,37 @@
+---
+# Tests supply evidence to this task file, never to the live collection entrypoint.
+- name: Validate initial CachyOS Niri compatibility
+  ansible.builtin.assert:
+    that:
+      - qubix_discovery_evidence.system == 'Linux'
+      - qubix_discovery_evidence.distribution_id == 'cachyos'
+      - qubix_discovery_evidence.service_manager == 'systemd'
+      - qubix_discovery_evidence.binaries.pacman | default(false)
+      - qubix_discovery_evidence.binaries.niri | default(false)
+    fail_msg: 'Unsupported evidence: require CachyOS, Linux/systemd, executable Pacman and Niri.'
+
+- name: Build non-destructive capability report
+  ansible.builtin.set_fact:
+    qubix_discovery_report:
+      profile_compatible: true
+      evidence: '{{ qubix_discovery_evidence }}'
+      bootloader:
+        installed_candidates: >-
+          {{ ['grub'] if qubix_discovery_evidence.binaries.get('grub-mkconfig', false) else [] }}
+        active_backend: unresolved
+        reason: 'Installed tools and configuration paths do not establish the active boot chain.'
+      initramfs:
+        installed_candidates: >-
+          {{ ['dracut', 'mkinitcpio'] | intersect(
+             qubix_discovery_evidence.binaries | dict2items | selectattr('value') | map(attribute='key') | list) }}
+        active_backend: unresolved
+        reason: 'Executable presence does not establish which generator maintains active images.'
+      graphical_session_verified: false
+      boot_verified: false
+
+- name: Include installed Limine evidence without selecting an active loader
+  ansible.builtin.set_fact:
+    qubix_discovery_report: >-
+      {{ qubix_discovery_report | combine({'bootloader': {'installed_candidates':
+         qubix_discovery_report.bootloader.installed_candidates + ['limine']}}, recursive=true) }}
+  when: qubix_discovery_evidence.binaries.get('limine', false)

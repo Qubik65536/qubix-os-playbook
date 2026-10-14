@@ -1,6 +1,6 @@
 # Component boundaries
 
-Status: **Planned**. Only completed roles listed in [status](../project/status.md) are executable.
+Status: **Discovery and profile validation are Implemented; customization components remain Planned**. See [status](../project/status.md) for evidence.
 
 | Component | Responsibility | Ownership | Required dependencies |
 |---|---|---|---|
