@@ -104,6 +104,17 @@
   changed_when: false
   check_mode: false
 
+- name: Inspect native manager units even without a display-manager alias
+  ansible.builtin.command:
+    argv: [/usr/bin/systemctl, show, '{{ item }}.service', '--property=Id,LoadState,ActiveState']
+  loop: [sddm, greetd, gdm, lightdm]
+  register: qubix_discovery_manager_units
+  failed_when: >-
+    qubix_discovery_manager_units.rc != 0 and
+    'LoadState=not-found' not in qubix_discovery_manager_units.stdout_lines
+  changed_when: false
+  check_mode: false
+
 - name: Read current kernel arguments without modifying them
   ansible.builtin.slurp:
     src: /proc/cmdline

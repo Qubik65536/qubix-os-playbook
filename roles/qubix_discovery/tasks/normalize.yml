@@ -20,3 +20,6 @@
       display_manager:
         configured_unit: '{{ qubix_discovery_display_link.stat.lnk_source | default("unknown") }}'
         activity: '{{ qubix_discovery_display_status.stdout_lines }}'
+        active_units: >-
+          {{ qubix_discovery_manager_units.results | default([])
+          | selectattr('stdout', 'search', '(?m)^ActiveState=active$') | map(attribute='item') | list }}

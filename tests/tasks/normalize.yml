@@ -27,6 +27,17 @@
     qubix_discovery_display_status:
       stdout_lines: ['Id=sddm.service', 'LoadState=loaded', 'ActiveState=active']
 
+    qubix_discovery_manager_units:
+      results:
+        - item: sddm
+          stdout: |
+            Id=sddm.service
+            ActiveState=active
+        - item: greetd
+          stdout: |
+            Id=greetd.service
+            ActiveState=inactive
+
 - name: Check measured facts are retained and unrelated packages omitted
   ansible.builtin.assert:
     that:
@@ -35,3 +46,4 @@
       - qubix_discovery_evidence.niri_version == 'niri fixture-version'
       - qubix_discovery_evidence.desktop_hint == 'unknown'
       - qubix_discovery_evidence.display_manager.configured_unit == '/usr/lib/systemd/system/sddm.service'
+      - qubix_discovery_evidence.display_manager.active_units == ['sddm']

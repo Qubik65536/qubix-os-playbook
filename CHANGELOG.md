@@ -20,3 +20,4 @@ Changes are grouped by release. Bootstrap has no release tag.
 - Added opt-in GRUB custom-hook and Limine 8–12 appearance adapters with active-path confirmation and backups.
 - Added a Qubix Plymouth script theme, dracut/mkinitcpio integration, conditional verified regeneration and kernel-aware image recovery.
 - Added auditable pending/failure state alongside last verified deployment revision.
+- Fixed standalone SDDM detection, conflicting-manager rejection and redirected factory theme preflight.

@@ -3,11 +3,29 @@
   ansible.builtin.assert:
     that:
       - qubix_profile_resolved.login.backend in ['auto', 'sddm']
-      - "'Id=sddm.service' in qubix_discovery_report.evidence.display_manager.activity"
-      - "'ActiveState=active' in qubix_discovery_report.evidence.display_manager.activity"
+      - >-
+        (qubix_discovery_report.evidence.display_manager.active_units | default([])) == ['sddm'] or
+        (qubix_discovery_report.evidence.display_manager.active_units | default([]) | length == 0 and
+        'Id=sddm.service' in qubix_discovery_report.evidence.display_manager.activity and
+        'ActiveState=active' in qubix_discovery_report.evidence.display_manager.activity)
+      - >-
+        'ActiveState=active' not in qubix_discovery_report.evidence.display_manager.activity or
+        'Id=sddm.service' in qubix_discovery_report.evidence.display_manager.activity or
+        (qubix_discovery_report.evidence.display_manager.configured_unit | default('')).endswith('/sddm.service')
       - qubix_profile_resolved.login.theme_source == 'breeze'
       - qubix_profile_resolved.branding.enabled
     fail_msg: 'Login branding requires already-active SDDM and an installed Breeze theme; managers are never replaced.'
+
+- name: Inspect factory theme namespace
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/usr/share/sddm/themes/breeze'
+    follow: false
+  register: qubix_login_source_root
+
+- name: Reject a missing or redirected source namespace
+  ansible.builtin.assert:
+    that: [qubix_login_source_root.stat.isdir | default(false)]
+    fail_msg: 'Factory Breeze theme must be a regular directory.'
 
 - name: Inspect installed source theme files without following links
   ansible.builtin.find:

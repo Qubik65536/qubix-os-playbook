@@ -7,7 +7,7 @@ export ANSIBLE_CONFIG="$repo_dir/ansible.cfg"
 
 usage() {
   printf '%s\n' 'Usage: ./bootstrap.sh verify|deploy|restore [ansible-playbook arguments]'
-  printf '%s\n' 'Default inventory is local. Override with -i inventory.ini; verify never escalates privileges.'
+  printf '%s\n' 'Default inventory is local. Override with -i inventory.ini; default verify is read-only; installed boot checks may require become.'
 }
 
 case "${1:---help}" in

@@ -1,5 +1,5 @@
 ---
-- name: Inspect Qubix compatibility and optionally verify installed branding
+- name: Inspect Qubix compatibility and optionally verify installed resources
   hosts: qubix_targets
   gather_facts: false
   become: false
@@ -14,7 +14,9 @@
         msg:
           configuration: '{{ qubix_profile_resolved }}'
           discovery: '{{ qubix_discovery_report }}'
-          implementation: 'Branding files supported; desktop and boot activation are Planned.'
+          implementation: >-
+            All candidate components are implemented;
+            native session and reboot acceptance remain unverified.
       tags: [always]
 
     - name: Verify explicitly selected installed branding without writes

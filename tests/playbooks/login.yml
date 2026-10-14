@@ -66,6 +66,41 @@
               - qubix_login_appearance[0].content.splitlines() | length == 3
               - qubix_login_appearance[1].content.splitlines() == ['[Theme]', 'Current=qubix']
 
+        - name: Seed standalone active SDDM without alias
+          ansible.builtin.set_fact:
+            qubix_discovery_report:
+              evidence:
+                display_manager:
+                  active_units: [sddm]
+                  activity: ['Id=display-manager.service', 'LoadState=not-found', 'ActiveState=inactive']
+
+        - name: Prepare standalone SDDM theme safely
+          ansible.builtin.include_role:
+            name: qubix_login
+
+        - name: Seed ambiguous simultaneous managers
+          ansible.builtin.set_fact:
+            qubix_discovery_report:
+              evidence:
+                display_manager:
+                  active_units: [sddm, greetd]
+                  activity: ['Id=sddm.service', 'ActiveState=active']
+            qubix_test_ambiguous: false
+
+        - name: Require ambiguous activity rejection
+          block:
+            - name: Attempt theme with conflicting native activity
+              ansible.builtin.include_role:
+                name: qubix_login
+          rescue:
+            - name: Record manager ambiguity rejection
+              ansible.builtin.set_fact:
+                qubix_test_ambiguous: true
+
+        - name: Require ambiguity to fail rather than selecting a manager
+          ansible.builtin.assert:
+            that: [qubix_test_ambiguous]
+
         - name: Seed unsupported active manager evidence
           ansible.builtin.set_fact:
             qubix_discovery_report:
