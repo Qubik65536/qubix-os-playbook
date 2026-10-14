@@ -22,7 +22,7 @@ Objective: first useful safe mutation. Scope: canonical Qubix assets, attributio
 
 ## F03 — CachyOS Niri default activation (Feature)
 
-Status: Implemented candidate; native parser/session/preservation/idempotency gate open.
+Status: Implemented candidate; Niri 26.04 production/invalid-control grammar Tested on physical target; companion/session/preservation/idempotency gate open.
 
 Objective: begin a usable Qubix desktop on an actual target. Scope: live report, supported KDL candidate, theme include, detected companion commands and preservation policy. Acceptance: `niri validate`, user/system originals preserved, actual wallpaper/launcher/bar/notifications/terminal work in VM, second run unchanged. Depends on F02, F06 backup preparation for default activation, and live VM evidence. Tests: parser + preservation + VM graphical session. Docs: Niri, compatibility, user deployment and recovery.
 

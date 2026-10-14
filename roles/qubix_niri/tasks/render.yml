@@ -1,0 +1,37 @@
+---
+- name: Load attributed wallpaper digest
+  ansible.builtin.include_vars:
+    file: '{{ role_path }}/../../assets/wallpaper/manifest.yml'
+    name: qubix_niri_wallpaper
+
+- name: Initialize desktop resource definitions
+  ansible.builtin.set_fact:
+    qubix_niri_resources:
+      - path: /usr/share/qubix/wallpaper.png
+        source: '{{ role_path }}/../../assets/wallpaper/qubix.png'
+        sha256: '{{ qubix_niri_wallpaper.sha256 }}'
+        component: niri
+
+- name: Render explicit desktop definitions
+  ansible.builtin.set_fact:
+    qubix_niri_resources: >-
+      {{ qubix_niri_resources + [{'path': item.path, 'component': 'niri',
+      'content': lookup('template', item.template)}
+      | combine({'validate': item.validate} if item.validate is defined else {})] }}
+  loop:
+    - {path: /etc/niri/qubix/theme.kdl, template: theme.kdl.j2}
+    - path: /etc/qubix/foot.ini
+      template: foot.ini.j2
+      validate: /usr/bin/foot --check-config --config %s
+    - {path: /etc/qubix/fuzzel.ini, template: fuzzel.ini.j2}
+    - {path: /etc/qubix/waybar.json, template: waybar.json.j2}
+    - {path: /etc/qubix/waybar.css, template: waybar.css.j2}
+    - {path: /etc/qubix/mako.conf, template: mako.conf.j2}
+
+- name: Place parser-validated configuration before session activation
+  ansible.builtin.set_fact:
+    qubix_niri_resources: >-
+      {{ qubix_niri_resources + [{'path': '/etc/niri/qubix/config.kdl', 'component': 'niri',
+      'content': lookup('template', 'config.kdl.j2'), 'validate': qubix_niri_validate_binary ~ ' validate --config %s'},
+      {'path': '/usr/share/wayland-sessions/qubix-niri.desktop', 'component': 'niri',
+      'content': lookup('template', 'session.desktop.j2')}] }}

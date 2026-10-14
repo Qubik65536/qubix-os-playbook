@@ -6,6 +6,7 @@ input {
     touchpad { tap; natural-scroll; }
 }
 {% include 'theme.kdl.j2' %}
+
 spawn-at-startup "/usr/bin/swaybg" "-i" "/usr/share/qubix/wallpaper.png" "-m" "fill"
 spawn-at-startup "/usr/bin/waybar" "-c" "/etc/qubix/waybar.json" "-s" "/etc/qubix/waybar.css"
 spawn-at-startup "/usr/bin/mako" "--config" "/etc/qubix/mako.conf"

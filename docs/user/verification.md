@@ -23,6 +23,8 @@ Record exact revision, resolved options, target/package/kernel/loader/generator 
 | mkinitcpio | All mapped preset outputs, preserved hooks/settings, real generation/splash/unlock/restoration succeed |
 | Recovery/state | Pending failure visible alongside last success; baseline/snapshot recovery works; revision/digest/dirty flag accurate |
 
-On the VM, run `niri --config /etc/niri/qubix/config.kdl validate` and `foot --check-config --config /etc/qubix/foot.ini` for direct native parser evidence. Greeter/session checks require an actual display.
+On the VM, run `niri validate --config /etc/niri/qubix/config.kdl` and `foot --check-config --config /etc/qubix/foot.ini` for direct native parser evidence. Greeter/session checks require an actual display.
 
 Reapply before restoring. Verify original behaviour after baseline recovery. Archive presence cannot prove rendering/authentication/boot. Fixtures do not satisfy these native gates. Record outcomes in [status](../project/status.md) and [compatibility](../architecture/compatibility.md).
+
+Before installing the desktop, you can test native KDL using `.venv/bin/ansible-playbook tests/integration/niri.yml -i inventory/target.local.ini`. For a private /boot, add `-e '{"qubix_discovery_privileged": true}' --ask-become-pass`. This creates/removes private temporary config files only; companion availability and graphical appearance are separate checks.

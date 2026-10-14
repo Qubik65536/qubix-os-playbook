@@ -1,0 +1,61 @@
+---
+- name: Validate production Niri grammar without installing a session
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  pre_tasks:
+    - name: Require a real temporary-file parser test
+      ansible.builtin.assert:
+        that: [not ansible_check_mode]
+        fail_msg: 'Native grammar tests create private temporary files; check mode is not a parser test.'
+  roles:
+    - role: qubix_profile
+    - role: qubix_discovery
+  tasks:
+    - name: Render candidate without asserting companion startup availability
+      ansible.builtin.include_role:
+        name: qubix_niri
+        tasks_from: render
+
+    - name: Create a private user-owned native-test directory
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: qubix-niri-validate-
+      register: qubix_native_directory
+
+    - name: Test actual config parsing with guaranteed cleanup
+      block:
+        - name: Write intentionally invalid control
+          ansible.builtin.copy:
+            dest: '{{ qubix_native_directory.path }}/invalid.kdl'
+            content: 'input {'
+            mode: '0600'
+
+        - name: Require parser rejection of the explicit invalid file
+          ansible.builtin.command:
+            argv: [/usr/bin/niri, validate, --config, '{{ qubix_native_directory.path }}/invalid.kdl']
+          changed_when: false
+          register: qubix_native_negative
+          failed_when: >-
+            qubix_native_negative.rc == 0 or
+            'invalid.kdl' not in qubix_native_negative.stderr
+
+        - name: Write the exact production candidate
+          ansible.builtin.copy:
+            dest: '{{ qubix_native_directory.path }}/config.kdl'
+            content: '{{ qubix_niri_resources[-2].content }}'
+            mode: '0600'
+
+        - name: Require installed parser to accept production KDL
+          ansible.builtin.command:
+            argv: [/usr/bin/niri, validate, --config, '{{ qubix_native_directory.path }}/config.kdl']
+          changed_when: false
+
+        - name: Report syntax scope accurately
+          ansible.builtin.debug:
+            msg: 'Native Niri syntax passed. Companions, session appearance and deployed files are not tested here.'
+      always:
+        - name: Remove only the test-created private directory
+          ansible.builtin.file:
+            path: '{{ qubix_native_directory.path }}'
+            state: absent

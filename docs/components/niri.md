@@ -1,11 +1,13 @@
 # Niri desktop and appearance
 
-Status: Implemented candidate. Native parser/session verification needs the CachyOS VM.
+Status: Implemented candidate. Production KDL and invalid-control checks pass on Niri 26.04; companion/graphical acceptance remains pending.
 
 The role measures Niri, Foot, Fuzzel, Waybar, Mako and Swaybg before defining resources. Missing tools fail before deployment writes. Noctalia/DMS/native desktop settings remain preserved; Qubix uses its own additional session rather than replacing the native session. Install missing prerequisites explicitly as described in the user guide.
 
-Qubix manages `/etc/niri/qubix/{config,theme}.kdl`, `/etc/qubix/` companion defaults, an attributed wallpaper and `/usr/share/wayland-sessions/qubix-niri.desktop`. The system's `/etc/niri/config.kdl`, personal configuration and output/hardware settings are not replaced. The candidate is validated using `niri --config %s validate` by Ansible before the session entry is installed. Parser failure leaves earlier inert resources recoverable from recorded baselines.
+Qubix manages `/etc/niri/qubix/{config,theme}.kdl`, `/etc/qubix/` companion defaults, an attributed wallpaper and `/usr/share/wayland-sessions/qubix-niri.desktop`. The system's `/etc/niri/config.kdl`, personal configuration and output/hardware settings are not replaced. The candidate is validated using `niri validate --config %s` by Ansible before the session entry is installed. Parser failure leaves earlier inert resources recoverable from recorded baselines.
 
 Select **Qubix Niri** at login; native Niri remains available. The session uses explicit configuration paths, so its supplied defaults do not automatically inherit personal Niri settings. Existing personal files are untouched; using the separate session is explicit operator consent. From a free TTY after logout, `niri --session --config /etc/niri/qubix/config.kdl` provides a test entrypoint.
 
 Mod+Return starts Foot, Mod+D Fuzzel, Mod+Q closes, Mod+O toggles overview, Mod+H/J/K/L navigates, and Mod+Shift+E exits. Waybar, Mako and Swaybg start explicitly. The CachyOS KDE Polkit authentication agent starts only when its executable is measured; Qubix never installs or replaces an agent. If absent, GUI privilege prompts need manual preparation and VM verification. Configuration file availability and parser success are separate from graphical acceptance. Verify observed wallpaper, notifications, launcher, bar, terminal, keyboard navigation and second-deploy idempotency before recording desktop acceptance. Restore returns the pre-deployment resource baseline using the file engine.
+
+A native grammar test is available at tests/integration/niri.yml. It renders the production candidate with measured optional-agent evidence and validates an invalid control plus the candidate in a private temporary directory, removed afterward. It does not install sessions/assets, launch companions or require those companions merely to parse KDL. Do not use check mode for this temporary-file test.

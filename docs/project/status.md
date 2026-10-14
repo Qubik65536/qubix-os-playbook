@@ -9,7 +9,7 @@ Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM t
 | Profile/identity/discovery | Tested in fixtures | 25 profile + 11 host + 7 identity cases; independent manager activity; normal/check zero changes |
 | Live CachyOS inspection | Tested on physical target | CachyOS/Linux/systemd; explicit privileged metadata for private /boot; 38 tasks, zero changes/failures |
 | Branding | Tested in fixtures | Provenance/hash checks, isolated preview/install/repair/idempotency/preservation |
-| Niri/wallpaper/companions | Implemented | Separate session definitions, missing-tool rejection, optional measured agent; native parsers/session pending |
+| Niri/wallpaper/companions | Native KDL syntax Tested; deployment pending | Niri 26.04 accepts exact production rendering and rejects invalid control; Foot/companions/session pending |
 | Shell | Tested in controller fixtures | Explicit/user/default Starship precedence; native interactive startup pending |
 | SDDM | Implemented | UI clone, actual INI lines, standalone/ambiguous/unsupported activity fixtures; authentication pending |
 | GRUB and Limine | Implemented | Independent preservation/reapplication/private-mode/file-restore fixtures; native checker, boot/restore pending |
@@ -20,12 +20,14 @@ Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM t
 
 - `./scripts/validate.sh`: passes YAML lint, production Ansible lint, all public/fixture syntax checks, ShellCheck, Markdown/local-link/configuration/asset checks and diff whitespace.
 - `./scripts/test.sh`: passed the complete framework normal/check (zero changes), branding normal/check, recovery, desktop, SDDM, loader and image-generator/check-mode fixtures. Subsequent focused boot file-lifecycle/private-mode, login, splash and compact-wrapper guard fixtures also pass.
-- `bash scripts/collect-target-info.sh --help`: exit 0. Actual macOS invocation: expected exit 2, no writes; Linux output pending.
+- `bash scripts/collect-target-info.sh --help`: exit 0. Actual macOS invocation: expected exit 2; Linux collector completed with permission failures labelled, followed by successful privileged metadata discovery.
 - `./bootstrap.sh verify`: actual macOS rejection, exit 2 and zero changes; expected guard, not supported-host acceptance.
 
-Fake generators/inspectors and archive listings prove dispatch/guards, not native initramfs generation. Desktop tests render definitions, not a compositor. Native validators are wired into deployment but not yet run on CachyOS. Fixtures write only disposable roots under `.cache/tests/`.
+Fake generators/inspectors and archive listings prove dispatch/guards, not native initramfs generation. Desktop tests render definitions, not a compositor. Native Niri validation now passes on CachyOS; Foot validation and actual deployment/session remain pending. Controller fixtures write only disposable roots under `.cache/tests/`. The native grammar test creates/removes its own user-owned temporary directory; its four changes are temporary setup/cleanup.
 
 SSH initially timed out because target sshd was inactive and UFW lacked an allow rule. The operator enabled access and confirmed the ED25519 fingerprint. Password authentication works; no credentials are saved in inventory or Git. The target reports no virtualization and runs Niri 26.04, Noctalia 5.2.1/Alacritty, SDDM 0.21.0, Limine 12.9.3 and mkinitcpio 42.2. Bootctl identifies the current Limine loader; no boot configuration was changed.
+
+Native `tests/integration/niri.yml` passes: 50 tasks, four temporary setup/cleanup changes, zero failures. Corrected validation uses `niri validate --config`; the installed CLI rejected the old option order. This establishes syntax only, not visual or companion behaviour.
 
 ## Limits and next gate
 

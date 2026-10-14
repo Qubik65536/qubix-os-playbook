@@ -7,8 +7,8 @@ export ANSIBLE_CONFIG="$repo_dir/ansible.cfg"
 export ANSIBLE_HOME="$repo_dir/.cache/ansible"
 
 yamllint .
-ansible-lint --offline playbooks roles tests/playbooks tests/tasks
-for playbook in playbooks/*.yml tests/playbooks/*.yml; do
+ansible-lint --offline playbooks roles tests/playbooks tests/integration tests/tasks
+for playbook in playbooks/*.yml tests/playbooks/*.yml tests/integration/*.yml; do
   ansible-playbook "$playbook" --syntax-check
 done
 shellcheck bootstrap.sh scripts/*.sh roles/qubix_shell/files/qubix.sh tests/shell/*.sh

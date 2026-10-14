@@ -23,7 +23,7 @@
         that:
           - qubix_niri_resources | length == 9
           - "'/etc/niri/config.kdl' not in (qubix_niri_resources | map(attribute='path') | list)"
-          - qubix_niri_resources[-2].validate == '/usr/bin/niri --config %s validate'
+          - qubix_niri_resources[-2].validate == '/usr/bin/niri validate --config %s'
           - "'--config /etc/niri/qubix/config.kdl' in qubix_niri_resources[-1].content"
           - "'/usr/bin/swaybg' in qubix_niri_resources[-2].content"
           - "'/usr/bin/waybar' in qubix_niri_resources[-2].content"
