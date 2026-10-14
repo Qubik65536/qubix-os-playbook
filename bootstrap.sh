@@ -19,7 +19,7 @@ esac
 if [[ "$action" == deploy || "$action" == restore ]]; then
   for argument in "$@"; do
     case "$argument" in
-      --tags|--tags=*|-t|--skip-tags|--skip-tags=*)
+      --tags|--tags=*|-t*|--skip-tags|--skip-tags=*)
         printf '%s\n' 'Select deployment components in qubix configuration; tags are reserved for verification.' >&2
         exit 2 ;;
     esac

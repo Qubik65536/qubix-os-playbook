@@ -25,3 +25,4 @@ Changes are grouped by release. Bootstrap has no release tag.
 - Fixed Starship default selection to preserve existing user configuration precedence.
 - Added a read-only VM information collector and target evidence guide.
 - Extended each bootloader fixture through real baseline installation, reapplication and exact restoration.
+- Fixed rejection of compact deployment tag arguments to keep component selection in YAML.
