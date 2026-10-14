@@ -23,7 +23,9 @@
     - path: /etc/qubix/foot.ini
       template: foot.ini.j2
       validate: /usr/bin/foot --check-config --config %s
-    - {path: /etc/qubix/fuzzel.ini, template: fuzzel.ini.j2}
+    - path: /etc/qubix/fuzzel.ini
+      template: fuzzel.ini.j2
+      validate: /usr/bin/fuzzel --check-config --config %s
     - {path: /etc/qubix/waybar.json, template: waybar.json.j2}
     - {path: /etc/qubix/waybar.css, template: waybar.css.j2}
     - {path: /etc/qubix/mako.conf, template: mako.conf.j2}

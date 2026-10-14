@@ -51,9 +51,20 @@
             argv: [/usr/bin/niri, validate, --config, '{{ qubix_native_directory.path }}/config.kdl']
           changed_when: false
 
+        - name: Validate available native companion grammars
+          ansible.builtin.include_tasks: ../tasks/native-companion.yml
+          loop:
+            - {name: foot, path: /etc/qubix/foot.ini}
+            - {name: fuzzel, path: /etc/qubix/fuzzel.ini}
+          loop_control:
+            loop_var: qubix_native_companion
+          when: qubix_discovery_report.evidence.binaries.get(qubix_native_companion.name, false)
+
         - name: Report syntax scope accurately
           ansible.builtin.debug:
-            msg: 'Native Niri syntax passed. Companions, session appearance and deployed files are not tested here.'
+            msg: >-
+              Native Niri syntax and available Foot/Fuzzel grammars passed.
+              Companion startup, session appearance and deployed files are not tested here.
       always:
         - name: Remove only the test-created private directory
           ansible.builtin.file:

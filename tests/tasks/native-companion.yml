@@ -1,0 +1,30 @@
+---
+- name: Select the exact production companion definition
+  ansible.builtin.set_fact:
+    qubix_native_companion_resource: >-
+      {{ qubix_niri_resources | selectattr('path', 'equalto', qubix_native_companion.path) | first }}
+    qubix_native_companion_path: '{{ qubix_native_directory.path }}/{{ qubix_native_companion.name }}.ini'
+
+- name: Write deliberately invalid companion control
+  ansible.builtin.copy:
+    dest: '{{ qubix_native_companion_path }}'
+    content: "[not-a-section]\nunknown-key=yes\n"
+    mode: '0600'
+
+- name: Require installed companion parser to reject the invalid control
+  ansible.builtin.command:
+    cmd: '{{ qubix_native_companion_resource.validate | replace("%s", qubix_native_companion_path) }}'
+  changed_when: false
+  register: qubix_native_companion_negative
+  failed_when: qubix_native_companion_negative.rc == 0
+
+- name: Write the exact production companion candidate
+  ansible.builtin.copy:
+    dest: '{{ qubix_native_companion_path }}'
+    content: '{{ qubix_native_companion_resource.content }}'
+    mode: '0600'
+
+- name: Require installed companion parser to accept the production candidate
+  ansible.builtin.command:
+    cmd: '{{ qubix_native_companion_resource.validate | replace("%s", qubix_native_companion_path) }}'
+  changed_when: false

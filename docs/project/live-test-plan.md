@@ -1,18 +1,18 @@
 # Physical-target desktop test proposal
 
-Status: Planned execution; native read-only inspection and Niri grammar test are complete. Privileged desktop installation requires explicit operator authorization. This plan excludes login, bootloader and Plymouth activation; boot acceptance uses disposable VMs.
+Status: In Progress; the operator explicitly authorized the package transaction, its native hook effects, desktop-only deployment and tests. Package preparation, native Niri/Foot/Fuzzel grammars and desktop preview pass. This plan excludes login, bootloader and Plymouth activation; boot acceptance uses disposable VMs.
 
 ## Observed prerequisites
 
-The target is a physical CachyOS ThinkPad running Niri 26.04 with Noctalia 5.2.1/Alacritty, active SDDM, Limine 12.9.3 and mkinitcpio 42.2. The classic Qubix companions are missing. Native Niri accepts the production KDL; the invalid-file control fails as intended. Existing dotfiles and system configuration have not been deployed over.
+The target is a physical CachyOS ThinkPad running Niri 26.04 with Noctalia 5.2.1/Alacritty, active SDDM, Limine 12.9.3 and mkinitcpio 42.2. The classic Qubix companions were initially missing and are now installed. Native Niri accepts the production KDL; the invalid-file control fails as intended. Existing dotfiles and system configuration have not been deployed over.
 
-## Proposed package preparation
+## Authorized package preparation
 
 Install foot, fuzzel, waybar, mako, swaybg and starship with native Pacman. The current read-only resolution includes 17 dependencies (23 packages total); no kernel, loader or initramfs package is selected. Recheck the transaction immediately before execution.
 
-The machine has native snap-pac pre/post hooks on every transaction and Limine snapshot integration. Normal package installation may create snapshots and refresh snapshot-related menu entries. Do not disable existing hooks to conceal these effects. This must be included in operator approval for physical-machine package preparation; use a disposable VM if those effects are not acceptable.
+The machine has native snap-pac pre/post hooks on every transaction and Limine snapshot integration. Normal package installation may create snapshots and refresh snapshot-related menu entries. Do not disable existing hooks to conceal these effects. The operator approval includes these native effects. The completed transaction changed limine.conf; the other 75 audited resources and default Fish shell remain unchanged. Kernel/initramfs files retain their original hashes. No explicit Qubix boot activation or image generation was run.
 
-## Proposed deployment
+## Authorized deployment
 
 Enable only branding, niri and shell. Install five attributed branding files, wallpaper, /etc/niri/qubix defaults, five /etc/qubix companion configurations, an additional Qubix Niri session, Bash/Zsh fragments and Starship defaults: 17 named resources plus protected backup/receipt/revision state. Native/personal Niri files, Noctalia/Alacritty and default shell remain preserved.
 

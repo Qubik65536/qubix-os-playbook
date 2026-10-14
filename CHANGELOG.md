@@ -33,3 +33,4 @@ Changes are grouped by release. Bootstrap has no release tag.
 - Added explicit privileged metadata discovery for private boot directories.
 - Corrected Niri validator option order and added a reusable native temporary-file grammar test, passing on Niri 26.04.
 - Prepared a physical desktop test proposal with explicit package-hook and deployment scope for operator review.
+- Added native Fuzzel pre-activation validation and repeatable Foot/Fuzzel production/invalid-control grammar tests.

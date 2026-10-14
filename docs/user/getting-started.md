@@ -83,7 +83,7 @@ Run from the controller:
 ./bootstrap.sh verify -i inventory/target.local.ini -e @config/local.yml --tags installed
 ```
 
-Missing prerequisites stop deployment before component writes. The native Niri and Foot parsers validate candidate files before activation. A parser failure may leave earlier inert files installed; backups support recovery. Check mode performs no backup/state writes and cannot validate files it has not installed.
+Missing prerequisites stop deployment before component writes. The native Niri, Foot and Fuzzel parsers validate candidate files before activation. A parser failure may leave earlier inert files installed; backups support recovery. Check mode performs no backup/state writes and cannot validate files it has not installed.
 
 Existing personal dotfiles and `/etc/niri/config.kdl` remain intact. The additional session uses `/etc/niri/qubix/config.kdl` explicitly, so it does not inherit your personal Niri configuration. Qubix installs named resources, not a replacement operating system.
 

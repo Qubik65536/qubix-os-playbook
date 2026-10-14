@@ -9,7 +9,7 @@ Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM t
 | Profile/identity/discovery | Tested in fixtures | 25 profile + 11 host + 7 identity cases; independent manager activity; normal/check zero changes |
 | Live CachyOS inspection | Tested on physical target | CachyOS/Linux/systemd; explicit privileged metadata for private /boot; 38 tasks, zero changes/failures |
 | Branding | Tested in fixtures | Provenance/hash checks, isolated preview/install/repair/idempotency/preservation |
-| Niri/wallpaper/companions | Native KDL syntax Tested; deployment pending | Niri 26.04 accepts exact production rendering and rejects invalid control; Foot/companions/session pending |
+| Niri/wallpaper/companions | Native KDL syntax Tested; deployment pending | Niri 26.04 accepts exact production rendering and rejects invalid control; Foot/Fuzzel candidate and invalid-control checks pass; deployment/session pending |
 | Shell | Tested in controller fixtures | Explicit/user/default Starship precedence; native interactive startup pending |
 | SDDM | Implemented | UI clone, actual INI lines, standalone/ambiguous/unsupported activity fixtures; authentication pending |
 | GRUB and Limine | Implemented | Independent preservation/reapplication/private-mode/file-restore fixtures; native checker, boot/restore pending |
@@ -23,11 +23,11 @@ Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM t
 - `bash scripts/collect-target-info.sh --help`: exit 0. Actual macOS invocation: expected exit 2; Linux collector completed with permission failures labelled, followed by successful privileged metadata discovery.
 - `./bootstrap.sh verify`: actual macOS rejection, exit 2 and zero changes; expected guard, not supported-host acceptance.
 
-Fake generators/inspectors and archive listings prove dispatch/guards, not native initramfs generation. Desktop tests render definitions, not a compositor. Native Niri validation now passes on CachyOS; Foot validation and actual deployment/session remain pending. Controller fixtures write only disposable roots under `.cache/tests/`. The native grammar test creates/removes its own user-owned temporary directory; its four changes are temporary setup/cleanup.
+Fake generators/inspectors and archive listings prove dispatch/guards, not native initramfs generation. Desktop tests render definitions, not a compositor. Native Niri validation now passes on CachyOS; Foot/Fuzzel validation passes; actual deployment/session remains pending. Controller fixtures write only disposable roots under `.cache/tests/`. The native grammar test creates/removes its own user-owned temporary directory; its eight changes are temporary setup/cleanup.
 
-SSH initially timed out because target sshd was inactive and UFW lacked an allow rule. The operator enabled access and confirmed the ED25519 fingerprint. Password authentication works; no credentials are saved in inventory or Git. The target reports no virtualization and runs Niri 26.04, Noctalia 5.2.1/Alacritty, SDDM 0.21.0, Limine 12.9.3 and mkinitcpio 42.2. Bootctl identifies the current Limine loader; no boot configuration was changed.
+SSH initially timed out because target sshd was inactive and UFW lacked an allow rule. The operator enabled access and confirmed the ED25519 fingerprint. Password authentication works; no credentials are saved in inventory or Git. The target reports no virtualization and runs Niri 26.04, Noctalia 5.2.1/Alacritty, SDDM 0.21.0, Limine 12.9.3 and mkinitcpio 42.2. Bootctl identifies the current Limine loader; read-only inspection itself changed no boot configuration. Later approved package hooks refreshed Limine snapshot entries.
 
-Native `tests/integration/niri.yml` passes: 50 tasks, four temporary setup/cleanup changes, zero failures. Corrected validation uses `niri validate --config`; the installed CLI rejected the old option order. This establishes syntax only, not visual or companion behaviour.
+Native `tests/integration/niri.yml` passes: 62 tasks, eight temporary setup/cleanup changes, zero failures. Corrected validation uses `niri validate --config`; the installed CLI rejected the old option order. Niri, Foot and Fuzzel accept their production candidates and reject invalid controls. This establishes syntax only, not visual or companion startup behaviour.
 
 ## Limits and next gate
 
@@ -35,4 +35,4 @@ No native graphical or reboot success is claimed. [Compatibility](../architectur
 
 Backups record bytes, UID/GID/mode and absence, not ACLs/xattrs or complete system state. Restore is per resource; changed kernels block stale images. Check mode cannot validate uninstalled files or regenerated archives. Concurrent deployment is unsupported.
 
-Next: review the [physical desktop proposal](live-test-plan.md) and obtain explicit permission for prerequisites/deployment, or use a disposable VM. Foot/Fuzzel/Waybar/Mako/Swaybg/Starship and Breeze are absent. Native package hooks include Snapper/Limine integration; inspect those effects before installing prerequisites. Then independently test login, both loaders and both generators. See [T01](backlog.md) and [operator guide](../user/getting-started.md).
+The operator authorized desktop-only preparation, including native Snapper/Limine package hooks. Pacman installed Foot 1.28.0, Fuzzel 1.15.0, Waybar 0.15.0, Mako 1.11.0, Swaybg 1.2.2 and Starship 1.26.0 plus 17 dependencies. The preview passed (280 tasks, 17 proposed changes, zero failures). Native package hooks changed limine.conf; the other 75 audited resources and default Fish shell were preserved. Next: deploy/verify/reapply/restore the [approved desktop scope](live-test-plan.md). Breeze is absent. Then independently test login, both loaders and both generators. See [T01](backlog.md) and [operator guide](../user/getting-started.md).

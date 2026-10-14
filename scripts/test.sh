@@ -43,7 +43,7 @@ if ! ansible-playbook tests/playbooks/desktop.yml >.cache/tests/desktop.log 2>&1
   cat .cache/tests/desktop.log
   exit 1
 fi
-printf '%s\n' 'Desktop definition and prerequisite fixtures passed (native Niri parser pending VM).'
+printf '%s\n' 'Desktop definition and prerequisite fixtures passed; run native grammar tests separately.'
 
 if ! ansible-playbook tests/playbooks/login.yml >.cache/tests/login.log 2>&1; then
   cat .cache/tests/login.log
