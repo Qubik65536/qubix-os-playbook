@@ -26,3 +26,4 @@ Changes are grouped by release. Bootstrap has no release tag.
 - Added a read-only VM information collector and target evidence guide.
 - Extended each bootloader fixture through real baseline installation, reapplication and exact restoration.
 - Fixed rejection of compact deployment tag arguments to keep component selection in YAML.
+- Preserved existing activation-file modes and allowed privileged read-only checks for private login/boot/splash configuration.

@@ -6,6 +6,10 @@
   ansible.builtin.include_role:
     name: qubix_files
     tasks_from: verify
+    apply:
+      become: >-
+        {{ qubix_profile_resolved.login.enabled or qubix_profile_resolved.bootloader.enabled or
+        qubix_profile_resolved.plymouth.enabled }}
   vars:
     qubix_files_resources: '{{ qubix_deployment_resources }}'
 

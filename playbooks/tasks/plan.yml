@@ -28,6 +28,8 @@
 - name: Validate and prepare supported login appearance
   ansible.builtin.include_role:
     name: qubix_login
+    apply:
+      become: true
   when: qubix_profile_resolved.login.enabled
 
 - name: Validate and prepare the explicitly confirmed bootloader

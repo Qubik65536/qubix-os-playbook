@@ -155,6 +155,7 @@
       - path: /etc/plymouth/plymouthd.conf
         component: plymouth
         content: '{{ qubix_plymouth_selection }}'
+        mode: '{{ qubix_plymouth_conf_stat.stat.mode | default("0644") }}'
 
 - name: Prepare only the confirmed generator adapter
   ansible.builtin.include_tasks: '{{ qubix_profile_resolved.plymouth.initramfs_backend }}.yml'

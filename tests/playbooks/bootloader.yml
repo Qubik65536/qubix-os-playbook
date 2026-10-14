@@ -59,6 +59,12 @@
                     cmdline: root=UUID=keep cryptdevice=UUID=keep:root quiet splash
                     module_path: boot():/initramfs-linux-cachyos.img
 
+        - name: Protect pre-existing activation files with private modes
+          ansible.builtin.file:
+            path: '{{ qubix_root }}{{ item }}'
+            mode: '0600'
+          loop: [/boot/grub/custom.cfg, /boot/limine.conf]
+
         - name: Record original boot fixture hashes before activation
           ansible.builtin.stat:
             path: '{{ qubix_root }}{{ item }}'
@@ -89,6 +95,7 @@
               - "'set operator_setting=preserve' in qubix_test_grub_hook"
               - qubix_bootloader_resources | length == 2
               - qubix_bootloader_resources[-1].path == '/boot/grub/custom.cfg'
+              - qubix_bootloader_resources[-1].mode == '0600'
               - "'cryptdevice=UUID=keep:root' in qubix_bootloader_text"
 
         - name: Install GRUB resources through the real baseline engine in the fixture
@@ -138,6 +145,7 @@
             that:
               - qubix_test_limine.split('/CachyOS')[1] == qubix_bootloader_text.split('/CachyOS')[1]
               - "'timeout: 5' in qubix_test_limine"
+              - qubix_bootloader_resources[0].mode == '0600'
               - qubix_test_limine | regex_findall('(?m)^interface_branding:') | length == 1
 
         - name: Install Limine through its independent recorded baseline

@@ -30,6 +30,7 @@
     qubix_bootloader_resources:
       - path: '{{ qubix_profile_resolved.bootloader.config_path }}'
         component: bootloader
+        mode: '{{ qubix_bootloader_active_stat.stat.mode }}'
         content: >-
           {{ lookup('file', role_path ~ '/files/limine.conf', rstrip=false) ~
           (qubix_bootloader_preserved | regex_replace(

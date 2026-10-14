@@ -6,6 +6,12 @@
       - qubix_profile_resolved.plymouth.presets | length > 0
     fail_msg: 'mkinitcpio requires lsinitcpio and explicitly named existing presets.'
 
+- name: Inspect existing main hook permissions
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/etc/mkinitcpio.conf'
+    follow: false
+  register: qubix_plymouth_mk_stat
+
 - name: Read main hook configuration without executing shell
   ansible.builtin.slurp:
     src: '{{ qubix_root | default("") }}/etc/mkinitcpio.conf'
@@ -152,5 +158,6 @@
   ansible.builtin.set_fact:
     qubix_plymouth_resources: >-
       {{ qubix_plymouth_resources + [{'path': '/etc/mkinitcpio.conf', 'component': 'plymouth',
+      'mode': qubix_plymouth_mk_stat.stat.mode,
       'content': qubix_plymouth_mk_text | regex_replace('(?m)^HOOKS=\([^\n()]*\)',
       'HOOKS=(' ~ qubix_plymouth_desired_hooks | join(' ') ~ ')')}] }}

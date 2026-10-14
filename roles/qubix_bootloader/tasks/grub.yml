@@ -39,6 +39,7 @@
         content: '{{ lookup("file", role_path ~ "/files/grub-theme.txt", rstrip=false) }}'
       - path: '{{ qubix_bootloader_directory }}/custom.cfg'
         component: bootloader
+        mode: '{{ qubix_bootloader_hook_stat.stat.mode | default("0644") }}'
         content: >-
           {{ qubix_bootloader_preserved ~
           ('' if not qubix_bootloader_preserved or qubix_bootloader_preserved.endswith(qubix_bootloader_newline)

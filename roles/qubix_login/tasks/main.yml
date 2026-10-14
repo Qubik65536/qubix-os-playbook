@@ -148,7 +148,9 @@
   ansible.builtin.set_fact:
     qubix_login_resources: >-
       {{ qubix_login_resources + [{'path': '/etc/sddm.conf', 'component': 'login',
-      'content': qubix_login_main_bytes.content | b64decode | regex_replace('(?m)^Current\s*=.*$', 'Current=qubix')}] }}
+      'mode': qubix_login_main_stat.stat.mode,
+      'content': qubix_login_main_bytes.content | b64decode
+      | regex_replace('(?m)^Current\s*=.*$', 'Current=qubix')}] }}
   when:
     - qubix_login_main_stat.stat.exists
     - qubix_login_main_bytes.content | b64decode is regex('(?m)^Current\s*=')
