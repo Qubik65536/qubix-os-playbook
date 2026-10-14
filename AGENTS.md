@@ -1,0 +1,13 @@
+# Agent instructions
+
+Build Qubix OS Playbook: Ansible customization of existing Linux systems, initially **CachyOS Niri**. Read this file, relevant architecture/component documents, and `docs/project/status.md` before work. Define a focused task and its acceptance criteria. Fedora/KDE are post-MVP; both GRUB and Limine plus Plymouth/dracut/mkinitcpio are mandatory MVP work.
+
+- Document substantial feature responsibilities, interfaces, constraints, and acceptance criteria before implementation. Keep behaviour and documentation in the same logical change afterward.
+- Use ordinary Ansible roles, task files, variables, and Jinja2. Use FQCN modules, named tasks, explicit file modes, idempotent operations, and narrowly justified command probes. Read-only probes use `changed_when: false` and run safely in check mode. Prefer built-ins; no separate Python runtime application or adapter framework.
+- Validate configuration strictly and fail unsupported enabled components before writes. Do not guess ambiguous boot or initramfs selections. Check mode is an approximation, not a transaction planner.
+- Preserve personal dotfiles, boot entries, kernel arguments, encryption/hardware settings, PAM, and native distribution identity. Never replace a bootloader/display manager for branding. Bootstrap does not run privileged host mutations, boot activation, or initramfs rebuilds. Boot work uses explicitly authorized disposable VMs.
+- Follow Managed/Default/Preserved ownership in `docs/architecture/configuration.md`. Prefer additive resources; back up existing defaults before activation. Do not silently claim success for skipped or unimplemented components.
+- Run relevant local checks and focused tests; use disposable fixtures for non-destructive tests and VMs for graphical/boot acceptance. Report file installation, parser validation, session checks, and boot checks separately.
+- Review `git diff`, stage only related files, validate, inspect staged changes, then create atomic Conventional Commits for completed logical units. Verify every commit. Do not commit broken stages, amend unnecessarily, rewrite history, push, or tag without authorization. Never invent an author identity.
+- Update affected user/design documents, CHANGELOG, status, and actionable backlog with substantial capabilities. Use Planned, In Progress, Implemented, Tested, Deprecated precisely. Keep authoritative contracts in one place and link to them.
+- Report results, commits, actual test evidence, limitations, and the next task. A task is done when its documented acceptance criteria and available required checks pass.
