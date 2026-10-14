@@ -63,9 +63,8 @@ qubix_test_profiles:
     input: {niri: {enabled: true}}
   - name: supported shell component
     input: {shell: {enabled: true}}
-  - name: planned login component
+  - name: supported login component
     input: {login: {enabled: true}}
-    error: are Planned
   - name: planned bootloader component
     input: {bootloader: {enabled: true}}
     error: are Planned

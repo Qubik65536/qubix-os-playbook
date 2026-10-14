@@ -16,6 +16,7 @@ qubix:
   login:
     enabled: false
     backend: auto
+    theme_source: breeze
   bootloader:
     enabled: false
     backend: auto
@@ -37,3 +38,5 @@ Booleans must be YAML booleans, not strings. Each nested mapping allows only doc
 | Preserved | Detect and report without modifying | Dotfiles, boot entries, kernel arguments, encryption, `/usr/lib/os-release` |
 
 Existing non-Qubix system defaults require backup and an explicit activation policy before replacement. Additive fragments are preferred. A file's presence does not prove the application loaded it.
+
+Login currently supports already-active SDDM with `theme_source: breeze` and validated background/type options. Other managers and incompatible source themes are rejected before configuration writes. Native authentication QML is copied unchanged; no PAM or service replacement/restart occurs.

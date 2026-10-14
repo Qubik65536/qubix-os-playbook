@@ -42,3 +42,9 @@ if ! ansible-playbook tests/playbooks/desktop.yml >.cache/tests/desktop.log 2>&1
   exit 1
 fi
 printf '%s\n' 'Desktop definition and prerequisite fixtures passed (native Niri parser pending VM).'
+
+if ! ansible-playbook tests/playbooks/login.yml >.cache/tests/login.log 2>&1; then
+  cat .cache/tests/login.log
+  exit 1
+fi
+printf '%s\n' 'SDDM clone and unsupported-manager fixtures passed.'

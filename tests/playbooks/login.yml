@@ -1,0 +1,94 @@
+---
+- name: Test native SDDM theme cloning and precedence without starting a greeter
+  hosts: localhost
+  gather_facts: false
+  vars:
+    qubix_profile_resolved:
+      branding: {enabled: true}
+      login: {enabled: true, backend: auto, theme_source: breeze}
+    qubix_discovery_report:
+      evidence:
+        display_manager:
+          activity: ['Id=sddm.service', 'ActiveState=active']
+  tasks:
+    - name: Create isolated source theme fixture
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-login-
+      register: qubix_test_tmp
+
+    - name: Use isolated paths
+      ansible.builtin.set_fact:
+        qubix_root: '{{ qubix_test_tmp.path }}'
+
+    - name: Exercise source theme preservation
+      block:
+        - name: Create fixture directories
+          ansible.builtin.file:
+            path: '{{ qubix_root }}{{ item }}'
+            state: directory
+            mode: '0755'
+          loop: [/usr/share/sddm/themes/breeze, /etc]
+
+        - name: Seed native UI and main configuration
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}{{ item.path }}'
+            content: '{{ item.content }}'
+            mode: '0644'
+          loop:
+            - {path: /usr/share/sddm/themes/breeze/Main.qml, content: '// original authentication UI'}
+            - path: /usr/share/sddm/themes/breeze/theme.conf
+              content: |
+                [General]
+                background=original.png
+                type=image
+            - path: /etc/sddm.conf
+              content: |
+                [Theme]
+                Current=breeze
+                [General]
+                HaltCommand=/usr/bin/systemctl poweroff
+
+        - name: Prepare login definitions using original UI
+          ansible.builtin.include_role:
+            name: qubix_login
+
+        - name: Require preserved authentication implementation and minimal Current edit
+          ansible.builtin.assert:
+            that:
+              - >-
+                (qubix_login_resources | selectattr('path', 'equalto', '/usr/share/sddm/themes/qubix/Main.qml')
+                | first).remote_source
+              - "'HaltCommand=/usr/bin/systemctl poweroff' in qubix_login_resources[-1].content"
+              - "'Current=qubix' in qubix_login_resources[-1].content"
+              - qubix_login_resources | length == 5
+
+        - name: Seed unsupported active manager evidence
+          ansible.builtin.set_fact:
+            qubix_discovery_report:
+              evidence:
+                display_manager: {activity: ['Id=greetd.service', 'ActiveState=active']}
+            qubix_test_rejected: false
+
+        - name: Require unsupported manager rejection
+          block:
+            - name: Attempt branding of unsupported manager
+              ansible.builtin.include_role:
+                name: qubix_login
+          rescue:
+            - name: Require compatibility-specific failure
+              ansible.builtin.assert:
+                that: ["'already-active SDDM' in ansible_failed_result.msg"]
+            - name: Record expected rejection
+              ansible.builtin.set_fact:
+                qubix_test_rejected: true
+
+        - name: Require negative case rejection
+          ansible.builtin.assert:
+            that: [qubix_test_rejected]
+      always:
+        - name: Remove only source fixture root
+          ansible.builtin.file:
+            path: '{{ qubix_test_tmp.path }}'
+            state: absent

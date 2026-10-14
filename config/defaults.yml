@@ -11,6 +11,7 @@ shell:
 login:
   enabled: false
   backend: auto
+  theme_source: breeze
 bootloader:
   enabled: false
   backend: auto

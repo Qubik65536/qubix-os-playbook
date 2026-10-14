@@ -16,3 +16,4 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 - Added first-baseline file backups, applied checksums, drift-safe restoration and revision-state tasks.
 - Added an isolated Qubix Niri session, detected companion prerequisites, wallpaper and Bash/terminal defaults.
+- Added SDDM native-UI cloning, supported background overrides and checked theme-selection precedence.
