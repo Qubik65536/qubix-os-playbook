@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-10-13. Stage: **Bootstrap complete; initial Phase 2 artwork capability**.
+Updated: 2026-10-13. Stage: **MVP candidate implementation In Progress**.
 
 | Capability | Status | Evidence |
 |---|---|---|
@@ -28,3 +28,5 @@ Updated: 2026-10-13. Stage: **Bootstrap complete; initial Phase 2 artwork capabi
 No live CachyOS VM was supplied. Supported-host collection, system artwork deployment, Niri parsing/session behaviour, login, boot and recovery remain **unverified on a real target**. Artwork installation alone cannot activate Qubix appearance. Check mode defers file copies if the namespace does not exist; it cannot verify unwritten content. Restricted sandbox requires approved execution for Ansible local IPC.
 
 Next: collect a live disposable CachyOS Niri report, design minimal validated Niri/companion defaults, and add backup-aware activation. See [F03/F06](backlog.md). First desktop milestone requires observed wallpaper, launcher, bar/notifications, terminal, preservation and idempotency; boot work remains independent.
+
+The next implementation follows [candidate contracts](../architecture/mvp-candidate.md). A VM is installing; complete other implementation/fixture work first, then collect live target evidence.
