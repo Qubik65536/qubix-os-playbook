@@ -5,6 +5,7 @@ Status: **Implemented local checks and GitHub Actions workflow**. Run `./scripts
 Equivalent individual commands, with the virtual environment active:
 
 ```bash
+mkdir -p .cache/tests
 yamllint .
 ANSIBLE_HOME="$PWD/.cache/ansible" ansible-lint --offline playbooks roles tests/playbooks tests/tasks
 ansible-playbook playbooks/verify.yml --syntax-check
