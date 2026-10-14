@@ -12,17 +12,46 @@
     - name: Validate all component prerequisites before configuration writes
       ansible.builtin.import_tasks: tasks/plan.yml
 
-    - name: Reconcile named resources with protected baselines
-      ansible.builtin.include_role:
-        name: qubix_files
-        apply:
-          become: true
-      vars:
-        qubix_files_resources: '{{ qubix_deployment_resources }}'
-
-    - name: Record verified source revision and effective configuration
+    - name: Prepare auditable deployment attempt
       ansible.builtin.include_role:
         name: qubix_state
+        tasks_from: begin
         apply:
           become: true
       when: qubix_deployment_resources | length > 0
+
+    - name: Apply and verify components before recording success
+      block:
+        - name: Reconcile named resources with protected baselines
+          ansible.builtin.include_role:
+            name: qubix_files
+            apply:
+              become: true
+          vars:
+            qubix_files_resources: '{{ qubix_deployment_resources }}'
+
+        - name: Regenerate and inspect only confirmed Plymouth images
+          ansible.builtin.include_role:
+            name: qubix_plymouth
+            tasks_from: rebuild
+            apply:
+              become: true
+          when: qubix_profile_resolved.plymouth.enabled
+
+        - name: Record verified source revision and effective configuration
+          ansible.builtin.include_role:
+            name: qubix_state
+            apply:
+              become: true
+          when: qubix_deployment_resources | length > 0
+      rescue:
+        - name: Keep failed attempt visible for recovery
+          ansible.builtin.include_role:
+            name: qubix_state
+            tasks_from: failed
+            apply:
+              become: true
+
+        - name: Stop with the original component failure
+          ansible.builtin.fail:
+            msg: '{{ ansible_failed_result.msg | default("Component failed; inspect protected pending state.") }}'

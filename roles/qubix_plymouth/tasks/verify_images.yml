@@ -1,0 +1,45 @@
+---
+- name: Inspect declared image archives with the selected native tool
+  ansible.builtin.command:
+    argv: >-
+      {{ [qubix_plymouth_lsinitrd_binary, qubix_root | default('') ~ item.path]
+      if qubix_profile_resolved.plymouth.initramfs_backend == 'dracut'
+      else [qubix_plymouth_lsinitcpio_binary, '-l', qubix_root | default('') ~ item.path] }}
+  loop: '{{ qubix_profile_resolved.plymouth.images }}'
+  changed_when: false
+  check_mode: false
+  register: qubix_plymouth_archives
+  loop_control:
+    label: '{{ item.path }}'
+
+- name: Require theme resources, script plugin and daemon in each image
+  ansible.builtin.assert:
+    that:
+      - "'usr/share/plymouth/themes/qubix/qubix.plymouth' in item.stdout"
+      - "'usr/share/plymouth/themes/qubix/qubix.script' in item.stdout"
+      - "'usr/share/plymouth/themes/qubix/logo.png' in item.stdout"
+      - "'script.so' in item.stdout"
+      - "'plymouthd' in item.stdout"
+    fail_msg: 'Generated image lacks required Plymouth resources; rebuild remains incomplete.'
+  loop: '{{ qubix_plymouth_archives.results }}'
+  loop_control:
+    label: '{{ item.item.path }}'
+
+- name: Require the associated kernel files to remain unchanged
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}{{ item.item.kernel_image }}'
+    checksum_algorithm: sha256
+    follow: false
+  loop: '{{ qubix_plymouth_kernels.results }}'
+  register: qubix_plymouth_kernel_after
+  loop_control:
+    label: '{{ item.item.kernel_image }}'
+
+- name: Refuse a successful result if a kernel image changed
+  ansible.builtin.assert:
+    that:
+      - item.stat.checksum == item.item.stat.checksum
+    fail_msg: 'Kernel image changed unexpectedly; stop and recover the VM snapshot.'
+  loop: '{{ qubix_plymouth_kernel_after.results }}'
+  loop_control:
+    label: '{{ item.item.item.kernel_image }}'

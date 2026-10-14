@@ -7,6 +7,7 @@
     qubix_shell_resources: []
     qubix_login_resources: []
     qubix_bootloader_resources: []
+    qubix_plymouth_resources: []
 
 - name: Prepare enabled branding
   ansible.builtin.include_role:
@@ -36,8 +37,15 @@
       become: true
   when: qubix_profile_resolved.bootloader.enabled
 
+- name: Validate and prepare confirmed Plymouth integration
+  ansible.builtin.include_role:
+    name: qubix_plymouth
+    apply:
+      become: true
+  when: qubix_profile_resolved.plymouth.enabled
+
 - name: Resolve ordered deployment resources after all capability checks
   ansible.builtin.set_fact:
     qubix_deployment_resources: >-
       {{ qubix_branding_resources + qubix_niri_resources + qubix_shell_resources +
-      qubix_login_resources + qubix_bootloader_resources }}
+      qubix_login_resources + qubix_bootloader_resources + qubix_plymouth_resources }}

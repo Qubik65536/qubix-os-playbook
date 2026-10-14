@@ -1,0 +1,237 @@
+---
+- name: Test two initramfs adapter plans and simulated generation in an isolated root
+  hosts: localhost
+  gather_facts: true
+  gather_subset: ['!all', min]
+  become: false
+  vars:
+    qubix_discovery_report:
+      evidence:
+        kernel_command_line: root=UUID=preserved quiet splash
+        binaries: {plymouth: true, dracut: true, mkinitcpio: true, lsinitrd: true, lsinitcpio: true}
+  tasks:
+    - name: Create disposable initramfs fixture root
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-plymouth-
+      register: qubix_test_tmp
+
+    - name: Resolve fixture ownership and paths
+      ansible.builtin.set_fact:
+        qubix_root: '{{ qubix_test_tmp.path }}'
+        qubix_files_owner: '{{ ansible_facts.user_id }}'
+        qubix_files_group: '{{ ansible_facts.user_gid | string }}'
+        qubix_plymouth_dracut_binary: '{{ qubix_test_tmp.path }}/dracut-fake'
+        qubix_plymouth_mkinitcpio_binary: '{{ qubix_test_tmp.path }}/mkinitcpio-fake'
+        qubix_plymouth_lsinitrd_binary: '{{ qubix_test_tmp.path }}/inspect-fake'
+        qubix_plymouth_lsinitcpio_binary: '{{ qubix_test_tmp.path }}/inspect-fake'
+        qubix_profile_resolved:
+          branding: {enabled: true}
+          plymouth:
+            initramfs_backend: dracut
+            confirm_active: true
+            force_rebuild: false
+            presets: []
+            images:
+              - {path: /boot/initramfs-test.img, kernel: 6.0-fixture, kernel_image: /boot/vmlinuz-test}
+              - {path: /boot/initramfs-test-fallback.img, kernel: 6.0-fixture, kernel_image: /boot/vmlinuz-test}
+
+    - name: Exercise generator boundaries and preserve cleanup
+      block:
+        - name: Create fake native resource directories
+          ansible.builtin.file:
+            path: '{{ qubix_root }}{{ item }}'
+            state: directory
+            mode: '0755'
+          loop: [/usr/lib/modules/6.0-fixture, /usr/lib/plymouth, /boot, /etc/plymouth, /etc/mkinitcpio.d]
+
+        - name: Seed original configuration and plain images
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}{{ item.path }}'
+            content: '{{ item.content }}'
+            mode: '0644'
+          loop:
+            - {path: /usr/lib/plymouth/script.so, content: fixture-plugin}
+            - {path: /boot/vmlinuz-test, content: preserved-kernel}
+            - {path: /boot/initramfs-test.img, content: original-primary}
+            - {path: /boot/initramfs-test-fallback.img, content: original-fallback}
+            - path: /etc/plymouth/plymouthd.conf
+              content: |
+                [Daemon]
+                Theme=spinner
+                ShowDelay=3
+            - path: /etc/mkinitcpio.conf
+              content: |
+                MODULES=(preserve_me)
+                HOOKS=(base systemd autodetect keyboard sd-vconsole block sd-encrypt filesystems fsck)
+                COMPRESSION="zstd"
+            - path: /etc/mkinitcpio.d/test.preset
+              content: |
+                ALL_config="/etc/mkinitcpio.conf"
+                ALL_kver="/boot/vmlinuz-test"
+                PRESETS=('default' 'fallback')
+                default_image="/boot/initramfs-test.img"
+                fallback_image="/boot/initramfs-test-fallback.img"
+                fallback_options="-S autodetect"
+
+        - name: Install fake generators that only write fixture paths
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/{{ item.name }}'
+            content: '{{ item.script }}'
+            mode: '0755'
+            validate: /bin/bash -n %s
+          loop:
+            - name: dracut-fake
+              script: |
+                #!/usr/bin/env bash
+                set -e
+                image=""
+                for argument in "$@"; do
+                    case "$argument" in *.img) image=$argument ;; esac
+                done
+                case "$image" in {{ (qubix_root ~ '/boot/') | quote }}*) ;; *) exit 2 ;; esac
+                printf 'generated fixture image' >"$image"
+                printf '%s\n' "$*" >>{{ (qubix_root ~ '/calls') | quote }}
+            - name: mkinitcpio-fake
+              script: |
+                #!/usr/bin/env bash
+                set -e
+                printf 'generated fixture image' >{{ (qubix_root ~ '/boot/initramfs-test.img') | quote }}
+                printf 'generated fallback' >{{ (qubix_root ~ '/boot/initramfs-test-fallback.img') | quote }}
+                printf '%s\n' "$*" >>{{ (qubix_root ~ '/calls') | quote }}
+            - name: inspect-fake
+              script: |
+                #!/usr/bin/env bash
+                printf '%s\n' usr/share/plymouth/themes/qubix/qubix.plymouth \
+                  usr/share/plymouth/themes/qubix/qubix.script \
+                  usr/share/plymouth/themes/qubix/logo.png usr/lib/plymouth/script.so usr/bin/plymouthd
+
+        - name: Plan dracut adapter
+          ansible.builtin.include_role:
+            name: qubix_plymouth
+
+        - name: Require only additive dracut integration and preserved daemon settings
+          ansible.builtin.assert:
+            that:
+              - qubix_plymouth_resources[-1].path == '/etc/dracut.conf.d/90-qubix-plymouth.conf'
+              - "'ShowDelay=3' in qubix_plymouth_selection"
+              - qubix_plymouth_selection.splitlines()[1] == 'Theme=qubix'
+
+        - name: Simulate declared dracut generation with real backups and receipts
+          ansible.builtin.include_role:
+            name: qubix_plymouth
+            tasks_from: rebuild
+
+        - name: Repeat identical inputs without regeneration
+          ansible.builtin.include_role:
+            name: qubix_plymouth
+            tasks_from: rebuild
+
+        - name: Require second application to skip generator commands
+          ansible.builtin.assert:
+            that: [not qubix_plymouth_needs_rebuild]
+
+        - name: Select mkinitcpio while retaining the same image map
+          ansible.builtin.set_fact:
+            qubix_profile_resolved: >-
+              {{ qubix_profile_resolved | combine({'plymouth':
+              {'initramfs_backend': 'mkinitcpio', 'presets': ['test']}}, recursive=true) }}
+
+        - name: Plan independent mkinitcpio adapter
+          ansible.builtin.include_role:
+            name: qubix_plymouth
+
+        - name: Require original hook sequence and unrelated generator settings
+          ansible.builtin.assert:
+            that:
+              - qubix_plymouth_desired_hooks | reject('equalto', 'plymouth') | list == qubix_plymouth_hooks
+              - qubix_plymouth_desired_hooks.index('plymouth') < qubix_plymouth_desired_hooks.index('sd-encrypt')
+              - "'MODULES=(preserve_me)' in qubix_plymouth_resources[-1].content"
+              - "'COMPRESSION=\"zstd\"' in qubix_plymouth_resources[-1].content"
+
+        - name: Simulate only the named native preset generation
+          ansible.builtin.include_role:
+            name: qubix_plymouth
+            tasks_from: rebuild
+
+        - name: Require suppressed boot-entry post hooks in the dispatched preset command
+          ansible.builtin.slurp:
+            src: '{{ qubix_root }}/calls'
+          register: qubix_test_calls
+
+        - name: Require exact preset dispatch
+          ansible.builtin.assert:
+            that: ["'--nopost -p test' in qubix_test_calls.content | b64decode"]
+
+        - name: Simulate missing generated archive resources
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/inspect-fake'
+            content: |
+              #!/usr/bin/env bash
+              printf '%s\\n' 'archive without Qubix assets'
+            mode: '0755'
+
+        - name: Request deliberate repair and reset failure outcome
+          ansible.builtin.set_fact:
+            qubix_profile_resolved: >-
+              {{ qubix_profile_resolved | combine({'plymouth': {'force_rebuild': true}}, recursive=true) }}
+            qubix_test_rejected: false
+
+        - name: Require incomplete resources to stop rebuild completion
+          block:
+            - name: Run simulated generator with incomplete archive results
+              ansible.builtin.include_role:
+                name: qubix_plymouth
+                tasks_from: rebuild
+          rescue:
+            - name: Require archive-specific failure
+              ansible.builtin.assert:
+                that: ["'lacks required Plymouth resources' in (ansible_failed_result | to_json)"]
+            - name: Record expected archive failure
+              ansible.builtin.set_fact:
+                qubix_test_rejected: true
+
+        - name: Inspect persisted incomplete rebuild marker
+          ansible.builtin.stat:
+            path: '{{ qubix_root }}/var/lib/qubix/plymouth-pending'
+          register: qubix_test_pending
+
+        - name: Require an incomplete attempt to remain visible
+          ansible.builtin.assert:
+            that:
+              - qubix_test_rejected
+              - qubix_test_pending.stat.exists
+
+        - name: Change the kernel to test stale-image restoration protection
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/boot/vmlinuz-test'
+            content: new-kernel-must-remain
+            mode: '0644'
+
+        - name: Reset stale restoration outcome
+          ansible.builtin.set_fact:
+            qubix_test_rejected: false
+
+        - name: Require changed-kernel restoration rejection
+          block:
+            - name: Attempt original image restoration against a changed kernel
+              ansible.builtin.include_role:
+                name: qubix_files
+                tasks_from: restore
+          rescue:
+            - name: Require kernel-specific rejection
+              ansible.builtin.assert:
+                that: ["'Associated kernel changed' in ansible_failed_result.msg"]
+            - name: Record expected rejection
+              ansible.builtin.set_fact:
+                qubix_test_rejected: true
+
+        - name: Require stale-image rejection to succeed as a negative test
+          ansible.builtin.assert:
+            that: [qubix_test_rejected]
+      always:
+        - name: Remove only the synthetic initramfs fixture root
+          ansible.builtin.file:
+            path: '{{ qubix_test_tmp.path }}'
+            state: absent

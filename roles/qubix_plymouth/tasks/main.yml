@@ -1,0 +1,181 @@
+---
+- name: Require confirmed native splash integration
+  ansible.builtin.assert:
+    that:
+      - qubix_profile_resolved.plymouth.initramfs_backend in ['dracut', 'mkinitcpio']
+      - qubix_profile_resolved.plymouth.confirm_active is boolean
+      - qubix_profile_resolved.plymouth.confirm_active
+      - qubix_profile_resolved.branding.enabled
+      - qubix_discovery_report.evidence.binaries.get('plymouth', false)
+      - qubix_discovery_report.evidence.binaries.get(qubix_profile_resolved.plymouth.initramfs_backend, false)
+      - "'splash' in qubix_discovery_report.evidence.kernel_command_line.split()"
+      - "'plymouth.enable=0' not in qubix_discovery_report.evidence.kernel_command_line.split()"
+      - qubix_profile_resolved.plymouth.images is sequence
+      - qubix_profile_resolved.plymouth.images is not string
+      - qubix_profile_resolved.plymouth.images | length > 0
+    fail_msg: >-
+      Plymouth requires installed tools, confirmed generator,
+      existing splash argument and explicit image mapping.
+
+- name: Validate image mapping without changing kernels or boot entries
+  ansible.builtin.assert:
+    that:
+      - item is mapping
+      - item.keys() | difference(['path', 'kernel', 'kernel_image']) | length == 0
+      - item.path is string and item.path is match('^/boot/[A-Za-z0-9_./-]+\.img$')
+      - "'..' not in item.path.split('/')"
+      - item.kernel is string and item.kernel is match('^[0-9][A-Za-z0-9.+_-]+$')
+      - item.kernel_image is string and item.kernel_image is match('^/boot/[A-Za-z0-9_./+-]+$')
+      - "'..' not in item.kernel_image.split('/')"
+      - not item.kernel_image.endswith('.efi')
+    fail_msg: 'Each image needs a plain /boot/*.img path, installed kernel version and unchanged kernel_image path.'
+  loop: '{{ qubix_profile_resolved.plymouth.images }}'
+  loop_control:
+    label: '{{ item }}'
+
+- name: Reject duplicate image paths
+  ansible.builtin.assert:
+    that:
+      - >-
+        qubix_profile_resolved.plymouth.images | map(attribute='path') | unique | length ==
+        qubix_profile_resolved.plymouth.images | length
+
+- name: Keep image outputs disjoint from preserved kernel files
+  ansible.builtin.assert:
+    that:
+      - >-
+        qubix_profile_resolved.plymouth.images | map(attribute='path')
+        | intersect(qubix_profile_resolved.plymouth.images | map(attribute='kernel_image') | list) | length == 0
+    fail_msg: 'An initramfs destination must never overwrite a declared kernel image.'
+
+- name: Inspect installed script plugin
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/usr/lib/plymouth/script.so'
+  register: qubix_plymouth_plugin
+
+- name: Require script plugin instead of silently selecting an unusable theme
+  ansible.builtin.assert:
+    that: [qubix_plymouth_plugin.stat.isreg | default(false)]
+
+- name: Inspect declared installed kernels
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/usr/lib/modules/{{ item.kernel }}'
+  loop: '{{ qubix_profile_resolved.plymouth.images }}'
+  register: qubix_plymouth_modules
+
+- name: Require installed module directories
+  ansible.builtin.assert:
+    that: [item.stat.isdir | default(false)]
+  loop: '{{ qubix_plymouth_modules.results }}'
+  loop_control:
+    label: '{{ item.item.kernel }}'
+
+- name: Inspect unchanged kernel images
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}{{ item.kernel_image }}'
+    follow: false
+    checksum_algorithm: sha256
+    get_mime: false
+  loop: '{{ qubix_profile_resolved.plymouth.images }}'
+  register: qubix_plymouth_kernels
+
+- name: Require regular existing kernel images
+  ansible.builtin.assert:
+    that: [item.stat.isreg | default(false)]
+  loop: '{{ qubix_plymouth_kernels.results }}'
+  loop_control:
+    label: '{{ item.item.kernel_image }}'
+
+- name: Inspect existing affected images
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}{{ item.path }}'
+    follow: false
+  loop: '{{ qubix_profile_resolved.plymouth.images }}'
+  register: qubix_plymouth_image_stats
+
+- name: Require existing regular images rather than creating guessed boot outputs
+  ansible.builtin.assert:
+    that: [item.stat.isreg | default(false)]
+  loop: '{{ qubix_plymouth_image_stats.results }}'
+  loop_control:
+    label: '{{ item.item.path }}'
+
+- name: Read existing Plymouth selection metadata
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/etc/plymouth/plymouthd.conf'
+    follow: false
+  register: qubix_plymouth_conf_stat
+
+- name: Read existing selection
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}/etc/plymouth/plymouthd.conf'
+  register: qubix_plymouth_conf_bytes
+  when: qubix_plymouth_conf_stat.stat.exists
+
+- name: Preserve selection settings outside Theme
+  ansible.builtin.set_fact:
+    qubix_plymouth_conf: '{{ qubix_plymouth_conf_bytes.content | default("") | b64decode }}'
+
+- name: Reject ambiguous theme selection
+  ansible.builtin.assert:
+    that:
+      - qubix_plymouth_conf | regex_findall('(?m)^[ \t]*Theme[ \t]*=') | length <= 1
+      - >-
+        not qubix_plymouth_conf is regex('(?m)^[ \t]*Theme[ \t]*=') or
+        qubix_plymouth_conf is regex('(?m)^\[Daemon\]')
+    fail_msg: 'Ambiguous or non-Daemon Theme setting; refusing to replace unrelated configuration.'
+
+- name: Resolve only theme selection
+  ansible.builtin.set_fact:
+    qubix_plymouth_selection: >-
+      {{ (qubix_plymouth_conf | regex_replace('(?m)^[ \t]*Theme[ \t]*=.*$', 'Theme=qubix'))
+      if qubix_plymouth_conf is regex('(?m)^[ \t]*Theme[ \t]*=') else
+      ((qubix_plymouth_conf | regex_replace('(?m)^\[Daemon\]',
+      '[Daemon]' ~ qubix_plymouth_newline ~ 'Theme=qubix'))
+      if qubix_plymouth_conf is regex('(?m)^\[Daemon\]') else qubix_plymouth_daemon ~ qubix_plymouth_conf) }}
+
+- name: Load attributed logo definition
+  ansible.builtin.include_vars:
+    file: '{{ role_path }}/../../assets/branding/manifest.yml'
+    name: qubix_plymouth_branding
+
+- name: Prepare standalone theme and selection resources
+  ansible.builtin.set_fact:
+    qubix_plymouth_resources:
+      - path: /usr/share/plymouth/themes/qubix/logo.png
+        component: plymouth
+        source: '{{ role_path }}/../../assets/branding/logo.png'
+        sha256: '{{ (qubix_plymouth_branding.files | selectattr("filename", "equalto", "logo.png") | first).sha256 }}'
+      - path: /usr/share/plymouth/themes/qubix/qubix.plymouth
+        component: plymouth
+        content: '{{ lookup("file", role_path ~ "/files/qubix.plymouth", rstrip=false) }}'
+      - path: /usr/share/plymouth/themes/qubix/qubix.script
+        component: plymouth
+        content: '{{ lookup("file", role_path ~ "/files/qubix.script", rstrip=false) }}'
+      - path: /etc/plymouth/plymouthd.conf
+        component: plymouth
+        content: '{{ qubix_plymouth_selection }}'
+
+- name: Prepare only the confirmed generator adapter
+  ansible.builtin.include_tasks: '{{ qubix_profile_resolved.plymouth.initramfs_backend }}.yml'
+
+- name: Compute reproducible image input hashes
+  ansible.builtin.set_fact:
+    qubix_plymouth_inputs: []
+
+- name: Include each theme or generator resource digest
+  ansible.builtin.set_fact:
+    qubix_plymouth_inputs: >-
+      {{ qubix_plymouth_inputs + [{'path': item.path,
+      'sha256': item.sha256 | default(item.content | default('') | hash('sha256'))}] }}
+  loop: '{{ qubix_plymouth_resources }}'
+  loop_control:
+    label: '{{ item.path }}'
+
+- name: Resolve conditional rebuild fingerprint
+  ansible.builtin.set_fact:
+    qubix_plymouth_fingerprint: >-
+      {{ {'files': qubix_plymouth_inputs, 'images': qubix_profile_resolved.plymouth.images,
+      'kernel_hashes': qubix_plymouth_kernels.results | map(attribute='stat.checksum') | list,
+      'backend': qubix_profile_resolved.plymouth.initramfs_backend,
+      'presets': qubix_profile_resolved.plymouth.presets} | to_json(sort_keys=true) | hash('sha256') }}

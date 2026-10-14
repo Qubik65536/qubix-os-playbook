@@ -1,0 +1,5 @@
+---
+qubix_plymouth_dracut_binary: /usr/bin/dracut
+qubix_plymouth_mkinitcpio_binary: /usr/bin/mkinitcpio
+qubix_plymouth_lsinitrd_binary: /usr/bin/lsinitrd
+qubix_plymouth_lsinitcpio_binary: /usr/bin/lsinitcpio

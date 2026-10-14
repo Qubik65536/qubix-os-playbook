@@ -76,4 +76,6 @@
       uid: '{{ qubix_files_before.stat.uid | default(0) }}'
       gid: '{{ qubix_files_before.stat.gid | default(0) }}'
       mode: '{{ qubix_files_before.stat.mode | default("0644") }}'
+      kernel_image: '{{ qubix_files_resource.kernel_image | default("") }}'
+      kernel_sha256: '{{ qubix_files_resource.kernel_sha256 | default("") }}'
   when: not ansible_check_mode and not qubix_files_manifest_stat.stat.exists

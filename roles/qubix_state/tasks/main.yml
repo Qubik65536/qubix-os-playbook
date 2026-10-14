@@ -35,3 +35,10 @@
       graphical_session_verified: false
       boot_verified: false
   when: not ansible_check_mode
+
+- name: Clear transient attempt only after completed verification and revision recording
+  ansible.builtin.file:
+    path: '{{ qubix_root | default("") }}/var/lib/qubix/deployment-pending.json'
+    state: absent
+  changed_when: false
+  when: not ansible_check_mode

@@ -1,0 +1,8 @@
+---
+- name: Preserve failure diagnostics without claiming deployment completion
+  ansible.builtin.copy:
+    dest: '{{ qubix_root | default("") }}/var/lib/qubix/deployment-pending.json'
+    content: >-
+      {{ {"status": "failed", "error": ansible_failed_result.msg | default("Component failed")} | to_nice_json }}
+    mode: '0600'
+  when: not ansible_check_mode

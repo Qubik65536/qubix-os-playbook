@@ -21,3 +21,7 @@ bootloader:
 plymouth:
   enabled: false
   initramfs_backend: auto
+  confirm_active: false
+  force_rebuild: false
+  images: []
+  presets: []

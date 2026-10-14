@@ -13,7 +13,7 @@ Updated: 2026-10-13. Stage: **MVP candidate implementation In Progress**.
 | Niri/appearance/shell | Implemented | Definitions and missing-companion fixtures pass; native parser/session pending VM |
 | Login | Implemented | Native Breeze clone and unsupported-manager fixtures; VM login pending |
 | GRUB and Limine | Implemented | Independent preservation/idempotency and unsupported-version fixtures; reboot acceptance pending |
-| Plymouth/dracut/mkinitcpio | Planned | Opt-in; no image changes |
+| Plymouth/dracut/mkinitcpio | Implemented | Two simulated dispatch plans, conditional rebuild, archive checks and no-write check-mode fixtures; real generation pending |
 | Backups/restoration/revision state | Implemented | Baselines, receipts, conflict/restore fixtures; deployment revision recorded last |
 
 ## Actual validation

@@ -84,7 +84,7 @@
       - qubix_profile_enabled | difference(qubix_profile_implemented) | length == 0
     fail_msg: >-
       Requested components {{ qubix_profile_enabled | difference(qubix_profile_implemented) }} are Planned.
-      Only branding, Niri, shell and login components are supported at this revision.
+      Unknown enabled components have no implementation.
 
 - name: Require typed boot safety confirmation and version
   ansible.builtin.assert:
@@ -92,3 +92,13 @@
       - qubix_profile_resolved.bootloader.confirm_active is boolean
       - qubix_profile_resolved.bootloader.config_path is string
       - qubix_profile_resolved.bootloader.limine_version is integer
+
+- name: Require typed splash safety options
+  ansible.builtin.assert:
+    that:
+      - qubix_profile_resolved.plymouth.confirm_active is boolean
+      - qubix_profile_resolved.plymouth.force_rebuild is boolean
+      - qubix_profile_resolved.plymouth.images is sequence
+      - qubix_profile_resolved.plymouth.images is not string and qubix_profile_resolved.plymouth.images is not mapping
+      - qubix_profile_resolved.plymouth.presets is sequence
+      - qubix_profile_resolved.plymouth.presets is not string and qubix_profile_resolved.plymouth.presets is not mapping

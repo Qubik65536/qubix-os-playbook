@@ -1,0 +1,13 @@
+---
+- name: Require archive inspection and dracut executable capabilities
+  ansible.builtin.assert:
+    that:
+      - qubix_discovery_report.evidence.binaries.get('lsinitrd', false)
+      - qubix_profile_resolved.plymouth.presets | length == 0
+    fail_msg: 'dracut requires lsinitrd and explicit image/kernel mappings; mkinitcpio presets must be empty.'
+
+- name: Add only the required Plymouth dracut module
+  ansible.builtin.set_fact:
+    qubix_plymouth_resources: >-
+      {{ qubix_plymouth_resources + [{'path': '/etc/dracut.conf.d/90-qubix-plymouth.conf',
+      'component': 'plymouth', 'content': lookup('file', role_path ~ '/files/dracut.conf', rstrip=false)}] }}

@@ -1,0 +1,156 @@
+---
+- name: Require native archive inspection and explicitly selected presets
+  ansible.builtin.assert:
+    that:
+      - qubix_discovery_report.evidence.binaries.get('lsinitcpio', false)
+      - qubix_profile_resolved.plymouth.presets | length > 0
+    fail_msg: 'mkinitcpio requires lsinitcpio and explicitly named existing presets.'
+
+- name: Read main hook configuration without executing shell
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}/etc/mkinitcpio.conf'
+  register: qubix_plymouth_mk_bytes
+
+- name: Resolve literal main hook declaration
+  ansible.builtin.set_fact:
+    qubix_plymouth_mk_text: '{{ qubix_plymouth_mk_bytes.content | b64decode }}'
+    qubix_plymouth_hook_arrays: >-
+      {{ qubix_plymouth_mk_bytes.content | b64decode
+      | regex_findall('(?m)^HOOKS=\(([^\n()]*)\)[ \t]*(?:#.*)?$') }}
+
+- name: Require one literal unambiguous hook array
+  ansible.builtin.assert:
+    that:
+      - qubix_plymouth_hook_arrays | length == 1
+      - qubix_plymouth_mk_text | regex_findall('(?m)^[ \t]*HOOKS=') | length == 1
+    fail_msg: 'Only one literal single-line HOOKS array is supported; no shell config is executed by discovery.'
+
+- name: Decode literal hook names
+  ansible.builtin.set_fact:
+    qubix_plymouth_hooks: '{{ qubix_plymouth_hook_arrays[0] | replace("\"", "") | replace("''", "") | split }}'
+
+- name: Reject expansion, shell operators and unsupported init systems
+  ansible.builtin.assert:
+    that:
+      - item is match('^[A-Za-z0-9_-]+$')
+  loop: '{{ qubix_plymouth_hooks }}'
+
+- name: Require an existing early userspace trigger
+  ansible.builtin.assert:
+    that:
+      - "'systemd' in qubix_plymouth_hooks or 'udev' in qubix_plymouth_hooks"
+      - qubix_plymouth_hooks | select('equalto', 'plymouth') | list | length <= 1
+
+- name: Choose only the Plymouth hook insertion position
+  ansible.builtin.set_fact:
+    qubix_plymouth_insert: >-
+      {{ qubix_plymouth_hooks.index('systemd') + 1 if 'systemd' in qubix_plymouth_hooks
+      else qubix_plymouth_hooks.index('udev') + 1 }}
+
+- name: Preserve existing hook order while adding Plymouth
+  ansible.builtin.set_fact:
+    qubix_plymouth_desired_hooks: >-
+      {{ qubix_plymouth_hooks if 'plymouth' in qubix_plymouth_hooks else
+      qubix_plymouth_hooks[:qubix_plymouth_insert] + ['plymouth'] + qubix_plymouth_hooks[qubix_plymouth_insert:] }}
+
+- name: Require Plymouth after the existing init trigger even without encryption
+  ansible.builtin.assert:
+    that:
+      - qubix_plymouth_desired_hooks.index('plymouth') >= qubix_plymouth_insert
+
+- name: Validate Plymouth before encryption and after the init trigger
+  ansible.builtin.assert:
+    that:
+      - qubix_plymouth_desired_hooks.index('plymouth') >= qubix_plymouth_insert
+      - qubix_plymouth_desired_hooks.index('plymouth') < qubix_plymouth_desired_hooks.index(item)
+    fail_msg: 'Existing Plymouth/encryption hook order is unsafe; no encryption hooks are rewritten.'
+  loop: '{{ ["encrypt", "sd-encrypt"] | intersect(qubix_plymouth_hooks) }}'
+
+- name: Inspect override directory
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/etc/mkinitcpio.conf.d'
+  register: qubix_plymouth_override_dir
+
+- name: Find possible hook overrides
+  ansible.builtin.find:
+    paths: '{{ qubix_root | default("") }}/etc/mkinitcpio.conf.d'
+    patterns: '*.conf'
+  register: qubix_plymouth_overrides
+  when: qubix_plymouth_override_dir.stat.exists
+
+- name: Read possible override files
+  ansible.builtin.slurp:
+    src: '{{ item.path }}'
+  loop: '{{ qubix_plymouth_overrides.files | default([]) }}'
+  register: qubix_plymouth_override_bytes
+  loop_control:
+    label: '{{ item.path }}'
+
+- name: Reject competing hook overrides
+  ansible.builtin.assert:
+    that:
+      - not item.content | b64decode is regex('(?m)^[ \t]*HOOKS=')
+    fail_msg: 'HOOKS is overridden by a drop-in; resolve effective hook configuration before Plymouth deployment.'
+  loop: '{{ qubix_plymouth_override_bytes.results }}'
+  loop_control:
+    label: '{{ item.item.path }}'
+
+- name: Validate native preset names
+  ansible.builtin.assert:
+    that:
+      - item is string and item is match('^[A-Za-z0-9_-]+$')
+  loop: '{{ qubix_profile_resolved.plymouth.presets }}'
+
+- name: Read selected installed presets without sourcing them
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}/etc/mkinitcpio.d/{{ item }}.preset'
+  loop: '{{ qubix_profile_resolved.plymouth.presets }}'
+  register: qubix_plymouth_preset_bytes
+
+- name: Require literal outputs and exclude UKI or alternate configuration
+  ansible.builtin.assert:
+    that:
+      - not item.content | b64decode is regex('(?m)^[A-Za-z0-9_]+_uki=')
+      - >-
+        not item.content | b64decode is regex(
+        '(?m)^[A-Za-z0-9_]+_options=.*(?:--uki|-U|--config|-c|--skiphooks.*plymouth|-S[^\n]*plymouth)')
+      - >-
+        (item.content | b64decode | regex_findall('(?m)^ALL_config=["\x27]?([^"\x27\n]+)'))
+        in [[], ['/etc/mkinitcpio.conf']]
+      - >-
+        item.content | b64decode | regex_findall('(?m)^[A-Za-z0-9_]+_image=') | length ==
+        item.content | b64decode | regex_findall(qubix_plymouth_image_pattern) | length
+    fail_msg: >-
+      Preset has UKI, alternate/complex configuration or non-literal outputs;
+      refusing guessed image generation.
+  loop: '{{ qubix_plymouth_preset_bytes.results }}'
+  loop_control:
+    label: '{{ item.item }}'
+
+- name: Initialize all preset output paths
+  ansible.builtin.set_fact:
+    qubix_plymouth_preset_outputs: []
+
+- name: Collect every preset output before rebuild
+  ansible.builtin.set_fact:
+    qubix_plymouth_preset_outputs: >-
+      {{ qubix_plymouth_preset_outputs +
+      (item.content | b64decode | regex_findall(qubix_plymouth_image_pattern)) }}
+  loop: '{{ qubix_plymouth_preset_bytes.results }}'
+  loop_control:
+    label: '{{ item.item }}'
+
+- name: Require every affected output to be explicitly mapped and backed up
+  ansible.builtin.assert:
+    that:
+      - >-
+        qubix_plymouth_preset_outputs | unique | sort ==
+        qubix_profile_resolved.plymouth.images | map(attribute='path') | sort
+    fail_msg: 'Declared images must exactly cover every output from the selected presets, including fallback images.'
+
+- name: Prepare only the Plymouth insertion in main configuration
+  ansible.builtin.set_fact:
+    qubix_plymouth_resources: >-
+      {{ qubix_plymouth_resources + [{'path': '/etc/mkinitcpio.conf', 'component': 'plymouth',
+      'content': qubix_plymouth_mk_text | regex_replace('(?m)^HOOKS=\([^\n()]*\)',
+      'HOOKS=(' ~ qubix_plymouth_desired_hooks | join(' ') ~ ')')}] }}

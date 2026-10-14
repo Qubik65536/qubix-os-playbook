@@ -1,0 +1,154 @@
+---
+- name: Prove check mode does not execute initramfs generators
+  hosts: localhost
+  gather_facts: true
+  gather_subset:
+    - '!all'
+    - min
+  become: false
+  vars:
+    qubix_discovery_report:
+      evidence:
+        kernel_command_line: root=UUID=preserved quiet splash
+        binaries:
+          plymouth: true
+          dracut: true
+          mkinitcpio: true
+          lsinitrd: true
+          lsinitcpio: true
+  tasks:
+    - name: Create disposable initramfs fixture root
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-plymouth-
+      register: qubix_test_tmp
+      check_mode: false
+    - name: Resolve fixture ownership and paths
+      ansible.builtin.set_fact:
+        qubix_root: '{{ qubix_test_tmp.path }}'
+        qubix_files_owner: '{{ ansible_facts.user_id }}'
+        qubix_files_group: '{{ ansible_facts.user_gid | string }}'
+        qubix_plymouth_dracut_binary: '{{ qubix_test_tmp.path }}/dracut-fake'
+        qubix_plymouth_mkinitcpio_binary: '{{ qubix_test_tmp.path }}/mkinitcpio-fake'
+        qubix_plymouth_lsinitrd_binary: '{{ qubix_test_tmp.path }}/inspect-fake'
+        qubix_plymouth_lsinitcpio_binary: '{{ qubix_test_tmp.path }}/inspect-fake'
+        qubix_profile_resolved:
+          branding:
+            enabled: true
+          plymouth:
+            initramfs_backend: dracut
+            confirm_active: true
+            force_rebuild: false
+            presets: []
+            images:
+              - path: /boot/initramfs-test.img
+                kernel: 6.0-fixture
+                kernel_image: /boot/vmlinuz-test
+              - path: /boot/initramfs-test-fallback.img
+                kernel: 6.0-fixture
+                kernel_image: /boot/vmlinuz-test
+    - name: Create fake native resource directories
+      ansible.builtin.file:
+        path: '{{ qubix_root }}{{ item }}'
+        state: directory
+        mode: '0755'
+      loop:
+        - /usr/lib/modules/6.0-fixture
+        - /usr/lib/plymouth
+        - /boot
+        - /etc/plymouth
+        - /etc/mkinitcpio.d
+      check_mode: false
+    - name: Seed original configuration and plain images
+      ansible.builtin.copy:
+        dest: '{{ qubix_root }}{{ item.path }}'
+        content: '{{ item.content }}'
+        mode: '0644'
+      loop:
+        - path: /usr/lib/plymouth/script.so
+          content: fixture-plugin
+        - path: /boot/vmlinuz-test
+          content: preserved-kernel
+        - path: /boot/initramfs-test.img
+          content: original-primary
+        - path: /boot/initramfs-test-fallback.img
+          content: original-fallback
+        - path: /etc/plymouth/plymouthd.conf
+          content: |
+            [Daemon]
+            Theme=spinner
+            ShowDelay=3
+        - path: /etc/mkinitcpio.conf
+          content: |
+            MODULES=(preserve_me)
+            HOOKS=(base systemd autodetect keyboard sd-vconsole block sd-encrypt filesystems fsck)
+            COMPRESSION="zstd"
+        - path: /etc/mkinitcpio.d/test.preset
+          content: |
+            ALL_config="/etc/mkinitcpio.conf"
+            ALL_kver="/boot/vmlinuz-test"
+            PRESETS=('default' 'fallback')
+            default_image="/boot/initramfs-test.img"
+            fallback_image="/boot/initramfs-test-fallback.img"
+            fallback_options="-S autodetect"
+      check_mode: false
+    - name: Install fake generators that only write fixture paths
+      ansible.builtin.copy:
+        dest: '{{ qubix_root }}/{{ item.name }}'
+        content: '{{ item.script }}'
+        mode: '0755'
+        validate: /bin/bash -n %s
+      loop:
+        - name: dracut-fake
+          script: |
+            #!/usr/bin/env bash
+            set -e
+            printf 'generated fixture image' >"$2"
+            printf '%s\n' "$*" >>{{ (qubix_root ~ '/calls') | quote }}
+        - name: mkinitcpio-fake
+          script: |
+            #!/usr/bin/env bash
+            set -e
+            printf 'generated fixture image' >{{ (qubix_root ~ '/boot/initramfs-test.img') | quote }}
+            printf 'generated fallback' >{{ (qubix_root ~ '/boot/initramfs-test-fallback.img') | quote }}
+            printf '%s\n' "$*" >>{{ (qubix_root ~ '/calls') | quote }}
+        - name: inspect-fake
+          script: |
+            #!/usr/bin/env bash
+            printf '%s\n' usr/share/plymouth/themes/qubix/qubix.plymouth \
+              usr/share/plymouth/themes/qubix/qubix.script \
+              usr/share/plymouth/themes/qubix/logo.png usr/lib/plymouth/script.so usr/bin/plymouthd
+      check_mode: false
+    - name: Assert check-mode isolation with cleanup
+      block:
+        - name: Plan standalone theme using synthetic installed evidence
+          ansible.builtin.include_role:
+            name: qubix_plymouth
+        - name: Preview regeneration in real global check mode
+          ansible.builtin.include_role:
+            name: qubix_plymouth
+            tasks_from: rebuild
+        - name: Inspect unchanged image and absence of generated state
+          ansible.builtin.stat:
+            path: '{{ qubix_root }}{{ item }}'
+            checksum_algorithm: sha256
+          loop:
+            - /boot/initramfs-test.img
+            - /calls
+            - /var/lib/qubix/backup
+            - /var/lib/qubix/plymouth-pending
+          register: qubix_test_preview
+        - name: Require no preview generator, backup or state side effects
+          ansible.builtin.assert:
+            that:
+              - qubix_test_preview.results[0].stat.checksum == 'original-primary' | hash('sha256')
+              - not qubix_test_preview.results[1].stat.exists
+              - not qubix_test_preview.results[2].stat.exists
+              - not qubix_test_preview.results[3].stat.exists
+      always:
+        - name: Remove only the synthetic initramfs fixture root
+          ansible.builtin.file:
+            path: '{{ qubix_test_tmp.path }}'
+            state: absent
+          check_mode: false

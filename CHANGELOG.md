@@ -12,9 +12,11 @@ Changes are grouped by release. Bootstrap has no release tag.
 - Added focused Issue and PR templates.
 - Added licensed shared artwork, safe named-file deployment, checksum/metadata verification and explicit installed-branding verification.
 - Tested branding preview, idempotency, repair, corruption/missing diagnostics, symlink rejection and unrelated-file preservation in temporary filesystems.
-- Login, boot adapters and Plymouth remain Planned.
+- Graphical login/session, native image generation and reboot acceptance remain pending VM testing.
 
 - Added first-baseline file backups, applied checksums, drift-safe restoration and revision-state tasks.
 - Added an isolated Qubix Niri session, detected companion prerequisites, wallpaper and Bash/terminal defaults.
 - Added SDDM native-UI cloning, supported background overrides and checked theme-selection precedence.
 - Added opt-in GRUB custom-hook and Limine 8–12 appearance adapters with active-path confirmation and backups.
+- Added a Qubix Plymouth script theme, dracut/mkinitcpio integration, conditional verified regeneration and kernel-aware image recovery.
+- Added auditable pending/failure state alongside last verified deployment revision.

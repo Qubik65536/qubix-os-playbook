@@ -15,3 +15,11 @@
   changed_when: false
   check_mode: false
   when: qubix_profile_resolved.niri.enabled
+
+- name: Verify selected image resources without rebuilding
+  ansible.builtin.include_role:
+    name: qubix_plymouth
+    tasks_from: verify_images
+    apply:
+      become: true
+  when: qubix_profile_resolved.plymouth.enabled

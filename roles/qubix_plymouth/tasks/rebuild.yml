@@ -1,0 +1,104 @@
+---
+- name: Inspect completed image input marker
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/var/lib/qubix/plymouth-inputs.sha256'
+    follow: false
+  register: qubix_plymouth_input_stat
+
+- name: Read prior successful image inputs
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}/var/lib/qubix/plymouth-inputs.sha256'
+  register: qubix_plymouth_previous_inputs
+  when: qubix_plymouth_input_stat.stat.exists
+
+- name: Inspect unfinished rebuild marker
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/var/lib/qubix/plymouth-pending'
+    follow: false
+  register: qubix_plymouth_pending
+
+- name: Resolve required regeneration without guessing image paths
+  ansible.builtin.set_fact:
+    qubix_plymouth_needs_rebuild: >-
+      {{ qubix_profile_resolved.plymouth.force_rebuild or qubix_plymouth_pending.stat.exists or
+      (qubix_plymouth_previous_inputs.content | default('') | b64decode | trim) != qubix_plymouth_fingerprint }}
+
+- name: Prepare recovery and perform required regeneration
+  when: qubix_plymouth_needs_rebuild and not ansible_check_mode
+  block:
+    - name: Snapshot every affected image before executing a generator
+      ansible.builtin.include_role:
+        name: qubix_files
+        tasks_from: snapshot
+      vars:
+        qubix_files_resource:
+          path: '{{ qubix_plymouth_kernel.item.path }}'
+          component: plymouth-image
+          kernel_image: '{{ qubix_plymouth_kernel.item.kernel_image }}'
+          kernel_sha256: '{{ qubix_plymouth_kernel.stat.checksum }}'
+      loop: '{{ qubix_plymouth_kernels.results }}'
+      loop_control:
+        loop_var: qubix_plymouth_kernel
+        label: '{{ qubix_plymouth_kernel.item.path }}'
+
+    - name: Persist pending state before any image mutation
+      ansible.builtin.copy:
+        dest: '{{ qubix_root | default("") }}/var/lib/qubix/plymouth-pending'
+        content: '{{ qubix_plymouth_fingerprint }}'
+        mode: '0600'
+
+    - name: Generate only declared dracut images
+      ansible.builtin.command:
+        argv:
+          - '{{ qubix_plymouth_dracut_binary }}'
+          - --no-uefi
+          - --force
+          - '{{ qubix_root | default("") }}{{ item.path }}'
+          - '{{ item.kernel }}'
+      loop: '{{ qubix_profile_resolved.plymouth.images }}'
+      when: qubix_profile_resolved.plymouth.initramfs_backend == 'dracut'
+      changed_when: true
+
+    - name: Regenerate only confirmed presets without boot-entry post hooks
+      ansible.builtin.command:
+        argv: ['{{ qubix_plymouth_mkinitcpio_binary }}', --nopost, -p, '{{ item }}']
+      loop: '{{ qubix_profile_resolved.plymouth.presets }}'
+      when: qubix_profile_resolved.plymouth.initramfs_backend == 'mkinitcpio'
+      changed_when: true
+
+- name: Inspect generated resources even when inputs did not change
+  ansible.builtin.import_tasks: verify_images.yml
+  when: not ansible_check_mode
+
+- name: Commit successful image receipts and fingerprint only after verification
+  when: qubix_plymouth_needs_rebuild and not ansible_check_mode
+  block:
+    - name: Record each verified generated image checksum
+      ansible.builtin.include_role:
+        name: qubix_files
+        tasks_from: receipt
+      vars:
+        qubix_files_target: '{{ qubix_root | default("") }}{{ item.path }}'
+        qubix_files_state_dir: '{{ qubix_root | default("") }}/var/lib/qubix/backup'
+        qubix_files_id: '{{ item.path | hash("sha256") }}'
+      loop: '{{ qubix_profile_resolved.plymouth.images }}'
+      loop_control:
+        label: '{{ item.path }}'
+
+    - name: Persist completed input fingerprint
+      ansible.builtin.copy:
+        dest: '{{ qubix_root | default("") }}/var/lib/qubix/plymouth-inputs.sha256'
+        content: '{{ qubix_plymouth_fingerprint }}'
+        mode: '0600'
+
+    - name: Clear completed pending marker
+      ansible.builtin.file:
+        path: '{{ qubix_root | default("") }}/var/lib/qubix/plymouth-pending'
+        state: absent
+
+- name: Report check-mode rebuild boundary
+  ansible.builtin.debug:
+    msg: >-
+      Images require regeneration: {{ qubix_plymouth_needs_rebuild }}.
+      Check mode performs no image generation, image backup or success-marker write.
+  when: ansible_check_mode

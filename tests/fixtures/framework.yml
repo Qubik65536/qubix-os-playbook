@@ -67,9 +67,8 @@ qubix_test_profiles:
     input: {login: {enabled: true}}
   - name: bootloader schema accepts explicit selection
     input: {bootloader: {enabled: true}}
-  - name: planned splash component
+  - name: splash schema permits explicit selection
     input: {plymouth: {enabled: true}}
-    error: are Planned
   - name: supported branding component
     input: {branding: {enabled: true}}
 qubix_test_host:

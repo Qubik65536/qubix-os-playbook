@@ -26,6 +26,10 @@ qubix:
   plymouth:
     enabled: false
     initramfs_backend: auto
+    confirm_active: false
+    force_rebuild: false
+    images: []
+    presets: []
 ```
 
 The eventual desktop profile enables validated desktop components. The current profile enables branding, an additional Qubix Niri session and shell defaults. During bootstrap planned components stay disabled and enabling them must fail clearly. Bootloader and Plymouth remain opt-in until VM testing. No fallback from a mistyped profile or backend.
@@ -45,3 +49,5 @@ Existing non-Qubix system defaults require backup and an explicit activation pol
 Login currently supports already-active SDDM with `theme_source: breeze` and validated background/type options. Other managers and incompatible source themes are rejected before configuration writes. Native authentication QML is copied unchanged; no PAM or service replacement/restart occurs.
 
 Boot activation requires `backend: grub|limine`, confirmed `config_path` and `confirm_active: true`. Limine additionally requires the observed booted major `limine_version` (8–12). Auto/unknown configurations fail before writes. Native configs and boot entries remain preserved except minimal supported appearance changes.
+
+Plymouth needs a confirmed generator, explicit images (path, kernel version and kernel_image), and mkinitcpio preset names. All selected preset outputs must be mapped. force_rebuild is an explicit repair override, normally false. Plain initramfs images are supported; UKI signing and encrypted/hardware/kernel arguments remain outside ownership.

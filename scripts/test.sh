@@ -54,3 +54,13 @@ if ! ansible-playbook tests/playbooks/bootloader.yml >.cache/tests/bootloader.lo
   exit 1
 fi
 printf '%s\n' 'Independent GRUB/Limine preservation and reapplication fixtures passed; actual boot pending VM.'
+
+if ! ansible-playbook tests/playbooks/plymouth.yml >.cache/tests/plymouth.log 2>&1; then
+  cat .cache/tests/plymouth.log
+  exit 1
+fi
+if ! ansible-playbook tests/playbooks/plymouth-preview.yml --check >.cache/tests/plymouth-preview.log 2>&1; then
+  cat .cache/tests/plymouth-preview.log
+  exit 1
+fi
+printf '%s\n' 'Both initramfs dispatch, idempotency, kernel-restore guard and no-write preview fixtures passed.'

@@ -24,6 +24,8 @@ qubix_discovery_binary_paths:
   dracut: /usr/bin/dracut
   mkinitcpio: /usr/bin/mkinitcpio
   plymouth: /usr/bin/plymouth
+  lsinitrd: /usr/bin/lsinitrd
+  lsinitcpio: /usr/bin/lsinitcpio
 qubix_discovery_evidence_paths:
   - /boot/grub/grub.cfg
   - /boot/grub2/grub.cfg

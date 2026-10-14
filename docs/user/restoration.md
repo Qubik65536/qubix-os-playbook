@@ -4,7 +4,7 @@ Status: **Implemented named-file recovery; isolated fixtures Tested**. The share
 
 Run `./bootstrap.sh restore --check --diff --ask-become-pass` to preview and `./bootstrap.sh restore --ask-become-pass` to restore. Add the same remote inventory used for deployment. Restore needs a readable recorded baseline and supported CachyOS host; an empty backup set fails explicitly. It restores the first pre-Qubix state, retains baselines, removes only originally absent recorded files, and leaves unlisted resources/directories alone.
 
-Local drift fails safely. Inspect the target and backup before deliberately passing `-e qubix_files_force_restore=true`. Restoration is per resource; a later conflict can leave earlier resources already restored. Original ACLs/xattrs are not recorded, concurrent deployments are unsupported, and automated boot-image recovery is still being implemented. Snapshot the test VM before deployment.
+Local drift fails safely. Inspect the target and backup before deliberately passing `-e qubix_files_force_restore=true`. Restoration is per resource; a later conflict can leave earlier resources already restored. Original ACLs/xattrs are not recorded; concurrent deployments are unsupported, and plain boot-image recovery is included with an associated-kernel hash guard. Snapshot the test VM before deployment.
 
 Branding owns only `/usr/share/qubix/branding/{logo.svg,logo.png,banner.svg,LICENSE,NOTICE}`. It reconciles these files on reapplication. Unlisted files, distribution assets and personal defaults are untouched. To remove branding, first disable `branding.enabled` in operator configuration, then remove only the five owned files:
 
@@ -17,3 +17,5 @@ Do not recursively delete the namespace: it may contain unrelated files. This ma
 Future default activation requires content/metadata backups, original-absence records, target paths, and source revision. Restoration must preserve unowned content and reject conflicts. This is resource-level recovery, not whole-system rollback.
 
 Boot adapters require a known bootable fallback and tested live-media recovery before activation. Exact GRUB, Limine, dracut and mkinitcpio recovery procedures remain Planned and must be independently tested before MVP completion.
+
+Image restoration refuses a changed kernel image, even with the force drift option. After a kernel update, use the VM snapshot or restore reviewed configuration and regenerate with native tools for the current kernel; never copy an old initramfs onto a changed kernel blindly. Successful restoration clears regeneration/pending markers so a later reapplication rebuilds required images. Inaccessible live-media recovery should use the VM snapshot first.

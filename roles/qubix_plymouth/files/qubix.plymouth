@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Qubix OS
+Description=Qubix startup splash with native password and question callbacks
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/qubix
+ScriptFile=/usr/share/plymouth/themes/qubix/qubix.script

@@ -1,6 +1,6 @@
 # Boot and splash architecture
 
-Status: **Bootloader adapters Implemented as a test candidate; Plymouth In Progress**. Both GRUB and Limine are mandatory MVP components; neither is a bootstrap host operation.
+Status: **Bootloader adapters Implemented as a test candidate; Plymouth adapters Implemented as a test candidate**. Both GRUB and Limine are mandatory MVP components; neither is a bootstrap host operation.
 
 ```mermaid
 flowchart TD

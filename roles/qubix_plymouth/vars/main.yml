@@ -1,0 +1,6 @@
+---
+qubix_plymouth_newline: "\n"
+qubix_plymouth_daemon: |
+  [Daemon]
+  Theme=qubix
+qubix_plymouth_image_pattern: '(?m)^[A-Za-z0-9_]+_image=["\x27]?(/boot/[A-Za-z0-9_./-]+\.img)'

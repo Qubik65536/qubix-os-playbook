@@ -104,6 +104,11 @@
   changed_when: false
   check_mode: false
 
+- name: Read current kernel arguments without modifying them
+  ansible.builtin.slurp:
+    src: /proc/cmdline
+  register: qubix_discovery_cmdline
+
 - name: Normalize live evidence for the report
   ansible.builtin.import_tasks: normalize.yml
 

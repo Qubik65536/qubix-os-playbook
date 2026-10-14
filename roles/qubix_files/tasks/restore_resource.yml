@@ -32,6 +32,21 @@
         (qubix_files_receipt_bytes.content | default('') | b64decode | trim) == qubix_files_before.stat.checksum
     fail_msg: 'Local drift at {{ qubix_files_target }}; inspect backups before explicit qubix_files_force_restore=true.'
 
+- name: Inspect associated kernel before restoring an initramfs baseline
+  ansible.builtin.stat:
+    path: '{{ qubix_files_root }}{{ qubix_files_resource.kernel_image }}'
+    follow: false
+    checksum_algorithm: sha256
+  register: qubix_files_restore_kernel
+  when: qubix_files_resource.kernel_image | default('') | length > 0
+
+- name: Refuse stale initramfs backups after kernel changes
+  ansible.builtin.assert:
+    that:
+      - qubix_files_restore_kernel.stat.checksum | default('') == qubix_files_resource.kernel_sha256
+    fail_msg: 'Associated kernel changed; refusing stale initramfs restoration. Use VM snapshot or native regeneration.'
+  when: qubix_files_resource.kernel_image | default('') | length > 0
+
 - name: Verify retained original bytes before restoring
   ansible.builtin.stat:
     path: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.original'

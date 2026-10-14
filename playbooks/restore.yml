@@ -13,6 +13,13 @@
         apply:
           become: true
 
+    - name: Clear image input markers after successful baseline restoration
+      ansible.builtin.file:
+        path: '/var/lib/qubix/{{ item }}'
+        state: absent
+      loop: [plymouth-inputs.sha256, plymouth-pending, deployment-pending.json]
+      become: true
+
     - name: Mark deployment as restored after successful recovery
       ansible.builtin.copy:
         dest: /var/lib/qubix/deployment.json

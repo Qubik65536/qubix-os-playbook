@@ -1,0 +1,34 @@
+# Qubix script theme. Never logs or stores password input.
+Window.SetBackgroundTopColor(0.106, 0.141, 0.173);
+Window.SetBackgroundBottomColor(0.106, 0.141, 0.173);
+logo = Image("logo.png").Scale(160, 160);
+logo_sprite = Sprite(logo);
+logo_sprite.SetX(Window.GetWidth() / 2 - logo.GetWidth() / 2);
+logo_sprite.SetY(Window.GetHeight() / 2 - logo.GetHeight() / 2 - 40);
+text_sprite = Sprite();
+text_sprite.SetZ(100);
+fun show_text(text) {
+    image = Image.Text(text, 0.812, 0.855, 0.886);
+    text_sprite.SetImage(image);
+    text_sprite.SetX(Window.GetWidth() / 2 - image.GetWidth() / 2);
+    text_sprite.SetY(Window.GetHeight() / 2 + 75);
+}
+fun normal_callback() {
+    show_text("Qubix OS");
+}
+fun password_callback(prompt, bullets) {
+    stars = "";
+    for (index = 0; index < bullets; index++) stars = stars + "*";
+    show_text(prompt + " " + stars);
+}
+fun question_callback(prompt, entry) {
+    show_text(prompt + " " + entry);
+}
+fun message_callback(message) {
+    show_text(message);
+}
+Plymouth.SetDisplayNormalFunction(normal_callback);
+Plymouth.SetDisplayPasswordFunction(password_callback);
+Plymouth.SetDisplayQuestionFunction(question_callback);
+Plymouth.SetDisplayMessageFunction(message_callback);
+normal_callback();

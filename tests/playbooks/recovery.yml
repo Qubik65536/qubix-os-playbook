@@ -51,6 +51,78 @@
           ansible.builtin.assert:
             that: [not qubix_files_write.changed]
 
+        - name: Define auditable fixture deployment identity
+          ansible.builtin.set_fact:
+            qubix_profile_resolved: {profile: fixture}
+            qubix_profile_enabled: [fixture]
+
+        - name: Prepare transient deployment attempt
+          ansible.builtin.include_role:
+            name: qubix_state
+            tasks_from: begin
+
+        - name: Complete verified fixture revision state
+          ansible.builtin.include_role:
+            name: qubix_state
+
+        - name: Inspect completed revision and cleared attempt
+          ansible.builtin.stat:
+            path: '{{ qubix_root }}/var/lib/qubix/{{ item }}'
+          loop: [deployment.json, deployment-pending.json]
+          register: qubix_test_state
+
+        - name: Require completion marker and absence of pending state
+          ansible.builtin.assert:
+            that:
+              - qubix_test_state.results[0].stat.isreg
+              - not qubix_test_state.results[1].stat.exists
+
+        - name: Prepare a second auditable attempt
+          ansible.builtin.include_role:
+            name: qubix_state
+            tasks_from: begin
+
+        - name: Reset atomic validation rejection outcome
+          ansible.builtin.set_fact:
+            qubix_test_validation_rejected: false
+
+        - name: Reject invalid content atomically and preserve failure diagnostics
+          block:
+            - name: Attempt a file with an intentionally rejecting validator
+              ansible.builtin.include_role:
+                name: qubix_files
+              vars:
+                qubix_files_resources:
+                  - path: /etc/qubix-invalid.conf
+                    component: fixture
+                    content: invalid
+                    validate: /usr/bin/false %s
+          rescue:
+            - name: Persist the real file validation failure
+              ansible.builtin.include_role:
+                name: qubix_state
+                tasks_from: failed
+            - name: Record actual validation rejection
+              ansible.builtin.set_fact:
+                qubix_test_validation_rejected: true
+
+        - name: Read persisted failure diagnostics
+          ansible.builtin.slurp:
+            src: '{{ qubix_root }}/var/lib/qubix/deployment-pending.json'
+          register: qubix_test_failed_state
+
+        - name: Inspect refused activation file
+          ansible.builtin.stat:
+            path: '{{ qubix_root }}/etc/qubix-invalid.conf'
+          register: qubix_test_invalid
+
+        - name: Require failed state and no invalid file activation
+          ansible.builtin.assert:
+            that:
+              - qubix_test_validation_rejected
+              - (qubix_test_failed_state.content | b64decode | from_json).status == 'failed'
+              - not qubix_test_invalid.stat.exists
+
         - name: Introduce local drift
           ansible.builtin.copy:
             dest: '{{ qubix_root }}/etc/qubix-existing.conf'

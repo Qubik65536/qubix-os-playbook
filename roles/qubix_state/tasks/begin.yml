@@ -1,0 +1,31 @@
+---
+- name: Inspect state namespace and its ancestors
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}{{ item }}'
+    follow: false
+  loop: [/var, /var/lib, /var/lib/qubix]
+  register: qubix_state_directories
+
+- name: Reject redirected or non-directory state namespace
+  ansible.builtin.assert:
+    that:
+      - not item.stat.islnk | default(false)
+      - not item.stat.exists or item.stat.isdir | default(false)
+  loop: '{{ qubix_state_directories.results }}'
+  loop_control:
+    label: '{{ item.item }}'
+
+- name: Create private Qubix state directory
+  ansible.builtin.file:
+    path: '{{ qubix_root | default("") }}/var/lib/qubix'
+    state: directory
+    mode: '0700'
+  when: not ansible_check_mode
+
+- name: Record transient attempt before component mutation
+  ansible.builtin.copy:
+    dest: '{{ qubix_root | default("") }}/var/lib/qubix/deployment-pending.json'
+    content: '{{ {"status": "in-progress", "components": qubix_profile_enabled} | to_nice_json }}'
+    mode: '0600'
+  changed_when: false # Transient bookkeeping is not a managed configuration change.
+  when: not ansible_check_mode
