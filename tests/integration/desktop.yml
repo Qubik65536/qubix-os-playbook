@@ -1,0 +1,69 @@
+---
+- name: Test installed desktop in an isolated nested Niri window
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  pre_tasks:
+    - name: Require a real temporary graphical test
+      ansible.builtin.assert:
+        that: [not ansible_check_mode]
+        fail_msg: 'This optional test opens a temporary nested window; check mode cannot test rendering.'
+  roles:
+    - qubix_profile
+    - qubix_discovery
+  tasks:
+    - name: Require the selected desktop before runtime testing
+      ansible.builtin.assert:
+        that: [qubix_profile_resolved.niri.enabled]
+
+    - name: Verify deployed resources and syntax first
+      ansible.builtin.import_tasks: ../../playbooks/tasks/verify-installed.yml
+
+    - name: Create private user-owned native test directory
+      ansible.builtin.tempfile:
+        state: directory
+        path: /tmp
+        prefix: qubix-native-smoke.
+      register: qubix_smoke_directory
+
+    - name: Run optional rendering and preservation checks with cleanup
+      block:
+        - name: Transfer native-only test helpers
+          ansible.builtin.copy:
+            src: 'files/niri-smoke-{{ item }}.py'
+            dest: '{{ qubix_smoke_directory.path }}/{{ item }}.py'
+            mode: '0600'
+          loop: [inner, outer]
+
+        - name: Exercise native companions in an isolated temporary session
+          ansible.builtin.command:
+            argv: [/usr/bin/python3, '{{ qubix_smoke_directory.path }}/outer.py', '{{ qubix_smoke_directory.path }}']
+          changed_when: true # The explicitly invoked test opens/closes its own temporary graphical window.
+          timeout: 90
+
+      always:
+        - name: Preserve evidence even after a failed native test
+          block:
+            - name: Retain test artifacts on the controller
+              ansible.builtin.find:
+                paths: '{{ qubix_smoke_directory.path }}'
+                patterns: ['*.json', '*.png', '*.log']
+                file_type: file
+              register: qubix_smoke_artifacts
+
+            - name: Fetch available native evidence before cleanup
+              ansible.builtin.fetch:
+                src: '{{ item.path }}'
+                dest: >-
+                  {{ playbook_dir }}/../../.cache/native-desktop/{{
+                  inventory_hostname | regex_replace('[^A-Za-z0-9_.-]', '_') }}/
+                flat: true
+              loop: '{{ qubix_smoke_artifacts.files }}'
+              loop_control:
+                label: '{{ item.path | basename }}'
+
+          always:
+            - name: Remove only this test-created directory
+              ansible.builtin.file:
+                path: '{{ qubix_smoke_directory.path }}'
+                state: absent

@@ -12,6 +12,7 @@ for playbook in playbooks/*.yml tests/playbooks/*.yml tests/integration/*.yml; d
   ansible-playbook "$playbook" --syntax-check
 done
 shellcheck bootstrap.sh scripts/*.sh roles/qubix_shell/files/qubix.sh tests/shell/*.sh
+python3 -m py_compile tests/integration/files/*.py
 python3 tests/static/check_repository.py
 git diff --check
 printf '%s\n' 'Static validation passed.'

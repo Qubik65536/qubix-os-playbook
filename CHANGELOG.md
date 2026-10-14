@@ -34,3 +34,4 @@ Changes are grouped by release. Bootstrap has no release tag.
 - Corrected Niri validator option order and added a reusable native temporary-file grammar test, passing on Niri 26.04.
 - Prepared a physical desktop test proposal with explicit package-hook and deployment scope for operator review.
 - Added native Fuzzel pre-activation validation and repeatable Foot/Fuzzel production/invalid-control grammar tests.
+- Added an optional native Ansible desktop smoke workflow with isolated session, screenshot/log evidence and cleanup.

@@ -71,7 +71,14 @@ ansible-playbook tests/playbooks/plymouth-preview.yml --check
 
 Follow the [user getting-started guide](../user/getting-started.md), and collect [target evidence](../user/collecting-target-info.md) first. Keep host inventory and overrides ignored. Never run boot deployment against the development controller.
 
-Test desktop first. Capture native parser output, preserved-file checksums, actual companion behaviour and the second deployment recap. Then test supported SDDM without changing authentication. Both already-installed GRUB and Limine need independent VM boot/restoration tests, and both dracut and mkinitcpio need native generation/splash/restoration evidence. Snapshots allow recovery without pretending file restoration is whole-system rollback.
+Test desktop first. Capture native parser output, preserved-file checksums, actual companion behaviour and the second deployment recap. On an already-deployed target with its original Niri service running, the optional native smoke workflow opens a temporary nested window and saves evidence without changing the main session:
+
+```bash
+ansible-playbook tests/integration/niri.yml -i inventory/target.local.ini -e @config/local.yml --ask-pass --ask-become-pass
+ansible-playbook tests/integration/desktop.yml -i inventory/target.local.ini -e @config/local.yml --ask-pass --ask-become-pass
+```
+
+Omit --ask-pass with SSH keys. Include qubix_discovery_privileged: true in local overrides for private /boot metadata. See the [test contract and limits](testing.md). Then test supported SDDM without changing authentication. Both already-installed GRUB and Limine need independent VM boot/restoration tests, and both dracut and mkinitcpio need native generation/splash/restoration evidence. Snapshots allow recovery without pretending file restoration is whole-system rollback.
 
 Record target versions, exact Git revision/configuration, commands, results and failures in project status/compatibility. A candidate is implemented and ready to test; an accepted MVP satisfies the entire [scope](../project/scope.md). Do not turn fixture success into a compatibility claim.
 

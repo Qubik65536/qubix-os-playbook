@@ -1,6 +1,6 @@
 # Niri desktop and appearance
 
-Status: Implemented candidate. Production KDL, Foot and Fuzzel candidates and invalid controls pass on Niri 26.04, Foot 1.28.0 and Fuzzel 1.15.0; deployment/graphical acceptance remains pending.
+Status: Implemented candidate. Production KDL, Foot and Fuzzel candidates and invalid controls pass on Niri 26.04, Foot 1.28.0 and Fuzzel 1.15.0; native deployment, zero-change reapplication and isolated nested companion rendering pass; primary-session acceptance remains pending.
 
 The role measures Niri, Foot, Fuzzel, Waybar, Mako and Swaybg before defining resources. Missing tools fail before deployment writes. Noctalia/DMS/native desktop settings remain preserved; Qubix uses its own additional session rather than replacing the native session. Install missing prerequisites explicitly as described in the user guide.
 
