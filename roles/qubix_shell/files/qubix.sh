@@ -1,6 +1,6 @@
 # shellcheck shell=sh
 # Qubix defaults, read by login shells. Existing personal settings take precedence.
-if [ -z "${STARSHIP_CONFIG:-}" ]; then
+if [ -z "${STARSHIP_CONFIG:-}" ] && [ ! -f "${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml" ]; then
     export STARSHIP_CONFIG=/etc/qubix/starship.toml
 fi
 if [ -n "${BASH_VERSION:-}" ]; then

@@ -22,3 +22,4 @@ Changes are grouped by release. Bootstrap has no release tag.
 - Added auditable pending/failure state alongside last verified deployment revision.
 - Fixed standalone SDDM detection, conflicting-manager rejection and redirected factory theme preflight.
 - Added optional measured CachyOS Polkit agent startup to the separate Qubix Niri session.
+- Fixed Starship default selection to preserve existing user configuration precedence.
