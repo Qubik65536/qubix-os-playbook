@@ -1,0 +1,30 @@
+---
+- name: Select restore policy and reset expected rejection
+  ansible.builtin.set_fact:
+    qubix_files_force_restore: '{{ qubix_test_boot_force }}'
+    qubix_test_boot_stale_rejected: false
+
+- name: Require stale entry protection even after receipt refresh
+  block:
+    - name: Attempt activation-only baseline restoration
+      ansible.builtin.include_role:
+        name: qubix_files
+        tasks_from: restore_resource
+  rescue:
+    - name: Require preservation-specific refusal
+      ansible.builtin.assert:
+        that: ["'Preserved boot content changed' in ansible_failed_result.msg"]
+    - name: Record expected stale baseline refusal
+      ansible.builtin.set_fact:
+        qubix_test_boot_stale_rejected: true
+
+- name: Read activation after rejected restoration
+  ansible.builtin.slurp:
+    src: '{{ qubix_root }}{{ qubix_test_boot_case.activation }}'
+  register: qubix_test_boot_retained
+
+- name: Require refusal before replacing or removing preserved content
+  ansible.builtin.assert:
+    that:
+      - qubix_test_boot_stale_rejected
+      - qubix_test_boot_retained.content | b64decode == qubix_test_boot_after_reapply

@@ -1,0 +1,66 @@
+---
+- name: Read current adapter activation
+  ansible.builtin.slurp:
+    src: '{{ qubix_root }}{{ qubix_test_boot_case.activation }}'
+  register: qubix_test_boot_before_edit
+
+- name: Simulate a preserved native entry or hook added after initial deployment
+  ansible.builtin.copy:
+    dest: '{{ qubix_root }}{{ qubix_test_boot_case.activation }}'
+    content: '{{ qubix_test_boot_before_edit.content | b64decode }}{{ qubix_test_boot_foreign }}'
+    mode: '0600'
+  vars:
+    qubix_test_boot_foreign: >-
+      {{ '/New snapshot\n    protocol: linux\n    cmdline: root=UUID=new quiet\n'
+      if qubix_test_boot_case.backend == 'limine' else '\nset new_operator_setting=keep\n' }}
+
+- name: Select the changed supported fixture
+  ansible.builtin.set_fact:
+    qubix_profile_resolved:
+      bootloader:
+        backend: '{{ qubix_test_boot_case.backend }}'
+        confirm_active: true
+        config_path: '{{ qubix_test_boot_case.config }}'
+        limine_version: 10
+
+- name: Replan while preserving native changes
+  ansible.builtin.include_role:
+    name: qubix_bootloader
+
+- name: Reapply while retaining the first baseline and refreshing receipts
+  ansible.builtin.include_role:
+    name: qubix_files
+  vars:
+    qubix_files_resources: '{{ qubix_bootloader_resources }}'
+
+- name: Record changed activation and original baseline location
+  ansible.builtin.set_fact:
+    qubix_test_boot_after_reapply: '{{ qubix_bootloader_resources[-1].content }}'
+    qubix_files_baseline_file:
+      path: '{{ qubix_root }}/var/lib/qubix/backup/{{ qubix_test_boot_case.activation | hash("sha256") }}.json'
+
+- name: Require normal and forced restoration to retain new preserved content
+  ansible.builtin.include_tasks: boot-stale-attempt.yml
+  loop: [false, true]
+  loop_control:
+    loop_var: qubix_test_boot_force
+
+- name: Reset only the synthetic edit so original-baseline success remains tested
+  ansible.builtin.copy:
+    dest: '{{ qubix_root }}{{ qubix_test_boot_case.activation }}'
+    content: '{{ qubix_test_boot_before_edit.content | b64decode }}'
+    mode: '0600'
+
+- name: Restore ordinary conflict policy after forced-guard assertions
+  ansible.builtin.set_fact:
+    qubix_files_force_restore: false
+
+- name: Replan and refresh receipt after fixture-only reset
+  ansible.builtin.include_role:
+    name: qubix_bootloader
+
+- name: Keep baseline success test independent of synthetic edits
+  ansible.builtin.include_role:
+    name: qubix_files
+  vars:
+    qubix_files_resources: '{{ qubix_bootloader_resources }}'

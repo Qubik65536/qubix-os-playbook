@@ -35,3 +35,4 @@ Changes are grouped by release. Bootstrap has no release tag.
 - Prepared a physical desktop test proposal with explicit package-hook and deployment scope for operator review.
 - Added native Fuzzel pre-activation validation and repeatable Foot/Fuzzel production/invalid-control grammar tests.
 - Added an optional native Ansible desktop smoke workflow with isolated session, screenshot/log evidence and cleanup.
+- Fixed stale GRUB/Limine activation restoration after preserved content changes and reapplication; force cannot bypass the guard.

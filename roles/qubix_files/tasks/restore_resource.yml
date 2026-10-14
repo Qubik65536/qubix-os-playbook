@@ -63,6 +63,15 @@
     fail_msg: 'Missing or damaged original backup; restoration stopped.'
   when: qubix_files_resource.existed
 
+- name: Protect preserved boot content before restoring an activation file
+  ansible.builtin.include_role:
+    name: qubix_bootloader
+    tasks_from: restore_guard
+  when:
+    - qubix_files_resource.component == 'bootloader'
+    - qubix_files_resource.path is regex('(?:/custom\.cfg|limine\.conf)$')
+    - qubix_files_before.stat.exists
+
 - name: Restore original bytes and ownership
   ansible.builtin.copy:
     src: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.original'

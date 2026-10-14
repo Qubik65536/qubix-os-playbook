@@ -1,0 +1,32 @@
+---
+- name: Read current boot activation without executing it
+  ansible.builtin.slurp:
+    src: '{{ qubix_files_target }}'
+  register: qubix_bootloader_restore_current
+
+- name: Read verified original activation when it existed
+  ansible.builtin.slurp:
+    src: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.original'
+  register: qubix_bootloader_restore_original
+  when: qubix_files_resource.existed
+
+- name: Initialize independent preservation comparison
+  ansible.builtin.set_fact:
+    qubix_bootloader_restore_preserved: []
+
+- name: Normalize current and original content independently
+  ansible.builtin.include_tasks: restore_normalize.yml
+  loop:
+    - '{{ qubix_bootloader_restore_current.content | b64decode }}'
+    - '{{ qubix_bootloader_restore_original.content | default("") | b64decode }}'
+  loop_control:
+    loop_var: qubix_bootloader_restore_text
+    label: preserved activation content
+
+- name: Refuse stale boot activation restoration even after reapplication or force
+  ansible.builtin.assert:
+    that:
+      - qubix_bootloader_restore_preserved[0] == qubix_bootloader_restore_preserved[1]
+    fail_msg: >-
+      Preserved boot content changed since the first baseline; refusing stale entry/hook restoration.
+      Use reviewed native recovery or a VM snapshot. Force cannot bypass this guard.

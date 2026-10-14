@@ -12,7 +12,7 @@ Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM t
 | Niri/wallpaper/companions | Native syntax/files/nested rendering Tested | Niri/Foot/Fuzzel controls pass; wallpaper/bar/terminal/launcher/notifications/IPC navigation render; primary session pending |
 | Shell | Native Bash/Starship and controller fixtures Tested | Temporary-home native startup/TOML/prompt pass; default Fish and personal files preserved |
 | SDDM | Implemented | UI clone, actual INI lines, standalone/ambiguous/unsupported activity fixtures; authentication pending |
-| GRUB and Limine | Implemented | Independent preservation/reapplication/private-mode/file-restore fixtures; native checker, boot/restore pending |
+| GRUB and Limine | Implemented | Independent preservation/reapplication/private-mode/absent-hook/stale-restore fixtures; native checker, boot/restore pending |
 | Plymouth/dracut/mkinitcpio | Implemented | Simulated dispatch/rebuild skip/archive failure, kernel restore and no-write preview; native generation/splash pending |
 | Backup/restore/state | Tested in fixtures | Bytes/modes/absence, drift/repeated restore, failed validator and pending/last-success records |
 
@@ -40,3 +40,5 @@ The operator authorized desktop-only preparation, including native Snapper/Limin
 ## Repeatable native desktop evidence
 
 The optional tests/integration/desktop.yml workflow passes: 64 tasks, five temporary setup/test/evidence/cleanup changes, zero failures. It runs the production configuration in a nested window on a private D-Bus session, with temporary HOME/config/cache paths. Native wallpaper/bar layers, two Foot windows, Fuzzel rendering, Mako notification receipt and IPC focus navigation pass. Screenshots were inspected; the original Niri service PID and session endpoints remain unchanged. Evidence is retained only under ignored .cache/native-desktop/ on the controller. Physical keys, login, portals, Polkit and lock/unlock remain acceptance items.
+
+Boot recovery fixtures now also prove that native entries/hook changes survive rejected restoration after reapplication, with force false and true. The expanded boot suite passes 724 tasks (five expected rescued refusals); shared recovery passes 229 tasks (two expected rescued refusals). Native boot/recovery remains unverified.

@@ -17,6 +17,8 @@ Restore handles **all recorded baselines**, independently of enabled components.
 
 Local drift/unreceipted partial changes stop restore. Inspect the target/receipt/original before intentionally adding `-e qubix_files_force_restore=true`. Restoration is per resource; a later failure may leave earlier resources restored. Concurrent deployment is unsupported.
 
+Boot activation recovery refuses changed preserved entries/settings even if Qubix was reapplied afterward. Use reviewed native recovery or a VM snapshot when native package hooks have changed the menu; force cannot bypass this protection.
+
 Image backups include associated kernel hashes. Changed kernels prohibit stale image restoration, even with force. Use the VM snapshot or reviewed current-kernel native recovery. Successful restoration clears image-input/pending markers; backups remain, and subsequent deployment rebuilds required images.
 
 ## Failed deployment or reboot

@@ -1,0 +1,19 @@
+---
+- name: Select activation text for strict marker validation
+  ansible.builtin.set_fact:
+    qubix_bootloader_base: '{{ qubix_bootloader_restore_text }}'
+
+- name: Require well-formed markers before any content removal
+  ansible.builtin.import_tasks: markers.yml
+
+- name: Exclude only managed Limine directives from the preservation comparison
+  ansible.builtin.set_fact:
+    qubix_bootloader_preserved: >-
+      {{ qubix_bootloader_preserved | regex_replace(
+      '(?im)^[ \t]*(interface_branding|term_foreground|term_background)[ \t]*:[^\n]*(?:\n|$)', '') }}
+  when: qubix_files_resource.path.endswith('limine.conf')
+
+- name: Retain preserved bytes apart from additive trailing line breaks
+  ansible.builtin.set_fact:
+    qubix_bootloader_restore_preserved: >-
+      {{ qubix_bootloader_restore_preserved + [qubix_bootloader_preserved | regex_replace('\n+$', '')] }}

@@ -46,13 +46,13 @@ Objective: auditable resource-level restoration. Scope: manifests, backups befor
 
 ## F07 — GRUB adapter (Feature)
 
-Status: Implemented; independent preservation/private-mode/reapplication/file-restoration fixtures Tested; native checker/reboot/restore open.
+Status: Implemented; independent preservation/private-mode/reapplication/absent-hook/stale-restoration fixtures Tested; native checker/reboot/restore open.
 
 Objective: safe GRUB branding. Scope: active configuration evidence, minimal activation, owned theme and backups. Acceptance: preserved entries/arguments, validated output, boot and recovery in VM. Depends on F02/F06. Tests: independent GRUB VM, idempotency and restoration. Docs: boot compatibility and exact recovery.
 
 ## F08 — Limine adapter (Feature)
 
-Status: Implemented 8–12 candidate; independent version/preservation fixtures Tested; reboot/restore open.
+Status: Implemented 8–12 candidate; independent version/preservation/stale-restoration fixtures Tested; reboot/restore open.
 
 Objective: safe Limine branding; mandatory MVP. Scope: installed-version-supported settings, active-path validation and minimal edits. Acceptance: unchanged entries/arguments, VM boot and recovery. Depends on F02/F06; independent of F07. Tests: Limine-specific syntax where supported, VM and preservation. Docs: supported directives/versions and recovery.
 

@@ -173,6 +173,14 @@
             that:
               - qubix_bootloader_resources[0].content == qubix_test_limine
 
+        - name: Require restoration guards after preserved edits and reapplication
+          ansible.builtin.include_tasks: ../tasks/boot-stale-restore.yml
+          loop:
+            - {backend: grub, config: /boot/grub/grub.cfg, activation: /boot/grub/custom.cfg}
+            - {backend: limine, config: /boot/limine.conf, activation: /boot/limine.conf}
+          loop_control:
+            loop_var: qubix_test_boot_case
+
         - name: Introduce unsupported firmware version
           ansible.builtin.set_fact:
             qubix_profile_resolved:
@@ -226,6 +234,49 @@
         - name: Require restoration removes only the newly added theme file
           ansible.builtin.assert:
             that: [not qubix_test_removed_theme.stat.exists]
+
+        - name: Prepare a separate originally absent GRUB hook case
+          ansible.builtin.file:
+            path: '{{ qubix_root }}{{ item }}'
+            state: absent
+          loop:
+            - /boot/grub/custom.cfg
+            - '/var/lib/qubix/backup/{{ "/boot/grub/custom.cfg" | hash("sha256") }}.json'
+            - '/var/lib/qubix/backup/{{ "/boot/grub/custom.cfg" | hash("sha256") }}.original'
+            - '/var/lib/qubix/backup/{{ "/boot/grub/custom.cfg" | hash("sha256") }}.receipt'
+
+        - name: Select supported GRUB with an absent custom hook
+          ansible.builtin.set_fact:
+            qubix_profile_resolved:
+              bootloader:
+                backend: grub
+                confirm_active: true
+                config_path: /boot/grub/grub.cfg
+                limine_version: 0
+
+        - name: Prepare appearance without assumed existing hook content
+          ansible.builtin.include_role:
+            name: qubix_bootloader
+
+        - name: Install the newly owned hook with an absence baseline
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_resources: '{{ qubix_bootloader_resources }}'
+
+        - name: Restore only recorded original absence with preservation guards
+          ansible.builtin.include_role:
+            name: qubix_files
+            tasks_from: restore
+
+        - name: Inspect the restored originally absent hook
+          ansible.builtin.stat:
+            path: '{{ qubix_root }}/boot/grub/custom.cfg'
+          register: qubix_test_absent_hook
+
+        - name: Require safe removal of the new hook
+          ansible.builtin.assert:
+            that: [not qubix_test_absent_hook.stat.exists]
       always:
         - name: Remove only disposable boot fixtures
           ansible.builtin.file:
