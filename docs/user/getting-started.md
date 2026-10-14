@@ -32,7 +32,7 @@ Create an ignored controller inventory at `inventory/target.local.ini`, substitu
 qubix-vm ansible_host=192.168.64.10 ansible_user=YOUR_VM_USER ansible_port=22
 ```
 
-Test `ssh YOUR_VM_USER@192.168.64.10`. With password-only SSH, standard Ansible `--ask-pass` may need additional controller support; SSH key authentication is recommended. Keep one VM in this inventory while testing boot changes.
+Test `ssh YOUR_VM_USER@192.168.64.10`. With password-only SSH, add `--ask-pass` to Ansible commands and enter the password interactively; the pinned controller uses native SSH askpass. Keep the password out of inventory. SSH keys are convenient for repeated tests. Keep one VM in this inventory while testing boot changes.
 
 ## 2. Inspect without deploying
 

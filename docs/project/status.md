@@ -1,13 +1,13 @@
 # Project status
 
-Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM testing**. Full MVP acceptance remains In Progress; a test machine is available, with SSH connection details pending.
+Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM testing**. Full MVP acceptance remains In Progress; SSH details were provided; the initial connection times out before authentication. The operator started sshd; TCP port 22 still times out, so listener/address/firewall confirmation is pending.
 
 | Capability | Status | Actual evidence |
 |---|---|---|
 | Architecture/ADRs/conventions | Implemented | Documentation committed before source; local links/configuration agreement pass |
 | Tools and CI | Tested locally; CI Implemented | Locked tools; shared scripts pass; no GitHub execution because commits were not pushed |
 | Profile/identity/discovery | Tested in fixtures | 25 profile + 11 host + 7 identity cases; independent manager activity; normal/check zero changes |
-| Live CachyOS inspection | Implemented, target acceptance pending | Actual macOS rejection with zero changes; no supported-host run yet |
+| Live CachyOS inspection | Implemented, target acceptance pending | Actual macOS rejection with zero changes; supplied SSH endpoint times out before authentication; no supported-host run yet |
 | Branding | Tested in fixtures | Provenance/hash checks, isolated preview/install/repair/idempotency/preservation |
 | Niri/wallpaper/companions | Implemented | Separate session definitions, missing-tool rejection, optional measured agent; native parsers/session pending |
 | Shell | Tested in controller fixtures | Explicit/user/default Starship precedence; native interactive startup pending |
@@ -24,6 +24,8 @@ Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM t
 - `./bootstrap.sh verify`: actual macOS rejection, exit 2 and zero changes; expected guard, not supported-host acceptance.
 
 Fake generators/inspectors and archive listings prove dispatch/guards, not native initramfs generation. Desktop tests render definitions, not a compositor. Native validators are wired into deployment but not yet run on CachyOS. Fixtures write only disposable roots under `.cache/tests/`.
+
+The supplied target's SSH port did not respond within an eight-second connection timeout. TCP and ICMP probes failed; the controller has a local-interface route and neighbor entry. The password was not sent and no target command executed. This is a connectivity blocker, not evidence of authentication failure or CachyOS incompatibility.
 
 ## Limits and next gate
 

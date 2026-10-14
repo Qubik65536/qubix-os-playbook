@@ -18,13 +18,23 @@ Snapshot/backup and console access: available or unavailable
 
 The address must be reachable from the controller running this repository. In the target, `whoami` gives the account and `ip -brief address` lists addresses. NAT may need a forwarded SSH port; mention any required VPN or jump host. A configured SSH alias can supply those settings instead.
 
-Use an existing local key or SSH agent; send only its local path or alias, never the private-key contents, passphrase or sudo password. If SSH currently uses a password, say so: prepare key access before automated tests. No new key or personal SSH configuration is needed when working key access already exists.
+Use an existing local key or SSH agent; send only its local path or alias, never the private-key contents, passphrase or sudo password. The pinned Ansible controller supports password authentication with --ask-pass; enter passwords at the prompt rather than saving them in inventory. SSH keys remain convenient for repeated runs. No new key or personal SSH configuration is needed when working key access already exists.
 
 From this Mac, first confirm ordinary SSH login, completing host-key verification and any key-unlock prompt yourself:
 
 ```bash
 ssh -p PORT USER@HOST
 ```
+
+If the connection times out before authentication, collect these on the target console:
+
+```bash
+ip -brief address
+systemctl is-active sshd
+ss -ltn '( sport = :22 )'
+```
+
+Report the actual SSH port and, for a VM, its network mode. Bridged networking or a reachable forwarded NAT port is needed when connecting from another machine. Review the target firewall's SSH rule rather than disabling the firewall. If sshd is unavailable or inactive, use the manual SSH preparation in the [user guide](getting-started.md).
 
 If needed, obtain the target's public host-key fingerprint from its console using `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub`, then compare it with the SSH prompt. If that key type is absent, use the existing host public key. Do not disable host-key checking.
 

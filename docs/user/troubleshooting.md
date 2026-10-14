@@ -4,6 +4,7 @@ Status: Candidate diagnostics Implemented; [status](../project/status.md) define
 
 | Symptom | Next step |
 |---|---|
+| SSH timeout before authentication | Confirm target address, active sshd, listening port, firewall and VM network mode; password has not been tested |
 | Restricted-sandbox RPC failure | Permit non-destructive Ansible IPC; retain target guards |
 | Unsupported host | Use CachyOS Niri; the Mac controller is not a target |
 | Missing companion | Prepare the named prerequisite manually, inspect again |

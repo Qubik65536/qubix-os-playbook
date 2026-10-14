@@ -29,3 +29,4 @@ Changes are grouped by release. Bootstrap has no release tag.
 - Preserved existing activation-file modes and allowed privileged read-only checks for private login/boot/splash configuration.
 - Added desktop-first user onboarding, human-developer onboarding and an explicit native MVP acceptance checklist.
 - Made user/developer onboarding links prominent and documented the SSH access handoff for live inspection.
+- Added pre-authentication SSH timeout diagnostics and clarified password authentication with the pinned controller.
