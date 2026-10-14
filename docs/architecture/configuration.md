@@ -32,7 +32,7 @@ qubix:
     presets: []
 ```
 
-The eventual desktop profile enables validated desktop components. The current profile enables branding, an additional Qubix Niri session and shell defaults. During bootstrap planned components stay disabled and enabling them must fail clearly. Bootloader and Plymouth remain opt-in until VM testing. No fallback from a mistyped profile or backend.
+The current profile enables branding, an additional Qubix Niri session and shell defaults. All candidate components have implementations; unsupported selections still fail explicitly. Bootloader and Plymouth remain opt-in until VM testing. No fallback from a mistyped profile or backend.
 
 Booleans must be YAML booleans, not strings. Each nested mapping allows only documented keys. `user_config` initially accepts only `preserve`; an adoption interface requires its own consent and recovery design. `change_default_shell` must be false during bootstrap. Login backend allows `auto`, `sddm`, `greetd`, `gdm`, `lightdm`; bootloader allows `auto`, `grub`, `limine`; initramfs allows `auto`, `dracut`, `mkinitcpio`. Allowing a value in the schema does not implement an adapter.
 
@@ -41,7 +41,7 @@ Booleans must be YAML booleans, not strings. Each nested mapping allows only doc
 | Policy | Meaning | Examples |
 |---|---|---|
 | Managed | Qubix reconciles content in a Qubix namespace | `/usr/share/qubix/branding/` |
-| Default | Operator accepts a supplied default; personal override wins | Future `/etc/niri/` defaults and terminal defaults |
+| Default | Operator selects supplied defaults; explicit Qubix session does not inherit personal Niri settings | `/etc/niri/qubix/` defaults and terminal defaults |
 | Preserved | Detect and report without modifying | Dotfiles, boot entries, kernel arguments, encryption, `/usr/lib/os-release` |
 
 Existing non-Qubix system defaults require backup and an explicit activation policy before replacement. Additive fragments are preferred. A file's presence does not prove the application loaded it.

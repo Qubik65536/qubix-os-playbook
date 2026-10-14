@@ -1,16 +1,11 @@
-# Installation
+# Installation prerequisites
 
-The controller tooling, inspection workflow, and additive artwork deployment are **Implemented**. A live CachyOS target has not yet been integration-tested. Use an existing CachyOS Niri installation; this project does not install Linux or build an ISO.
+Status: Implemented candidate; native integration pending.
 
-Clone the repository, enter its root, and follow [controller setup](../development/environment.md). The default inventory selects localhost. The target needs Python, Linux/systemd, exact CachyOS identity, and executable `/usr/bin/pacman` and `/usr/bin/niri`. No package installation is automatic. Artwork deployment needs target privilege escalation; inspection does not.
+Follow the [user getting-started guide](getting-started.md). Use existing CachyOS Niri; the project installs neither Linux nor an ISO. A Mac/Linux controller needs Python 3.12+ and locked tools. The target needs Python, exact CachyOS identity, Linux/systemd, Pacman and Niri.
 
-For a remote target, create an operator-owned inventory (example; replace the hostname):
+Ansible transfers repository assets over SSH. Use the existing checkout: unpublished candidate commits are not in a GitHub clone. Default inventory selects localhost; always provide your VM inventory from a Mac. Keep host-key checking enabled.
 
-```ini
-[qubix_targets]
-qubix-vm ansible_host=192.0.2.10 ansible_user=operator
-```
+Prepare Foot/Fuzzel/Waybar/Mako/Swaybg manually. Deployment does not install packages, replace managers/loaders or change the default shell. See [compatibility](../architecture/compatibility.md) for optional prerequisites.
 
-Then run `./bootstrap.sh verify -i inventory.ini`. Use normal SSH authentication and host-key verification. Do not add `--become` for inspection; the playbooks explicitly disable escalation in preflight. The macOS development host is intentionally unsupported as a target.
-
-Read [configuration](configuration.md), [deployment](deployment.md), and [restoration](restoration.md) before later mutation. Bootloader/Plymouth remain disabled and unimplemented.
+Inspect with `./bootstrap.sh verify -i inventory/target.local.ini`. Default inspection uses ordinary readable facts without escalation. Installed boot/splash checks may need sudo. Read [configuration](configuration.md), [deployment](deployment.md) and [recovery](restoration.md).

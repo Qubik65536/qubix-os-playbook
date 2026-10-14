@@ -1,24 +1,27 @@
 # Qubix OS Playbook
 
-An Ansible framework for deploying Qubix branding and desktop defaults onto existing Linux installations. The first target is **CachyOS with Niri**. Qubix manages its own configuration, not the complete operating system.
+An Ansible framework for deploying Qubix branding and desktop defaults onto existing Linux installations. The first target is **CachyOS with Niri**. Qubix reproduces its managed configuration, not the complete operating system.
 
-**Status: desktop MVP candidate In Progress.** Strict profile validation, read-only CachyOS Niri discovery, shared artwork installation, file recovery, and an additional Qubix Niri session are implemented. No graphical or boot integration has been verified. Follow [project status](docs/project/status.md) for evidence.
+**Status: MVP candidate ready for disposable-VM testing.** Branding, a separate Qubix Niri session, wallpaper/companions, shell defaults, SDDM branding, both GRUB and Limine, and Plymouth with both dracut and mkinitcpio are implemented. Static checks and isolated fixtures pass. Native sessions, authentication, image generation, reboots and recovery remain unverified until the VM matrix passes. See [actual evidence](docs/project/status.md).
 
-Set up [controller tools](docs/development/environment.md), then run from the repository root:
+Start with the [user getting-started guide](docs/user/getting-started.md). Use the [human developer getting-started guide](docs/development/getting-started.md) to understand or change the code. The [target information guide](docs/user/collecting-target-info.md) explains what to collect when the VM finishes installing.
+
+After controller setup and a remote inventory with a `qubix_targets` group:
 
 ```bash
-./bootstrap.sh verify
-./bootstrap.sh deploy --check --diff --ask-become-pass
+./bootstrap.sh verify -i inventory/target.local.ini
+./bootstrap.sh deploy -i inventory/target.local.ini --check --diff --ask-become-pass
+./bootstrap.sh deploy -i inventory/target.local.ini --ask-become-pass
+./bootstrap.sh verify -i inventory/target.local.ini --tags installed
 ```
 
-These commands inspect an existing CachyOS Niri host and reject unsupported systems. Deployment prepares measured desktop prerequisites, backs up named resources, and installs an additional Qubix Niri session, wallpaper, companion and shell defaults. Native and personal Niri configuration remain preserved. Login and boot components are being implemented. Use `-i inventory.ini` for a remote `qubix_targets` group and `-e @config/local.yml` for overrides. See [installation](docs/user/installation.md).
+The default profile deploys the desktop only. Choose **Qubix Niri** at login or start it from a free TTY. Native Niri, personal dotfiles, distribution identity, boot entries and kernel arguments remain preserved. Login/boot/splash are opt-in; explicit boot paths/version/image mappings are required. Candidate commits are local and have not been pushed.
 
-The MVP includes a working Niri desktop, login branding, **both GRUB and Limine adapters**, and Plymouth with both dracut and mkinitcpio. Boot work remains opt-in and follows the first desktop milestone. Fedora Workstation and KDE are post-MVP.
+- [Scope and acceptance](docs/project/scope.md), [roadmap](docs/project/roadmap.md), [backlog](docs/project/backlog.md)
+- [Architecture](docs/architecture/overview.md), [configuration](docs/architecture/configuration.md), [candidate boundaries](docs/architecture/mvp-candidate.md)
+- [Verification checklist](docs/user/verification.md), [restoration](docs/user/restoration.md), [troubleshooting](docs/user/troubleshooting.md)
+- [Contributing](CONTRIBUTING.md), [agent instructions](AGENTS.md), [testing](docs/development/testing.md)
 
-- [Scope and acceptance criteria](docs/project/scope.md)
-- [Architecture](docs/architecture/overview.md) and [configuration contract](docs/architecture/configuration.md)
-- [Roadmap](docs/project/roadmap.md) and [backlog](docs/project/backlog.md)
-- [Installation](docs/user/installation.md), [deployment](docs/user/deployment.md), and [recovery](docs/user/restoration.md)
-- [Contributing](CONTRIBUTING.md) and [agent instructions](AGENTS.md)
+MVP acceptance requires both loaders and both generators to pass independent VM tests; the first working desktop milestone does not depend on boot customization. Fedora Workstation and KDE are post-MVP.
 
-Visual identity originates in [Qubix OS BlueBuild](https://github.com/Qubik65536/qubix-os-bluebuild). Imported artwork retains [attribution](NOTICE), [checksums](assets/branding/manifest.yml), and Apache-2.0 notices. This project does not reuse its image-generation infrastructure or overwrite distribution identity. See [reference review](docs/architecture/reference.md).
+Visual identity originates in [Qubix OS BlueBuild](https://github.com/Qubik65536/qubix-os-bluebuild). Imported artwork retains [attribution](NOTICE), [checksums](assets/branding/manifest.yml), and Apache-2.0 notices. Image-generation infrastructure is not reused. See [reference review](docs/architecture/reference.md).

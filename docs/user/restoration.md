@@ -1,21 +1,30 @@
 # Restoration and recovery
 
-Status: **Implemented named-file recovery; isolated fixtures Tested**. The shared file engine snapshots bytes, original absence and UID/GID/mode before mutation. Baselines and applied-checksum receipts are under `/var/lib/qubix/backup/`, readable only by root. Desktop and branding deployment use this engine.
+Status: Named-file/image recovery Implemented; isolated fixtures Tested; VM boot recovery pending.
 
-Run `./bootstrap.sh restore --check --diff --ask-become-pass` to preview and `./bootstrap.sh restore --ask-become-pass` to restore. Add the same remote inventory used for deployment. Restore needs a readable recorded baseline and supported CachyOS host; an empty backup set fails explicitly. It restores the first pre-Qubix state, retains baselines, removes only originally absent recorded files, and leaves unlisted resources/directories alone.
+Snapshot the VM and retain console access before login/boot changes. Private `/var/lib/qubix/backup/` stores first pre-Qubix bytes, UID/GID/mode, absence and applied-checksum receipts. Baselines survive reapplication. ACLs/xattrs and whole-system state are not captured.
 
-Local drift fails safely. Inspect the target and backup before deliberately passing `-e qubix_files_force_restore=true`. Restoration is per resource; a later conflict can leave earlier resources already restored. Original ACLs/xattrs are not recorded; concurrent deployments are unsupported, and plain boot-image recovery is included with an associated-kernel hash guard. Snapshot the test VM before deployment.
+## Normal restoration
 
-Branding owns only `/usr/share/qubix/branding/{logo.svg,logo.png,banner.svg,LICENSE,NOTICE}`. It reconciles these files on reapplication. Unlisted files, distribution assets and personal defaults are untouched. To remove branding, first disable `branding.enabled` in operator configuration, then remove only the five owned files:
+Use the deployment inventory:
 
 ```bash
-sudo rm -- /usr/share/qubix/branding/logo.svg /usr/share/qubix/branding/logo.png /usr/share/qubix/branding/banner.svg /usr/share/qubix/branding/LICENSE /usr/share/qubix/branding/NOTICE
+./bootstrap.sh restore -i inventory/target.local.ini --check --diff --ask-become-pass
+./bootstrap.sh restore -i inventory/target.local.ini --ask-become-pass
 ```
 
-Do not recursively delete the namespace: it may contain unrelated files. This manual system-removal procedure is not host-tested; equivalent preservation is tested in disposable fixtures. No application references are activated yet, so removal does not change login, desktop or boot configuration. To recover a prior artwork revision that implements branding, use a separate checkout/worktree at that Git revision and reapply its documented deployment procedure.
+Restore handles **all recorded baselines**, independently of enabled components. Original files/images return; originally absent files are removed. Unlisted files/directories remain. Disabling a component alone does not uninstall it. Empty baseline sets fail explicitly.
 
-Future default activation requires content/metadata backups, original-absence records, target paths, and source revision. Restoration must preserve unowned content and reject conflicts. This is resource-level recovery, not whole-system rollback.
+Local drift/unreceipted partial changes stop restore. Inspect the target/receipt/original before intentionally adding `-e qubix_files_force_restore=true`. Restoration is per resource; a later failure may leave earlier resources restored. Concurrent deployment is unsupported.
 
-Boot adapters require a known bootable fallback and tested live-media recovery before activation. Exact GRUB, Limine, dracut and mkinitcpio recovery procedures remain Planned and must be independently tested before MVP completion.
+Image backups include associated kernel hashes. Changed kernels prohibit stale image restoration, even with force. Use the VM snapshot or reviewed current-kernel native recovery. Successful restoration clears image-input/pending markers; backups remain, and subsequent deployment rebuilds required images.
 
-Image restoration refuses a changed kernel image, even with the force drift option. After a kernel update, use the VM snapshot or restore reviewed configuration and regenerate with native tools for the current kernel; never copy an old initramfs onto a changed kernel blindly. Successful restoration clears regeneration/pending markers so a later reapplication rebuilds required images. Inaccessible live-media recovery should use the VM snapshot first.
+## Failed deployment or reboot
+
+Read `deployment-pending.json` beside `deployment.json` under `/var/lib/qubix/` as root. Pending state describes an unfinished/failed attempt; deployment.json may describe an older success. `plymouth-pending` triggers retry after an incomplete rebuild. Resolve the actual failure; do not clear markers to manufacture success.
+
+If the VM cannot boot, revert its snapshot first. Manual live-media recovery requires mounting the correct root and boot/EFI filesystems, inspecting JSON manifests for exact targets and original backup names, and restoring only affected activation/integration resources. Never guess hashed filenames.
+
+GRUB recovery restores its original custom hook; Limine restores the original active configuration. No loader installation/disk operation needs reversal. Plymouth recovery restores selection/generator integration and compatible original images. After kernel changes use reviewed native generation for current outputs instead of stale images. These live-media steps require independent VM validation before release.
+
+Choose native Niri when a restored Qubix session entry is removed. Remove any manually adopted Zsh source line yourself; the playbook never edits personal dotfiles. Test original login, entries, splash and sessions using the [checklist](verification.md). Resource restoration is not a transaction or whole-system rollback.

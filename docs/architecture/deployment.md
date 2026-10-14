@@ -1,6 +1,6 @@
 # Deployment lifecycle
 
-Status: **Implemented profile resolution, discovery, compatibility validation and preflight**. Branding mutation and checksum verification are Implemented. Named-file backups, receipts, restoration and revision state are Implemented; remaining adapters are In Progress; see [status](../project/status.md).
+Status: **Implemented profile resolution, discovery, compatibility validation and preflight**. Branding mutation and checksum verification are Implemented. Named-file backups, receipts, restoration and revision state are Implemented; all candidate adapters are Implemented; see [status](../project/status.md).
 
 ```mermaid
 flowchart TD
@@ -23,6 +23,8 @@ Inventory and privilege escalation are standard Ansible operator inputs. The loc
 
 Bootstrap profile resolution loads defaults, the allowlisted profile, and an optional operator mapping (`qubix`), in that order with recursive dictionary merge. Scalar/list replacement is deliberate. Unknown keys and malformed types are rejected, so a misspelled opt-out cannot accidentally activate another component.
 
-Future recovery stores content, metadata, original absence, target paths, and source revision before overwriting default resources. Owned assets are reconciled idempotently; unrelated files must remain untouched. Revision tracking includes Git commit and effective configuration digest, with dirty-tree detection. It is not whole-system rollback.
+Recovery stores content, metadata, original absence and target paths before overwriting default resources. Owned assets are reconciled idempotently; unrelated files must remain untouched. Revision tracking includes Git commit and effective configuration digest, with dirty-tree detection. It is not whole-system rollback.
 
 Current deployment validates all selected component prerequisites first, then escalates for backed-up named file installation and verification. `verify` inspects by default; `verify --tags branding` explicitly checks deployed assets. The wrapper reserves tags for verification; configure enabled components in YAML. A successful file deployment records revision and configuration digest; graphical and boot verification remain false until actual acceptance.
+
+A transient deployment-pending.json is recorded before mutation. Failures retain diagnostics alongside the previous successful deployment.json; only complete file/archive verification clears pending and updates success. This bookkeeping never asserts graphical/reboot acceptance. Image rebuild pending state is independent and triggers retry.

@@ -1,11 +1,28 @@
-# Verification
+# Verification and VM acceptance
 
-Status: **Implemented inspection and branding-file verification, fixture-tested**. Run `./bootstrap.sh verify` after [setup](installation.md); add inventory/overrides as described in [deployment](deployment.md).
+Status: Inspection and installed-resource verification Implemented; controller fixtures Tested. **Native graphical/reboot acceptance pending.**
 
-The report includes resolved configuration, native CachyOS/version evidence, executable capabilities, relevant package versions, Niri version, desktop/session environment hints, configured display-manager link and systemd activity, existing candidate paths, and installed loader/initramfs tools. Detection never changes host configuration. Unknown/ambiguous active loader and image generator are reported as `unresolved`, even when one tool is installed.
+Default `verify` reports configuration, identity/version, binaries/packages, Niri, manager activity, kernel arguments and candidates without writes. Active loader/generator stay unresolved until operator confirmation. SSH session hints may be absent.
 
-Permission/probe failures stop execution rather than being treated as missing capabilities. Session hints may be unknown under SSH. The initial supported path still needs live CachyOS VM evidence; fixtures exercise production classification/normalization/identity tasks.
+After deployment use `./bootstrap.sh verify -i inventory/target.local.ini -e @config/local.yml --tags installed`; add `--ask-become-pass` for login/boot/splash selections. It checks selected file hashes/modes, Niri syntax and image archive resources without regeneration. `--tags branding` checks only branding, including ownership.
 
-Run `./bootstrap.sh verify --tags branding` to check already-installed branding (with inventory/overrides as needed). All five named files must be regular files with expected SHA-256, mode 0644, and ownership; missing/damaged/redirected content fails. Leave branding enabled in the resolved configuration for this check. `verify` without this tag stays useful before installation.
+## Acceptance checklist
 
-Asset availability is established only by explicit branding checks or successful post-install checks. Niri parser validation, graphical session, bootloader boot and Plymouth boot remain future verification levels. None is established by successful inspection or artwork installation.
+Record exact revision, resolved options, target/package/kernel/loader/generator versions, commands/exit statuses and observations. Save pre-test native/personal file and boot-entry checksums. Use independent snapshots/installations.
+
+| Area | Required result |
+|---|---|
+| Desktop | Niri/Foot validators pass; wallpaper, bar, launcher, notifications, terminal, navigation work |
+| Authentication | Existing login, GUI privilege and encrypted-root paths work; no PAM/encryption changes |
+| Preservation | Native/personal files and identity unchanged; unowned files survive |
+| Idempotency | Same revision/options second deploy has zero managed changes; unchanged images skip rebuild |
+| Login | Supported SDDM preview/authentication/native and Qubix sessions and restore succeed |
+| GRUB | Native custom-hook checker, branded menu, original entries/arguments and restored boot succeed |
+| Limine | Confirmed supported version, branded menu, original entries/arguments and restored boot succeed |
+| dracut | Real generation/archive/splash/unlock/preservation/restoration succeed |
+| mkinitcpio | All mapped preset outputs, preserved hooks/settings, real generation/splash/unlock/restoration succeed |
+| Recovery/state | Pending failure visible alongside last success; baseline/snapshot recovery works; revision/digest/dirty flag accurate |
+
+On the VM, run `niri --config /etc/niri/qubix/config.kdl validate` and `foot --check-config --config /etc/qubix/foot.ini` for direct native parser evidence. Greeter/session checks require an actual display.
+
+Reapply before restoring. Verify original behaviour after baseline recovery. Archive presence cannot prove rendering/authentication/boot. Fixtures do not satisfy these native gates. Record outcomes in [status](../project/status.md) and [compatibility](../architecture/compatibility.md).

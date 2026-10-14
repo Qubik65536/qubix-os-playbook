@@ -1,6 +1,6 @@
 # MVP candidate implementation contract
 
-Status: In Progress. This document defines the candidate before implementation. A candidate is ready for operator VM tests; MVP acceptance still requires the graphical/reboot matrix in [scope](../project/scope.md).
+Status: Implemented candidate; controller fixtures Tested and native acceptance pending. This document defined the contract before implementation. A candidate is ready for operator VM tests; MVP acceptance still requires the graphical/reboot matrix in [scope](../project/scope.md).
 
 ## Files, backups and state
 
@@ -24,6 +24,6 @@ A Qubix script theme and theme-selection file are separate from loaders. Both dr
 
 ## Validation boundary
 
-Controller fixtures use synthetic facts and temporary filesystem roots, never development-host boot paths. Static checks cover templates/schema; fake command tools test dispatch/failure handling only. Actual `niri validate`, SDDM preview/login, GRUB/Limine reboot, dracut/mkinitcpio generation and recovery require the installing CachyOS VM. User and human-developer getting-started guides will provide prerequisites, commands, evidence collection, recovery and test reporting.
+Controller fixtures use synthetic facts and temporary filesystem roots, never development-host boot paths. Static checks cover templates/schema; fake command tools test dispatch/failure handling only. Actual `niri validate`, SDDM preview/login, GRUB/Limine reboot, dracut/mkinitcpio generation and recovery require the installing CachyOS VM. The [user guide](../user/getting-started.md) and [human developer guide](../development/getting-started.md) provide prerequisites, commands, evidence collection, recovery and reporting.
 
 Primary references: [Niri](https://github.com/niri-wm/niri/wiki/Getting-Started), [Limine v8 configuration](https://github.com/limine-bootloader/limine/blob/v8.x/CONFIG.md), [SDDM configuration](https://man.archlinux.org/man/sddm.conf.5.en), [mkinitcpio](https://man.archlinux.org/man/mkinitcpio.8.en), [dracut](https://man.archlinux.org/man/dracut.8.en).

@@ -1,33 +1,34 @@
 # Project status
 
-Updated: 2026-10-13. Stage: **MVP candidate implementation In Progress**.
+Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM testing**. Full MVP acceptance remains In Progress; the disposable CachyOS VM is still installing.
 
-| Capability | Status | Evidence |
+| Capability | Status | Actual evidence |
 |---|---|---|
-| Scope, architecture, ten ADRs, roadmap and workflows | Implemented | Documentation committed before source; local links/consistency pass |
-| Controller tooling | Tested | Python 3.13.14; Ansible 2.21.5; ansible-lint 26.10.1; yamllint 1.38.0; ShellCheck 0.11.0 |
-| Profile/identity/discovery contracts | Tested | 25 profile + 11 host + 7 identity cases and normalization; normal/check mode; zero changes |
-| Live inspection | Implemented | Real macOS rejection with zero changes; supported CachyOS collection still unverified |
-| CI workflow | Implemented | Same local scripts pass; GitHub execution pending because no commits were pushed |
-| Branding installation and file verification | Tested | Licensed assets; isolated filesystem; preview/idempotency/repair/preservation; missing/corrupt/symlink rejection |
-| Niri/appearance/shell | Implemented | Definitions and missing-companion fixtures pass; native parser/session pending VM |
-| Login | Implemented | Native Breeze clone and unsupported-manager fixtures; VM login pending |
-| GRUB and Limine | Implemented | Independent preservation/idempotency and unsupported-version fixtures; reboot acceptance pending |
-| Plymouth/dracut/mkinitcpio | Implemented | Two simulated dispatch plans, conditional rebuild, archive checks and no-write check-mode fixtures; real generation pending |
-| Backups/restoration/revision state | Implemented | Baselines, receipts, conflict/restore fixtures; deployment revision recorded last |
+| Architecture/ADRs/conventions | Implemented | Documentation committed before source; local links/configuration agreement pass |
+| Tools and CI | Tested locally; CI Implemented | Locked tools; shared scripts pass; no GitHub execution because commits were not pushed |
+| Profile/identity/discovery | Tested in fixtures | 25 profile + 11 host + 7 identity cases; independent manager activity; normal/check zero changes |
+| Live CachyOS inspection | Implemented, target acceptance pending | Actual macOS rejection with zero changes; no supported-host run yet |
+| Branding | Tested in fixtures | Provenance/hash checks, isolated preview/install/repair/idempotency/preservation |
+| Niri/wallpaper/companions | Implemented | Separate session definitions, missing-tool rejection, optional measured agent; native parsers/session pending |
+| Shell | Tested in controller fixtures | Explicit/user/default Starship precedence; native interactive startup pending |
+| SDDM | Implemented | UI clone, actual INI lines, standalone/ambiguous/unsupported activity fixtures; authentication pending |
+| GRUB and Limine | Implemented | Independent preservation/reapplication/private-mode/file-restore fixtures; native checker, boot/restore pending |
+| Plymouth/dracut/mkinitcpio | Implemented | Simulated dispatch/rebuild skip/archive failure, kernel restore and no-write preview; native generation/splash pending |
+| Backup/restore/state | Tested in fixtures | Bytes/modes/absence, drift/repeated restore, failed validator and pending/last-success records |
 
-## Actual validation
+## Commands and outcomes
 
-`./scripts/validate.sh`: YAML lint, production Ansible lint, all entry/test playbook syntax checks, ShellCheck, Markdown/local-link checks, schema/profile/documented-default agreement and source asset hashes pass.
+- `./scripts/validate.sh`: passes YAML lint, production Ansible lint, all public/fixture syntax checks, ShellCheck, Markdown/local-link/configuration/asset checks and diff whitespace.
+- `./scripts/test.sh`: passed the complete framework normal/check (zero changes), branding normal/check, recovery, desktop, SDDM, loader and image-generator/check-mode fixtures. Subsequent focused boot file-lifecycle/private-mode, login, splash and compact-wrapper guard fixtures also pass.
+- `bash scripts/collect-target-info.sh --help`: exit 0. Actual macOS invocation: expected exit 2, no writes; Linux output pending.
+- `./bootstrap.sh verify`: actual macOS rejection, exit 2 and zero changes; expected guard, not supported-host acceptance.
 
-`./scripts/test.sh`: framework fixtures pass in normal/check mode with zero changes; branding fixtures pass both modes. Branding tests deliberately create/mutate/remove only temporary fixtures and assert a second install changes no files/directories. A preview leaves the branding namespace absent. Tests assert unowned content survives both reapplication and rejected symlink writes.
+Fake generators/inspectors and archive listings prove dispatch/guards, not native initramfs generation. Desktop tests render definitions, not a compositor. Native validators are wired into deployment but not yet run on CachyOS. Fixtures write only disposable roots under `.cache/tests/`.
 
-`./bootstrap.sh verify`: on the real macOS controller, expected unsupported-host rejection (exit 2), zero changes. It does not claim supported-host or graphical verification.
+## Limits and next gate
 
-## Limits and next milestone
+No native graphical or reboot success is claimed. [Compatibility](../architecture/compatibility.md) limits login to active SDDM/Breeze; fixed-command greetd desktop testing uses a free TTY. Boot selection is explicit. Plymouth supports existing plain images and literal mkinitcpio settings, not UKIs/signing.
 
-No live CachyOS VM was supplied. Supported-host collection, system artwork deployment, Niri parsing/session behaviour, login, boot and recovery remain **unverified on a real target**. Artwork installation alone cannot activate Qubix appearance. Check mode defers file copies if the namespace does not exist; it cannot verify unwritten content. Restricted sandbox requires approved execution for Ansible local IPC.
+Backups record bytes, UID/GID/mode and absence, not ACLs/xattrs or complete system state. Restore is per resource; changed kernels block stale images. Check mode cannot validate uninstalled files or regenerated archives. Concurrent deployment is unsupported.
 
-Next: collect a live disposable CachyOS Niri report, design minimal validated Niri/companion defaults, and add backup-aware activation. See [F03/F06](backlog.md). First desktop milestone requires observed wallpaper, launcher, bar/notifications, terminal, preservation and idempotency; boot work remains independent.
-
-The next implementation follows [candidate contracts](../architecture/mvp-candidate.md). A VM is installing; complete other implementation/fixture work first, then collect live target evidence.
+Next: [collect the VM report](../user/collecting-target-info.md), run desktop preview/deploy/native validation, observe companions/preservation, prove second-run idempotency and restoration. Then independently test login, both loaders and both generators. See [T01](backlog.md) and [operator guide](../user/getting-started.md).
