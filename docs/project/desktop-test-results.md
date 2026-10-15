@@ -71,3 +71,22 @@ The post-deployment audit matches all 76 native/personal resources to the post-p
 The operator-authorized reboot after this deployment also succeeds: a new boot ID is observed, SSH/native SDDM return active, both installed parsers pass and the Qubix session entry is available. No user desktop process was running at inspection, leaving session selection to the operator. Qubix login/bootloader/Plymouth remained disabled throughout.
 
 These results establish syntax, nested appearance and actual system-file deployment/idempotency. Physical shortcuts, launcher application startup, GUI authentication, lock/unlock and portals need primary-session acceptance after the operator selects the updated session. Restoration of the three new Noctalia resources remains a native recovery acceptance item; the shared first-baseline engine is covered by fixtures and the earlier classic lifecycle.
+
+## Bar and shortcut-panel refinement
+
+Clean source revision 6bb163c adds separate rounded widget capsules and a searchable local Noctalia shortcut panel, opened with the bar keyboard button or Super+Shift+/. Its three managed files contain the manifest, Luau presenter and JSON generated from labelled KDL bindings. Super+F1 retains Niri's compact overlay. No additional packages or services were installed.
+
+| Check | Actual outcome |
+|---|---|
+| scripts/validate.sh | YAML/Ansible/ShellCheck, all syntax checks and repository consistency pass |
+| tests/playbooks/desktop.yml | 62 tasks, zero changes/failures; six expected dependency/version refusals; generated binding data covers labelled KDL |
+| tests/integration/desktop.yml | 62 tasks, eight temporary changes, zero failures; manifest lint and panel open/search/close pass |
+| bootstrap.sh deploy | 395 tasks, 15 changes, zero failures |
+| Same-revision/configuration reapplication | 391 tasks, zero changes/failures |
+| bootstrap.sh verify --tags installed | 64 tasks, zero changes/failures; hashes/modes and installed native validators pass |
+
+The native screenshots were inspected: separate floating bar pills, two-column category cards, keycaps, bounded scrolling with a visible footer, and a search that filters 41 grouped actions to the launcher entry. The initial preview caught unbounded content; the final presenter gives the scroll viewport the remaining panel height. Search is exercised through the same callback used by the input. Physical keystrokes and pointer dismissal still require operator testing.
+
+The main native Niri/Noctalia process IDs and preview configuration/session checks remain preserved; cleanup leaves zero test processes. A post-deployment audit matches all 76 native/personal resources and the default Fish shell to the pre-deployment snapshot. All 20 earlier baseline hashes remain intact; the three new private manifests bring the total to 23. State records clean revision 6bb163c, files-verified and no pending attempt, with graphical/boot acceptance flags still false.
+
+The active main session is native CachyOS Niri/Noctalia. Saved Qubix GUI preferences contain no bar/theme/plugin overrides. Log out and select **Qubix Niri** to use the refinements; the native session remains available. Primary-session acceptance and native restoration of the newer Noctalia resources remain open. Login, bootloader and Plymouth components remained disabled; no reboot was needed for this deployment. Evidence stays in ignored .cache/native-desktop/ and the local refinement logs/audit.
