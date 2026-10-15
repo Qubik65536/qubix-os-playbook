@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM testing**. Full MVP acceptance remains In Progress; SSH is connected to a physical CachyOS ThinkPad after service/firewall setup and host-key confirmation. Desktop deployment, installed verification, zero-change reapplication and isolated nested rendering pass. Earlier classic desktop restoration passes; Noctalia recovery and primary-session/VM acceptance remain pending.
+Updated: 2026-10-15. Stage: **Implemented MVP candidate, ready for operator VM testing**. Full MVP acceptance remains In Progress; SSH is connected to a physical CachyOS ThinkPad after service/firewall setup and host-key confirmation. Desktop deployment, installed verification, zero-change reapplication and isolated nested rendering pass. Earlier classic desktop restoration passes; Noctalia recovery and primary-session/VM acceptance remain pending.
 
 | Capability | Status | Actual evidence |
 |---|---|---|
@@ -30,6 +30,8 @@ SSH initially timed out because target sshd was inactive and UFW lacked an allow
 Native `tests/integration/niri.yml` passes: 62 tasks, eight temporary setup/cleanup changes, zero failures. Corrected validation uses `niri validate --config`; the installed CLI rejected the old option order. Niri, Foot and Fuzzel accept their production candidates and reject invalid controls. This establishes syntax only, not visual or companion startup behaviour.
 
 ## Limits and next gate
+
+The bar/logo visibility correction is Implemented and native preview Tested: launcher-only scaling doubles the image box to 32 px, and stronger module outlines make separation visible. Static checks, the 62-task controller fixture and 62-task native preview pass with original configuration/compositor preserved and zero leftover test processes. Deployment is pending.
 
 The resize, launcher-power and compact bar revision is Implemented and deployed from clean revision bbea600. The 62-task fixture and 62-task native preview pass, including actual sizing, generated binding coverage, pinned Power options, menu/search, warning-free configuration and dock absence. Deployment passes 409 tasks with 10 changes; reapplication passes 408 tasks with zero changes; installed verification passes 64 tasks with zero changes. The active Qubix shell reloads without changing Niri/Noctalia PIDs or boot ID, leaving bar/wallpaper and no dock. All 76 current native/personal snapshots, the Fish shell, retirement backup and 23 existing private baseline hashes are preserved; the new power entry brings baselines to 24. See the [revision evidence](desktop-test-results.md#resize-power-controls-and-compact-bar). Physical interaction and native recovery remain open.
 

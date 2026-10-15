@@ -36,9 +36,9 @@ global = true
 
 [bar.default]
 position = "top"
-thickness = 36
-margin_edge = 8
-margin_ends = 12
+thickness = 40
+margin_edge = 10
+margin_ends = 16
 radius = 12
 radius_top_left = 12
 radius_top_right = 12
@@ -48,15 +48,15 @@ concave_edge_corners = false
 background_opacity = 0.0
 border_width = 0.0
 shadow = false
-widget_spacing = 8
+widget_spacing = 10
 capsule = true
 capsule_fill = "surface"
 capsule_foreground = "on_surface"
-capsule_thickness = 0.86
-capsule_padding = 10
-capsule_radius = 10.0
-capsule_opacity = 0.96
-capsule_border = "#56728b4d"
+capsule_thickness = 0.9
+capsule_padding = 12
+capsule_radius = 12.0
+capsule_opacity = 1.0
+capsule_border = "#56728bcc"
 capsule_border_width = 1.0
 start = ["launcher", "workspaces", "shortcuts"]
 center = ["clock"]
@@ -65,6 +65,8 @@ end = ["tray", "notifications", "network", "volume", "battery", "control-center"
 [widget.launcher]
 custom_image = "/usr/share/qubix/branding/logo.png"
 custom_image_colorize = false
+scale = 2.0
+capsule_padding = 4
 capsule_fill = "primary"
 
 [widget.clock]

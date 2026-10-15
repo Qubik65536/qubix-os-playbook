@@ -24,7 +24,7 @@ Noctalia's application theme templates are disabled: palette changes must not re
 - Primary accent and active Niri focus ring: **#56728b**.
 - Base surface: #1b242c; raised surface: #283745; main text: #f2f5f8; secondary text: #cfdae2. Brighter blue-gray secondary colours preserve legibility when an accent alone is too dark for small text.
 - Niri window corner radius: **16 px**, with content clipped to geometry; gaps: 12 px.
-- Noctalia top bar: a transparent 36 px surface with separate rounded 10 px widget capsules, 8 px edge inset and 12 px end inset. Floating launcher/clipboard/settings surfaces use an increased global corner scale.
+- Noctalia top bar: a transparent 40 px surface with separate rounded 36 px modules, 12 px module radii, 10 px edge inset and 16 px end insets. The launcher image is scaled to 32 px; other widgets retain their ordinary content scale. Floating launcher/clipboard/settings surfaces use an increased global corner scale.
 - The dock is disabled, including its reserved bottom area. The launcher, Niri overview and window switcher provide application access. Noctalia controls shell surfaces; ordinary applications retain their own toolkits and decorations.
 
 ### Bar and shortcut-panel refinement
@@ -46,6 +46,14 @@ The profile supplies a pinned **Power options** launcher entry that opens Noctal
 The profile refines the separate floating bar components using the compact modules, restrained borders and spacing observed in the [Ryoku showroom](https://ryoku.dev/showroom), especially the pink-room reference. It uses 36 px bar thickness, 10 px module radii, 8 px component spacing and the existing #56728b palette. This is visual inspiration; no Ryoku source, artwork or runtime is imported. The Noctalia dock and its reserved bottom area are disabled; launcher, overview and window switcher provide application access.
 
 Acceptance: generated binding coverage including resize labels, native KDL/TOML validation, observed width/height changes in the isolated test, visible launcher power entry/results without executing power actions, screenshots with no dock layer, preserved main compositor/personal configuration, and zero-change reapplication. Update native fixtures for the resulting production candidates. Deploy and reload the active Qubix shell after these checks; reboot is unnecessary.
+
+### Bar visibility and logo correction
+
+Status: **Implemented; native preview Tested; deployment pending**. Inspection of the primary Qubix session confirms that the compact revision is installed and no user bar/widget overrides mask it. Its height, radius and border changes were too small to establish the intended visual distinction. Noctalia 5.2 renders a launcher image at its 16 px base glyph size; the attributed logo's transparent margins further reduce the visible cube.
+
+The correction uses a 40 px bar with 36 px modules, 12 px module radii, 10 px separation/edge inset and 16 px end insets. Outline opacity rises from 30% to 80% with opaque module fills. Only the launcher widget's scale is set to 2.0, yielding a 32 px image box and twice the previous visible artwork dimensions; its horizontal capsule padding is reduced so its button stays compact. Original artwork, palette, individual module boundaries, actions, dock absence and user preferences remain preserved. Before/after native preview screenshots were inspected; the larger cube and stronger outlines are visible, parser checks pass and the parent configuration/compositor remain unchanged.
+
+Acceptance: warning-free native configuration validation, inspected before/after preview screenshots showing a clearly larger cube and distinct module outlines, preserved parent session/configuration, live profile reload and zero-change reapplication. File presence and layer names alone do not establish visual improvement.
 
 ## Shortcut contract
 
