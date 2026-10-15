@@ -59,6 +59,12 @@ if ! ansible-playbook tests/playbooks/bootloader.yml >.cache/tests/bootloader.lo
 fi
 printf '%s\n' 'Independent GRUB/Limine preservation and reapplication fixtures passed; actual boot pending VM.'
 
+if ! ansible-playbook tests/playbooks/limine-appearance.yml >.cache/tests/limine-appearance.log 2>&1; then
+  cat .cache/tests/limine-appearance.log
+  exit 1
+fi
+printf '%s\n' 'Graphical Limine preservation, recovery and unsafe-input fixtures passed.'
+
 if ! ansible-playbook tests/playbooks/plymouth.yml >.cache/tests/plymouth.log 2>&1; then
   cat .cache/tests/plymouth.log
   exit 1

@@ -1,0 +1,33 @@
+---
+- name: Seed the unsafe fixture input
+  ansible.builtin.copy:
+    dest: '{{ qubix_root }}{{ qubix_test_limine_case.path }}'
+    content: '{{ qubix_test_limine_case.content }}'
+    mode: '0600'
+
+- name: Reset refusal outcome
+  ansible.builtin.set_fact:
+    qubix_test_graphical_refused: false
+
+- name: Require safe refusal
+  block:
+    - name: Plan without host writes
+      ansible.builtin.include_role:
+        name: qubix_bootloader
+  rescue:
+    - name: Require the intended diagnostic
+      ansible.builtin.assert:
+        that: [qubix_test_limine_case.error in (ansible_failed_result | to_json)]
+    - name: Record refusal
+      ansible.builtin.set_fact:
+        qubix_test_graphical_refused: true
+
+- name: Require negative control failure
+  ansible.builtin.assert:
+    that: [qubix_test_graphical_refused]
+
+- name: Remove only the non-native unsafe input
+  ansible.builtin.file:
+    path: '{{ qubix_root }}{{ qubix_test_limine_case.path }}'
+    state: absent
+  when: qubix_test_limine_case.path != '/boot/limine.conf'

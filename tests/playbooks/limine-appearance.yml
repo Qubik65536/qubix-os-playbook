@@ -1,0 +1,152 @@
+---
+- name: Verify graphical Limine ownership and recovery in a disposable root
+  hosts: localhost
+  gather_facts: true
+  gather_subset: ['!all', min]
+  become: false
+  vars:
+    qubix_discovery_report:
+      evidence:
+        binaries: {limine: true}
+    qubix_test_native_limine: |
+      timeout: 5
+      default_entry: 2
+      wallpaper: boot():/factory.png
+      term_palette: 1;2;3;4;5;6;7;8
+      /CachyOS
+        protocol: linux
+        path: boot():/native/vmlinuz
+        module_path: boot():/native/initramfs
+        cmdline: root=UUID=preserved rw quiet splash
+      /Snapshots
+        comment: native history remains intact
+  tasks:
+    - name: Create disposable graphical fixture root
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-limine-appearance-
+      register: qubix_test_tmp
+
+    - name: Resolve fixture paths and explicit Limine selection
+      ansible.builtin.set_fact:
+        qubix_root: '{{ qubix_test_tmp.path }}'
+        qubix_files_owner: '{{ ansible_facts.user_id }}'
+        qubix_files_group: '{{ ansible_facts.user_gid | string }}'
+        qubix_profile_resolved:
+          bootloader:
+            enabled: true
+            backend: limine
+            confirm_active: true
+            config_path: /boot/limine.conf
+            limine_version: 12
+
+    - name: Exercise actual file lifecycle with cleanup
+      block:
+        - name: Create native fixture directories
+          ansible.builtin.file:
+            path: '{{ qubix_root }}{{ item }}'
+            state: directory
+            mode: '0755'
+          loop: [/boot, /etc/default]
+
+        - name: Seed private native config
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/boot/limine.conf'
+            content: '{{ qubix_test_native_limine }}'
+            mode: '0600'
+
+        - name: Plan graphical Limine resources
+          ansible.builtin.include_role:
+            name: qubix_bootloader
+
+        - name: Require wallpaper path exact entry preservation and explicit ownership
+          ansible.builtin.assert:
+            that:
+              - qubix_bootloader_resources | length == 2
+              - qubix_bootloader_resources[0].path == '/boot/qubix/wallpaper.png'
+              - "'wallpaper: boot():/qubix/wallpaper.png' in qubix_bootloader_resources[-1].content"
+              - "'term_font_scale: 2x2' in qubix_bootloader_resources[-1].content"
+              - >-
+                qubix_bootloader_resources[-1].content.split('/CachyOS')[1] ==
+                qubix_test_native_limine.split('/CachyOS')[1]
+              - "'wallpaper' in qubix_bootloader_resources[-1].limine_appearance_keys"
+              - qubix_bootloader_resources[-1].mode == '0600'
+
+        - name: Save the first deterministic candidate
+          ansible.builtin.set_fact:
+            qubix_test_graphical_candidate: '{{ qubix_bootloader_resources[-1].content }}'
+
+        - name: Apply theme with original baselines
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_resources: '{{ qubix_bootloader_resources }}'
+
+        - name: Replan graphical Limine
+          ansible.builtin.include_role:
+            name: qubix_bootloader
+
+        - name: Require identical candidate after installation
+          ansible.builtin.assert:
+            that:
+              - qubix_bootloader_resources[-1].content == qubix_test_graphical_candidate
+
+        - name: Reapply the same resources
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_resources: '{{ qubix_bootloader_resources }}'
+
+        - name: Require unchanged activation on reapplication
+          ansible.builtin.assert:
+            that: [not qubix_files_write.changed]
+
+        - name: Restore original global appearance and remove new wallpaper
+          ansible.builtin.include_role:
+            name: qubix_files
+            tasks_from: restore
+
+        - name: Read restored native config
+          ansible.builtin.slurp:
+            src: '{{ qubix_root }}/boot/limine.conf'
+          register: qubix_test_restored
+
+        - name: Inspect restored config and absent Qubix wallpaper
+          ansible.builtin.stat:
+            path: '{{ qubix_root }}{{ item }}'
+          loop: [/boot/limine.conf, /boot/qubix/wallpaper.png]
+          register: qubix_test_restored_stats
+
+        - name: Require original bytes permissions and image absence
+          ansible.builtin.assert:
+            that:
+              - qubix_test_restored.content | b64decode == qubix_test_native_limine
+              - qubix_test_restored_stats.results[0].stat.mode == '0600'
+              - not qubix_test_restored_stats.results[1].stat.exists
+
+        - name: Create another candidate directory
+          ansible.builtin.file:
+            path: '{{ qubix_root }}/boot/EFI/limine'
+            state: directory
+            mode: '0755'
+
+        - name: Reject shadow enrollment and duplicate appearance inputs
+          ansible.builtin.include_tasks: ../tasks/limine-appearance-rejection.yml
+          loop:
+            - path: /boot/EFI/limine/limine.conf
+              content: native-shadow
+              error: Another Limine candidate
+            - path: /etc/default/limine
+              content: ENABLE_ENROLL_LIMINE_CONFIG=yes
+              error: EFI enrollment changes are unsupported
+            - path: /boot/limine.conf
+              content: '{{ qubix_test_native_limine }}wallpaper: boot():/duplicate.png'
+              error: Ambiguous repeated Limine wallpaper
+          loop_control:
+            loop_var: qubix_test_limine_case
+      always:
+        - name: Remove only this fixture root
+          ansible.builtin.file:
+            path: '{{ qubix_test_tmp.path }}'
+            state: absent

@@ -9,8 +9,10 @@
 - name: Exclude only managed Limine directives from the preservation comparison
   ansible.builtin.set_fact:
     qubix_bootloader_preserved: >-
-      {{ qubix_bootloader_preserved | regex_replace(
-      '(?im)^[ \t]*(interface_branding|term_foreground|term_background)[ \t]*:[^\n]*(?:\n|$)', '') }}
+      {{ qubix_bootloader_preserved | regex_replace('(?im)^[ \t]*(' ~
+      (qubix_files_resource.limine_appearance_keys | default([], true)
+      or ['interface_branding', 'term_foreground', 'term_background']) | join('|') ~
+      ')[ \t]*:[^\n]*(?:\n|$)', '') }}
   when: qubix_files_resource.path.endswith('limine.conf')
 
 - name: Retain preserved bytes apart from additive trailing line breaks

@@ -18,20 +18,54 @@
 - name: Preserve all content outside the Qubix appearance block
   ansible.builtin.import_tasks: markers.yml
 
+- name: Resolve version-supported Limine appearance ownership
+  ansible.builtin.set_fact:
+    qubix_bootloader_limine_managed_keys: >-
+      {{ qubix_bootloader_limine_graphical_keys if qubix_profile_resolved.bootloader.limine_version == 12
+      else qubix_bootloader_limine_text_keys }}
+
+- name: Validate the graphical ESP location and native enrollment boundary
+  ansible.builtin.include_tasks: limine_preflight.yml
+  when: qubix_profile_resolved.bootloader.limine_version == 12
+
 - name: Reject duplicate existing appearance directives
   ansible.builtin.assert:
     that:
       - qubix_bootloader_preserved | regex_findall('(?im)^[ \t]*' ~ item ~ '[ \t]*:') | length <= 1
     fail_msg: 'Ambiguous repeated Limine {{ item }} directive; refusing guessed precedence.'
-  loop: [interface_branding, term_foreground, term_background]
+  loop: '{{ qubix_bootloader_limine_managed_keys }}'
 
-- name: Prepare only version-shared Limine appearance directives
+- name: Reject duplicate spelling aliases for the branding colour
+  ansible.builtin.assert:
+    that:
+      - qubix_bootloader_preserved | regex_findall('(?im)^[ \t]*interface_branding_colou?r[ \t]*:') | length <= 1
+  when: qubix_profile_resolved.bootloader.limine_version == 12
+
+- name: Initialize Limine resource definitions
+  ansible.builtin.set_fact:
+    qubix_bootloader_resources: []
+
+- name: Load attributed wallpaper metadata for the graphical adapter
+  ansible.builtin.include_vars:
+    file: '{{ role_path }}/../../assets/wallpaper/manifest.yml'
+    name: qubix_bootloader_limine_wallpaper
+  when: qubix_profile_resolved.bootloader.limine_version == 12
+
+- name: Place wallpaper on the confirmed boot filesystem before activation
   ansible.builtin.set_fact:
     qubix_bootloader_resources:
-      - path: '{{ qubix_profile_resolved.bootloader.config_path }}'
+      - path: '{{ qubix_bootloader_directory }}/qubix/wallpaper.png'
+        source: '{{ role_path }}/../../assets/wallpaper/qubix.png'
+        sha256: '{{ qubix_bootloader_limine_wallpaper.sha256 }}'
         component: bootloader
-        mode: '{{ qubix_bootloader_active_stat.stat.mode }}'
-        content: >-
-          {{ lookup('file', role_path ~ '/files/limine.conf', rstrip=false) ~
-          (qubix_bootloader_preserved | regex_replace(
-          '(?im)^[ \t]*(interface_branding|term_foreground|term_background)[ \t]*:[^\n]*(?:\n|$)', '')) }}
+  when: qubix_profile_resolved.bootloader.limine_version == 12
+
+- name: Prepare marked appearance while preserving all entry bytes
+  ansible.builtin.set_fact:
+    qubix_bootloader_resources: >-
+      {{ qubix_bootloader_resources + [{'path': qubix_profile_resolved.bootloader.config_path,
+      'component': 'bootloader', 'mode': qubix_bootloader_active_stat.stat.mode,
+      'limine_appearance_keys': qubix_bootloader_limine_managed_keys,
+      'content': lookup('template', 'limine.conf.j2') ~
+      (qubix_bootloader_preserved | regex_replace(
+      '(?im)^[ \t]*(' ~ qubix_bootloader_limine_managed_keys | join('|') ~ ')[ \t]*:[^\n]*(?:\n|$)', ''))}] }}

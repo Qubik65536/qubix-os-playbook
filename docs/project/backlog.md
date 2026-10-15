@@ -54,7 +54,7 @@ Objective: safe GRUB branding. Scope: active configuration evidence, minimal act
 
 Status: Implemented 8–12 candidate; independent version/preservation/stale-restoration fixtures Tested; reboot/restore open.
 
-Appearance follow-up: the current adapter supplies only a heading and foreground/background colours. Design and test a Limine-native graphical profile with boot-accessible Qubix wallpaper, supported palette/margins/font scaling and preservation/restore coverage before claiming BlueBuild-like visual branding. The physical desktop target remains bootloader-disabled; activation requires explicit boot authorization and the documented recovery gate.
+Appearance follow-up: the version-12 adapter now supplies a boot-accessible Qubix wallpaper and supported palette/margins/font scaling. Preservation, reapplication, restoration and three unsafe-input fixtures pass; deployment and visual acceptance remain pending. The physical desktop target remains bootloader-disabled; activation requires explicit boot authorization and the documented recovery gate.
 
 Objective: safe Limine branding; mandatory MVP. Scope: installed-version-supported settings, active-path validation and minimal edits. Acceptance: unchanged entries/arguments, VM boot and recovery. Depends on F02/F06; independent of F07. Tests: Limine-specific syntax where supported, VM and preservation. Docs: supported directives/versions and recovery.
 

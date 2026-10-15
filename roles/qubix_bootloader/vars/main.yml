@@ -1,2 +1,21 @@
 ---
 qubix_bootloader_newline: "\n"
+qubix_bootloader_limine_text_keys: [interface_branding, term_foreground, term_background]
+qubix_bootloader_limine_graphical_keys:
+  - interface_branding
+  - interface_branding_color
+  - interface_branding_colour
+  - term_foreground
+  - term_background
+  - term_foreground_bright
+  - term_background_bright
+  - term_palette
+  - term_palette_bright
+  - wallpaper
+  - wallpaper_style
+  - backdrop
+  - term_font_scale
+  - term_margin
+  - term_margin_gradient
+qubix_bootloader_limine_enrollment_no: >-
+  ^[ \t]*ENABLE_ENROLL_LIMINE_CONFIG[ \t]*=[ \t]*(?:no|"no"|'no')[ \t]*(?:#.*)?$

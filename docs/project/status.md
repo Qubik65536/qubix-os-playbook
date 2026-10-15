@@ -12,7 +12,7 @@ Updated: 2026-10-15. Stage: **Implemented MVP candidate, ready for operator VM t
 | Niri/wallpaper/companions | Noctalia files/grammar/nested rendering and primary startup/reload Tested; interaction acceptance pending | Compact bar/wallpaper, launcher power controls, resize actions and dock absence pass; deployment/verification and zero-change reapplication pass; 76 current native/personal snapshots preserved; native login entry privately backed up/retired on request |
 | Shell | Native Bash/Starship and controller fixtures Tested | Temporary-home native startup/TOML/prompt pass; default Fish and personal files preserved |
 | SDDM | Implemented | UI clone, actual INI lines, standalone/ambiguous/unsupported activity fixtures; authentication pending |
-| GRUB and Limine | Implemented | Independent preservation/reapplication/private-mode/absent-hook/stale-restore fixtures; native checker, boot/restore pending |
+| GRUB and Limine | Implemented; graphical Limine 12 fixture Tested | Graphical fixture passes 256 tasks with three expected refusals; legacy loader suite passes 732 tasks; physical appearance and native boot/restore pending |
 | Plymouth/dracut/mkinitcpio | Implemented; isolated native splash Tested | Three circular-animation modes, native parser controls and synthetic prompt pass; hook/font/archive/kernel/check-mode fixtures pass; native generation/boot/restore pending |
 | Backup/restore/state | Fixtures and native desktop absence lifecycle Tested | Original-byte/mode/drift faults in fixtures; earlier 17-resource restoration passes; 24 current private baselines, 23 earlier hashes preserved; newer Noctalia and boot/image recovery pending |
 
