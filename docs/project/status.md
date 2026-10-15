@@ -31,6 +31,8 @@ Native `tests/integration/niri.yml` passes: 62 tasks, eight temporary setup/clea
 
 ## Limits and next gate
 
+The bar capsule refinement passes the native nested preview: 59 tasks, eight temporary changes, zero failures; screenshots confirm separate visible components, with native configuration/compositor preserved and zero leftover test processes. It is ready for deployment with the matching shortcut-panel refinement.
+
 Native nested rendering is Tested. The operator-authorized reboot after desktop redeployment succeeded: the boot ID changed, SSH and native SDDM returned active, and the Qubix session entry and Niri syntax remained valid. No primary-session, authentication or Qubix boot-branding success is claimed. [Compatibility](../architecture/compatibility.md) limits login to active SDDM/Breeze; fixed-command greetd desktop testing uses a free TTY. Boot selection is explicit. Plymouth supports existing plain images and literal mkinitcpio settings, not UKIs/signing.
 
 Backups record bytes, UID/GID/mode and absence, not ACLs/xattrs or complete system state. Restore is per resource; changed kernels block stale images. Check mode cannot validate uninstalled files or regenerated archives. Concurrent deployment is unsupported.

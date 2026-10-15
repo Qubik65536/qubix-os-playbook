@@ -24,8 +24,18 @@ Noctalia's application theme templates are disabled: palette changes must not re
 - Primary accent and active Niri focus ring: **#56728b**.
 - Base surface: #1b242c; raised surface: #283745; main text: #f2f5f8; secondary text: #cfdae2. Brighter blue-gray secondary colours preserve legibility when an accent alone is too dark for small text.
 - Niri window corner radius: **16 px**, with content clipped to geometry; gaps: 12 px.
-- Noctalia top bar: rounded 16 px convex corners, 8 px edge inset, 12 px end inset and 36 px thickness. Floating launcher/clipboard/settings surfaces use an increased global corner scale.
+- Noctalia top bar: a transparent 40 px surface with separate rounded 16 px widget capsules, 8 px edge inset and 12 px end inset. Floating launcher/clipboard/settings surfaces use an increased global corner scale.
 - A small rounded bottom dock provides the macOS-inspired application surface. Noctalia controls shell surfaces; ordinary applications retain their own toolkits and decorations.
+
+### Bar and shortcut-panel refinement
+
+Status: **Bar capsules Implemented and native preview Tested; shortcut panel Planned**. Every visible top-bar component has its own rounded capsule on a transparent bar surface, with consistent padding/gaps, subtle outlines and #56728b emphasis. Launcher/workspaces, the clock and system controls retain their existing positions and actions. Empty widgets do not leave decorative capsules behind.
+
+Replace Super+Shift+/ with a Qubix Noctalia shortcut panel: searchable categories, readable action names, blue-gray keycaps, two columns and scrolling within the available screen. Add a keyboard button to the bar; retain Super+F1 for Niri's compact built-in overlay. Escape, a Close button and outside click dismiss the panel.
+
+The presenter is a small local Noctalia plugin using its installed declarative UI runtime, with no new packages, background service or network fetch. Ansible generates its display data from the managed KDL's labelled bindings; the panel must not maintain a second shortcut list or execute listed actions. Install plugin files under /usr/share/qubix/noctalia/plugins/ and enable only the local path source in Qubix defaults. Preserve native Noctalia and user GUI overrides.
+
+Acceptance: warning-free native TOML/KDL validation, valid plugin manifest/entry paths, matching generated shortcut data, native bar/panel screenshots, successful IPC open/close and search, zero-change reapplication, unchanged native configuration/compositor, and no leftover preview processes. Test the candidate in a nested session before deployment. The currently selected native CachyOS session must remain intact; select Qubix Niri to use these defaults.
 
 ## Shortcut contract
 
