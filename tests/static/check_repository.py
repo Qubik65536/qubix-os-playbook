@@ -68,6 +68,16 @@ def main():
     shell = tomllib.loads((desktop / 'noctalia.toml.j2').read_text())
     assert not shell['theme']['templates']['enable_builtin_templates']
     assert not shell['theme']['templates']['enable_community_templates']
+    plugin_dir = ROOT / 'roles/qubix_niri/files/shortcuts'
+    plugin = tomllib.loads((plugin_dir / 'plugin.toml').read_text())
+    panel = plugin['panel'][0]
+    assert (plugin_dir / panel['entry']).is_file(), 'Shortcut panel entry is missing'
+    assert shell['plugins']['enabled'] == [plugin['id']]
+    assert shell['plugins']['auto_update'] == 'none'
+    assert all(source['kind'] == 'path' for source in shell['plugins']['source'])
+    panel_id = plugin['id'] + ':' + panel['id']
+    assert panel_id in (desktop / 'config.kdl.j2').read_text()
+    assert panel_id in shell['widget']['shortcuts']['actions']['left']
     palette = json.loads((desktop / 'palette.json.j2').read_text())['dark']
     roles = {'mPrimary', 'mOnPrimary', 'mSecondary', 'mOnSecondary', 'mTertiary', 'mOnTertiary',
              'mError', 'mOnError', 'mSurface', 'mOnSurface', 'mSurfaceVariant', 'mOnSurfaceVariant',

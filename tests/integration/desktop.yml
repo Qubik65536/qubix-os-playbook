@@ -34,7 +34,7 @@
             path: '{{ qubix_smoke_directory.path }}/{{ item }}'
             state: directory
             mode: '0700'
-          loop: [config/noctalia/palettes, assets]
+          loop: [config/noctalia/palettes, assets, plugins/shortcuts]
 
         - name: Define exact candidate paths within the owned test directory
           ansible.builtin.set_fact:
@@ -44,6 +44,9 @@
               /etc/qubix/noctalia/palettes/Qubix.json: config/noctalia/palettes/Qubix.json
               /usr/share/qubix/bin/qubix-noctalia: qubix-noctalia
               /etc/niri/qubix/config.kdl: config.kdl
+              /usr/share/qubix/noctalia/plugins/shortcuts/plugin.toml: plugins/shortcuts/plugin.toml
+              /usr/share/qubix/noctalia/plugins/shortcuts/panel.luau: plugins/shortcuts/panel.luau
+              /usr/share/qubix/noctalia/plugins/shortcuts/bindings.json: plugins/shortcuts/bindings.json
 
         - name: Copy production wallpaper to a private candidate path
           ansible.builtin.copy:
@@ -59,6 +62,7 @@
               | replace('/usr/share/qubix/wallpaper.png', qubix_smoke_directory.path ~ '/assets/wallpaper.png')
               | replace('/etc/qubix/foot.ini', qubix_smoke_directory.path ~ '/foot.ini')
               | replace('/usr/share/qubix/bin/qubix-noctalia', qubix_smoke_directory.path ~ '/qubix-noctalia')
+              | replace('/usr/share/qubix/noctalia/plugins', qubix_smoke_directory.path ~ '/plugins')
               | replace('NOCTALIA_CONFIG_HOME=/etc/qubix',
                         'NOCTALIA_CONFIG_HOME=' ~ qubix_smoke_directory.path ~ '/config') }}
             mode: '{{ item.mode | default("0600") }}'
@@ -66,6 +70,11 @@
           loop: '{{ qubix_niri_resources | selectattr("path", "in", qubix_smoke_paths) | list }}'
           loop_control:
             label: '{{ item.path }}'
+
+        - name: Check the candidate plugin manifest and declared entry files
+          ansible.builtin.command:
+            argv: [/usr/bin/noctalia, plugins, lint, '{{ qubix_smoke_directory.path }}/plugins/shortcuts']
+          changed_when: false
 
         - name: Transfer native-only test helpers
           ansible.builtin.copy:

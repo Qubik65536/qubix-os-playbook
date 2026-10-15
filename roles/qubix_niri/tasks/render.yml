@@ -12,6 +12,17 @@
         sha256: '{{ qubix_niri_wallpaper.sha256 }}'
         component: niri
 
+- name: Render canonical KDL before deriving its shortcut display data
+  ansible.builtin.set_fact:
+    qubix_niri_config_content: '{{ lookup("template", "config.kdl.j2") }}'
+
+- name: Include the local shortcut presenter files before enabling the plugin
+  ansible.builtin.set_fact:
+    qubix_niri_resources: >-
+      {{ qubix_niri_resources + [{'path': '/usr/share/qubix/noctalia/plugins/shortcuts/' ~ item,
+      'component': 'niri', 'content': lookup('file', role_path ~ '/files/shortcuts/' ~ item, rstrip=false)}] }}
+  loop: [plugin.toml, panel.luau]
+
 - name: Render explicit desktop definitions
   ansible.builtin.set_fact:
     qubix_niri_resources: >-
@@ -20,6 +31,8 @@
       | combine({'validate': item.validate} if item.validate is defined else {})
       | combine({'mode': item.mode} if item.mode is defined else {})] }}
   loop:
+    - path: /usr/share/qubix/noctalia/plugins/shortcuts/bindings.json
+      template: shortcuts.json.j2
     - {path: /etc/niri/qubix/theme.kdl, template: theme.kdl.j2}
     - path: /etc/qubix/foot.ini
       template: foot.ini.j2
@@ -37,6 +50,6 @@
   ansible.builtin.set_fact:
     qubix_niri_resources: >-
       {{ qubix_niri_resources + [{'path': '/etc/niri/qubix/config.kdl', 'component': 'niri',
-      'content': lookup('template', 'config.kdl.j2'), 'validate': qubix_niri_validate_binary ~ ' validate --config %s'},
+      'content': qubix_niri_config_content, 'validate': qubix_niri_validate_binary ~ ' validate --config %s'},
       {'path': '/usr/share/wayland-sessions/qubix-niri.desktop', 'component': 'niri',
       'content': lookup('template', 'session.desktop.j2')}] }}

@@ -83,6 +83,18 @@ try:
     result['notifications_status'] = json.loads(shell('status'))
     command(['/usr/bin/niri', 'msg', 'action', 'screenshot-screen', '--path', str(root / 'notifications.png'), '--show-pointer', 'false'])
     shell('panel-close', 'control-center')
+    shell('panel-open', 'qubix/shortcuts:cheatsheet')
+    wait_for(lambda: json.loads(shell('status')).get('activePanelId') == 'qubix/shortcuts:cheatsheet', 'Shortcut panel')
+    result['shortcuts_status'] = json.loads(shell('status'))
+    time.sleep(0.4)
+    command(['/usr/bin/niri', 'msg', 'action', 'screenshot-screen', '--path', str(root / 'shortcuts.png'), '--show-pointer', 'false'])
+    shell('plugin', 'qubix/shortcuts:cheatsheet', 'all', 'search', 'launcher')
+    time.sleep(0.3)
+    command(['/usr/bin/niri', 'msg', 'action', 'screenshot-screen', '--path', str(root / 'shortcuts-search.png'), '--show-pointer', 'false'])
+    shell('panel-close', 'qubix/shortcuts:cheatsheet')
+    wait_for(lambda: not json.loads(shell('status')).get('panelOpen'), 'Shortcut panel close')
+    result['shortcuts_search_dispatched'] = True
+    result['shortcuts_closed'] = True
     result['status'] = 'passed'
 except Exception as error:
     result['status'] = 'failed'

@@ -29,11 +29,11 @@ Noctalia's application theme templates are disabled: palette changes must not re
 
 ### Bar and shortcut-panel refinement
 
-Status: **Bar capsules Implemented and native preview Tested; shortcut panel Planned**. Every visible top-bar component has its own rounded capsule on a transparent bar surface, with consistent padding/gaps, subtle outlines and #56728b emphasis. Launcher/workspaces, the clock and system controls retain their existing positions and actions. Empty widgets do not leave decorative capsules behind.
+Status: **Bar capsules and shortcut panel Implemented; native preview Tested**. Every visible top-bar component has its own rounded capsule on a transparent bar surface, with consistent padding/gaps, subtle outlines and #56728b emphasis. Launcher/workspaces, the clock and system controls retain their existing positions and actions. Empty widgets do not leave decorative capsules behind.
 
-Replace Super+Shift+/ with a Qubix Noctalia shortcut panel: searchable categories, readable action names, blue-gray keycaps, two columns and scrolling within the available screen. Add a keyboard button to the bar; retain Super+F1 for Niri's compact built-in overlay. Escape, a Close button and outside click dismiss the panel.
+Super+Shift+/ opens a Qubix Noctalia shortcut panel: searchable categories, readable action names, blue-gray keycaps, two columns and scrolling within the available screen. The bar's keyboard button opens the same panel; Super+F1 retains Niri's compact built-in overlay. Escape, a Close button and outside click dismiss the panel.
 
-The presenter is a small local Noctalia plugin using its installed declarative UI runtime, with no new packages, background service or network fetch. Ansible generates its display data from the managed KDL's labelled bindings; the panel must not maintain a second shortcut list or execute listed actions. Install plugin files under /usr/share/qubix/noctalia/plugins/ and enable only the local path source in Qubix defaults. Preserve native Noctalia and user GUI overrides.
+The presenter is a small local Noctalia plugin using its installed declarative UI runtime, with no new packages, background service or network fetch. Ansible generates its display data from the managed KDL's labelled bindings; the panel must not maintain a second shortcut list or execute listed actions. The role installs plugin files under /usr/share/qubix/noctalia/plugins/ and enables only the local path source in Qubix defaults. Native Noctalia and user GUI overrides remain preserved.
 
 Acceptance: warning-free native TOML/KDL validation, valid plugin manifest/entry paths, matching generated shortcut data, native bar/panel screenshots, successful IPC open/close and search, zero-change reapplication, unchanged native configuration/compositor, and no leftover preview processes. Test the candidate in a nested session before deployment. The currently selected native CachyOS session must remain intact; select Qubix Niri to use these defaults.
 
@@ -60,6 +60,8 @@ Acceptance: warning-free native TOML/KDL validation, valid plugin manifest/entry
 | Super+X | Session/power menu |
 | Super+Shift+E | Niri's confirmed session exit |
 | Super+Shift+S; Print | Niri screenshot picker |
+| Super+Shift+/; bar keyboard button | Searchable Qubix shortcut panel |
+| Super+F1 | Compact Niri shortcut overlay |
 
 Audio, microphone, media and brightness keys call Noctalia's installed IPC commands. Window/workspace sizing and navigation remain Niri actions. No automatic suspension, logout or lock is performed during deployment/testing.
 

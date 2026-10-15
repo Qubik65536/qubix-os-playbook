@@ -1,0 +1,1 @@
+{{ qubix_niri_config_content | regex_findall('(?m)^\\s+([^\\s{]+)\\s+hotkey-overlay-title="([^"]+)"') | to_nice_json }}

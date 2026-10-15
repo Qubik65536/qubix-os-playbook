@@ -5,6 +5,7 @@ Changes are grouped by release. Bootstrap has no release tag.
 ## Unreleased
 
 - Separated Noctalia bar widgets into rounded capsules on a transparent surface; native preview and preservation checks pass.
+- Added a searchable Noctalia shortcut panel with category cards/keycaps, generated from managed Niri bindings; open it from the bar or Super+Shift+/.
 
 - Adopted a Noctalia 5 desktop profile with #56728b accents, rounded windows/bar/dock and DMS/macOS-inspired shortcuts.
 - Added measured Noctalia version guards, native TOML validation and palette/terminal colour consistency checks.

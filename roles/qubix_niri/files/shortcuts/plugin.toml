@@ -1,0 +1,17 @@
+id = "qubix/shortcuts"
+name = "Qubix shortcuts"
+version = "1.0.0"
+plugin_api = 10
+author = "Qubix"
+license = "Apache-2.0"
+description = "A searchable guide to the managed Qubix Niri shortcuts."
+icon = "keyboard"
+
+[[panel]]
+id = "cheatsheet"
+entry = "panel.luau"
+width = 880
+height = 680
+placement = "floating"
+position = "center"
+keyboard_focus = "exclusive"

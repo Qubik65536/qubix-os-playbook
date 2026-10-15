@@ -52,7 +52,7 @@ capsule_padding = 12
 capsule_radius = 16.0
 capsule_border = "#56728b66"
 capsule_border_width = 1.0
-start = ["launcher", "workspaces"]
+start = ["launcher", "workspaces", "shortcuts"]
 center = ["clock"]
 end = ["tray", "notifications", "network", "volume", "battery", "control-center", "session"]
 
@@ -67,6 +67,14 @@ capsule_fill = "surface_variant"
 
 [widget.workspaces]
 capsule_fill = "surface_variant"
+
+[widget.shortcuts]
+type = "custom_button"
+glyph = "keyboard"
+tooltip = "Keyboard shortcuts (Super+Shift+/)"
+
+[widget.shortcuts.actions]
+left = "panel-toggle qubix/shortcuts:cheatsheet"
 
 [dock]
 enabled = true
@@ -97,5 +105,11 @@ enable_daemon = true
 border_color = "primary"
 
 [plugins]
-enabled = []
+enabled = ["qubix/shortcuts"]
 auto_update = "none"
+
+[[plugins.source]]
+name = "qubix"
+kind = "path"
+location = "/usr/share/qubix/noctalia/plugins"
+enabled = true

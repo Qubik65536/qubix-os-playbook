@@ -22,7 +22,7 @@ Objective: first useful safe mutation. Scope: canonical Qubix assets, attributio
 
 ## F03 — CachyOS Niri default activation (Feature)
 
-Status: Noctalia redesign Implemented; native grammar, version fixtures, nested rendering, deployment, preservation and zero-change reapplication Tested; primary-session acceptance pending. Earlier classic restoration evidence remains historical; new Noctalia restoration and primary-session gates remain open.
+Status: Noctalia redesign Implemented; native grammar, version fixtures, nested rendering, deployment, preservation and zero-change reapplication Tested; primary-session acceptance pending. Separate widget capsules and the generated searchable shortcut panel pass native preview, including configuration/compositor preservation and cleanup. Earlier classic restoration evidence remains historical; new Noctalia restoration and primary-session gates remain open.
 
 Objective: begin a usable Qubix desktop on an actual target. Scope: live report, supported KDL candidate, theme include, detected companion commands and preservation policy. Acceptance: `niri validate`, user/system originals preserved, actual wallpaper/launcher/bar/notifications/terminal work in VM, second run unchanged. Depends on F02, F06 backup preparation for default activation, and live VM evidence. Tests: parser + preservation + VM graphical session. Docs: Niri, compatibility, user deployment and recovery.
 

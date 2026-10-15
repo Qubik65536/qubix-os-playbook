@@ -21,7 +21,7 @@
     - name: Require validated resources and preserved native ownership
       ansible.builtin.assert:
         that:
-          - qubix_niri_resources | length == 8
+          - qubix_niri_resources | length == 11
           - "'/etc/niri/config.kdl' not in (qubix_niri_resources | map(attribute='path') | list)"
           - qubix_niri_resources[-2].validate == '/usr/bin/niri validate --config %s'
           - "'--config /etc/niri/qubix/config.kdl' in qubix_niri_resources[-1].content"
@@ -33,6 +33,23 @@
           - "'polkit-kde-authentication-agent-1' not in qubix_niri_resources[-2].content"
           - "'geometry-corner-radius 16' in qubix_niri_resources[-2].content"
           - qubix_shell_resources | length == 3
+
+    - name: Require generated shortcut data to cover the actual labelled KDL bindings
+      ansible.builtin.set_fact:
+        qubix_test_shortcuts: >-
+          {{ (qubix_niri_resources | selectattr('path', 'equalto',
+          '/usr/share/qubix/noctalia/plugins/shortcuts/bindings.json') | first).content | from_json }}
+
+    - name: Reject empty duplicated or stale shortcut display data
+      ansible.builtin.assert:
+        that:
+          - qubix_test_shortcuts | length > 40
+          - >-
+            qubix_test_shortcuts | map('first') | unique | length == qubix_test_shortcuts | length
+          - >-
+            qubix_test_shortcuts | length ==
+            qubix_niri_config_content | regex_findall('hotkey-overlay-title=') | length
+          - "'Session / Keyboard shortcuts' in (qubix_test_shortcuts | map('last') | list)"
 
     - name: Require complete custom palette and readable primary text
       ansible.builtin.assert:
