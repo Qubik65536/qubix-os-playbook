@@ -102,3 +102,27 @@ The requested sudo systemctl reboot completed. A changed boot ID confirms restar
 The 76-resource audit shows exactly one intentional change: removal of the native session entry. The other 75 native/personal resources, default Fish shell and all 23 existing private baseline hashes remain unchanged. The retirement backup is separate from those managed baselines. No pending deployment remains. Login authentication settings, bootloader configuration and initramfs images were not modified.
 
 No autologin was configured. Physical shortcut handling, launcher applications, portals, GUI authentication, lock/unlock and native restoration of the newer Noctalia resources remain acceptance items. Deployment state still retains false graphical/boot acceptance flags. Local evidence is ignored under .cache/native-session-retirement-audit.json and the retirement log.
+
+## Resize, power controls and compact bar
+
+Clean source revision bbea600 deploys the compact #56728b bar, disabled dock/bottom reservation, pinned Power options application and global Session launcher search. It includes the resize bindings from 79175a3 and the [README cheatsheet regeneration guide](../../README.md#regenerate-the-shortcut-cheatsheet) from 4c99994. No additional packages were required.
+
+| Check | Actual outcome |
+|---|---|
+| scripts/validate.sh | YAML/Ansible/ShellCheck, syntax, Markdown/local links and repository consistency pass |
+| tests/playbooks/desktop.yml | 62 tasks, zero changes/failures, six expected dependency/version refusals; every managed binding is represented in generated shortcut data |
+| tests/integration/desktop.yml | 62 tasks, eight temporary changes, zero failures; native sizing, power-menu/search and dock-absence checks pass |
+| bootstrap.sh deploy | 409 tasks, 10 changes, zero failures |
+| Same-revision/configuration reapplication | 408 tasks, zero changes/failures |
+| bootstrap.sh verify --tags installed | 64 tasks, zero changes/failures; installed hashes/modes and parsers pass |
+| Active-session config-reload | Returns ok; Qubix bar/wallpaper remain visible and no dock layer remains on eDP-1 |
+
+The isolated preview invokes the actual resize actions parsed from the candidate KDL. Column width grows from 438 to 483 logical pixels and also decreases; stacked-window height grows from 386 to 407 and also decreases; automatic height reset succeeds. The screenshot of the filtered cheatsheet includes the four resize actions with arrow/HJKL aliases. The full generated list has 46 grouped actions.
+
+Inspected screenshots show compact separate bar modules without a dock, Power options pinned first in the launcher, a global reboot search result, /session results and the native session menu. The test runs the candidate desktop entry's actual command to open that menu. It never activates a power action; test-only locking is disabled, so action availability differs from production. Native desktop-file validation and warning-free Noctalia TOML validation pass.
+
+The deployed defaults were reloaded in the existing Qubix primary session. Niri PID 931, Noctalia PID 1002 and the boot ID remain unchanged through activation and reapplication; no reboot or session restart was needed. Read-only IPC confirms the custom Qubix palette, visible bar and wallpaper, and dock absence. The installed Niri, Noctalia and Power options entry pass their native validators.
+
+The fresh post-deployment audit matches all 76 native/personal resource snapshots, including the intentionally absent retired native login entry. The default Fish shell, retirement backup and all 23 existing private baseline hashes remain unchanged. The new power entry brings private baseline manifests to 24. State records clean revision bbea600, files-verified and no pending attempt; graphical_session_verified and boot_verified remain false.
+
+Physical shortcut handling, actual launcher application/power actions, portals, GUI authentication, lock/unlock and native recovery of the newer Noctalia resources remain operator acceptance items. Login, bootloader and Plymouth components stayed disabled. Local evidence remains ignored under .cache/native-desktop/, .cache/controls-*.log and .cache/controls-preservation-audit.json.

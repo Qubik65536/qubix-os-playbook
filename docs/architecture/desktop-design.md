@@ -39,7 +39,7 @@ Acceptance: warning-free native TOML/KDL validation, valid plugin manifest/entry
 
 ### Resize and launcher/layout revision
 
-Status: **Resize bindings and launcher/bar/dock changes Implemented; native preview Tested**. Super+Ctrl+Left/Right (or H/L) adjust column width in 5% steps, Super+Ctrl+Up/Down (or K/J) adjust window height in the same steps, and Super+Ctrl+R resets automatic height. Tiled windows share column width; height controls are most apparent when windows are stacked. Keep labelled bindings in the canonical KDL so regeneration includes these controls.
+Status: **Resize bindings and launcher/bar/dock changes Implemented; native preview, deployment, primary reload and zero-change reapplication Tested**. Super+Ctrl+Left/Right (or H/L) adjust column width in 5% steps, Super+Ctrl+Up/Down (or K/J) adjust window height in the same steps, and Super+Ctrl+R resets automatic height. Tiled windows share column width; height controls are most apparent when windows are stacked. Keep labelled bindings in the canonical KDL so regeneration includes these controls.
 
 The profile supplies a pinned **Power options** launcher entry that opens Noctalia's existing session panel. Its native Session provider is enabled in global launcher search for lock/logout/sleep/reboot/shutdown terms; retain `/session` for the full action list. Super+Space keeps opening the launcher, Super+X keeps opening the session panel, and the Control Center's native power entry remains available. The entry uses native session actions/backends without custom privileged commands. Selecting a direct action result executes it through Noctalia; the Power options entry opens the menu.
 

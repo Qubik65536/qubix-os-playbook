@@ -4,7 +4,7 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
-- Added pinned launcher power controls and global session-action search; refined the bar using Ryoku showroom inspiration and disabled the dock/bottom reservation.
+- Added pinned launcher power controls and global session-action search; refined the bar using Ryoku showroom inspiration and disabled the dock/bottom reservation. Native preview, primary-session reload, installed verification and zero-change reapplication pass.
 
 - Documented cheatsheet regeneration in README and added labelled window-resize shortcuts with complete generated-binding coverage and native sizing checks.
 
