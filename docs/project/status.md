@@ -13,7 +13,7 @@ Updated: 2026-10-15. Stage: **Implemented MVP candidate, ready for operator VM t
 | Shell | Native Bash/Starship and controller fixtures Tested | Temporary-home native startup/TOML/prompt pass; default Fish and personal files preserved |
 | SDDM | Implemented | UI clone, actual INI lines, standalone/ambiguous/unsupported activity fixtures; authentication pending |
 | GRUB and Limine | Implemented | Independent preservation/reapplication/private-mode/absent-hook/stale-restore fixtures; native checker, boot/restore pending |
-| Plymouth/dracut/mkinitcpio | Implemented | Simulated dispatch/rebuild skip/archive failure, kernel restore and no-write preview; native generation/splash pending |
+| Plymouth/dracut/mkinitcpio | Implemented | Simulated dispatch/rebuild skip/archive failure, preserved literal hook appends, kernel restore and no-write preview; native generation/splash pending |
 | Backup/restore/state | Fixtures and native desktop absence lifecycle Tested | Original-byte/mode/drift faults in fixtures; earlier 17-resource restoration passes; 24 current private baselines, 23 earlier hashes preserved; newer Noctalia and boot/image recovery pending |
 
 ## Commands and outcomes

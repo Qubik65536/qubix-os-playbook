@@ -179,4 +179,7 @@
       {{ {'files': qubix_plymouth_inputs, 'images': qubix_profile_resolved.plymouth.images,
       'kernel_hashes': qubix_plymouth_kernels.results | map(attribute='stat.checksum') | list,
       'backend': qubix_profile_resolved.plymouth.initramfs_backend,
-      'presets': qubix_profile_resolved.plymouth.presets} | to_json(sort_keys=true) | hash('sha256') }}
+      'presets': qubix_profile_resolved.plymouth.presets,
+      'generator_dropins': (qubix_plymouth_override_inputs | default([])
+      if qubix_profile_resolved.plymouth.initramfs_backend == 'mkinitcpio' else [])}
+      | to_json(sort_keys=true) | hash('sha256') }}

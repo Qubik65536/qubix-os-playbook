@@ -1,0 +1,29 @@
+---
+- name: Seed an unsupported hook mutation in the disposable root
+  ansible.builtin.copy:
+    dest: '{{ qubix_root }}/etc/mkinitcpio.conf.d/10-snapshot.conf'
+    content: '{{ qubix_test_hook_case.content }}
+'
+    mode: '0644'
+
+- name: Reset hook refusal outcome
+  ansible.builtin.set_fact:
+    qubix_test_hook_refused: false
+
+- name: Require unsupported hook mutation refusal
+  block:
+    - name: Plan against the unsafe fixture without executing shell configuration
+      ansible.builtin.include_role:
+        name: qubix_plymouth
+        tasks_from: mkinitcpio
+  rescue:
+    - name: Require the intended hook-specific diagnostic
+      ansible.builtin.assert:
+        that: [qubix_test_hook_case.error in (ansible_failed_result | to_json)]
+    - name: Record the expected refusal
+      ansible.builtin.set_fact:
+        qubix_test_hook_refused: true
+
+- name: Require the negative control to fail safely
+  ansible.builtin.assert:
+    that: [qubix_test_hook_refused]

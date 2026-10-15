@@ -4,6 +4,8 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Preserved literal mkinitcpio hook appends while validating effective Plymouth/encryption order; unsafe mutations and duplicate Plymouth hooks fail in fixtures.
+
 - Added a 32 px information bar inspired by the olive-dusk reference, bounded application titles, CPU/RAM/temperature widgets and optional media; native wide-preview/title checks pass.
 
 - Added 100% output-scale defaults at Qubix session startup/new connection, preserving existing-output session adjustments and native monitor files; lifecycle fixtures pass.

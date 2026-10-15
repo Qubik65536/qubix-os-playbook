@@ -4,3 +4,5 @@ qubix_plymouth_daemon: |
   [Daemon]
   Theme=qubix
 qubix_plymouth_image_pattern: '(?m)^[A-Za-z0-9_]+_image=["\x27]?(/boot/[A-Za-z0-9_./-]+\.img)'
+qubix_plymouth_hook_append_pattern: >-
+  ^[ \t]*HOOKS\+=\((?:[ \t]*(?:[A-Za-z0-9_-]+|"[A-Za-z0-9_-]+"|'[A-Za-z0-9_-]+'))*[ \t]*\)[ \t]*$

@@ -138,6 +138,19 @@
               {{ qubix_profile_resolved | combine({'plymouth':
               {'initramfs_backend': 'mkinitcpio', 'presets': ['test']}}, recursive=true) }}
 
+        - name: Create preserved native generator drop-in directory
+          ansible.builtin.file:
+            path: '{{ qubix_root }}/etc/mkinitcpio.conf.d'
+            state: directory
+            mode: '0755'
+
+        - name: Seed the CachyOS-style snapshot hook append
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/etc/mkinitcpio.conf.d/10-snapshot.conf'
+            content: 'HOOKS+=(sd-btrfs-overlayfs)
+'
+            mode: '0644'
+
         - name: Plan independent mkinitcpio adapter
           ansible.builtin.include_role:
             name: qubix_plymouth
@@ -149,6 +162,31 @@
               - qubix_plymouth_desired_hooks.index('plymouth') < qubix_plymouth_desired_hooks.index('sd-encrypt')
               - "'MODULES=(preserve_me)' in qubix_plymouth_resources[-1].content"
               - "'COMPRESSION=\"zstd\"' in qubix_plymouth_resources[-1].content"
+              - qubix_plymouth_effective_hooks[-1] == 'sd-btrfs-overlayfs'
+              - qubix_plymouth_override_inputs | length == 1
+              - >-
+                '/etc/mkinitcpio.conf.d/10-snapshot.conf' not in
+                (qubix_plymouth_resources | map(attribute='path') | list)
+
+        - name: Refuse unsafe native hook mutations before any file deployment
+          ansible.builtin.include_tasks: ../tasks/plymouth-hooks-rejection.yml
+          loop:
+            - {content: 'HOOKS=(base systemd)', error: 'Only literal HOOKS+='}
+            - {content: 'HOOKS+=($UNSAFE)', error: 'Only literal HOOKS+='}
+            - {content: 'HOOKS+=(plymouth)', error: 'must not duplicate Plymouth'}
+          loop_control:
+            loop_var: qubix_test_hook_case
+
+        - name: Restore valid native append after negative controls
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/etc/mkinitcpio.conf.d/10-snapshot.conf'
+            content: 'HOOKS+=(sd-btrfs-overlayfs)
+'
+            mode: '0644'
+
+        - name: Refresh the confirmed candidate after restored append inputs
+          ansible.builtin.include_role:
+            name: qubix_plymouth
 
         - name: Simulate only the named native preset generation
           ansible.builtin.include_role:

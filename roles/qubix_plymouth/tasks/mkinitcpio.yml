@@ -81,25 +81,74 @@
   ansible.builtin.find:
     paths: '{{ qubix_root | default("") }}/etc/mkinitcpio.conf.d'
     patterns: '*.conf'
+    file_type: any
   register: qubix_plymouth_overrides
   when: qubix_plymouth_override_dir.stat.exists
+
+- name: Require regular unredirected generator drop-ins
+  ansible.builtin.assert:
+    that: [item.isreg, not item.islnk]
+    fail_msg: 'Generator drop-ins must be regular files; redirected configuration requires review.'
+  loop: '{{ qubix_plymouth_overrides.files | default([]) }}'
+  loop_control:
+    label: '{{ item.path }}'
 
 - name: Read possible override files
   ansible.builtin.slurp:
     src: '{{ item.path }}'
-  loop: '{{ qubix_plymouth_overrides.files | default([]) }}'
+  loop: '{{ qubix_plymouth_overrides.files | default([]) | sort(attribute="path") }}'
   register: qubix_plymouth_override_bytes
   loop_control:
     label: '{{ item.path }}'
 
-- name: Reject competing hook overrides
-  ansible.builtin.assert:
-    that:
-      - not item.content | b64decode is regex('(?m)^[ \t]*HOOKS=')
-    fail_msg: 'HOOKS is overridden by a drop-in; resolve effective hook configuration before Plymouth deployment.'
+- name: Initialize preserved append declarations and source fingerprints
+  ansible.builtin.set_fact:
+    qubix_plymouth_append_lines: []
+    qubix_plymouth_append_hooks: []
+    qubix_plymouth_override_inputs: []
+
+- name: Collect only hook-related statements without executing generator configuration
+  ansible.builtin.set_fact:
+    qubix_plymouth_append_lines: >-
+      {{ qubix_plymouth_append_lines + (item.content | b64decode
+      | regex_findall('(?m)^[^#\n]*\bHOOKS\b[^#\n]*')) }}
+    qubix_plymouth_override_inputs: >-
+      {{ qubix_plymouth_override_inputs + [{'path': item.item.path,
+      'sha256': item.content | b64decode | hash('sha256')}] }}
   loop: '{{ qubix_plymouth_override_bytes.results }}'
   loop_control:
     label: '{{ item.item.path }}'
+
+- name: Reject hook replacements and nonliteral append expressions
+  ansible.builtin.assert:
+    that:
+      - item is match(qubix_plymouth_hook_append_pattern)
+    fail_msg: 'Only literal HOOKS+=(name ...) append arrays are supported in preserved drop-ins.'
+  loop: '{{ qubix_plymouth_append_lines }}'
+
+- name: Decode validated append tokens while preserving native files
+  ansible.builtin.set_fact:
+    qubix_plymouth_append_hooks: >-
+      {{ qubix_plymouth_append_hooks + (item.split('(', 1)[1].rsplit(')', 1)[0]
+      | replace('"', '') | replace("'", '') | split) }}
+  loop: '{{ qubix_plymouth_append_lines }}'
+
+- name: Resolve the effective hook sequence including preserved appends
+  ansible.builtin.set_fact:
+    qubix_plymouth_effective_hooks: '{{ qubix_plymouth_desired_hooks + qubix_plymouth_append_hooks }}'
+
+- name: Require exactly one Plymouth hook after preserved appends
+  ansible.builtin.assert:
+    that:
+      - qubix_plymouth_effective_hooks | select('equalto', 'plymouth') | list | length == 1
+    fail_msg: 'Preserved hook appends must not duplicate Plymouth.'
+
+- name: Validate Plymouth precedes encryption in the complete literal sequence
+  ansible.builtin.assert:
+    that:
+      - qubix_plymouth_effective_hooks.index('plymouth') < qubix_plymouth_effective_hooks.index(item)
+    fail_msg: 'The effective hook sequence places encryption before Plymouth.'
+  loop: '{{ ["encrypt", "sd-encrypt"] | intersect(qubix_plymouth_effective_hooks) }}'
 
 - name: Validate native preset names
   ansible.builtin.assert:
