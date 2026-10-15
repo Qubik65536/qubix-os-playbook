@@ -4,6 +4,8 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Added 100% output-scale defaults at Qubix session startup/new connection, preserving existing-output session adjustments and native monitor files; lifecycle fixtures pass.
+
 - Corrected the undersized bar logo with launcher-only 2x scaling and made separate module outlines more visible; native before/after previews, live reload, installed verification and zero-change reapplication pass.
 
 - Added pinned launcher power controls and global session-action search; refined the bar using Ryoku showroom inspiration and disabled the dock/bottom reservation. Native preview, primary-session reload, installed verification and zero-change reapplication pass.

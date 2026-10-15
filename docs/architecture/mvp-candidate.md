@@ -8,7 +8,7 @@ Ordinary component roles prepare named file definitions after capability checks.
 
 ## Desktop
 
-Niri installs an additional **Qubix Niri** session with explicit `/etc/niri/qubix/config.kdl`; native system/user configuration remains untouched. The session explicitly uses measured Foot and standalone Noctalia >=5.2.0 and <6.0.0, or fails with missing dependency/version evidence. Noctalia supplies the shell surfaces with a separate Qubix profile, as defined in the [desktop design](desktop-design.md). Parser validation must precede session activation. Wallpaper uses attributed reference artwork. Foot, bar and notification configuration live in Qubix-named paths. Bash defaults and an optional sourced Zsh fragment preserve personal files and the login shell.
+Niri installs an additional **Qubix Niri** session with explicit `/etc/niri/qubix/config.kdl`; native system/user configuration remains untouched. The session explicitly uses measured Foot/jq and standalone Noctalia >=5.2.0 and <6.0.0, or fails with missing dependency/version evidence. Noctalia supplies the shell surfaces with a separate Qubix profile, as defined in the [desktop design](desktop-design.md). Parser validation must precede session activation. Wallpaper uses attributed reference artwork. Foot, bar and notification configuration live in Qubix-named paths. Bash defaults and an optional sourced Zsh fragment preserve personal files and the login shell.
 
 ## Login
 

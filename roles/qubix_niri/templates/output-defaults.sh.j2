@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Qubix session defaults only: never write monitor or personal configuration.
+set -euo pipefail
+if [[ $# -gt 1 || ( $# -eq 1 && $1 != --once ) ]]; then
+  printf '%s\n' 'Usage: qubix-output-defaults [--once]' >&2
+  exit 2
+fi
+: "${NIRI_SOCKET:?Run this inside the intended Qubix Niri session}"
+niri_command=${QUBIX_NIRI_BIN:-/usr/bin/niri}
+jq_command=${QUBIX_JQ_BIN:-/usr/bin/jq}
+seen=$'\n'
+
+apply_defaults() {
+  local outputs connected output
+  outputs=$("$niri_command" msg --json outputs)
+  connected=$(printf '%s\n' "$outputs" | "$jq_command" -r 'to_entries[] | select(.value.logical != null) | .key')
+  while IFS= read -r output; do
+    [[ -n "$output" ]] || continue
+    if [[ "$seen" != *$'\n'"$output"$'\n'* ]]; then
+      "$niri_command" msg output "$output" scale 1.0 >/dev/null
+    fi
+  done <<< "$connected"
+  seen=$'\n'"$connected"$'\n'
+}
+
+apply_defaults
+[[ ${1-} != --once ]] || exit 0
+# Most events concern windows; parse only topology/config events with jq.
+# A disconnected output leaves the remembered set and receives the default on reconnect.
+"$niri_command" msg --json event-stream | while IFS= read -r event; do
+  case "$event" in
+    *'"WorkspacesChanged":'*|*'"ConfigLoaded":'*)
+      if printf '%s\n' "$event" | "$jq_command" -e \
+        'has("WorkspacesChanged") or (.ConfigLoaded.failed == false)' >/dev/null; then
+        apply_defaults
+      fi
+      ;;
+  esac
+done

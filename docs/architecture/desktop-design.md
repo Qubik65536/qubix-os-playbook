@@ -21,6 +21,16 @@ Noctalia's application theme templates are disabled: palette changes must not re
 
 ## Appearance
 
+### Slim information bar and display scale
+
+Status: **Scale helper Implemented and fixture Tested; slim bar Planned**. The requested [olive-dusk reference](https://ryoku.dev/showroom/11.webp) uses thin dark modules, shallow rounded corners and a quiet outline. The inspected eDP-1 is 1920x1080 at 1.25 scale: the previous 40 logical px bar occupies about 50 physical px. The new target is a 32 px bar at 100% output scale, with 28 px dark modules, 6 px radii/gaps/edge inset and 10 px end insets. Keep #56728b accents and an identifiable 24 px launcher image box. No reference artwork or shell code is imported.
+
+Show a bounded active application icon/title beside the launcher/workspaces/shortcut button, optional native MPRIS media in the centre, and CPU load, used RAM, available CPU temperature, connectivity, volume, battery, notifications, date/time and shell/session controls on the right. Missing sensors and inactive media must use native unavailable/hidden behaviour rather than invented values. Bound title/media widths and inspect narrow and full-width previews.
+
+Niri 26.04 has exact output matching and automatic scale selection rather than a global wildcard scale setting. A small Bash helper uses installed jq and Niri's JSON IPC to apply scale 1.0 once at session start and when an enabled output first appears/reconnects. It observes native workspace/config events, remembers connected outputs and exits with the compositor. Existing-output events must not repeatedly override an operator's session-local scale adjustment. It changes only runtime scale, preserving modes, refresh rates, transforms, position configuration and personal files. Startup plus hotplug handling supplies the requested default for future screens; jq becomes a measured prerequisite. A --once mode permits explicit activation in an already-running session.
+
+Acceptance: native parser/renderer checks; 100% scale on the active panel; isolated startup/hotplug/reconnect and manual-override preservation tests; real application-title changes and hardware readings in screenshots; no dock; preserved native configuration and main compositor; zero-change Ansible reapplication. The default applies in Qubix Niri, leaving other sessions' configuration intact.
+
 - Primary accent and active Niri focus ring: **#56728b**.
 - Base surface: #1b242c; raised surface: #283745; main text: #f2f5f8; secondary text: #cfdae2. Brighter blue-gray secondary colours preserve legibility when an accent alone is too dark for small text.
 - Niri window corner radius: **16 px**, with content clipped to geometry; gaps: 12 px.
@@ -88,7 +98,7 @@ Audio, microphone, media and brightness keys call Noctalia's installed IPC comma
 
 ## Acceptance and migration
 
-Require measured Niri, Foot and supported Noctalia before component writes. Validate generated Niri KDL, Foot INI and Noctalia TOML using their installed parsers; check all palette roles and include complete terminal colours, required by the Noctalia 5.2 palette loader. A custom palette name alone does not prove that its colours loaded. Install the session entry last. Existing Qubix baselines remain immutable.
+Require measured Niri, Foot, jq and supported Noctalia before component writes. Validate generated Niri KDL, Foot INI and Noctalia TOML using their installed parsers; check all palette roles and include complete terminal colours, required by the Noctalia 5.2 palette loader. A custom palette name alone does not prove that its colours loaded. Install the session entry last. Existing Qubix baselines remain immutable.
 
 The native nested test must use a distinct Wayland display/private D-Bus session and temporary Qubix state/data/cache. It must support the existing Niri process whether launched by a user service or directly by SDDM. Disable test-only Polkit registration and clipboard persistence, prove shell/bar/wallpaper/launcher/power-menu/notification/window rendering and IPC, plus dock absence, preserve the original compositor and clean up temporary processes. Main-session physical shortcuts, application launching, authentication, lock/unlock and portal behaviour require operator verification.
 

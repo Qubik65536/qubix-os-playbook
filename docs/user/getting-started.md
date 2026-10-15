@@ -19,7 +19,7 @@ On the VM, keep its existing Niri installation and display manager.
 Preview the selected desktop transaction before installation, especially on a physical machine:
 
 ```bash
-pacman -Sp --needed --print-format '%n %v' noctalia foot starship
+pacman -Sp --needed --print-format '%n %v' noctalia foot jq starship
 ```
 
 Native CachyOS Snapper/Limine package hooks can create snapshots and refresh menu entries. Those effects occurred in the [recorded native desktop test](../project/desktop-test-results.md); they are package preparation effects, independently of Qubix boot branding. Review the actual transaction and keep normal hooks enabled.
@@ -27,7 +27,7 @@ Native CachyOS Snapper/Limine package hooks can create snapshots and refresh men
 Install the selected desktop companions and SSH prerequisites yourself:
 
 ```bash
-sudo pacman -S --needed python openssh noctalia foot starship
+sudo pacman -S --needed python openssh noctalia foot jq starship
 noctalia --version
 sudo systemctl enable --now sshd
 ip -brief address
@@ -104,6 +104,8 @@ Missing prerequisites stop deployment before component writes. The native Niri, 
 Existing personal dotfiles and `/etc/niri/config.kdl` remain intact. The additional session uses `/etc/niri/qubix/config.kdl` explicitly, so it does not inherit your personal Niri configuration. Qubix installs named resources, not a replacement operating system.
 
 ## 4. Try the Qubix session
+
+Qubix supplies 100% scaling at session start and whenever a screen is newly connected or reconnected. Niri's preferred resolution and refresh rate remain unchanged. You can adjust an already-connected screen through Noctalia for the current session; the helper does not continuously reset it. This default belongs to the Qubix session and does not rewrite personal/native output files. The helper's --once mode is used only for explicit activation in an already-running session.
 
 After deployment, log out when convenient and select **Qubix Niri** in a login manager that offers Wayland session selection. Keep native Niri available as a fallback.
 

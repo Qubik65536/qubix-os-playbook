@@ -1,6 +1,6 @@
 # Development environment
 
-Status: **Implemented controller setup**. Requires Python 3.12+ for the pinned Ansible controller. Target Python support follows the pinned ansible-core requirements. No Python application is deployed.
+Status: **Implemented controller setup**. Requires jq on PATH for output-default fixtures and Python 3.12+ for the pinned Ansible controller. Target Python support follows the pinned ansible-core requirements. No Python application is deployed.
 
 From the repository root, create local tooling using uv (if installed):
 
@@ -12,6 +12,7 @@ ansible-playbook --version
 ansible-lint --version
 yamllint --version
 shellcheck --version
+jq --version
 ```
 
 Alternatively use `python3 -m venv .venv` and `.venv/bin/python -m pip install -r requirements-dev.txt`. `shellcheck-py` supplies the ShellCheck binary without installing system packages. `requirements-dev.in` pins direct tooling; `requirements-dev.txt` locks transitive dependencies. Update intentionally with `UV_CACHE_DIR=.cache/uv uv pip compile --python .venv/bin/python requirements-dev.in -o requirements-dev.txt` and rerun all checks. `requirements.yml` records that no external Ansible collection is needed.

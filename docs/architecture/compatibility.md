@@ -4,7 +4,7 @@ Status: **Candidate adapters Implemented; fixtures Tested; native desktop file l
 
 | Selection | Supported candidate contract | Pending native acceptance |
 |---|---|---|
-| CachyOS Niri | Exact ID=cachyos, Linux/systemd/Pacman/Niri; measured Foot and standalone Noctalia >=5.2.0 and <6.0.0 | Main-session keys/default shell/portals/Polkit/lock/unlock |
+| CachyOS Niri | Exact ID=cachyos, Linux/systemd/Pacman/Niri; measured Foot/jq and standalone Noctalia >=5.2.0 and <6.0.0 | Main-session keys/default shell/portals/Polkit/lock/unlock |
 | Login | Unambiguously active SDDM, regular compatible Breeze tree | Preview/authentication/sessions/restore |
 | GRUB | Confirmed /boot/grub[2]/grub.cfg sourcing custom.cfg; native checker/tools | Checker/menu/original-entry boot/restore |
 | Limine | Confirmed regular limine.conf under /boot or /efi, observed major 8–12 | Menu/original-entry boot/restore |

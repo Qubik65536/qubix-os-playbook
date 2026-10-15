@@ -60,6 +60,10 @@ try:
     validation = command(['/usr/bin/noctalia', 'config', 'validate', str(root / 'config/noctalia/config.toml')])
     assert not re.search(r'(?m)^(WARN|ERROR)', validation), validation
     result['shell_config_validated'] = True
+    command([str(root / 'qubix-output-defaults'), '--once'])
+    result['outputs'] = query('outputs')
+    assert all(output['logical']['scale'] == 1 for output in result['outputs'].values() if output.get('logical'))
+    result['output_scale_default'] = 1
     def initial_layers():
         layers = query('layers')
         names = namespaces(layers)

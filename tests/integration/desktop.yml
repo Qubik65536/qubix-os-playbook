@@ -43,6 +43,7 @@
               /etc/qubix/noctalia/config.toml: config/noctalia/config.toml
               /etc/qubix/noctalia/palettes/Qubix.json: config/noctalia/palettes/Qubix.json
               /usr/share/qubix/bin/qubix-noctalia: qubix-noctalia
+              /usr/share/qubix/bin/qubix-output-defaults: qubix-output-defaults
               /etc/niri/qubix/config.kdl: config.kdl
               /usr/share/applications/qubix-power.desktop: home/.local/share/applications/qubix-power.desktop
               /usr/share/qubix/noctalia/plugins/shortcuts/plugin.toml: plugins/shortcuts/plugin.toml

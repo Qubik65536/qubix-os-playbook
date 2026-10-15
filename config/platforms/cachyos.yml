@@ -4,6 +4,7 @@ qubix_discovery_binary_paths:
   polkit-kde-agent: /usr/lib/polkit-kde-authentication-agent-1
   niri: /usr/bin/niri
   noctalia: /usr/bin/noctalia
+  jq: /usr/bin/jq
   qs: /usr/bin/qs
   dms: /usr/bin/dms
   waybar: /usr/bin/waybar
@@ -47,6 +48,7 @@ qubix_discovery_package_names:
   - cachyos-niri
   - quickshell
   - noctalia
+  - jq
   - dms
   - dank
   - waybar
