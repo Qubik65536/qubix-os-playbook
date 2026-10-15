@@ -181,6 +181,7 @@ decorative captions and reduces menu scaling to 1x1. The menu wallpaper reuses t
 cube. Font files, recovery ownership and activation/image mappings are unchanged. Repeat native
 preview, no-write review, exact-image verification and reapplication before the authorized reboot;
 record visual acceptance separately. Independent poweroff/LTS/GRUB/dracut/recovery gates stay open.
+
 ## Contrast correction activation
 
 Clean f626188 passes static validation, the 726-task Limine fixture/eight expected refusals, and the
@@ -212,3 +213,24 @@ assets, root fonts, original recovery bytes/metadata and active configuration ma
 Only loader/random-seed rotates among native boot resources. Pending markers and the transient target
 inhibitor are absent. Renewed console acceptance of contrast/font size remains pending; physical
 poweroff, LTS, independent GRUB/dracut, real encryption input and recovery gates remain open.
+
+## Reviewed original-colour and picture correction
+
+The operator requires the Plymouth logo's original colours and requests a picture/colour background.
+The new candidate removes the colour filter, independently compares the composed logo crop against
+the canonical render, and adds a blue-charcoal desktop-cube background.png. Native two-step scales
+the picture; preflight checks the installed plugin supports both the filename and scaling property
+before writes. Text/spinner colours and native prompts remain; Limine appearance is unchanged.
+
+Reinspection finds the same normal kernel, boot ID 8301a46f-e336-47cb-af51-9dbeb679c839, 83
+private manifests, all protected files unchanged and approximately 3.26 GiB free on /boot. Keep
+the approved two --nopost presets and native cache bindings. Back up the new picture's original
+absence and both new stages while preserving every earlier baseline and stage. Verify all 39 runtime
+theme assets and exact fonts in source/active images, both pins and zero-change reapplication before
+the already authorized reboot. Native preview must show the picture in each animation mode and under
+both prompt renderers. Original-colour logo and background acceptance require a new console observation.
+
+The canonical logo crop comparison passes. Native preview passes 50 tasks, verifies picture rendering
+in boot/reboot/shutdown and Pango/FreeType prompts, preserves host configuration/daemon and leaves zero
+preview processes. Captures are inspected. Generator fixtures pass 409 tasks/five expected refusals;
+the global check-mode control passes 45 tasks without image generation. Target activation is pending.

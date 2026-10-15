@@ -87,7 +87,7 @@ def main():
     splash = load('assets/plymouth/manifest.yml')
     assert splash['license'] == 'GPL-3.0-only' and len(splash['revision']) == 40
     assert {asset['filename'] for asset in splash['files']} == {
-        'qubix.plymouth', 'watermark.png', 'COPYING', 'NOTICE', 'bullet.png', 'entry.png',
+        'qubix.plymouth', 'watermark.png', 'background.png', 'COPYING', 'NOTICE', 'bullet.png', 'entry.png',
         'capslock.png', 'lock.png', 'keyboard.png', 'keymap-render.png',
         *(f'throbber-{index:04}.png' for index in range(1, 31))}
     for asset in splash['files']:
@@ -98,6 +98,7 @@ def main():
     assert native['Plymouth Theme']['ModuleName'] == 'two-step'
     assert native['two-step']['ImageDir'] == '/usr/share/plymouth/themes/qubix'
     assert native['two-step']['Font'] == 'Qubix Boot Mono 12'
+    assert native['two-step'].getboolean('ScaleBackgroundImage')
     for mode in ('boot-up', 'shutdown', 'reboot'):
         assert not native[mode].getboolean('UseFirmwareBackground') and not native[mode].getboolean('UseEndAnimation')
     desktop = ROOT / 'roles/qubix_niri/templates'

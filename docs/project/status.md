@@ -8,6 +8,12 @@ reboot returns the desktop. Following feedback on 87e824b, the higher-contrast c
 decorative captions, reduces menu text and reuses the desktop cube wallpaper. It is deployed and
 native-preview/image/reapplication/reboot Tested; renewed console acceptance remains open.
 The first Plymouth activation failed visual acceptance and is not counted as a successful boot theme.
+The operator rejects the blue Plymouth logo tint and requests a background. The original-colour logo
+and native scaled desktop-cube background correction is Implemented and native-preview Tested;
+f626188 remains the deployed version. The logo crop matches a canonical render pixel-for-pixel.
+All-mode/native Pango/FreeType picture/prompt previews pass 50 tasks with host preservation and
+cleanup. Generator fixtures pass 409 tasks/five expected refusals; global check-mode control passes
+45 tasks without image generation. Activation and renewed console acceptance remain pending.
 
 The [midnight/Krypton refinement](../architecture/boot-design.md) is now Implemented for Plymouth in
 source: a 154 KB renamed subset with embedded OFL, gradient background, original vector ring and

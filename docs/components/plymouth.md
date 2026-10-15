@@ -24,13 +24,18 @@ until restoration; automatic garbage collection is outside this repair.
 ## Native splash style revision
 
 Status: **Implemented; isolated native preview Tested**. The refined theme uses the native
-`two-step` layout: a midnight-blue gradient, an original 32 px ice-blue spinner at 70% height and
-a shaded Qubix cube/Krypton wordmark near the bottom. All three modes use this gradient rather than
+`two-step` layout: a blue-charcoal desktop-cube picture, an original 32 px near-white spinner at 70% height and
+the original-colour Qubix cube/Krypton wordmark near the bottom. All three modes use this picture rather than
 the firmware-background presentation, without altering firmware data. Native password/question/message controls remain.
 There is no large central title or routine startup/shutdown caption. The original CachyOS theme
 remains Preserved. The attributed [asset manifest](../../assets/plymouth/manifest.yml) pins neutral
 input files and adapted definition to their GPL-3.0 source revision; Qubix artwork
 retains Apache-2.0 attribution. The [asset guide](../../assets/plymouth/README.md) explains regeneration.
+
+The original-colour/picture correction is Implemented and native-preview Tested; activation is
+pending. Never recolour the logo: generation checks its crop against the canonical render. The native
+plugin must support background.png and ScaleBackgroundImage before deployment writes. Its scaled
+picture keeps the prompt area subdued; other aspect ratios may stretch it and need separate acceptance.
 
 Install only the attributed 154 KB Qubix Boot Mono subset and OFL in /usr/share/fonts/qubix/ when
 Plymouth is enabled. Include their hashes in the rebuild fingerprint. Before a required rebuild,

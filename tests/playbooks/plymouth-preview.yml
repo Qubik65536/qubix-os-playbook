@@ -120,6 +120,7 @@
               usr/share/plymouth/themes/qubix/watermark.png \
               usr/lib/plymouth/two-step.so usr/bin/plymouthd \
               usr/lib/plymouth/label-freetype.so usr/share/fonts/Plymouth.ttf
+            printf '%s\n' usr/share/plymouth/themes/qubix/background.png
             printf '%s\n' usr/share/plymouth/themes/qubix/bullet.png
             printf '%s\n' usr/share/plymouth/themes/qubix/capslock.png
             printf '%s\n' usr/share/plymouth/themes/qubix/entry.png

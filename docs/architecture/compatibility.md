@@ -14,6 +14,11 @@ Status: **Candidate adapters Implemented; fixtures Tested; native desktop file l
 
 UKIs/signing and complex/alternate mkinitcpio outputs are unsupported. Other managers preserve login and reject enabled branding; the Qubix desktop can use a free TTY.
 
+The Plymouth picture background requires native two-step support for background.png and
+ScaleBackgroundImage. Real-host preflight checks both capabilities in the installed plugin before
+writes; isolated fixture plugins do not establish native rendering support. Other aspect ratios
+may stretch the picture and need separate visual acceptance.
+
 Discovery measures identity/version, binaries/packages, kernel arguments, alias/standalone manager activity, paths and hints. SSH hints can be absent. Tools alone cannot establish firmware selection or image ownership; operator confirmation is required.
 
 The inspected CachyOS installation uses standalone Noctalia 5.2.1; the reference uses DMS. The [new desktop design](desktop-design.md) uses the installed Noctalia shell with Qubix-specific defaults/state and DMS-inspired shortcuts. Noctalia supplies its own Polkit agent. Legacy Quickshell/v4 is unsupported by this profile. Native preferences remain preserved; earlier classic-companion evidence below is historical.

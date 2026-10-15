@@ -27,6 +27,9 @@ def inside(root):
     config = configparser.ConfigParser()
     config.read_string(candidate)
     assert config['Plymouth Theme']['ModuleName'] == 'two-step'
+    assert config['two-step'].getboolean('ScaleBackgroundImage')
+    assert (root / 'theme/background.png').is_file()
+    assert b'ScaleBackgroundImage' in pathlib.Path('/usr/lib/plymouth/two-step.so').read_bytes()
     font_path = pathlib.Path('/usr/share/fonts/qubix/QubixBootMono-Regular.ttf')
     selected = run(['/usr/lib/plymouth/plymouth-font-file', 'Qubix Boot Mono 12']).stdout.strip()
     assert selected == str(font_path), 'Native font resolver silently chose a different family: ' + selected
@@ -124,6 +127,8 @@ def inside(root):
                 os.close(master)
             assert daemon.returncode == 0, 'Private splash daemon did not exit cleanly'
             text = artifact(mode + '-debug.log').read_text()
+            assert 'tiling background to' in text, 'Native picture background was not rendered'
+            result['modes'][mode]['picture_background_rendered'] = True
             assert "Loading boot splash theme '/usr/share/plymouth/themes//qubix/qubix.plymouth'" in text, 'Production theme was not loaded'
             assert not any(error in text.lower() for error in ('script error', 'parse error', 'parser error')), text[-1500:]
             assert 'Could not load font' not in text, 'Native renderer could not load the packaged subset'

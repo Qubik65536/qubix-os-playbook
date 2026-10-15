@@ -21,9 +21,23 @@ so its normal foreground/background pair must remain strongly contrasting; the b
 setting alone does not define the selected row. See the [native renderer](https://github.com/Limine-Bootloader/Limine/blob/v12.x/common/menu.c).
 Plymouth keeps the native two-step renderer, small circular animation and standard password/keyboard controls;
 replace its generic white/black treatment with the same dark blue palette, tinted spinner and a
-compact, near-white Krypton wordmark with a brighter shaded cube. Use a darker gradient and brighter
-ring consistently for boot/reboot/poweroff;
+compact, near-white Krypton wordmark with the original, unmodified Qubix cube colours. Never tint,
+recolour or filter the logo; contrast adjustments apply to text, backgrounds and supporting accents.
+Use a blue-charcoal picture background, fallback gradient and brighter ring consistently for boot/reboot/poweroff;
 this intentionally replaces the firmware-background presentation within Plymouth, not firmware data.
+
+### Original-colour logo and picture background correction
+
+Status: **Implemented; native preview and generator/check-mode fixtures Tested, activation pending**,
+following operator feedback on f626188. Its blue logo tint is rejected.
+Render the canonical logo.svg directly, retaining its original colours and shading. Keep the
+near-white caption-free wordmark and spinner. Add a subtle desktop-cube picture on a blue-charcoal
+background using native two-step's background.png and ScaleBackgroundImage support; keep its central
+prompt area quiet. Retain a blue-charcoal gradient as the fallback. Scaling follows the native
+renderer rather than a custom splash script; non-16:9 outputs may stretch the picture and require
+separate visual acceptance. Confirm background rendering in native Pango/FreeType previews, compare
+the rendered logo crop against the canonical logo, and verify the picture in actual boot archives.
+Kernel mappings, Limine appearance, first recovery bytes and native prompt behaviour stay unchanged.
 
 ## Typography and assets
 

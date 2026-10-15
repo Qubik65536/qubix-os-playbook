@@ -6,8 +6,10 @@ showed CachyOS, and the operator rejected the earlier scripted shutdown layout. 
 [current evidence](../project/plymouth-test-plan.md). Plymouth supplies the splash after the bootloader
 and during shutdown; it is independent of Limine/GRUB menu appearance.
 
-The refined candidate uses Plymouth's native two-step renderer: a midnight-blue gradient, a small
-near-white spinner and a bottom Qubix cube/Krypton wordmark without a secondary caption. It installs the 154 KB Qubix Boot Mono subset
+The refined candidate uses Plymouth's native two-step renderer: a blue-charcoal desktop-cube picture,
+a small near-white spinner and a bottom original-colour Qubix cube/Krypton wordmark without a secondary
+caption. The logo must retain its original colours; text and surrounding colours may change.
+It installs the 154 KB Qubix Boot Mono subset
 for native prompts; the generator must resolve that exact file. The font's Latin coverage is
 [documented](../../assets/fonts/README.md); other early-boot scripts are not validated. Native prompts
 remain available. The playbook preserves
@@ -15,6 +17,9 @@ kernel arguments, encryption settings, boot entries and service units. The refin
 preview passes, including FreeType prompts. Clean 87e824b boots successfully; the operator requests
 the higher-contrast, caption-free correction described here. That correction is deployed from clean
 f626188 with exact active-image checks and zero-change reapplication; renewed console acceptance remains open.
+The subsequent original-colour/picture correction passes native preview and generator fixtures;
+its activation is pending. Native background scaling is required; other aspect ratios may stretch
+the picture. See the [current results](../project/plymouth-test-plan.md).
 
 ## Preview without activation
 

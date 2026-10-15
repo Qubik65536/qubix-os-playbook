@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1080" viewBox="0 0 1920 1080">
+    <defs><linearGradient id="night" x2="0" y2="1"><stop stop-color="#111d28"/><stop offset="1" stop-color="#203548"/></linearGradient></defs>
+    <rect width="1920" height="1080" fill="url(#night)"/>
+    <image xlink:href="../wallpaper/qubix.png" width="1920" height="1080" opacity=".62"/>
+    </svg>

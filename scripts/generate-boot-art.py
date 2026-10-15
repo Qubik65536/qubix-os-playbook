@@ -5,6 +5,7 @@ import tempfile
 
 from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.ttLib import TTFont
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 FONT = TTFont(ROOT / "assets/fonts/QubixBootMono-Regular.ttf")
@@ -42,10 +43,30 @@ def main():
 
     watermark = ROOT / "assets/plymouth/watermark.svg"
     watermark.write_text('''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="240" height="72" viewBox="0 0 240 72">
-    <defs><filter id="steel" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values=".16 .54 .06 0 .24 .2 .67 .07 0 .29 .24 .8 .08 0 .34 0 0 0 1 0"/></filter></defs>
-    <image xlink:href="../branding/logo.svg" x="0" y="0" width="72" height="72" filter="url(#steel)"/>
+    <image xlink:href="../branding/logo.svg" x="0" y="0" width="72" height="72"/>
     ''' + lettering("QUBIX OS", 78, 45, 25, "#f4f8fc", 1.5) + '</svg>\n')
     export(watermark, ROOT / "assets/plymouth/theme/watermark.png")
+
+    # Guard the brand colours against filters or future composition changes.
+    with tempfile.TemporaryDirectory(prefix="qubix-logo-check.") as directory:
+        original = Path(directory) / "logo.png"
+        reference = Path(directory) / "reference.svg"
+        reference.write_text('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
+                             'width="240" height="72" viewBox="0 0 240 72"><image xlink:href="'
+                             + (ROOT / 'assets/branding/logo.svg').as_uri()
+                             + '" width="72" height="72"/></svg>')
+        export(reference, original)
+        with Image.open(original) as canonical, Image.open(ROOT / "assets/plymouth/theme/watermark.png") as composed:
+            assert canonical.convert("RGBA").crop((0, 0, 72, 72)).tobytes() == composed.convert("RGBA").crop((0, 0, 72, 72)).tobytes(), \
+                "Plymouth composition changed the original logo colours or pixels"
+
+    background = ROOT / "assets/plymouth/background.svg"
+    background.write_text('''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1080" viewBox="0 0 1920 1080">
+    <defs><linearGradient id="night" x2="0" y2="1"><stop stop-color="#111d28"/><stop offset="1" stop-color="#203548"/></linearGradient></defs>
+    <rect width="1920" height="1080" fill="url(#night)"/>
+    <image xlink:href="../wallpaper/qubix.png" width="1920" height="1080" opacity=".62"/>
+    </svg>\n''')
+    export(background, ROOT / "assets/plymouth/theme/background.png")
 
     # Original vector animation: a quiet track and rotating ice-blue arc.
     spinner = ROOT / "assets/plymouth/spinner.svg"
@@ -59,7 +80,7 @@ def main():
         for index in range(30):
             frame.write_text(template.replace("ANGLE", str(index * 12)))
             export(frame, ROOT / f"assets/plymouth/theme/throbber-{index + 1:04}.png")
-    print("Exported midnight wallpaper, outlined Qubix wordmark and 30 native spinner frames")
+    print("Exported cube backgrounds, original-colour logo/wordmark and 30 native spinner frames; logo pixels verified")
 
 
 if __name__ == "__main__":
