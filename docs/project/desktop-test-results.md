@@ -34,6 +34,9 @@ Controller commands used an ignored inventory/configuration, strict confirmed ho
 | Native Bash/Starship probe | Interactive initialization, TOML parsing and prompt rendering pass using a temporary home |
 | `bootstrap.sh restore --check --diff` | 248 tasks; 17 proposed removals; no failures |
 | `bootstrap.sh restore` | 249 tasks; 18 changes; all 17 originally absent resources removed; state records restored |
+| Final desktop redeployment from `3bc4851` | 352 tasks; 18 changes; managed resources restored; installed verification passes with 58 tasks and zero changes/failures |
+| Reapplication before authorized reboot | 352 tasks; zero changes/failures; installed verification again passes with 58 tasks and zero changes/failures |
+| Operator-authorized `sudo systemctl reboot` | Changed boot ID confirms restart; SSH and native SDDM return active; Qubix session entry remains available and installed Niri validation passes |
 
 These counts describe the runs at the revisions above; later task additions can change task counts. For the complete repeatable command lines, use the [operator guide](../user/getting-started.md) and [developer test guide](../development/getting-started.md).
 
@@ -47,6 +50,6 @@ The nested workflow uses a private D-Bus session and temporary HOME/config/cache
 
 ## Remaining acceptance
 
-The operator still needs to select Qubix Niri as the main session and verify physical shortcuts, native default-shell startup, application launching, portals, lock/unlock and GUI privilege prompts. Nested rendering is a development smoke test. Deployment state deliberately keeps graphical_session_verified and boot_verified false.
+After the authorized reboot, no Niri user service was running at the time of inspection. The operator still needs to select Qubix Niri as the main session and verify physical shortcuts, native default-shell startup, application launching, portals, lock/unlock and GUI privilege prompts. SDDM being active does not prove greeter rendering or successful authentication. The restart used the existing boot configuration with Qubix login/bootloader/Plymouth components disabled; it does not establish their acceptance. Nested rendering is a development smoke test. Deployment state deliberately keeps graphical_session_verified and boot_verified false.
 
 Breeze and the optional KDE Polkit agent are absent on this machine. Login branding remains disabled. Supported login authentication/restoration, independent GRUB and Limine boots/restoration, and real Plymouth generation/splash/recovery with both dracut and mkinitcpio need disposable VMs. Both loaders and both generators remain mandatory MVP gates; no release acceptance is claimed. See [scope](scope.md) and [backlog](backlog.md).
