@@ -3,7 +3,7 @@
 Updated: 2026-10-15. Stage: **MVP candidate; acceptance In Progress**.
 The physical CachyOS Niri desktop is deployed and returns after reboot at 100% scale with the slim
 information bar. The corrected native-style Plymouth and active Limine image adapter are fixture
-Tested and pass the target no-write preview; corrective deployment/boot observation remain pending.
+Tested and deployed from clean e7e652a. Exact active-image checks and installed verification pass; reapplication was interrupted by target connectivity loss, and controlled boot observation remains pending.
 The first Plymouth activation failed visual acceptance and is not counted as a successful boot theme.
 
 | Capability | Status and actual evidence |
@@ -16,8 +16,8 @@ The first Plymouth activation failed visual acceptance and is not counted as a s
 | Shell/terminal | Native temporary-home Bash/Starship checks pass; personal files and default Fish preserved |
 | Login | SDDM clone/activity/ambiguity fixtures Tested; physical target branding disabled; authentication/restore pending |
 | GRUB | Preservation/dispatch/reapplication/recovery fixtures Tested; independent native boot/restore pending |
-| Limine | Graphical fixture passes 301 tasks with four expected refusals; target no-write preview passes; physical appearance pending |
-| Plymouth | Native two-step preview passes 48 tasks, all three animated modes and synthetic prompt; corrective activation pending |
+| Limine | Graphical fixture passes 301 tasks with four expected refusals; graphical appearance deployed; protected entry/argument/snapshot bytes verified; physical appearance pending |
+| Plymouth | Native two-step preview passes 48 tasks and all three modes; selection, native mkinitcpio generation and exact active-image assets verified; controlled appearance observation pending |
 | Image/cache adapters | Two-image nested-entry lifecycle passes 767 tasks with two expected stale-pin refusals; binding/enrollment/FAT fixtures pass 368 tasks with five refusals and check mode 220 tasks with four refusals |
 | Recovery/state | Generic and loader regression suite passes 966 tasks with seven expected refusals; native classic desktop recovery Tested; newer desktop/boot recovery pending |
 
@@ -43,10 +43,27 @@ retired native login entry and preservation, is in [desktop test results](deskto
 README links both [operator](../user/getting-started.md) and
 [human developer](../development/getting-started.md) onboarding.
 
+## Corrective deployment results
+
+Clean e7e652a deploys successfully: 1542 tasks, 145 changes, zero failures. Installed verification
+passes 284 tasks with zero changes. Native extraction of both generated images and both Limine-
+referenced stages verifies all 38 runtime asset checksums, Theme=qubix, two-step/label plugins and fonts.
+Both native BLAKE2b pins match; protected Limine bytes, including entry identities/arguments and
+snapshot sections, remain unchanged. All 19 native cache/history/EFI resources and all 32 earlier
+baseline hashes remain intact. There are now 75 private baseline manifests. Only the two intended
+source images and limine.conf change among the 76 tracked native/personal resources.
+
+Identical reapplication reaches 1337 successful tasks with zero changes, then SSH becomes unreachable
+(one unreachable, zero component failures). This is an interrupted test, not a completed zero-change
+reapplication. The protected transient attempt marker was present during that run and may remain;
+the last verified deployment still records clean e7e652a. IPv4/IPv6 SSH and ping fail afterward; the
+known local hostname still resolves to the recorded address. The planned controlled reboot has not
+been requested. The operator has been asked to wake/reconnect the machine and report any console test.
+
 ## Limits and next gate
 
-- Complete the reviewed corrective boot deployment, identical reapplication and actual active-image
-  extraction/pin checks before reboot; then obtain console observations of Limine/startup/shutdown.
+- Reconnect the test machine, complete same-source reapplication and verify pending state clears.
+  Then run the guarded reboot and obtain console observations of Limine/startup/shutdown.
 - Test independent GRUB and dracut boots, LTS boot, login authentication, encrypted-root input where
   relevant, physical shortcuts/locking/portals and current desktop/boot restoration in disposable VMs.
 - Fixed image/kernel mappings require reinspection after package updates. Stale native pins and

@@ -1,10 +1,10 @@
 # Physical-target Plymouth test plan
 
-Status: **Physical activation attempted; boot appearance Failed acceptance and shutdown design rejected**. The operator approved physical-target Plymouth activation on 2026-10-15 after reviewing the native preview, no-write target preview and exact backup/two-image plan. This extends the earlier [desktop authorization](live-test-plan.md) for this machine only. Root [AGENTS.md](../../AGENTS.md) requires: “Boot work uses explicitly authorized disposable VMs.” Other boot work retains that rule; do not infer further exceptions from this approval.
+Status: **Corrective deployment and exact active-image checks Tested; reapplication interrupted by connectivity loss, controlled appearance observation pending**. The first scripted attempt failed visual acceptance. The operator approved physical-target Plymouth activation on 2026-10-15 after reviewing the native preview, no-write target preview and exact backup/two-image plan. This extends the earlier [desktop authorization](live-test-plan.md) for this machine only. Root [AGENTS.md](../../AGENTS.md) requires: “Boot work uses explicitly authorized disposable VMs.” Other boot work retains that rule; do not infer further exceptions from this approval.
 
 ## Inspected mapping
 
-Read-only inspection on 2026-10-15 finds Plymouth 26.134.222-4, mkinitcpio 42.2, the native cachyos theme, an existing splash argument and native Plymouth poweroff/reboot units. No bootloader change is proposed. Recheck installed kernels, presets and hashes immediately before activation; package updates can invalidate this mapping.
+Read-only inspection on 2026-10-15 finds Plymouth 26.134.222-4, mkinitcpio 42.2, the native cachyos theme, an existing splash argument and native Plymouth poweroff/reboot units. The first attempt proposed no bootloader change; the corrective deployment below also manages Limine appearance and explicit module aliases. Recheck installed kernels, presets and hashes immediately before activation; package updates can invalidate this mapping.
 
 | Preset | Installed kernel/module directory | Existing kernel file | Existing image |
 |---|---|---|---|
@@ -81,3 +81,26 @@ Clean source 2645034 was used throughout. The no-write target preview passes 459
 Native archive listing and extraction confirm Theme=qubix, exact installed logo/theme/script bytes, script/label plugins and a 621572-byte packaged font in both images. Original image backup hashes match the pre-deployment originals and associated kernels remain unchanged. Private baseline count rises from 25 to 32; every earlier baseline hash is preserved. Of 76 audited native/personal files, only the approved Plymouth selection and two initramfs images change; Limine, kernel files, main hook configuration, snapshot append, default Fish shell and personal files are preserved. Root-owned backups remain private. No recovery or alternate-kernel boot result is implied.
 
 The guarded reboot returns SSH/SDDM and the Qubix session; Plymouth start/quit services report success. The operator observes the old CachyOS startup splash and rejects the scripted shutdown appearance. Read-only inspection proves the active Limine entries reference /boot/<machine-id>/linux-cachyos/initramfs and its LTS counterpart, with BLAKE2b checksums. Those cached images were outside the first mapping. Source-image archive checks were insufficient. The [corrective contract](../components/plymouth.md#active-limine-image-repair) requires staged active-image binding and a native-style theme before another acceptance attempt.
+
+## Corrective activation results
+
+Clean e7e652a deployment passes 1542 tasks with 145 changes and zero failures. Installed verification
+passes 284 tasks with zero changes. Both exact mkinitcpio --nopost presets run; source images are
+staged at content-addressed Qubix paths and only the two confirmed module references/pins switch.
+Graphical Limine wallpaper/palette and the native two-step definition are installed with FAT modes.
+
+Extraction of all four source/staged images confirms Theme=qubix, all 38 runtime manifest checksums,
+native two-step/label plugins and packaged fonts. Both active BLAKE2b pins match. An independent byte
+comparison confirms protected config content unchanged. All 19 native boot/cache/history/EFI files
+and all 32 earlier baseline hashes remain unchanged; 75 baseline manifests are root-owned/private.
+Of 76 tracked native/personal resources, only the two source images and limine.conf change.
+
+The identical reapplication completes 1337 successful tasks with zero changes, then the machine
+becomes unreachable (one unreachable, zero component failures). It does not establish completed
+idempotency. The transient deployment-attempt marker was observed during reapplication; do not clear
+it manually or treat the prior files-verified manifest as completion of the interrupted run.
+No controlled reboot was requested after e7e652a. Ping/IPv4/IPv6 SSH fail; the known hostname still
+resolves to the original address. The operator was asked to wake/reconnect the target and report any
+manual shutdown/reboot observations. Complete same-source reapplication, verify pending state clears,
+then execute the prepared guarded reboot/console test. LTS, independent generator/loader and recovery
+gates remain separate.

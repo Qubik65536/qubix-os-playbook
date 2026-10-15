@@ -1,6 +1,6 @@
 # Boot, reboot and poweroff splash
 
-Status: native-style theme Implemented; isolated native preview Tested; revised deployment pending. The first physical
+Status: native-style theme Implemented; native preview, mkinitcpio generation, corrected deployment and exact active-image verification Tested; controlled boot appearance pending. The first physical
 activation used verified generator outputs but missed Limine's active cached images; startup still
 showed CachyOS, and the operator rejected the earlier scripted shutdown layout. See
 [current evidence](../project/plymouth-test-plan.md). Plymouth supplies the splash after the bootloader

@@ -4,6 +4,8 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Deployed graphical Limine and native-style Plymouth from clean e7e652a; exact source/active-image assets, pins, installed verification and preservation pass. Reapplication was interrupted by target connectivity loss before controlled reboot acceptance.
+
 - Added explicit Limine cache bindings, verified content-addressed image staging, native BLAKE2b pin activation and config-first recovery; native cache/history/EFI files remain preserved.
 - Added FAT-aware boot asset permissions and safe refusal of ambiguous image references, stale recovery pins and narrower earlier appearance ownership.
 

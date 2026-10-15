@@ -15,7 +15,7 @@ Status: Candidate diagnostics Implemented; [status](../project/status.md) define
 | Duplicate companions/agent | Collect running user units/processes before changing startup |
 | Login rejected | Require unambiguously active SDDM and compatible regular Breeze tree |
 | Boot/generator unresolved | Confirm active chain/config/version/mappings before opt-in |
-| Limine still looks like CachyOS | Bootloader branding is opt-in; the current adapter provides minimal text/colour branding rather than BlueBuild's GRUB layout |
+| Limine still looks like CachyOS | Confirm the selected config/version and enabled component; Limine 12 supports Qubix wallpaper/palette, while older supported versions use text/colour settings |
 | UKI/complex preset/HOOKS override rejected | Unsupported candidate setup; leave splash disabled and report |
 | Archive resource failure | Retain pending marker; inspect native generation before repair/retry |
 | Restore drift refusal | Review baseline/local edit before explicit force |
@@ -26,4 +26,14 @@ Report revision, options, target versions, command, pending state and redacted o
 
 Noctalia reads Qubix defaults from /etc/qubix/noctalia/config.toml when launched through the Qubix profile. GUI preferences under your XDG state root's qubix/noctalia/settings.toml override those defaults and survive deployment. Inspect only the relevant bar/widget settings before changing them; do not delete the whole preference file. A successful config-reload or parser check proves neither the visual distinction nor the logo's legibility. The [desktop design](../architecture/desktop-design.md#bar-visibility-and-logo-correction) records the measured launcher image scale and native screenshot comparison.
 
-The [bootloader contract](../components/bootloader.md) lists exactly what Limine currently manages. Its supported wallpaper/palette controls need a Limine-specific implementation; a GRUB theme.txt cannot be reused as a Limine theme.
+The [bootloader contract](../components/bootloader.md) lists exactly what Limine currently manages. Version 12 uses its own supported wallpaper/palette controls; a GRUB theme.txt cannot be reused as a Limine theme.
+
+## Remote validation interrupted
+
+Wake the target and recheck its address, SSH service and firewall using the
+[connection guide](collecting-target-info.md). DHCP changes can invalidate a restricted controller
+allow rule. Preserve protected pending markers: they distinguish an incomplete attempt from the
+last verified deployment. Reconnect and rerun the same source/configuration, then complete installed
+verification and unchanged reapplication before reboot. A successful earlier deployment does not
+turn a later unreachable run into a completed idempotency test. Keep the test machine awake during
+long file/backup checks; do not disable unrelated power settings or remove recovery state to bypass them.

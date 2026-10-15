@@ -1,6 +1,10 @@
 # Plymouth and initramfs adapters
 
-Status: **In Progress after physical acceptance failure**. Both generator fixtures, native source-image generation, exact archives/backups and zero-change reapplication pass. The first physical reboot still shows CachyOS because Limine boots separate cached images, and the operator rejected the large scripted shutdown design. These results do not establish working boot branding. Dracut, encrypted-root input and recovery also need acceptance.
+Status: **Corrective implementation deployed; controlled boot appearance pending**. Native two-step
+rendering, mkinitcpio generation, exact source/active-image contents and installed verification pass.
+Reapplication is interrupted by connectivity loss; no controlled reboot follows this revision yet.
+The first scripted attempt failed visual acceptance; see [recorded results](../project/plymouth-test-plan.md).
+Dracut, encrypted-root input and recovery retain independent acceptance gates.
 
 ## Active Limine image repair
 
@@ -26,7 +30,7 @@ spinner/input files and the adapted definition to their GPL-3.0 source revision;
 retains Apache-2.0 attribution. The [asset guide](../../assets/plymouth/README.md) explains regeneration.
 
 The earlier script design passed isolated rendering but failed operator acceptance; it is replaced
-in source and remains selected on the target until deployment. Obsolete script/logo files from that
+in source and on the target by the native definition. Obsolete script/logo files from that
 installation are inert when `ModuleName=two-step` is selected and remain in recovery records.
 
 The private native preview tests module loading against an invalid-module control, actual animation
