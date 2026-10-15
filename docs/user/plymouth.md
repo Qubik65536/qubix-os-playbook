@@ -1,6 +1,6 @@
 # Boot, reboot and poweroff splash
 
-Status: circular theme Implemented; native preview and image generation have separate acceptance gates. See [current evidence](../project/status.md). Plymouth supplies the splash after the bootloader and during shutdown; changing it does not theme the Limine or GRUB menu.
+Status: circular theme Implemented; native preview and physical-target mkinitcpio generation/reapplication Tested. Actual splash observation, dracut and recovery retain separate acceptance gates. See [current evidence](../project/status.md). Plymouth supplies the splash after the bootloader and during shutdown; changing it does not theme the Limine or GRUB menu.
 
 The Qubix theme keeps the logo and QUBIX OS title visible, animates a blue-gray circular loader and uses Starting, Restarting or Shutting down captions. Native Plymouth services select the mode. Password/question/message callbacks remain available; password display receives only the bullet count. The playbook preserves kernel arguments, encryption configuration, boot entries and native service units.
 
@@ -23,12 +23,12 @@ Add a `plymouth` section to your existing ignored configuration. Set `enabled: t
 Preview, review the predicted selection/integration changes, then activate only on an authorized target:
 
 ```bash
-./bootstrap.sh deploy -i inventory/target.local.ini -e @config/plymouth.local.yml --check --diff --ask-pass --ask-become-pass
-./bootstrap.sh deploy -i inventory/target.local.ini -e @config/plymouth.local.yml --ask-pass --ask-become-pass
-./bootstrap.sh verify -i inventory/target.local.ini -e @config/plymouth.local.yml --tags installed --ask-pass --ask-become-pass
+./bootstrap.sh deploy -i inventory/target.local.ini -e @.cache/plymouth.local.yml --check --diff --ask-pass --ask-become-pass
+./bootstrap.sh deploy -i inventory/target.local.ini -e @.cache/plymouth.local.yml --ask-pass --ask-become-pass
+./bootstrap.sh verify -i inventory/target.local.ini -e @.cache/plymouth.local.yml --tags installed --ask-pass --ask-become-pass
 ```
 
-Check mode does not rebuild, back up images or prove the resulting archives. Activation snapshots affected resources and images before rebuilding. Mkinitcpio uses `--nopost -p` for selected presets; the preserved snapshot-hook append remains active without rerunning Limine post hooks. Dracut uses the explicit images and kernels. Native archive checks require the logo, theme/script, daemon, script/label plugins and fonts. A failed check leaves pending state visible.
+Prepare that override in the ignored .cache directory, keeping the rest of your desktop selections. After approval/testing, retain the same mappings in ignored config/local.yml for normal future deployment commands. Check mode does not rebuild, back up images or prove the resulting archives. Activation snapshots affected resources and images before rebuilding. Mkinitcpio uses `--nopost -p` for selected presets; the preserved snapshot-hook append remains active without rerunning Limine post hooks. Dracut uses the explicit images and kernels. Native archive checks require the logo, theme/script, daemon, script/label plugins and fonts. A failed check leaves pending state visible.
 
 Reapply the identical configuration before reboot: unchanged inputs should skip regeneration. Keep `force_rebuild: false` except for an intentional repair. Observe startup, logout/reboot and poweroff separately; shutdown branding depends on the native Plymouth services and available graphics. For encrypted roots, test the real unlock prompt with console access. Record parser, preview, archive and physical observations separately.
 

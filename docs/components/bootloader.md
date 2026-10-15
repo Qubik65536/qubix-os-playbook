@@ -4,6 +4,12 @@ Status: Implemented candidate; GRUB and Limine preservation/reapplication/file-r
 
 Both adapters are mandatory for MVP. `bootloader.enabled` remains false by default. Require an explicit `backend`, `config_path` and `confirm_active: true` based on actual boot-chain evidence. Auto is a schema value for inspection, not permission to guess a loader. Backups precede each activation file change.
 
+## Graphical Limine revision
+
+Status: **Planned corrective contract**. Install the existing attributed Qubix wallpaper at /boot/qubix/wallpaper.png and use a version-supported boot(): URI, blue-gray terminal palette, restrained margins/font size and Qubix heading. Replace only the documented global appearance directives in one marked block; preserve timeout/default selection, every entry, kernel path/argument and snapshot. Reject duplicate globals, shadowed/ambiguous active configurations and native config enrollment requiring unsupported EFI changes. Keep the factory wallpaper and native theme files intact. Test exact reapplication, restoration and negative cases before physical boot observation.
+
+Plymouth's explicitly bound active-image staging may also update selected module_path aliases/digests. Config recovery metadata must record those aliases and ignore only those expected changes during preservation checks; every other entry byte remains protected. See the [active-image contract](plymouth.md#active-limine-image-repair). This is separate from ordinary Limine appearance and does not permit kernel or entry replacement.
+
 GRUB supports `/boot/grub/grub.cfg` and `/boot/grub2/grub.cfg` only when the existing generated configuration actually sources `custom.cfg`. Install a named theme under that prefix and update one marked appearance block in the custom hook. Validate the candidate with `grub-script-check` before atomic replacement. Generated menu entries, kernel arguments, timeout, loader installation and disks are untouched; no grub-mkconfig regeneration is needed. Malformed markers fail rather than stripping unrelated content.
 
 Limine requires a confirmed booted major version 8–12, native entry format and a regular active limine.conf under /boot or /efi. The adapter changes only interface_branding, term_foreground and term_background, whose shared syntax was checked against upstream version documentation. Duplicate directives and malformed markers fail. Entry sections and kernel arguments are preserved. There is no claimed Limine syntax-check command; fixture preservation checks do not establish boot validity.
