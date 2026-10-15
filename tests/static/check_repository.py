@@ -5,6 +5,7 @@ import configparser
 import json
 import re
 import tomllib
+import shlex
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -68,6 +69,15 @@ def main():
     shell = tomllib.loads((desktop / 'noctalia.toml.j2').read_text())
     assert not shell['theme']['templates']['enable_builtin_templates']
     assert not shell['theme']['templates']['enable_community_templates']
+    assert not shell['dock']['enabled'] and not shell['dock']['reserve_space']
+    launcher = shell['shell']['launcher']
+    assert launcher['providers']['session']['global']
+    power_entry = configparser.ConfigParser(interpolation=None)
+    power_entry.read(desktop / 'power.desktop.j2')
+    power = power_entry['Desktop Entry']
+    assert Path('qubix-power.desktop').stem in launcher['pinned'], 'Power menu must be available without typing'
+    assert power['Type'] == 'Application' and power['Terminal'] == 'false'
+    assert shlex.split(power['Exec']) == [power['TryExec'], 'msg', 'panel-toggle', 'session'], 'Power entry must only open the menu'
     plugin_dir = ROOT / 'roles/qubix_niri/files/shortcuts'
     plugin = tomllib.loads((plugin_dir / 'plugin.toml').read_text())
     panel = plugin['panel'][0]

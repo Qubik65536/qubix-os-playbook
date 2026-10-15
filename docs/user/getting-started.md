@@ -136,7 +136,9 @@ Run this from a free TTY, not inside an existing graphical session. In a tempora
 | Super+F1 | Compact shortcut overlay |
 | Super+Shift+E | Exit session |
 
-The top bar groups each component in its own rounded pill. Click its keyboard button or press Super+Shift+/ for the shortcut cheatsheet. Search by action or key, scroll through the categories, and close with Escape, Close or an outside click. The list follows Qubix's managed bindings; personal Niri overrides are not included. Follow the [README regeneration guide](../../README.md#regenerate-the-shortcut-cheatsheet) after changing the repository's bindings.
+The compact top bar groups each component in its own rounded module. The dock is disabled; use Super+Space, Super+O or Alt+Tab for application access. Click its keyboard button or press Super+Shift+/ for the shortcut cheatsheet. Search by action or key, scroll through the categories, and close with Escape, Close or an outside click. The list follows Qubix's managed bindings; personal Niri overrides are not included. Follow the [README regeneration guide](../../README.md#regenerate-the-shortcut-cheatsheet) after changing the repository's bindings.
+
+For power controls, press **Super+Space** and choose the pinned **Power options** entry to open Noctalia's session menu. Search for **reboot**, **shutdown**, **sleep**, **lock** or **logout**, or type **/session** for all available session actions. Selecting a direct action result runs that action; the Power options entry opens the menu. Entries depend on your enabled Noctalia actions and lock capability.
 
 Resize shortcuts use 5% steps. Tiled windows in one column share its width; height changes are easiest to see with two windows stacked in the column. The reset shortcut returns the focused window to automatic height.
 

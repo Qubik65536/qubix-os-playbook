@@ -34,7 +34,7 @@
             path: '{{ qubix_smoke_directory.path }}/{{ item }}'
             state: directory
             mode: '0700'
-          loop: [config/noctalia/palettes, assets, plugins/shortcuts]
+          loop: [config/noctalia/palettes, assets, plugins/shortcuts, home/.local/share/applications]
 
         - name: Define exact candidate paths within the owned test directory
           ansible.builtin.set_fact:
@@ -44,6 +44,7 @@
               /etc/qubix/noctalia/palettes/Qubix.json: config/noctalia/palettes/Qubix.json
               /usr/share/qubix/bin/qubix-noctalia: qubix-noctalia
               /etc/niri/qubix/config.kdl: config.kdl
+              /usr/share/applications/qubix-power.desktop: home/.local/share/applications/qubix-power.desktop
               /usr/share/qubix/noctalia/plugins/shortcuts/plugin.toml: plugins/shortcuts/plugin.toml
               /usr/share/qubix/noctalia/plugins/shortcuts/panel.luau: plugins/shortcuts/panel.luau
               /usr/share/qubix/noctalia/plugins/shortcuts/bindings.json: plugins/shortcuts/bindings.json

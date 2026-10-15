@@ -38,6 +38,8 @@
       template: foot.ini.j2
       validate: /usr/bin/foot --check-config --config %s
     - {path: /etc/qubix/noctalia/palettes/Qubix.json, template: palette.json.j2}
+    - path: /usr/share/applications/qubix-power.desktop
+      template: power.desktop.j2
     - path: /etc/qubix/noctalia/config.toml
       template: noctalia.toml.j2
       validate: /usr/bin/noctalia config validate %s

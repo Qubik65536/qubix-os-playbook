@@ -28,29 +28,35 @@ shadow = true
 
 [shell.launcher]
 fetch_exchange_rates = false
+pinned = ["qubix-power"]
+
+[shell.launcher.providers.session]
+prefix = "session"
+global = true
 
 [bar.default]
 position = "top"
-thickness = 40
+thickness = 36
 margin_edge = 8
 margin_ends = 12
-radius = 16
-radius_top_left = 16
-radius_top_right = 16
-radius_bottom_left = 16
-radius_bottom_right = 16
+radius = 12
+radius_top_left = 12
+radius_top_right = 12
+radius_bottom_left = 12
+radius_bottom_right = 12
 concave_edge_corners = false
 background_opacity = 0.0
 border_width = 0.0
 shadow = false
-widget_spacing = 10
+widget_spacing = 8
 capsule = true
 capsule_fill = "surface"
 capsule_foreground = "on_surface"
-capsule_thickness = 0.9
-capsule_padding = 12
-capsule_radius = 16.0
-capsule_border = "#56728b66"
+capsule_thickness = 0.86
+capsule_padding = 10
+capsule_radius = 10.0
+capsule_opacity = 0.96
+capsule_border = "#56728b4d"
 capsule_border_width = 1.0
 start = ["launcher", "workspaces", "shortcuts"]
 center = ["clock"]
@@ -77,19 +83,8 @@ tooltip = "Keyboard shortcuts (Super+Shift+/)"
 left = "panel-toggle qubix/shortcuts:cheatsheet"
 
 [dock]
-enabled = true
-position = "bottom"
-icon_size = 36
-margin_edge = 8
-radius = 20
-radius_top_left = 20
-radius_top_right = 20
-radius_bottom_left = 20
-radius_bottom_right = 20
-concave_edge_corners = false
-launcher_position = "start"
-show_running = true
-reserve_space = true
+enabled = false
+reserve_space = false
 
 [wallpaper]
 enabled = true

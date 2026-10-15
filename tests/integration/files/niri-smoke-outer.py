@@ -30,7 +30,7 @@ assert main_process.stat().st_uid == os.getuid() and (main_process / 'comm').rea
 assert service_pid in ('0', str(main_pid)), 'The service and selected session disagree'
 native_paths = [pathlib.Path.home() / p for p in (
     '.config/niri/config.kdl', '.config/noctalia/config.toml', '.config/dconf/user',
-    '.local/state/noctalia/settings.toml')]
+    '.local/state/noctalia/settings.toml', '.local/state/qubix/noctalia/settings.toml')]
 
 def native_hashes():
     return {str(p): hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None for p in native_paths}

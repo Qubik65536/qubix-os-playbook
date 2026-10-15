@@ -1,5 +1,7 @@
 # Native test helper only; the deployment engine remains Ansible.
 import json
+import configparser
+import shlex
 import os
 import pathlib
 import re
@@ -55,11 +57,14 @@ def configured_resize(key):
 result = {'socket': native_socket, 'display': os.environ['WAYLAND_DISPLAY'], 'bus': os.environ['DBUS_SESSION_BUS_ADDRESS']}
 children = []
 try:
+    validation = command(['/usr/bin/noctalia', 'config', 'validate', str(root / 'config/noctalia/config.toml')])
+    assert not re.search(r'(?m)^(WARN|ERROR)', validation), validation
+    result['shell_config_validated'] = True
     def initial_layers():
         layers = query('layers')
         names = namespaces(layers)
-        return layers if 'noctalia-wallpaper' in names and any(n.startswith('noctalia-bar-') for n in names) and 'noctalia-dock' in names else None
-    result['initial_layers'] = wait_for(initial_layers, 'Noctalia bar, dock and wallpaper layers')
+        return layers if 'noctalia-wallpaper' in names and any(n.startswith('noctalia-bar-') for n in names) and 'noctalia-dock' not in names else None
+    result['initial_layers'] = wait_for(initial_layers, 'Noctalia bar/wallpaper layers without a dock')
     result['palette'] = shell('color-scheme-get')
     assert result['palette'] == 'custom Qubix', result['palette']
     result['wallpaper'] = shell('wallpaper-get')
@@ -114,6 +119,34 @@ try:
     time.sleep(0.5)
     command(['/usr/bin/niri', 'msg', 'action', 'screenshot-screen', '--path', str(root / 'desktop.png'), '--show-pointer', 'false'])
     shell('panel-close', 'launcher')
+    power_entry = root / 'home/.local/share/applications/qubix-power.desktop'
+    validator = pathlib.Path('/usr/bin/desktop-file-validate')
+    if validator.is_file():
+        command([str(validator), str(power_entry)])
+        result['power_entry_native_validation'] = 'passed'
+    else:
+        result['power_entry_native_validation'] = 'unavailable'
+    desktop = configparser.ConfigParser(interpolation=None)
+    desktop.read(power_entry)
+    power_args = shlex.split(desktop['Desktop Entry']['Exec'])
+    assert power_args == [str(root / 'qubix-noctalia'), 'msg', 'panel-toggle', 'session'], power_args
+    command(power_args) # Open the configured menu; never execute a power action.
+    wait_for(lambda: json.loads(shell('status')).get('activePanelId') == 'session', 'Power options menu')
+    time.sleep(0.4)
+    result['power_menu_status'] = json.loads(shell('status'))
+    command(['/usr/bin/niri', 'msg', 'action', 'screenshot-screen', '--path', str(root / 'power-menu.png'), '--show-pointer', 'false'])
+    shell('panel-close', 'session')
+    shell('panel-open', 'launcher', 'reboot')
+    wait_for(lambda: json.loads(shell('status')).get('activePanelId') == 'launcher', 'Launcher power search')
+    time.sleep(0.4)
+    command(['/usr/bin/niri', 'msg', 'action', 'screenshot-screen', '--path', str(root / 'power-search.png'), '--show-pointer', 'false'])
+    result['launcher_power_query'] = 'reboot'
+    shell('panel-close', 'launcher')
+    shell('panel-open', 'launcher', '/session')
+    wait_for(lambda: json.loads(shell('status')).get('activePanelId') == 'launcher', 'Launcher session provider')
+    time.sleep(0.4)
+    command(['/usr/bin/niri', 'msg', 'action', 'screenshot-screen', '--path', str(root / 'power-options.png'), '--show-pointer', 'false'])
+    shell('panel-close', 'launcher')
     shell('panel-open', 'control-center', 'notifications')
     wait_for(lambda: json.loads(shell('status')).get('activePanelId') == 'control-center', 'Notification centre')
     result['notifications_status'] = json.loads(shell('status'))
@@ -127,10 +160,15 @@ try:
     shell('plugin', 'qubix/shortcuts:cheatsheet', 'all', 'search', 'launcher')
     time.sleep(0.3)
     command(['/usr/bin/niri', 'msg', 'action', 'screenshot-screen', '--path', str(root / 'shortcuts-search.png'), '--show-pointer', 'false'])
+    shell('plugin', 'qubix/shortcuts:cheatsheet', 'all', 'search', 'resize')
+    time.sleep(0.3)
+    command(['/usr/bin/niri', 'msg', 'action', 'screenshot-screen', '--path', str(root / 'resize-shortcuts.png'), '--show-pointer', 'false'])
     shell('panel-close', 'qubix/shortcuts:cheatsheet')
     wait_for(lambda: not json.loads(shell('status')).get('panelOpen'), 'Shortcut panel close')
     result['shortcuts_search_dispatched'] = True
     result['shortcuts_closed'] = True
+    assert 'noctalia-dock' not in namespaces(query('layers')), 'Disabled dock still has a surface'
+    result['dock_absent'] = True
     result['status'] = 'passed'
 except Exception as error:
     result['status'] = 'failed'
