@@ -10,10 +10,19 @@
   ansible.builtin.set_fact:
     qubix_bootloader_preserved: >-
       {{ qubix_bootloader_preserved | regex_replace('(?im)^[ \t]*(' ~
-      (qubix_files_resource.limine_appearance_keys | default([], true)
-      or ['interface_branding', 'term_foreground', 'term_background']) | join('|') ~
+      (qubix_files_resource.limine_appearance_keys |
+      default(['interface_branding', 'term_foreground', 'term_background'])) | join('|') ~
       ')[ \t]*:[^\n]*(?:\n|$)', '') }}
-  when: qubix_files_resource.path.endswith('limine.conf')
+  when:
+    - qubix_files_resource.path.endswith('limine.conf')
+    - qubix_files_resource.limine_appearance_keys | default(['legacy']) | length > 0
+
+- name: Compare staged module aliases without hiding unrelated entry changes
+  ansible.builtin.include_tasks: restore_limine_alias.yml
+  loop: '{{ qubix_files_resource.limine_module_aliases | default([]) }}'
+  loop_control:
+    loop_var: qubix_bootloader_limine_alias
+    label: '{{ qubix_bootloader_limine_alias.image }}'
 
 - name: Retain preserved bytes apart from additive trailing line breaks
   ansible.builtin.set_fact:

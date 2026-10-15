@@ -143,6 +143,9 @@
             - path: /boot/limine.conf
               content: '{{ qubix_test_native_limine }}wallpaper: boot():/duplicate.png'
               error: Ambiguous repeated Limine wallpaper
+            - path: '/var/lib/qubix/backup/{{ "/boot/limine.conf" | hash("sha256") }}.json'
+              content: '{"limine_appearance_keys": []}'
+              error: Earlier Limine ownership is narrower
           loop_control:
             loop_var: qubix_test_limine_case
       always:

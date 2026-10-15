@@ -1,0 +1,81 @@
+---
+- name: Require explicit confirmed Limine cache activation
+  ansible.builtin.assert:
+    that:
+      - qubix_profile_resolved.bootloader.backend == 'limine'
+      - qubix_profile_resolved.bootloader.confirm_active
+      - qubix_profile_resolved.bootloader.config_path == '/boot/limine.conf'
+      - qubix_profile_resolved.bootloader.limine_version == 12
+      - qubix_profile_resolved.plymouth.images | selectattr('limine_image', 'defined') | length ==
+        qubix_profile_resolved.plymouth.images | length
+    fail_msg: 'Limine Plymouth requires confirmed /boot/limine.conf and explicit cache/kernel bindings for every image.'
+
+- name: Reuse native config location and enrollment guards
+  ansible.builtin.include_role:
+    name: qubix_bootloader
+    tasks_from: limine_preflight
+  vars:
+    qubix_bootloader_directory: /boot
+
+- name: Guard the confirmed config without taking a premature baseline
+  ansible.builtin.include_role:
+    name: qubix_files
+    tasks_from: guard
+  vars:
+    qubix_files_resource: {path: /boot/limine.conf, component: bootloader}
+
+- name: Require existing regular Limine configuration
+  ansible.builtin.assert:
+    that:
+      - qubix_files_before.stat.isreg | default(false)
+
+- name: Read confirmed cache references
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}/boot/limine.conf'
+  register: qubix_plymouth_limine_config
+
+- name: Initialize explicit binding plan
+  ansible.builtin.set_fact:
+    qubix_plymouth_limine_bindings: []
+    qubix_plymouth_limine_text: '{{ qubix_plymouth_limine_config.content | b64decode }}'
+    qubix_plymouth_limine_mode: '{{ qubix_files_before.stat.mode }}'
+    qubix_plymouth_limine_file_mode: '{{ qubix_bootloader_limine_file_mode }}'
+    qubix_plymouth_limine_directory_mode: '{{ qubix_bootloader_limine_directory_mode }}'
+
+- name: Bind each primary entry without guessing active files
+  ansible.builtin.include_tasks: limine_bind.yml
+  loop: '{{ qubix_profile_resolved.plymouth.images }}'
+  loop_control:
+    loop_var: qubix_plymouth_limine_image
+    label: '{{ qubix_plymouth_limine_image.path }}'
+
+- name: Reject shared cache bindings
+  ansible.builtin.assert:
+    that:
+      - qubix_plymouth_limine_bindings | map(attribute='image') | unique | length ==
+        qubix_plymouth_limine_bindings | length
+      - qubix_plymouth_limine_bindings | map(attribute='stage_prefix') | unique | length ==
+        qubix_plymouth_limine_bindings | length
+
+- name: Collect recovery aliases from validated native files
+  ansible.builtin.set_fact:
+    qubix_plymouth_limine_aliases: '{{ qubix_plymouth_limine_bindings | map(attribute="alias") | list }}'
+
+- name: Prepare config resource with explicit cache recovery ownership
+  ansible.builtin.set_fact:
+    qubix_plymouth_limine_config_resource: >-
+      {{ ((qubix_bootloader_resources | selectattr('path', 'equalto', '/boot/limine.conf') | first)
+      if qubix_profile_resolved.bootloader.enabled else
+      {'path': '/boot/limine.conf', 'component': 'bootloader', 'content': qubix_plymouth_limine_text,
+      'mode': qubix_plymouth_limine_mode, 'limine_appearance_keys': []})
+      | combine({'limine_module_aliases': qubix_plymouth_limine_aliases}) }}
+
+- name: Validate earlier appearance-only recovery before deployment writes
+  ansible.builtin.include_role:
+    name: qubix_files
+    tasks_from: limine_metadata
+  vars:
+    qubix_files_resource: '{{ qubix_plymouth_limine_config_resource }}'
+    qubix_files_state_dir: '{{ qubix_root | default("") }}/var/lib/qubix/backup'
+    qubix_files_id: '{{ "/boot/limine.conf" | hash("sha256") }}'
+    qubix_files_limine_metadata_write: false

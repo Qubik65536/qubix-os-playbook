@@ -4,9 +4,16 @@ Status: **In Progress after physical acceptance failure**. Both generator fixtur
 
 ## Active Limine image repair
 
-Status: **Planned corrective contract**. CachyOS Limine entries load extensionless cached initramfs files and verify BLAKE2b digests, rather than loading the generator's /boot/initramfs-*.img outputs. Before writes, bind each source image explicitly with optional limine_image and limine_kernel_image fields. Both must identify existing regular files on the confirmed /boot ESP, the cached kernel must equal the declared source kernel, and exactly one primary module/kernel pair must match in the selected Limine configuration. Require a confirmed Limine backend/configuration; reject missing/ambiguous bindings and unsupported enrollment instead of reporting activation success.
+Status: **Implemented; two-image lifecycle/refusal/recovery fixtures and target no-write preview Tested**. CachyOS Limine entries load extensionless cached initramfs files and verify BLAKE2b digests, rather than loading the generator's /boot/initramfs-*.img outputs. Before writes, bind each source image explicitly with optional limine_image and limine_kernel_image fields. Both must identify existing regular files on the confirmed /boot ESP, the cached kernel must equal the declared source kernel, and exactly one primary module/kernel pair must match in the selected Limine configuration. Require a confirmed Limine backend/configuration; reject missing/ambiguous bindings and unsupported enrollment instead of reporting activation success.
 
 After generation, stage verified image copies under a Qubix-owned, content-addressed /boot/qubix/plymouth/ path. Preserve native cache and snapshot images. Atomically update only explicitly bound module_path values and their native BLAKE2b digests after the staged files are ready. Entry identities, kernel paths/hashes, arguments, snapshot entries and EFI binaries remain Preserved. Capture original config and stage-file absence baselines; keep image kernel-hash guards. Record owned module aliases in config recovery metadata so restoration can distinguish these expected pointer changes from native entry drift. Reapplication must reuse the same files and skip regeneration; installed verification must inspect the actual referenced images and hashes.
+
+Recovery must restore the retained Limine configuration before deleting any staged image. Verify
+the original native cache and cached kernel against their recorded hashes first; force cannot bypass
+stale pins or unrelated entry drift. Earlier appearance-only baselines may gain alias metadata only
+when their intact original configuration contains the exact original image/kernel pins; original
+bytes and all first-baseline fields remain unchanged. Old content-addressed stages remain available
+until restoration; automatic garbage collection is outside this repair.
 
 ## Native splash style revision
 

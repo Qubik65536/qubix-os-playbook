@@ -1,0 +1,15 @@
+---
+- name: Find only explicitly owned module lines for recovery comparison
+  ansible.builtin.set_fact:
+    qubix_bootloader_limine_restore_lines: >-
+      {{ qubix_bootloader_preserved | regex_findall('(?im)^[ \t]*module_path[ \t]*:[ \t]*(?:' ~
+      qubix_bootloader_limine_alias.original_uri | regex_escape ~ '|' ~
+      qubix_bootloader_limine_alias.owned_uri_pattern ~ ')[ \t]*$') }}
+
+- name: Normalize only the recorded module aliases to their original native URI
+  ansible.builtin.set_fact:
+    qubix_bootloader_preserved: >-
+      {{ qubix_bootloader_preserved.replace(item, item
+      | regex_replace(qubix_bootloader_limine_alias.owned_uri_pattern,
+      qubix_bootloader_limine_alias.original_uri)) }}
+  loop: '{{ qubix_bootloader_limine_restore_lines }}'

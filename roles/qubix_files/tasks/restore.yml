@@ -11,9 +11,17 @@
     that: [qubix_files_baselines.matched > 0]
     fail_msg: 'No recorded Qubix baselines found; no restoration was performed.'
 
-- name: Restore recorded resources independently
+- name: Prioritize Limine configs before removal of boot-referenced staged images
+  ansible.builtin.set_fact:
+    qubix_files_restore_config_pattern: >-
+      {{ '/(' ~ ['/boot/limine.conf', '/efi/limine.conf'] | map('hash', 'sha256') | join('|') ~ ')\.json$' }}
+
+- name: Restore configs first then other recorded resources independently
   ansible.builtin.include_tasks: restore_resource.yml
-  loop: '{{ qubix_files_baselines.files | sort(attribute="path") }}'
+  loop: >-
+    {{ (qubix_files_baselines.files | selectattr('path', 'search', qubix_files_restore_config_pattern)
+    | sort(attribute='path')) + (qubix_files_baselines.files
+    | rejectattr('path', 'search', qubix_files_restore_config_pattern) | sort(attribute='path')) }}
   loop_control:
     loop_var: qubix_files_baseline_file
     label: '{{ qubix_files_baseline_file.path }}'

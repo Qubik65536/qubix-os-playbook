@@ -1,0 +1,42 @@
+---
+- name: Seed unsafe native references and reset outcome
+  ansible.builtin.copy:
+    dest: '{{ qubix_root }}{{ item.path }}'
+    content: '{{ item.content }}'
+    mode: '0700'
+  loop:
+    - {path: /boot/limine.conf, content: '{{ qubix_test_binding_case.config }}'}
+    - {path: /boot/native/vmlinuz, content: '{{ qubix_test_binding_case.kernel }}'}
+  check_mode: false
+
+- name: Reset binding refusal
+  ansible.builtin.set_fact:
+    qubix_test_binding_refused: false
+    qubix_test_binding_previous_images: '{{ qubix_profile_resolved.plymouth.images }}'
+    qubix_profile_resolved: >-
+      {{ qubix_profile_resolved | combine({'plymouth': {'images':
+      qubix_test_binding_case.images | default(qubix_profile_resolved.plymouth.images)}}, recursive=true) }}
+
+- name: Require the intended refusal before deployment
+  block:
+    - name: Plan the unsafe binding without writes
+      ansible.builtin.include_role:
+        name: qubix_plymouth
+        tasks_from: limine_plan
+  rescue:
+    - name: Require binding-specific diagnostic
+      ansible.builtin.assert:
+        that: [qubix_test_binding_case.error in (ansible_failed_result | to_json)]
+    - name: Record expected binding refusal
+      ansible.builtin.set_fact:
+        qubix_test_binding_refused: true
+
+- name: Require negative control failure
+  ansible.builtin.assert:
+    that: [qubix_test_binding_refused]
+
+- name: Restore valid fixture image declarations
+  ansible.builtin.set_fact:
+    qubix_profile_resolved: >-
+      {{ qubix_profile_resolved | combine({'plymouth': {'images':
+      qubix_test_binding_previous_images}}, recursive=true) }}

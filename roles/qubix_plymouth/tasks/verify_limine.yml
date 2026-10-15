@@ -1,0 +1,32 @@
+---
+- name: Resolve expected active stages from exact source bytes
+  ansible.builtin.import_tasks: limine_stage_plan.yml
+
+- name: Read active config for installed-image verification
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}/boot/limine.conf'
+  register: qubix_plymouth_limine_verified_config
+
+- name: Require each active reference to bind the exact verified source
+  ansible.builtin.assert:
+    that:
+      - >-
+        qubix_plymouth_limine_verified_config.content | b64decode
+        | regex_findall('(?im)^[ \t]*module_path[ \t]*:[ \t]*' ~ item.uri | regex_escape ~ '[ \t]*$')
+        | length == 1
+    fail_msg: 'Active Limine module does not reference the verified Qubix image and BLAKE2b pin.'
+  loop: '{{ qubix_plymouth_limine_stages }}'
+  loop_control:
+    label: '{{ item.path }}'
+
+- name: Verify installed staged bytes and modes without writes
+  ansible.builtin.include_role:
+    name: qubix_files
+    tasks_from: verify
+  vars:
+    qubix_files_resources: '{{ qubix_plymouth_limine_stages }}'
+
+- name: Inspect the actual boot-referenced archives
+  ansible.builtin.include_tasks: verify_archive.yml
+  vars:
+    qubix_plymouth_archive_images: '{{ qubix_plymouth_limine_stages }}'

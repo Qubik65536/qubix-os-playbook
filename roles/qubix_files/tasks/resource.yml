@@ -8,7 +8,7 @@
     state: directory
     owner: '{{ qubix_files_owner }}'
     group: '{{ qubix_files_group }}'
-    mode: '0755'
+    mode: '{{ qubix_files_resource.directory_mode | default("0755") }}'
   when: not qubix_files_ancestor_stats.results[-1].stat.exists
 
 - name: Install and validate desired file atomically

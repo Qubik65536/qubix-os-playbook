@@ -79,4 +79,11 @@
       kernel_image: '{{ qubix_files_resource.kernel_image | default("") }}'
       kernel_sha256: '{{ qubix_files_resource.kernel_sha256 | default("") }}'
       limine_appearance_keys: '{{ qubix_files_resource.limine_appearance_keys | default([]) }}'
+      limine_module_aliases: '{{ qubix_files_resource.limine_module_aliases | default([]) }}'
   when: not ansible_check_mode and not qubix_files_manifest_stat.stat.exists
+
+- name: Enroll validated module recovery aliases without replacing the first baseline
+  ansible.builtin.include_tasks: limine_metadata.yml
+  vars:
+    qubix_files_limine_metadata_write: true
+  when: qubix_files_resource.limine_module_aliases | default([]) | length > 0

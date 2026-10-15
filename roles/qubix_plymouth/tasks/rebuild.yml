@@ -68,10 +68,20 @@
 
 - name: Inspect generated resources even when inputs did not change
   ansible.builtin.import_tasks: verify_images.yml
+  vars:
+    qubix_plymouth_verify_active: false
   when: not ansible_check_mode
 
+- name: Stage verified images before activating exact Limine module references
+  ansible.builtin.include_tasks: limine_sync.yml
+  when:
+    - not ansible_check_mode
+    - qubix_plymouth_limine_bindings | default([]) | length > 0
+
 - name: Commit successful image receipts and fingerprint only after verification
-  when: qubix_plymouth_needs_rebuild and not ansible_check_mode
+  when:
+    - not ansible_check_mode
+    - qubix_plymouth_needs_rebuild or qubix_plymouth_limine_sync_changed | default(false)
   block:
     - name: Record each verified generated image checksum
       ansible.builtin.include_role:

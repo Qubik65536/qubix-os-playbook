@@ -54,3 +54,12 @@ server isolate daemon IPC and devices. A reader drains early tty debug output. V
 plugin mappings, clean daemon exits, unchanged host selection/session and zero leftover processes.
 Logs/screenshots remain ignored. Review spinner, watermark and prompt captures manually; this test
 does not prove native initramfs packaging, firmware graphics, encrypted-root input or actual shutdown.
+
+The Limine image fixtures run with `ansible-playbook tests/playbooks/limine-plymouth.yml` and
+`ansible-playbook tests/playbooks/limine-bindings.yml` (also `--check`). They exercise two independently
+bound sources, indented native submenu entries, staged bytes/pins, original cache/snapshot
+preservation, reapplication, actual referenced archive dispatch, config-first recovery and force
+refusal after cached image/kernel drift. Smaller controls cover missing/duplicate/wrong bindings,
+no persistent preview state, compatible appearance-baseline alias enrollment and FAT permission
+planning. Their fake generators/digest tools inspect only disposable roots; native boot remains
+separate. Shared CI invokes these through scripts/test.sh with a 30-minute job timeout.

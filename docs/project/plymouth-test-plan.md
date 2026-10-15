@@ -42,6 +42,38 @@ Inspection finds approximately 3.58 GiB free on /boot and 464 GiB free on the ro
 
 Recovery retains the original images only while their matching kernels remain unchanged. Do not upgrade kernels during the test. The [restoration workflow](../user/restoration.md) restores every recorded component; first reinstate the privately retired native Niri session entry if removing Qubix. For splash-only manual recovery, inspect the exact backup manifests and restore only the selection, generator integration and matching images; do not guess hashed filenames or copy stale images. No physical recovery test has passed yet. A disposable VM remains the preferred acceptance environment.
 
+## Corrective deployment
+
+Following the failed visual result, the operator requested Limine branding, working startup branding
+and a native-looking shutdown, then instructed continuation. This corrective test extends the
+approved physical-target work to the confirmed Limine 12 config, Qubix boot wallpaper and exact
+module aliases/checksums. It preserves native cache/history, entry identities, kernel paths/args,
+EFI loaders and firmware enrollment. No Limine installer/updater or package hook is executed.
+
+Read-only reinspection confirms the same boot ID/kernel, 3.58 GiB free on the vfat /boot ESP,
+32 private first baselines and 19 preserved native boot/cache/EFI files. The controller DHCP address
+changed; the operator added the replacement restricted SSH firewall rule. The isolated two-step
+preview passes 48 tasks, all three animation modes, native password rendering, negative module
+control, unchanged host configuration/daemon and zero remaining processes. Its black fallback
+background and small spinner/bottom wordmark were inspected; firmware-background and physical
+appearance still require observation.
+
+Bind each source mapping to /boot/<machine-id>/linux-cachyos/initramfs and its vmlinuz, with the
+corresponding linux-cachyos-lts pair. Verify actual pins and kernel equality before writes.
+Stage verified copies under /boot/qubix/plymouth/, then atomically update only bound module values.
+Keep snapshot entries/cache/EFI hashes unchanged. Activate graphical Limine appearance separately
+in the same confirmed config. Reapply, inspect actual staged archives and pin checks, then reboot.
+Restore the retained config before deleting stages; reject native cache/kernel drift even under force.
+The [component contract](../components/plymouth.md#active-limine-image-repair) defines that boundary.
+
+The corrective no-write preview passes 1077 tasks with 43 proposed changes and zero failures.
+A protected audit afterward finds no changes to the 76 native/personal files, 19 native boot/cache/EFI
+resources or 32 existing baseline hashes; no pending state remains. Controller validation passes:
+767-task two-image nested-entry lifecycle with two expected stale-pin refusals, 368-task binding/
+enrollment/FAT suite with five refusals, 220-task check-mode suite with four refusals, 301-task
+graphical fixture with four refusals and 966-task legacy-loader/recovery regression with seven refusals.
+Corrective native deployment and console observation remain pending at this checkpoint.
+
 ## Recorded results
 
 Clean source 2645034 was used throughout. The no-write target preview passes 459 tasks with seven proposed changes. Actual deployment passes 616 tasks with 28 changes; identical reapplication passes 571 tasks with zero changes and skips both generator invocations. Login/bootloader branding remains disabled. The ignored config/local.yml now retains the approved Plymouth mappings for future runs.

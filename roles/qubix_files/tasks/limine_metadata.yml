@@ -1,0 +1,61 @@
+---
+- name: Inspect existing Limine recovery metadata without redirects
+  ansible.builtin.stat:
+    path: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.json'
+    follow: false
+    get_checksum: false
+  register: qubix_files_limine_manifest_stat
+
+- name: Validate existing baseline before enrolling module aliases
+  when: qubix_files_limine_manifest_stat.stat.exists
+  block:
+    - name: Require a regular baseline manifest
+      ansible.builtin.assert:
+        that: [qubix_files_limine_manifest_stat.stat.isreg | default(false)]
+
+    - name: Read first baseline and original config
+      ansible.builtin.slurp:
+        src: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.{{ item }}'
+      loop: [json, original]
+      register: qubix_files_limine_baseline_bytes
+
+    - name: Resolve retained config recovery contract
+      ansible.builtin.set_fact:
+        qubix_files_limine_baseline: >-
+          {{ qubix_files_limine_baseline_bytes.results[0].content | b64decode | from_json }}
+        qubix_files_limine_original: '{{ qubix_files_limine_baseline_bytes.results[1].content | b64decode }}'
+
+    - name: Require intact first bytes and compatible existing alias metadata
+      ansible.builtin.assert:
+        that:
+          - qubix_files_limine_baseline.path == qubix_files_resource.path
+          - qubix_files_limine_baseline.existed
+          - qubix_files_limine_baseline.checksum == qubix_files_limine_original | hash('sha256')
+          - >-
+            qubix_files_limine_baseline.limine_module_aliases | default([]) | length == 0 or
+            qubix_files_limine_baseline.limine_module_aliases == qubix_files_resource.limine_module_aliases
+        fail_msg: 'Existing Limine baseline or aliases differ; review native recovery before enrolling new mappings.'
+
+    - name: Require original pinned files to belong to the first retained config
+      ansible.builtin.assert:
+        that:
+          - qubix_files_limine_original.count(item.original_uri) == 1
+          - qubix_files_limine_original.count(item.kernel_uri) == 1
+        fail_msg: 'First Limine baseline does not bind these native images; refusing stale recovery metadata.'
+      loop: '{{ qubix_files_resource.limine_module_aliases }}'
+      loop_control:
+        label: '{{ item.image }}'
+
+    - name: Add ownership metadata while preserving every first-baseline field and original byte
+      ansible.builtin.copy:
+        dest: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.json'
+        content: >-
+          {{ qubix_files_limine_baseline | combine({'limine_module_aliases':
+          qubix_files_resource.limine_module_aliases}) | to_nice_json }}
+        owner: '{{ qubix_files_owner }}'
+        group: '{{ qubix_files_group }}'
+        mode: '0600'
+      when:
+        - qubix_files_limine_metadata_write | default(false)
+        - not ansible_check_mode
+        - qubix_files_limine_baseline.limine_module_aliases | default([]) != qubix_files_resource.limine_module_aliases

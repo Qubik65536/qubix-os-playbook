@@ -74,3 +74,17 @@ if ! ansible-playbook tests/playbooks/plymouth-preview.yml --check >.cache/tests
   exit 1
 fi
 printf '%s\n' 'Both initramfs dispatch, idempotency, kernel-restore guard and no-write preview fixtures passed.'
+
+if ! ansible-playbook tests/playbooks/limine-plymouth.yml >.cache/tests/limine-plymouth.log 2>&1; then
+  cat .cache/tests/limine-plymouth.log
+  exit 1
+fi
+for mode in normal check; do
+  set --
+  if [[ "$mode" == check ]]; then set -- --check; fi
+  if ! ansible-playbook tests/playbooks/limine-bindings.yml "$@" >".cache/tests/limine-bindings-$mode.log" 2>&1; then
+    cat ".cache/tests/limine-bindings-$mode.log"
+    exit 1
+  fi
+done
+printf '%s\n' 'Limine active-image staging, preservation, recovery, refusal and no-write preview fixtures passed.'

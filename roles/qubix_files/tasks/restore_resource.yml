@@ -63,6 +63,15 @@
     fail_msg: 'Missing or damaged original backup; restoration stopped.'
   when: qubix_files_resource.existed
 
+- name: Verify native Limine pins even when the current config is missing
+  ansible.builtin.include_role:
+    name: qubix_bootloader
+    tasks_from: restore_limine_module
+  loop: '{{ qubix_files_resource.limine_module_aliases | default([]) }}'
+  loop_control:
+    loop_var: qubix_bootloader_limine_alias
+    label: '{{ qubix_bootloader_limine_alias.image }}'
+
 - name: Protect preserved boot content before restoring an activation file
   ansible.builtin.include_role:
     name: qubix_bootloader

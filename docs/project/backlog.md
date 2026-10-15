@@ -66,6 +66,13 @@ Objective: startup splash independent of loader. Scope: Qubix theme, dracut/mkin
 
 Native-style correction: source now replaces the rejected scripted layout with two-step, a small spinner and bottom watermark. The 48-task native preview passes all three animations, native password rendering, invalid-module control, preservation and cleanup. Active Limine image synchronization and repeat physical observation are the next gates.
 
+Active-image repair: explicit Limine 12 cache/kernel bindings, content-addressed staging, atomic
+module/pin replacement, exact active-archive checks and config-first recovery are Implemented.
+Binding refusal/check-mode fixtures and earlier-baseline alias enrollment/FAT mode fixtures pass;
+the 767-task nested-entry lifecycle and 1077-task target no-write preview pass. Physical observation remains
+pending. Future maintenance: design reviewed ownership/recovery rebasing after kernel updates or
+expanding a narrower text/splash-only appearance baseline; current guards refuse unsafe transitions.
+
 ## T01 — MVP acceptance (Testing)
 
 Status: In Progress; SSH details supplied, connected after service/firewall setup; privileged read-only discovery passes. Approved physical desktop deployment, reapplication, earlier absence restoration, nested rendering and primary startup/reload pass; physical interaction, newer Noctalia recovery, login and VM boot tests remain pending. Next gate is native acceptance of the Noctalia redesign plus the remaining independent login/boot tests.

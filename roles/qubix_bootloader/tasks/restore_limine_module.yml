@@ -1,0 +1,24 @@
+---
+- name: Inspect preserved cache resources before restoring pinned references
+  ansible.builtin.stat:
+    path: '{{ qubix_files_root | default(qubix_root | default("")) }}{{ item }}'
+    follow: false
+    checksum_algorithm: sha256
+    get_mime: false
+  loop:
+    - '{{ qubix_bootloader_limine_alias.image }}'
+    - '{{ qubix_bootloader_limine_alias.kernel_image }}'
+  register: qubix_bootloader_limine_restore_native
+
+- name: Refuse stale native image or kernel pins even under force
+  ansible.builtin.assert:
+    that:
+      - qubix_bootloader_limine_restore_native.results[0].stat.isreg | default(false)
+      - qubix_bootloader_limine_restore_native.results[1].stat.isreg | default(false)
+      - >-
+        qubix_bootloader_limine_restore_native.results[0].stat.checksum | default('') ==
+        qubix_bootloader_limine_alias.sha256
+      - >-
+        qubix_bootloader_limine_restore_native.results[1].stat.checksum | default('') ==
+        qubix_bootloader_limine_alias.kernel_sha256
+    fail_msg: 'Preserved Limine cache image or kernel changed; refusing stale native pins, including under force.'

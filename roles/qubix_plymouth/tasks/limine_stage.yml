@@ -1,0 +1,39 @@
+---
+- name: Inspect the exact source content address
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}{{ qubix_plymouth_limine_binding.source }}'
+    checksum_algorithm: sha256
+    follow: false
+    get_mime: false
+  register: qubix_plymouth_limine_source
+
+- name: Compute the verified source native pin
+  ansible.builtin.command:
+    argv:
+      - '{{ qubix_plymouth_b2sum_binary }}'
+      - '{{ qubix_root | default("") }}{{ qubix_plymouth_limine_binding.source }}'
+  changed_when: false
+  check_mode: false
+  register: qubix_plymouth_limine_source_b2
+
+- name: Require a regular source and native BLAKE2b digest
+  ansible.builtin.assert:
+    that:
+      - qubix_plymouth_limine_source.stat.isreg | default(false)
+      - qubix_plymouth_limine_source_b2.stdout.split()[0] is match('^[a-f0-9]{128}$')
+
+- name: Record staged resource and exact module URI
+  ansible.builtin.set_fact:
+    qubix_plymouth_limine_stages: >-
+      {{ qubix_plymouth_limine_stages + [{'path': qubix_plymouth_limine_binding.stage_prefix ~
+      qubix_plymouth_limine_source.stat.checksum ~ '.img', 'component': 'plymouth-image',
+      'source': qubix_root | default('') ~ qubix_plymouth_limine_binding.source, 'remote_source': true,
+      'sha256': qubix_plymouth_limine_source.stat.checksum,
+      'size': qubix_plymouth_limine_source.stat.size,
+      'mode': qubix_plymouth_limine_file_mode | default('0644'),
+      'directory_mode': qubix_plymouth_limine_directory_mode | default('0755'),
+      'kernel_image': qubix_plymouth_limine_binding.alias.kernel_image,
+      'kernel_sha256': qubix_plymouth_limine_binding.alias.kernel_sha256,
+      'uri': 'boot():' ~ qubix_plymouth_limine_binding.stage_prefix[5:] ~
+      qubix_plymouth_limine_source.stat.checksum ~ '.img#' ~ qubix_plymouth_limine_source_b2.stdout.split()[0],
+      'binding': qubix_plymouth_limine_binding}] }}

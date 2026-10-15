@@ -4,6 +4,9 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Added explicit Limine cache bindings, verified content-addressed image staging, native BLAKE2b pin activation and config-first recovery; native cache/history/EFI files remain preserved.
+- Added FAT-aware boot asset permissions and safe refusal of ambiguous image references, stale recovery pins and narrower earlier appearance ownership.
+
 - Replaced the rejected scripted splash with a native two-step spinner, modest Qubix watermark and attributed neutral input assets; archive checks cover all runtime assets.
 
 - Added graphical Limine 12 defaults with Qubix wallpaper, palette and font/margin settings, exact recovery metadata and refusal of shadowed/enrolled configurations; fixtures pass.

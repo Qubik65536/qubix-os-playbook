@@ -1,0 +1,35 @@
+---
+- name: Resolve the explicit current staged path
+  ansible.builtin.set_fact:
+    qubix_plymouth_limine_current_path: '{{ "/boot" ~ qubix_plymouth_limine_module_uri[7:].split("#")[0] }}'
+
+- name: Guard referenced stage and its ancestors
+  ansible.builtin.include_role:
+    name: qubix_files
+    tasks_from: guard
+  vars:
+    qubix_files_resource: {path: '{{ qubix_plymouth_limine_current_path }}', component: plymouth-image}
+
+- name: Require bytes matching the stage filename
+  ansible.builtin.assert:
+    that:
+      - qubix_files_before.stat.isreg | default(false)
+      - >-
+        qubix_files_before.stat.checksum | default('') ==
+        qubix_plymouth_limine_module_uri.split('#')[0] | regex_search('[a-f0-9]{64}(?=\.img$)')
+    fail_msg: 'Referenced Qubix stage is missing, redirected or differs from its content address.'
+
+- name: Compute referenced image native pin
+  ansible.builtin.command:
+    argv:
+      - '{{ qubix_plymouth_b2sum_binary }}'
+      - '{{ qubix_root | default("") }}{{ qubix_plymouth_limine_current_path }}'
+  changed_when: false
+  check_mode: false
+  register: qubix_plymouth_limine_current_b2
+
+- name: Require the actual referenced image to match its native pin
+  ansible.builtin.assert:
+    that:
+      - qubix_plymouth_limine_current_b2.stdout.split()[0] == qubix_plymouth_limine_module_uri.split('#')[1]
+    fail_msg: 'The active Limine image fails its native BLAKE2b pin.'

@@ -21,7 +21,10 @@
   ansible.builtin.assert:
     that:
       - item is mapping
-      - item.keys() | difference(['path', 'kernel', 'kernel_image']) | length == 0
+      - >-
+        item.keys() | difference(['path', 'kernel', 'kernel_image', 'limine_image', 'limine_kernel_image'])
+        | length == 0
+      - (item.limine_image is defined) == (item.limine_kernel_image is defined)
       - item.path is string and item.path is match('^/boot/[A-Za-z0-9_./-]+\.img$')
       - "'..' not in item.path.split('/')"
       - item.kernel is string and item.kernel is match('^[0-9][A-Za-z0-9.+_-]+$')
@@ -99,6 +102,19 @@
   loop: '{{ qubix_plymouth_image_stats.results }}'
   loop_control:
     label: '{{ item.item.path }}'
+
+- name: Resolve explicit Limine cache integration without guessing active entries
+  ansible.builtin.set_fact:
+    qubix_plymouth_limine_required: >-
+      {{ (qubix_profile_resolved.bootloader | default({})).get('backend', 'auto') == 'limine' or
+      qubix_profile_resolved.plymouth.images | selectattr('limine_image', 'defined') | length > 0 or
+      ((qubix_profile_resolved.bootloader | default({})).get('backend', 'auto') == 'auto' and
+      'limine' in (qubix_discovery_report.bootloader | default({})).get('installed_candidates', [])) }}
+    qubix_plymouth_limine_bindings: []
+
+- name: Validate explicit active cached images before configuration writes
+  ansible.builtin.include_tasks: limine_plan.yml
+  when: qubix_plymouth_limine_required
 
 - name: Read existing Plymouth selection metadata
   ansible.builtin.stat:

@@ -1,0 +1,11 @@
+---
+- name: Initialize content-addressed image plan
+  ansible.builtin.set_fact:
+    qubix_plymouth_limine_stages: []
+
+- name: Resolve each verified source into an immutable staged path
+  ansible.builtin.include_tasks: limine_stage.yml
+  loop: '{{ qubix_plymouth_limine_bindings }}'
+  loop_control:
+    loop_var: qubix_plymouth_limine_binding
+    label: '{{ qubix_plymouth_limine_binding.source }}'

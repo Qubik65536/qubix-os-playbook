@@ -1,42 +1,8 @@
 ---
-- name: Inspect declared image archives with the selected native tool
-  ansible.builtin.command:
-    argv: >-
-      {{ [qubix_plymouth_lsinitrd_binary, qubix_root | default('') ~ item.path]
-      if qubix_profile_resolved.plymouth.initramfs_backend == 'dracut'
-      else [qubix_plymouth_lsinitcpio_binary, '-l', qubix_root | default('') ~ item.path] }}
-  loop: '{{ qubix_profile_resolved.plymouth.images }}'
-  changed_when: false
-  check_mode: false
-  register: qubix_plymouth_archives
-  loop_control:
-    label: '{{ item.path }}'
-
-- name: Require native spinner resources, text rendering and daemon in each image
-  ansible.builtin.assert:
-    that:
-      - "'usr/share/plymouth/themes/qubix/qubix.plymouth' in item.stdout"
-      - "'two-step.so' in item.stdout"
-      - "'plymouthd' in item.stdout"
-      - item.stdout is regex('label(?:-freetype)?\.so')
-      - item.stdout is regex('usr/share/fonts/[^\s]+\.(?:ttf|otf|ttc)')
-    fail_msg: 'Generated image lacks required Plymouth resources; rebuild remains incomplete.'
-  loop: '{{ qubix_plymouth_archives.results }}'
-  loop_control:
-    label: '{{ item.item.path }}'
-
-- name: Require every runtime theme asset in each declared archive
-  ansible.builtin.assert:
-    that:
-      - >-
-        qubix_plymouth_theme.files | map(attribute='filename') | reject('in', ['COPYING', 'NOTICE'])
-        | map('regex_replace', '^', 'usr/share/plymouth/themes/qubix/')
-        | difference(item.stdout_lines | map('regex_replace', '^.*?(?=usr/share/plymouth/)', '') | list)
-        | length == 0
-    fail_msg: 'Generated image lacks required Plymouth resources; rebuild remains incomplete.'
-  loop: '{{ qubix_plymouth_archives.results }}'
-  loop_control:
-    label: '{{ item.item.path }}'
+- name: Inspect exact declared generator outputs
+  ansible.builtin.include_tasks: verify_archive.yml
+  vars:
+    qubix_plymouth_archive_images: '{{ qubix_profile_resolved.plymouth.images }}'
 
 - name: Require the associated kernel files to remain unchanged
   ansible.builtin.stat:
@@ -56,3 +22,9 @@
   loop: '{{ qubix_plymouth_kernel_after.results }}'
   loop_control:
     label: '{{ item.item.item.kernel_image }}'
+
+- name: Verify the images actually referenced by Limine without regeneration
+  ansible.builtin.include_tasks: verify_limine.yml
+  when:
+    - qubix_plymouth_verify_active | default(true)
+    - qubix_plymouth_limine_bindings | default([]) | length > 0

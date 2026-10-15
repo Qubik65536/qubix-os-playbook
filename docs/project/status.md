@@ -1,60 +1,63 @@
 # Project status
 
-Updated: 2026-10-15. Stage: **Implemented MVP candidate, ready for operator VM testing**. Full MVP acceptance remains In Progress; SSH is connected to a physical CachyOS ThinkPad after service/firewall setup and host-key confirmation. Desktop deployment, installed verification, zero-change reapplication and isolated nested rendering pass. Earlier classic desktop restoration passes; Noctalia recovery and primary-session/VM acceptance remain pending.
+Updated: 2026-10-15. Stage: **MVP candidate; acceptance In Progress**.
+The physical CachyOS Niri desktop is deployed and returns after reboot at 100% scale with the slim
+information bar. The corrected native-style Plymouth and active Limine image adapter are fixture
+Tested and pass the target no-write preview; corrective deployment/boot observation remain pending.
+The first Plymouth activation failed visual acceptance and is not counted as a successful boot theme.
 
-| Capability | Status | Actual evidence |
-|---|---|---|
-| Architecture/ADRs/conventions | Implemented | Documentation committed before source; local links/configuration agreement pass |
-| Tools and CI | Tested locally; CI Implemented | Locked tools; shared scripts pass; no GitHub execution because commits were not pushed |
-| Profile/identity/discovery | Tested in fixtures | 25 profile + 11 host + 7 identity cases; independent manager activity; normal/check zero changes |
-| Live CachyOS inspection | Tested on physical target | CachyOS/Linux/systemd; explicit privileged metadata for private /boot; 38 tasks, zero changes/failures |
-| Branding | Tested in fixtures and native deployment | Exact installed resources, zero-change reapplication, original-file preservation |
-| Niri/wallpaper/companions | Noctalia files/grammar/nested rendering and primary startup/reload Tested; interaction acceptance pending | Compact bar/wallpaper, launcher power controls, resize actions and dock absence pass; deployment/verification and zero-change reapplication pass; 76 current native/personal snapshots preserved; native login entry privately backed up/retired on request |
-| Shell | Native Bash/Starship and controller fixtures Tested | Temporary-home native startup/TOML/prompt pass; default Fish and personal files preserved |
-| SDDM | Implemented | UI clone, actual INI lines, standalone/ambiguous/unsupported activity fixtures; authentication pending |
-| GRUB and Limine | Implemented; graphical Limine 12 fixture Tested | Graphical fixture passes 256 tasks with three expected refusals; legacy loader suite passes 732 tasks; physical appearance and native boot/restore pending |
-| Plymouth/dracut/mkinitcpio | Implemented; isolated native splash Tested | Three circular-animation modes, native parser controls and synthetic prompt pass; hook/font/archive/kernel/check-mode fixtures pass; native generation/boot/restore pending |
-| Backup/restore/state | Fixtures and native desktop absence lifecycle Tested | Original-byte/mode/drift faults in fixtures; earlier 17-resource restoration passes; 24 current private baselines, 23 earlier hashes preserved; newer Noctalia and boot/image recovery pending |
+| Capability | Status and actual evidence |
+|---|---|
+| Architecture, ADRs and conventions | Implemented before source; local links and schema/default agreement pass |
+| Tooling/CI | Static checks and fixtures Tested locally; Actions configured, not executed remotely |
+| Profile/discovery | Unsupported/schema/identity fixtures and native read-only discovery Tested |
+| Branding | Native install, exact resources, original preservation, reapplication and earlier restoration Tested |
+| Niri/Noctalia | Native grammar, private rendering, primary startup/reload and 100% output scale Tested; physical interaction/recovery acceptance open |
+| Shell/terminal | Native temporary-home Bash/Starship checks pass; personal files and default Fish preserved |
+| Login | SDDM clone/activity/ambiguity fixtures Tested; physical target branding disabled; authentication/restore pending |
+| GRUB | Preservation/dispatch/reapplication/recovery fixtures Tested; independent native boot/restore pending |
+| Limine | Graphical fixture passes 301 tasks with four expected refusals; target no-write preview passes; physical appearance pending |
+| Plymouth | Native two-step preview passes 48 tasks, all three animated modes and synthetic prompt; corrective activation pending |
+| Image/cache adapters | Two-image nested-entry lifecycle passes 767 tasks with two expected stale-pin refusals; binding/enrollment/FAT fixtures pass 368 tasks with five refusals and check mode 220 tasks with four refusals |
+| Recovery/state | Generic and loader regression suite passes 966 tasks with seven expected refusals; native classic desktop recovery Tested; newer desktop/boot recovery pending |
 
-## Commands and outcomes
+## Current validation
 
-- `./scripts/validate.sh`: passes YAML lint, production Ansible lint, all public/fixture syntax checks, ShellCheck, Markdown/local-link/configuration/asset checks and diff whitespace.
-- `./scripts/test.sh`: passed the complete framework normal/check (zero changes), branding normal/check, recovery, desktop, SDDM, loader and image-generator/check-mode fixtures. Subsequent focused boot file-lifecycle/private-mode, login, splash and compact-wrapper guard fixtures also pass.
-- `bash scripts/collect-target-info.sh --help`: exit 0. Actual macOS invocation: expected exit 2; Linux collector completed with permission failures labelled, followed by successful privileged metadata discovery.
-- `./bootstrap.sh verify`: actual macOS rejection, exit 2 and zero changes; expected guard, not supported-host acceptance.
+`./scripts/validate.sh` passes YAML, Ansible syntax/lint, ShellCheck, Python helper compilation,
+Markdown/local links, manifests/configuration consistency and diff whitespace. Shared scripts/CI
+include the image-binding fixtures; the expanded CI timeout is 30 minutes. Fake generators and
+inspectors establish dispatch, preservation and recovery contracts, not native boot validity.
 
-Fake generators/inspectors and archive listings prove dispatch/guards, not native initramfs generation. Desktop tests render definitions, not a compositor. Native grammar passes for the Noctalia redesign; earlier classic candidate installation and nested rendering evidence remains recorded. Primary startup/reload is Tested; physical interaction and recovery acceptance remain pending. Controller fixtures write only disposable roots under `.cache/tests/`. The native grammar test creates/removes its own user-owned temporary directory; its eight changes are temporary setup/cleanup.
+The native-style Plymouth preview loads the real two-step plugin, rejects an invalid-module control,
+animates boot/reboot/shutdown, renders the native password prompt and leaves zero processes.
+Host selection, daemon and desktop configuration remain unchanged. See the
+[splash results and reviewed corrective plan](plymouth-test-plan.md).
 
-SSH initially timed out because target sshd was inactive and UFW lacked an allow rule. The operator enabled access and confirmed the ED25519 fingerprint. Password authentication works; no credentials are saved in inventory or Git. The target reports no virtualization and runs Niri 26.04, Noctalia 5.2.1/Alacritty, SDDM 0.21.0, Limine 12.9.3 and mkinitcpio 42.2. Bootctl identifies the current Limine loader; read-only inspection itself changed no boot configuration. Later approved package hooks refreshed Limine snapshot entries.
+The exact physical no-write deployment preview passes 1077 tasks with 43 proposed changes and zero
+failures. A subsequent protected audit confirms all 76 native/personal resources, 19 native boot/cache/
+EFI resources and 32 existing first-baseline hashes unchanged, with no pending deployment state.
+No generator or staged-image activation runs in check mode.
 
-Native `tests/integration/niri.yml` passes: 62 tasks, eight temporary setup/cleanup changes, zero failures. Corrected validation uses `niri validate --config`; the installed CLI rejected the old option order. Niri, Foot and Fuzzel accept their production candidates and reject invalid controls. This establishes syntax only, not visual or companion startup behaviour.
-
-The native-style Plymouth revision is Implemented in source: two-step spinner, bottom watermark and strict runtime-asset archive checks. Native preview passes 48 tasks with eight temporary changes, all three animations, an invalid-module control, native password rendering, host preservation and zero leftover processes. Generator fixtures pass 395 tasks with five expected refusals; check-mode isolation passes 42 tasks. Revised deployment remains pending.
+Desktop evidence, including the slim information bar, primary reload/startup, absence of the dock,
+retired native login entry and preservation, is in [desktop test results](desktop-test-results.md).
+README links both [operator](../user/getting-started.md) and
+[human developer](../development/getting-started.md) onboarding.
 
 ## Limits and next gate
 
-The first physical Plymouth reboot **fails visual acceptance**: startup still shows CachyOS, and the operator rejects the large scripted shutdown design. Root files/archives verified correctly, but Limine boots separate BLAKE2-pinned cached images outside the first mapping. SSH/SDDM/Qubix session return; 100% scaling starts automatically (1920x1080). Implement the [active-image repair and native-style revision](../components/plymouth.md#active-limine-image-repair), then repeat physical observation. The [target results](plymouth-test-plan.md#recorded-results) preserve the actual success/failure boundaries.
+- Complete the reviewed corrective boot deployment, identical reapplication and actual active-image
+  extraction/pin checks before reboot; then obtain console observations of Limine/startup/shutdown.
+- Test independent GRUB and dracut boots, LTS boot, login authentication, encrypted-root input where
+  relevant, physical shortcuts/locking/portals and current desktop/boot restoration in disposable VMs.
+- Fixed image/kernel mappings require reinspection after package updates. Stale native pins and
+  narrower earlier appearance ownership fail safely; reviewed rebasing remains backlog work.
+- Boot components remain opt-in. The operator approved this physical-target Plymouth test and
+  subsequently requested Limine/startup/native-style corrections; other boot work retains VM policy.
+- Backups preserve bytes, UID/GID/mode and absence, not ACLs/xattrs or whole-system state. Restore is
+  per resource; Limine config precedes stage removal. Concurrent deployment/package updates are unsupported.
 
-Circular Plymouth branding is Implemented. The native isolated preview passes 47 tasks with seven temporary changes: boot/shutdown/reboot animation, positive/negative parser checks, a synthetic password prompt, unchanged host configuration/daemon and zero leftover processes. Mode captions and branding were inspected. The expanded generator fixture passes 386 tasks with five expected refusals; check-mode isolation passes 40 tasks. Native image generation, encrypted-root input, physical reboot/poweroff and image recovery remain pending. See the [splash guide](../user/plymouth.md) and [physical-target activation proposal](plymouth-test-plan.md).
-
-The 100% scale helper and slim information bar are Implemented; controller lifecycle and isolated native rendering are Tested. It uses measured jq/Niri IPC, changes only scale at startup/new connections, preserves existing-output manual adjustments and exits with the compositor. The expanded desktop fixture passes 68 tasks with seven expected refusals and zero changes. The native preview passes 62 tasks, validates 100% private output scale, shows changing application titles plus CPU/RAM readings, preserves main configuration/compositor and leaves zero processes. Temperature is unavailable and displayed as --. Primary deployment remains pending.
-
-The bar/logo visibility correction is Implemented and deployed from clean ce72276. Native before/after screenshots visibly show the 32 px launcher image box and clearer module outlines. Static checks, the 62-task fixture and 62-task native preview pass. Deployment passes 408 tasks with three changes; reapplication passes 408 tasks with zero changes; installed verification passes 64 tasks with zero changes. The primary Qubix shell reloads with the same process IDs and no dock. All 76 native/personal snapshots and 24 private baseline hashes remain unchanged. Read-only inspection confirms that Limine retains its native wallpaper with bootloader branding disabled; a richer graphical theme remains a separate task. See the [correction evidence](desktop-test-results.md#bar-visibility-and-logo-correction).
-
-The resize, launcher-power and compact bar revision is Implemented and deployed from clean revision bbea600. The 62-task fixture and 62-task native preview pass, including actual sizing, generated binding coverage, pinned Power options, menu/search, warning-free configuration and dock absence. Deployment passes 409 tasks with 10 changes; reapplication passes 408 tasks with zero changes; installed verification passes 64 tasks with zero changes. The active Qubix shell reloads without changing Niri/Noctalia PIDs or boot ID, leaving bar/wallpaper and no dock. All 76 current native/personal snapshots, the Fish shell, retirement backup and 23 existing private baseline hashes are preserved; the new power entry brings baselines to 24. See the [revision evidence](desktop-test-results.md#resize-power-controls-and-compact-bar). Physical interaction and native recovery remain open.
-
-The bar capsules and searchable shortcut panel are Implemented and deployed from clean revision 6bb163c. Static/generated-binding fixtures, native plugin/parser checks and isolated rendering/search/close pass; same-revision reapplication and installed verification have zero changes/failures. Following a separate operator request, the native login entry was privately backed up and retired. The other 75 audited native/personal resources, default shell and all 23 existing private baseline hashes remain intact. The subsequent reboot returns active SSH/SDDM and a running Qubix primary session; shell status, palette and bar/dock/wallpaper layers pass read-only checks. Main-session interaction/recovery acceptance remains open. See the [retirement/startup evidence](desktop-test-results.md#native-session-retirement-and-primary-startup). The [refinement results](desktop-test-results.md#bar-and-shortcut-panel-refinement) record commands, counts and remaining acceptance.
-
-Native nested rendering is Tested. The operator-authorized reboot after desktop redeployment succeeded: the boot ID changed, SSH and native SDDM returned active, and the Qubix session entry and Niri syntax remained valid. Full graphical-session, authentication and Qubix boot-branding acceptance remains pending. [Compatibility](../architecture/compatibility.md) limits login to active SDDM/Breeze; fixed-command greetd desktop testing uses a free TTY. Boot selection is explicit. Plymouth supports existing plain images and literal mkinitcpio settings, not UKIs/signing.
-
-Backups record bytes, UID/GID/mode and absence, not ACLs/xattrs or complete system state. Restore is per resource; changed kernels block stale images. Check mode cannot validate uninstalled files or regenerated archives. Concurrent deployment is unsupported.
-
-The operator authorized desktop-only preparation, including native Snapper/Limine package hooks. Pacman installed Foot 1.28.0, Fuzzel 1.15.0, Waybar 0.15.0, Mako 1.11.0, Swaybg 1.2.2 and Starship 1.26.0 plus 17 dependencies. The preview passed (280 tasks, 17 proposed changes, zero failures). Native package hooks changed limine.conf; the other 75 audited resources and default Fish shell were preserved. Desktop deployment (373 tasks, 58 changes), installed verification (58 tasks, zero changes) and same-revision reapplication (352 tasks, zero changes) pass. All 76 audited native/personal resources match the post-package baseline. Native restore passes (249 tasks, 18 changes); all 17 resources are removed, original hashes/default Fish shell and baseline hashes remain intact, and pending state clears. The [native results](desktop-test-results.md) provide the authoritative command/acceptance record. Next operator gate: exercise physical shortcuts, application startup, authentication and locking in the running Qubix Niri main session. Breeze is absent. Then independently test login, both loaders and both generators. See [T01](backlog.md) and [operator guide](../user/getting-started.md).
-
-## Repeatable native desktop evidence
-
-The earlier classic workflow at revision 28cc112 passed 64 tasks, five temporary setup/test/evidence/cleanup changes and zero failures. It ran production configuration in a nested window on private D-Bus with temporary HOME/config/cache. Wallpaper/bar layers, Foot windows, Fuzzel, Mako notifications and IPC navigation passed, preserving the original compositor. The current Noctalia workflow is recorded below; screenshots/logs remain ignored local artifacts. Physical keys, login, portals, Polkit and lock/unlock remain acceptance items.
-
-Boot recovery fixtures now also prove that native entries/hook changes survive rejected restoration after reapplication, with force false and true. The expanded boot suite passes 724 tasks (five expected rescued refusals); shared recovery passes 229 tasks (two expected rescued refusals). Native boot/recovery remains unverified.
-
-The Noctalia redesign is deployed from clean source revision 4dc23f6. Native grammar passes 63 tasks; the revised nested preview passes 59 tasks and preserves the direct SDDM compositor, native configuration hashes and session endpoints with zero leftover test processes. Deployment passes 343 tasks, reapplication passes 338 tasks with zero changes, and installed verification passes 62 tasks with zero changes. All 76 audited native/personal resources, the Fish shell and 17 earlier baseline hashes remain preserved; 20 private baseline manifests now include the three new Noctalia resources. The authorized reboot returns SSH/native SDDM, valid installed Niri/Noctalia configurations and the available Qubix session entry; user session selection is pending. See the [Noctalia results](desktop-test-results.md#noctalia-redesign). Primary-session physical keys, application startup, authentication, locking, portals and native recovery of the new resources remain open.
+The first physical splash attempt rebuilt generator outputs but missed Limine's separate pinned cache.
+It returned SSH/SDDM/Qubix successfully, but the operator still saw CachyOS startup and rejected the
+large scripted shutdown layout. The corrected implementation preserves native cache/history/EFI files,
+stages content-addressed images, atomically changes only bound module references/pins and uses the
+native small-spinner layout. File/archive verification and physical appearance remain distinct gates.

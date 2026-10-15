@@ -30,3 +30,9 @@ If the VM cannot boot, revert its snapshot first. Manual live-media recovery req
 GRUB recovery restores its original custom hook; Limine restores the original active configuration. No loader installation/disk operation needs reversal. Plymouth recovery restores selection/generator integration and compatible original images. After kernel changes use reviewed native generation for current outputs instead of stale images. These live-media steps require independent VM validation before release.
 
 Choose native Niri when a restored Qubix session entry is removed. Remove any manually adopted Zsh source line yourself; the playbook never edits personal dotfiles. Test original login, entries, splash and sessions using the [checklist](verification.md). Resource restoration is not a transaction or whole-system rollback.
+
+Limine image staging restores the retained config before deleting Qubix boot images. Original
+native cache and cached-kernel hashes must still match the recovery record, even under force.
+An intact earlier appearance-only baseline can gain explicit module-alias ownership without
+replacing its original bytes. A native package update that changes pinned files requires reviewed
+native recovery; copying an old config onto new cached images would invalidate its checksums.

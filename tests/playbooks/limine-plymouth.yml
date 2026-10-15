@@ -1,0 +1,226 @@
+---
+- name: Test boot-referenced image staging and recovery in a disposable root
+  hosts: localhost
+  gather_facts: true
+  gather_subset: ['!all', min]
+  become: false
+  vars:
+    qubix_discovery_report:
+      bootloader: {installed_candidates: [limine]}
+      evidence:
+        kernel_command_line: root=UUID=preserved quiet splash
+        binaries: {plymouth: true, dracut: true, lsinitrd: true, limine: true}
+    qubix_test_original_config: |
+      timeout: 5
+      wallpaper: boot():/native.png
+      /+CachyOS
+        //linux-cachyos
+        protocol: linux
+        path: boot():/native/main/vmlinuz#{{ 'preserved-kernel' | hash('blake2b') }}
+        module_path: boot():/native/main/initramfs#{{ 'original-main' | hash('blake2b') }}
+        cmdline: root=UUID=preserved rw quiet splash
+        //linux-cachyos-lts
+        protocol: linux
+        path: boot():/native/lts/vmlinuz#{{ 'preserved-kernel' | hash('blake2b') }}
+        module_path: boot():/native/lts/initramfs#{{ 'original-lts' | hash('blake2b') }}
+        cmdline: root=UUID=preserved rw quiet splash
+        //Snapshots
+           ///Unchanged snapshot
+        protocol: linux
+        path: boot():/history/vmlinuz#{{ 'preserved-kernel' | hash('blake2b') }}
+        module_path: boot():/history/initramfs#{{ 'history' | hash('blake2b') }}
+        cmdline: root=UUID=preserved rootflags=subvol=snapshot
+  tasks:
+    - name: Create disposable cache fixture
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-limine-plymouth-
+      register: qubix_test_tmp
+
+    - name: Resolve ownership and simulated tools
+      ansible.builtin.set_fact:
+        qubix_root: '{{ qubix_test_tmp.path }}'
+        qubix_files_owner: '{{ ansible_facts.user_id }}'
+        qubix_files_group: '{{ ansible_facts.user_gid | string }}'
+        qubix_plymouth_dracut_binary: '{{ qubix_test_tmp.path }}/generate'
+        qubix_plymouth_lsinitrd_binary: '{{ qubix_test_tmp.path }}/inspect'
+        qubix_plymouth_b2sum_binary: '{{ qubix_test_tmp.path }}/b2sum'
+        qubix_profile_resolved:
+          branding: {enabled: true}
+          bootloader:
+            enabled: false
+            backend: limine
+            confirm_active: true
+            config_path: /boot/limine.conf
+            limine_version: 12
+          plymouth:
+            initramfs_backend: dracut
+            confirm_active: true
+            force_rebuild: false
+            presets: []
+            images:
+              - path: /boot/initramfs-main.img
+                kernel: 6.0-fixture
+                kernel_image: /boot/vmlinuz-main
+                limine_image: /boot/native/main/initramfs
+                limine_kernel_image: /boot/native/main/vmlinuz
+              - path: /boot/initramfs-lts.img
+                kernel: 6.0-fixture
+                kernel_image: /boot/vmlinuz-lts
+                limine_image: /boot/native/lts/initramfs
+                limine_kernel_image: /boot/native/lts/vmlinuz
+
+    - name: Exercise two bound images with cleanup
+      block:
+        - name: Create native fixture directories
+          ansible.builtin.file:
+            path: '{{ qubix_root }}{{ item }}'
+            state: directory
+            mode: '0755'
+          loop: [/boot/native/main, /boot/native/lts, /usr/lib/modules/6.0-fixture, /usr/lib/plymouth]
+
+        - name: Seed preserved native files
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}{{ item.path }}'
+            content: '{{ item.content }}'
+            mode: '0644'
+          loop:
+            - {path: /usr/lib/plymouth/two-step.so, content: fixture-plugin}
+            - {path: /boot/vmlinuz-main, content: preserved-kernel}
+            - {path: /boot/vmlinuz-lts, content: preserved-kernel}
+            - {path: /boot/native/main/vmlinuz, content: preserved-kernel}
+            - {path: /boot/native/lts/vmlinuz, content: preserved-kernel}
+            - {path: /boot/initramfs-main.img, content: original-main}
+            - {path: /boot/initramfs-lts.img, content: original-lts}
+            - {path: /boot/native/main/initramfs, content: original-main}
+            - {path: /boot/native/lts/initramfs, content: original-lts}
+
+        - name: Seed private original config
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/boot/limine.conf'
+            content: '{{ qubix_test_original_config }}'
+            mode: '0600'
+
+        - name: Seed isolated generator and native-inspector substitutes
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/{{ item.name }}'
+            content: '{{ item.script }}'
+            mode: '0755'
+          loop:
+            - name: b2sum
+              script: |
+                #!/usr/bin/env python3
+                import hashlib, pathlib, sys
+                print(hashlib.blake2b(pathlib.Path(sys.argv[1]).read_bytes()).hexdigest() + '  ' + sys.argv[1])
+            - name: generate
+              script: |
+                #!/usr/bin/env bash
+                set -euo pipefail
+                [[ "$1 $2" == '--no-uefi --force' ]]
+                case "$3" in {{ (qubix_root ~ '/boot/initramfs-') | quote }}*.img) ;; *) exit 2 ;; esac
+                printf 'generated:%s' "${3##*/}" >"$3"
+                printf '%s\n' "$3" >>{{ (qubix_root ~ '/calls') | quote }}
+            - name: inspect
+              script: |
+                #!/usr/bin/env bash
+                printf '%s\n' usr/bin/plymouthd usr/lib/plymouth/two-step.so \
+                  usr/lib/plymouth/label-freetype.so usr/share/fonts/fixture.ttf
+                {% for asset in (lookup('file', playbook_dir ~
+                '/../../assets/plymouth/manifest.yml') | from_yaml).files %}
+                printf '%s\n' usr/share/plymouth/themes/qubix/{{ asset.filename }}
+                {% endfor %}
+
+        - name: Plan explicit cached-image bindings
+          ansible.builtin.include_role:
+            name: qubix_plymouth
+
+        - name: Capture original config before module switching
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_resources: ['{{ qubix_plymouth_limine_config_resource }}']
+
+        - name: Generate and activate both verified images
+          ansible.builtin.include_role:
+            name: qubix_plymouth
+            tasks_from: rebuild
+
+        - name: Require staged activation and original cache preservation
+          ansible.builtin.assert:
+            that:
+              - qubix_plymouth_limine_stages | length == 2
+              - qubix_plymouth_limine_sync_changed
+              - "'/Snapshots' ~ qubix_plymouth_limine_desired.split('/Snapshots')[1] in qubix_test_original_config"
+
+        - name: Replan from the actual active staged references
+          ansible.builtin.include_role:
+            name: qubix_plymouth
+
+        - name: Reapply identical inputs without generator or pointer changes
+          ansible.builtin.include_role:
+            name: qubix_plymouth
+            tasks_from: rebuild
+
+        - name: Require unchanged image fingerprint and module pointers
+          ansible.builtin.assert:
+            that:
+              - not qubix_plymouth_needs_rebuild
+              - not qubix_plymouth_limine_sync_changed
+
+        - name: Verify actual referenced resources without regeneration
+          ansible.builtin.include_role:
+            name: qubix_plymouth
+            tasks_from: verify_images
+
+        - name: Verify only two generator invocations occurred
+          ansible.builtin.slurp:
+            src: '{{ qubix_root }}/calls'
+          register: qubix_test_calls
+
+        - name: Require reapplication and verification to skip generation
+          ansible.builtin.assert:
+            that: [qubix_test_calls.content | b64decode | split | length == 2]
+
+        - name: Reject changed preserved cache before any staged image is removed
+          ansible.builtin.include_tasks: ../tasks/limine-cache-restore-rejection.yml
+          loop:
+            - {path: /boot/native/main/initramfs, original: original-main}
+            - {path: /boot/native/main/vmlinuz, original: preserved-kernel}
+          loop_control:
+            loop_var: qubix_test_cache_drift
+
+        - name: Restore original references before stage removal
+          ansible.builtin.include_role:
+            name: qubix_files
+            tasks_from: restore
+
+        - name: Inspect exact restored native config
+          ansible.builtin.stat:
+            path: '{{ qubix_root }}/boot/limine.conf'
+            checksum_algorithm: sha256
+          register: qubix_test_restored
+
+        - name: Require exact original bytes and private mode
+          ansible.builtin.assert:
+            that:
+              - qubix_test_restored.stat.checksum == qubix_test_original_config | hash('sha256')
+              - qubix_test_restored.stat.mode == '0600'
+
+        - name: Inspect staged absence after config restoration
+          ansible.builtin.stat:
+            path: '{{ qubix_root }}{{ item.path }}'
+          loop: '{{ qubix_plymouth_limine_stages }}'
+          register: qubix_test_restored_stages
+
+        - name: Require every originally absent stage to be removed
+          ansible.builtin.assert:
+            that: [not item.stat.exists]
+          loop: '{{ qubix_test_restored_stages.results }}'
+          loop_control:
+            label: '{{ item.item.path }}'
+      always:
+        - name: Remove only the disposable cache fixture
+          ansible.builtin.file:
+            path: '{{ qubix_test_tmp.path }}'
+            state: absent

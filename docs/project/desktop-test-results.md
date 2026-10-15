@@ -149,3 +149,19 @@ The final audit matches all 76 native/personal snapshots and all 24 private base
 Read-only Limine inspection still finds the native boot():/limine-splash.png wallpaper and no Qubix marker. Only branding, Niri and shell are selected. The adapter's current heading/two-colour contract does not provide BlueBuild's graphical GRUB layout; richer Limine appearance remains recorded under F08. No boot configuration or initramfs resources changed.
 
 Evidence is ignored under .cache/bar-logo-*.log, .cache/bar-logo-preservation-audit.json, .cache/bar-logo-before/ and .cache/native-desktop/.
+
+## Slim information bar and 100% startup
+
+The 32 px information bar and output-scale helper are deployed from clean 2645034. The controller
+fixture passes 68 tasks with seven expected refusals and zero changes; the isolated native desktop
+preview passes 62 tasks with eight temporary changes. It shows changing application titles and
+CPU/RAM readings, optional media and no dock; unavailable temperature is displayed as --.
+
+Desktop deployment passes 426 tasks with eight changes. Full configuration reapplication after the
+separate initial Plymouth activation passes 571 tasks with zero changes. The guarded reboot returns
+SSH/SDDM/Qubix with boot ID 802776ba-c8fe-4afa-8f7a-531d794868dc, Niri PID 1004 and Noctalia PID 1078.
+Read-only IPC confirms eDP-1 at 1920x1080, scale 1.0, unchanged refresh/transform and a running startup
+scale helper. Native monitor files and personal configurations remain preserved. This establishes
+startup/scale and running shell layers, while physical interaction and newer-resource recovery remain
+operator/VM acceptance. The [separate splash results](plymouth-test-plan.md#recorded-results) document
+that boot-theme attempt's failed visual acceptance; it does not invalidate the desktop startup result.

@@ -1,0 +1,120 @@
+---
+- name: Resolve staged paths after source archive verification
+  ansible.builtin.import_tasks: limine_stage_plan.yml
+
+- name: Read actual config after appearance installation
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}/boot/limine.conf'
+  register: qubix_plymouth_limine_sync_bytes
+
+- name: Refuse native entry changes during deployment
+  ansible.builtin.assert:
+    that:
+      - >-
+        qubix_plymouth_limine_sync_bytes.content | b64decode ==
+        qubix_plymouth_limine_config_resource.content
+    fail_msg: 'Limine configuration changed during deployment; no staged module references have been activated.'
+
+- name: Initialize atomic config candidate from preserved actual bytes
+  ansible.builtin.set_fact:
+    qubix_plymouth_limine_desired: '{{ qubix_plymouth_limine_sync_bytes.content | b64decode }}'
+
+- name: Replace only the explicitly bound module values and native pins
+  ansible.builtin.set_fact:
+    qubix_plymouth_limine_desired: >-
+      {{ qubix_plymouth_limine_desired.replace(item.binding.module_line,
+      item.binding.module_line.replace(item.binding.module_uri, item.uri)) }}
+  loop: '{{ qubix_plymouth_limine_stages }}'
+  loop_control:
+    label: '{{ item.path }}'
+
+- name: Inspect staged image presence before pending-state decisions
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}{{ item.path }}'
+    follow: false
+    checksum_algorithm: sha256
+    get_mime: false
+  loop: '{{ qubix_plymouth_limine_stages }}'
+  register: qubix_plymouth_limine_stage_stats
+  loop_control:
+    label: '{{ item.path }}'
+
+- name: Refuse damaged or unowned existing content-addressed images
+  ansible.builtin.assert:
+    that:
+      - not item.stat.exists or item.stat.checksum | default('') == item.item.sha256
+    fail_msg: 'Existing staged image differs from its content address; inspect recovery records before repair.'
+  loop: '{{ qubix_plymouth_limine_stage_stats.results }}'
+  loop_control:
+    label: '{{ item.item.path }}'
+
+- name: Resolve whether references or staged presence need repair
+  ansible.builtin.set_fact:
+    qubix_plymouth_limine_sync_changed: >-
+      {{ qubix_plymouth_limine_desired != qubix_plymouth_limine_sync_bytes.content | b64decode or
+      qubix_plymouth_limine_stage_stats.results | rejectattr('stat.exists') | list | length > 0 }}
+
+- name: Read available boot filesystem space before staging
+  ansible.builtin.command:
+    argv: [/bin/df, -Pk, '{{ qubix_root | default("") }}/boot']
+  changed_when: false
+  register: qubix_plymouth_limine_space
+  when: qubix_plymouth_limine_stage_stats.results | rejectattr('stat.exists') | list | length > 0
+
+- name: Require room for every new stage and working space
+  ansible.builtin.assert:
+    that:
+      - >-
+        (qubix_plymouth_limine_space.stdout_lines[-1].split()[3] | int) * 1024 >
+        (qubix_plymouth_limine_stages | map(attribute='size') | sum) + 67108864
+    fail_msg: 'Insufficient boot filesystem space for verified stages; native active images remain unchanged.'
+  when: qubix_plymouth_limine_stage_stats.results | rejectattr('stat.exists') | list | length > 0
+
+- name: Persist pending state before stage or pointer changes
+  ansible.builtin.copy:
+    dest: '{{ qubix_root | default("") }}/var/lib/qubix/plymouth-pending'
+    content: '{{ qubix_plymouth_fingerprint }}'
+    mode: '0600'
+  when: qubix_plymouth_limine_sync_changed
+
+- name: Install and verify all stages before switching either module pointer
+  ansible.builtin.include_role:
+    name: qubix_files
+  vars:
+    qubix_files_resources: '{{ qubix_plymouth_limine_stages }}'
+
+- name: Recheck native cache and kernels immediately before activation
+  ansible.builtin.include_role:
+    name: qubix_bootloader
+    tasks_from: restore_limine_module
+  loop: '{{ qubix_plymouth_limine_aliases }}'
+  loop_control:
+    loop_var: qubix_bootloader_limine_alias
+    label: '{{ qubix_bootloader_limine_alias.image }}'
+
+- name: Read config again after image copies
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}/boot/limine.conf'
+  register: qubix_plymouth_limine_switch_bytes
+
+- name: Refuse overwriting concurrent native configuration changes
+  ansible.builtin.assert:
+    that:
+      - qubix_plymouth_limine_switch_bytes.content == qubix_plymouth_limine_sync_bytes.content
+    fail_msg: 'Limine configuration changed while staging; inspect pending state before retrying.'
+
+- name: Activate staged images with one atomic config replacement and protected receipt
+  ansible.builtin.include_role:
+    name: qubix_files
+  vars:
+    qubix_files_resources:
+      - path: /boot/limine.conf
+        component: bootloader
+        content: '{{ qubix_plymouth_limine_desired }}'
+        mode: '{{ qubix_plymouth_limine_mode }}'
+        limine_appearance_keys: >-
+          {{ qubix_plymouth_limine_config_resource.limine_appearance_keys }}
+        limine_module_aliases: '{{ qubix_plymouth_limine_aliases }}'
+
+- name: Verify exact active references, content addresses and archives
+  ansible.builtin.import_tasks: verify_limine.yml

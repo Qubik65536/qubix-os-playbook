@@ -24,6 +24,31 @@
       {{ qubix_bootloader_limine_graphical_keys if qubix_profile_resolved.bootloader.limine_version == 12
       else qubix_bootloader_limine_text_keys }}
 
+- name: Inspect any earlier config ownership baseline
+  ansible.builtin.stat:
+    path: >-
+      {{ qubix_root | default('') }}/var/lib/qubix/backup/{{
+      qubix_profile_resolved.bootloader.config_path | hash('sha256') }}.json
+    follow: false
+  register: qubix_bootloader_limine_earlier_baseline
+
+- name: Read earlier ownership without changing its original recovery contract
+  ansible.builtin.slurp:
+    src: '{{ qubix_bootloader_limine_earlier_baseline.stat.path }}'
+  register: qubix_bootloader_limine_earlier_bytes
+  when: qubix_bootloader_limine_earlier_baseline.stat.exists
+
+- name: Refuse expanding appearance ownership over a narrower existing baseline
+  ansible.builtin.assert:
+    that:
+      - >-
+        qubix_bootloader_limine_managed_keys | difference(
+        (qubix_bootloader_limine_earlier_bytes.content | b64decode | from_json).limine_appearance_keys
+        | default(qubix_bootloader_limine_text_keys)) | length == 0
+    fail_msg: >-
+      Earlier Limine ownership is narrower; restore/review that baseline before expanding appearance ownership.
+  when: qubix_bootloader_limine_earlier_baseline.stat.exists
+
 - name: Validate the graphical ESP location and native enrollment boundary
   ansible.builtin.include_tasks: limine_preflight.yml
   when: qubix_profile_resolved.bootloader.limine_version == 12
@@ -57,6 +82,8 @@
       - path: '{{ qubix_bootloader_directory }}/qubix/wallpaper.png'
         source: '{{ role_path }}/../../assets/wallpaper/qubix.png'
         sha256: '{{ qubix_bootloader_limine_wallpaper.sha256 }}'
+        mode: '{{ qubix_bootloader_limine_file_mode }}'
+        directory_mode: '{{ qubix_bootloader_limine_directory_mode }}'
         component: bootloader
   when: qubix_profile_resolved.bootloader.limine_version == 12
 

@@ -1,0 +1,47 @@
+---
+- name: Seed native update that makes old pins unsafe
+  ansible.builtin.copy:
+    dest: '{{ qubix_root }}{{ qubix_test_cache_drift.path }}'
+    content: native-update
+    mode: '0644'
+
+- name: Reset restoration rejection
+  ansible.builtin.set_fact:
+    qubix_test_restore_refused: false
+
+- name: Require stale native pins to stop force restoration
+  block:
+    - name: Attempt restoration with explicit drift override
+      ansible.builtin.include_role:
+        name: qubix_files
+        tasks_from: restore
+      vars:
+        qubix_files_force_restore: true
+  rescue:
+    - name: Require the cache-specific safety diagnostic
+      ansible.builtin.assert:
+        that: ["'Preserved Limine cache image or kernel changed' in (ansible_failed_result | to_json)"]
+    - name: Record expected cache refusal
+      ansible.builtin.set_fact:
+        qubix_test_restore_refused: true
+
+- name: Inspect stage preservation after refused restoration
+  ansible.builtin.stat:
+    path: '{{ qubix_root }}{{ item.path }}'
+  loop: '{{ qubix_plymouth_limine_stages }}'
+  register: qubix_test_retained_stages
+
+- name: Require refusal before any stage removal
+  ansible.builtin.assert:
+    that:
+      - qubix_test_restore_refused
+      - item.stat.isreg | default(false)
+  loop: '{{ qubix_test_retained_stages.results }}'
+  loop_control:
+    label: '{{ item.item.path }}'
+
+- name: Restore only the fixture's simulated native update
+  ansible.builtin.copy:
+    dest: '{{ qubix_root }}{{ qubix_test_cache_drift.path }}'
+    content: '{{ qubix_test_cache_drift.original }}'
+    mode: '0644'

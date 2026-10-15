@@ -5,6 +5,39 @@
       - qubix_profile_resolved.bootloader.config_path in ['/boot/limine.conf', '/efi/limine.conf']
     fail_msg: 'Graphical Limine requires the confirmed ESP-root limine.conf; other layouts need an adapter.'
 
+- name: Measure the actual boot filesystem without changing mount options
+  ansible.builtin.command:
+    argv:
+      - '{{ qubix_bootloader_findmnt_binary }}'
+      - --noheadings
+      - --output
+      - FSTYPE
+      - --target
+      - '{{ qubix_root | default("") }}{{ qubix_bootloader_directory }}'
+  changed_when: false
+  check_mode: false
+  register: qubix_bootloader_limine_filesystem
+  when: qubix_root | default('') == '' or qubix_bootloader_findmnt_binary != '/usr/bin/findmnt'
+
+- name: Inspect mount-controlled boot file and directory permissions
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}{{ item }}'
+    follow: false
+    get_checksum: false
+  loop:
+    - '{{ qubix_profile_resolved.bootloader.config_path }}'
+    - '{{ qubix_bootloader_directory }}'
+  register: qubix_bootloader_limine_modes
+
+- name: Resolve supported asset modes for FAT or ordinary POSIX filesystems
+  ansible.builtin.set_fact:
+    qubix_bootloader_limine_file_mode: >-
+      {{ qubix_bootloader_limine_modes.results[0].stat.mode if
+      qubix_bootloader_limine_filesystem.stdout | default('posix') | trim in ['vfat', 'fat', 'msdos'] else '0644' }}
+    qubix_bootloader_limine_directory_mode: >-
+      {{ qubix_bootloader_limine_modes.results[1].stat.mode if
+      qubix_bootloader_limine_filesystem.stdout | default('posix') | trim in ['vfat', 'fat', 'msdos'] else '0755' }}
+
 - name: Inspect higher-priority native config candidates without following redirects
   ansible.builtin.stat:
     path: '{{ qubix_root | default("") }}{{ qubix_bootloader_directory }}/{{ item }}'

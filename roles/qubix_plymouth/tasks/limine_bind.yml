@@ -1,0 +1,121 @@
+---
+- name: Validate paired native cache paths
+  ansible.builtin.assert:
+    that:
+      - qubix_plymouth_limine_image.limine_image is match('^/boot/[A-Za-z0-9_./+-]+$')
+      - qubix_plymouth_limine_image.limine_kernel_image is match('^/boot/[A-Za-z0-9_./+-]+$')
+      - "'..' not in qubix_plymouth_limine_image.limine_image.split('/')"
+      - "'..' not in qubix_plymouth_limine_image.limine_kernel_image.split('/')"
+      - not qubix_plymouth_limine_image.limine_image.startswith('/boot/qubix/')
+      - "'/limine_history/' not in qubix_plymouth_limine_image.limine_image"
+      - "'/limine_history/' not in qubix_plymouth_limine_image.limine_kernel_image"
+      - qubix_plymouth_limine_image.limine_image != qubix_plymouth_limine_image.path
+      - qubix_plymouth_limine_image.limine_image != qubix_plymouth_limine_image.limine_kernel_image
+    fail_msg: 'Cache bindings must identify separate native files, preserving Qubix stages and snapshot history.'
+
+- name: Guard native image and kernel ancestors without mutation
+  ansible.builtin.include_role:
+    name: qubix_files
+    tasks_from: guard
+  vars:
+    qubix_files_resource: {path: '{{ qubix_plymouth_limine_native_path }}', component: preserved}
+  loop:
+    - '{{ qubix_plymouth_limine_image.limine_image }}'
+    - '{{ qubix_plymouth_limine_image.limine_kernel_image }}'
+  loop_control:
+    loop_var: qubix_plymouth_limine_native_path
+
+- name: Inspect native cache hashes
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}{{ item }}'
+    checksum_algorithm: sha256
+    follow: false
+    get_mime: false
+  loop:
+    - '{{ qubix_plymouth_limine_image.limine_image }}'
+    - '{{ qubix_plymouth_limine_image.limine_kernel_image }}'
+  register: qubix_plymouth_limine_native
+
+- name: Require matching regular native kernel and image files
+  ansible.builtin.assert:
+    that:
+      - qubix_plymouth_limine_native.results[0].stat.isreg | default(false)
+      - qubix_plymouth_limine_native.results[1].stat.isreg | default(false)
+      - >-
+        qubix_plymouth_limine_native.results[1].stat.checksum ==
+        (qubix_plymouth_kernels.results | selectattr('item.path', 'equalto', qubix_plymouth_limine_image.path)
+        | first).stat.checksum
+    fail_msg: 'Cached kernel differs from the declared source kernel or cache files are absent/redirected.'
+
+- name: Read native BLAKE2b pins without executing loader tools
+  ansible.builtin.command:
+    argv: ['{{ qubix_plymouth_b2sum_binary }}', '{{ qubix_root | default("") }}{{ item }}']
+  loop:
+    - '{{ qubix_plymouth_limine_image.limine_image }}'
+    - '{{ qubix_plymouth_limine_image.limine_kernel_image }}'
+  changed_when: false
+  check_mode: false
+  register: qubix_plymouth_limine_native_b2
+
+- name: Resolve exact native references and permitted staged alias
+  ansible.builtin.set_fact:
+    qubix_plymouth_limine_original_uri: >-
+      {{ 'boot():' ~ qubix_plymouth_limine_image.limine_image[5:] ~ '#' ~
+      qubix_plymouth_limine_native_b2.results[0].stdout.split()[0] }}
+    qubix_plymouth_limine_kernel_uri: >-
+      {{ 'boot():' ~ qubix_plymouth_limine_image.limine_kernel_image[5:] ~ '#' ~
+      qubix_plymouth_limine_native_b2.results[1].stdout.split()[0] }}
+    qubix_plymouth_limine_stage_prefix: >-
+      {{ '/boot/qubix/plymouth/' ~ (qubix_plymouth_limine_image.path | basename | regex_replace('\.img$', '')) ~ '-' }}
+
+- name: Find entries bound to this exact kernel reference
+  ansible.builtin.set_fact:
+    qubix_plymouth_limine_entries: >-
+      {{ qubix_plymouth_limine_text | regex_findall('(?ms)^[ \t]*/[^\n]+\n(?:(?!^[ \t]*/).)*')
+      | select('search', '(?im)^[ \t]*path[ \t]*:[ \t]*' ~
+      qubix_plymouth_limine_kernel_uri | regex_escape ~ '[ \t]*$') | list }}
+
+- name: Require one unambiguous primary Linux entry per binding
+  ansible.builtin.assert:
+    that:
+      - qubix_plymouth_limine_entries | length == 1
+      - qubix_plymouth_limine_entries[0] | regex_findall('(?im)^[ \t]*module_path[ \t]*:') | length == 1
+      - qubix_plymouth_limine_entries[0] | regex_findall('(?im)^[ \t]*path[ \t]*:') | length == 1
+      - qubix_plymouth_limine_entries[0] is regex('(?im)^[ \t]*protocol[ \t]*:[ \t]*linux[ \t]*$')
+    fail_msg: 'Missing or ambiguous primary Limine kernel/module pair; refusing guessed boot activation.'
+
+- name: Resolve bound module line and value
+  ansible.builtin.set_fact:
+    qubix_plymouth_limine_module_line: >-
+      {{ qubix_plymouth_limine_entries[0] | regex_findall('(?im)^[ \t]*module_path[ \t]*:[^\n]*') | first }}
+    qubix_plymouth_limine_module_uri: >-
+      {{ (qubix_plymouth_limine_entries[0] | regex_findall('(?im)^[ \t]*module_path[ \t]*:[ \t]*([^\n]+)')
+      | first) | trim }}
+    qubix_plymouth_limine_owned_pattern: >-
+      {{ ('boot():' ~ qubix_plymouth_limine_stage_prefix[5:]) | regex_escape ~ '[a-f0-9]{64}\.img#[a-f0-9]{128}' }}
+
+- name: Require the native image or a content-addressed Qubix stage
+  ansible.builtin.assert:
+    that:
+      - >-
+        qubix_plymouth_limine_module_uri == qubix_plymouth_limine_original_uri or
+        qubix_plymouth_limine_module_uri is match('^' ~ qubix_plymouth_limine_owned_pattern ~ '$')
+      - qubix_plymouth_limine_text.count(qubix_plymouth_limine_module_line) == 1
+    fail_msg: 'Limine module pin differs from the explicit native image or an owned Qubix stage.'
+
+- name: Inspect the currently referenced staged image when present
+  ansible.builtin.include_tasks: limine_current.yml
+  when: qubix_plymouth_limine_module_uri != qubix_plymouth_limine_original_uri
+
+- name: Record validated pointer and recovery ownership
+  ansible.builtin.set_fact:
+    qubix_plymouth_limine_bindings: >-
+      {{ qubix_plymouth_limine_bindings + [{'image': qubix_plymouth_limine_image.limine_image,
+      'source': qubix_plymouth_limine_image.path, 'stage_prefix': qubix_plymouth_limine_stage_prefix,
+      'module_line': qubix_plymouth_limine_module_line, 'module_uri': qubix_plymouth_limine_module_uri,
+      'alias': {'image': qubix_plymouth_limine_image.limine_image,
+      'sha256': qubix_plymouth_limine_native.results[0].stat.checksum,
+      'kernel_image': qubix_plymouth_limine_image.limine_kernel_image,
+      'kernel_sha256': qubix_plymouth_limine_native.results[1].stat.checksum,
+      'original_uri': qubix_plymouth_limine_original_uri, 'kernel_uri': qubix_plymouth_limine_kernel_uri,
+      'owned_uri_pattern': qubix_plymouth_limine_owned_pattern}}] }}

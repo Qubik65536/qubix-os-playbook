@@ -21,3 +21,16 @@ Restore returns the original activation file and removes newly created named res
 Controller file-lifecycle tests use a no-op GRUB checker solely as a dispatch stub; exact original hashes/modes and originally absent theme removal are verified. Native parser/boot validity remains a separate VM gate.
 
 Existing activation-file modes are preserved. Installed verification escalates read-only checks when login/boot/splash is selected, so private configuration is not made public for diagnostics.
+
+ESP filesystems such as FAT expose mount-controlled permissions. Detect the target filesystem
+read-only and inherit its observed file/directory modes for boot assets instead of requesting
+unsupported POSIX chmod values. Preserve mount options and native configuration modes; ordinary
+Linux filesystems retain 0644 files and 0755 resource directories. Include these effective modes
+in installed-resource verification.
+
+The initial upgrade policy refuses expanding managed appearance keys over a narrower existing
+Limine baseline (for example text-only to graphical, or splash-only to graphical). Restore/review
+that earlier baseline before changing ownership; do not delete backups to bypass the guard.
+Adding explicit Plymouth aliases to a compatible earlier appearance baseline is supported and
+tested, preserving original bytes and first metadata. Routine kernel/cache updates still require
+reinspection of fixed mappings and review of any stale recovery pins.
