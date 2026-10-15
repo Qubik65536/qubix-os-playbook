@@ -5,9 +5,10 @@ An Ansible framework for deploying Qubix branding and desktop defaults onto exis
 **Status: MVP candidate ready for testing.** Branding, Qubix Niri/Noctalia, shell defaults,
 SDDM branding, both GRUB and Limine, and Plymouth with dracut/mkinitcpio are implemented.
 The CachyOS desktop starts at 100% scale; the corrected Limine/native-style Plymouth deployment
-and exact boot-image checks pass on the authorized target. Reapplication was interrupted when
-the machine went offline; controlled reboot/appearance, authentication and current boot recovery
-remain acceptance gates. See [actual evidence](docs/project/status.md).
+and exact boot-image checks pass on the authorized target. Identical-source reapplication passes
+with zero changes, and a normal-kernel reboot returns the desktop. The operator confirms the
+Limine, startup and reboot branding. Independent loader/generator, authentication and current boot
+recovery tests remain acceptance gates. See [actual evidence](docs/project/status.md).
 
 Get started:
 

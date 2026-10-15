@@ -1,6 +1,6 @@
 # Boot, reboot and poweroff splash
 
-Status: native-style theme Implemented; native preview, mkinitcpio generation, corrected deployment and exact active-image verification Tested; controlled boot appearance pending. The first physical
+Status: native-style theme Implemented; native preview, mkinitcpio generation, corrected deployment and exact active-image verification Tested; the operator confirms normal-kernel startup/reboot appearance. Independent poweroff/LTS/recovery checks remain open. The first physical
 activation used verified generator outputs but missed Limine's active cached images; startup still
 showed CachyOS, and the operator rejected the earlier scripted shutdown layout. See
 [current evidence](../project/plymouth-test-plan.md). Plymouth supplies the splash after the bootloader
@@ -67,6 +67,12 @@ FAT permissions follow the existing mount; mount options remain unchanged. Retai
 native cache paths in the two binding fields after deployment: the active module then points to
 an automatically verified Qubix stage, not a replacement value for limine_image. Reinspect mappings
 and review recovery baselines after native kernel/cache updates; stale pins are rejected.
+
+CachyOS's native Snapper integration may refresh `limine.conf.old` during hourly cleanup, even
+when the active configuration bytes stay unchanged. That rolling copy is not Qubix's original
+recovery baseline. Retain the private manifests/originals under `/var/lib/qubix/backup/`; compare
+active module paths, pins and kernel/cache hashes when checking for drift. Do not disable native
+snapshot integration just to keep the rolling copy unchanged.
 
 Preview, review the predicted selection/integration changes, then activate only on an authorized target:
 

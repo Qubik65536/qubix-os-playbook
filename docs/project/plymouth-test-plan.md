@@ -1,6 +1,6 @@
 # Physical-target Plymouth test plan
 
-Status: **Corrective deployment and exact active-image checks Tested; reapplication interrupted by connectivity loss, controlled appearance observation pending**. The first scripted attempt failed visual acceptance. The operator approved physical-target Plymouth activation on 2026-10-15 after reviewing the native preview, no-write target preview and exact backup/two-image plan. This extends the earlier [desktop authorization](live-test-plan.md) for this machine only. Root [AGENTS.md](../../AGENTS.md) requires: “Boot work uses explicitly authorized disposable VMs.” Other boot work retains that rule; do not infer further exceptions from this approval.
+Status: **Corrective deployment, exact active-image checks and completed zero-change reapplication Tested; normal-kernel menu/startup/reboot appearance confirmed by the operator**. The first scripted attempt failed visual acceptance. The operator approved physical-target Plymouth activation on 2026-10-15 after reviewing the native preview, no-write target preview and exact backup/two-image plan. This extends the earlier [desktop authorization](live-test-plan.md) for this machine only. Root [AGENTS.md](../../AGENTS.md) requires: “Boot work uses explicitly authorized disposable VMs.” Other boot work retains that rule; do not infer further exceptions from this approval.
 
 ## Inspected mapping
 
@@ -104,3 +104,31 @@ resolves to the original address. The operator was asked to wake/reconnect the t
 manual shutdown/reboot observations. Complete same-source reapplication, verify pending state clears,
 then execute the prepared guarded reboot/console test. LTS, independent generator/loader and recovery
 gates remain separate.
+
+## Reconnected validation and reboot
+
+On 2026-10-15 the operator wakes the target. SSH reconnects with the pinned host key and confirms the
+same boot ID/kernel. A second run loses the LAN briefly after 758 tasks/zero changes. The next full
+run uses bounded SSH reconnection retries and a clean detached e7e652a checkout, with the identical
+inventory/configuration: 1490 successful tasks, zero changes, zero unreachable hosts and zero failures.
+Both mkinitcpio commands are skipped. Installed verification passes 284 tasks with zero changes.
+The attempt marker clears normally and all 75 private baseline hashes remain unchanged.
+
+Native hourly Snapper cleanup has refreshed limine.conf.old to the current configuration; its service
+journal records the writes. All 18 other native boot/cache/EFI hashes, active configuration bytes,
+source image hashes and protected personal/native resources match the reconnect audit. Qubix's
+original private recovery baseline is unaffected. Temporary controller/target sleep inhibitors are
+used for validation; saved power policy is unchanged.
+
+The guarded reboot checks all four exact source/staged image hashes, both BLAKE2b pins, all 38 runtime
+assets, clean e7e652a/configuration state, absent pending markers and the 32 original baseline hashes.
+It stops the temporary target inhibitor and requests reboot with a one-time 15-second boot menu.
+The request is accepted at 13:11 EDT. The target returns with new boot ID
+68011c7a-65dc-41c9-8da8-cf8253bd82d1, unchanged 7.2.9-2-cachyos and command line, and Limine 12.9.3
+reporting the native CachyOS.linux-cachyos entry. SSH/SDDM, Plymouth start/quit and the prior reboot-screen
+service succeed. Qubix Niri/Noctalia return with bar/wallpaper layers, no dock layer and eDP-1 at
+1920x1080/100% scale. The temporary target inhibitor is absent. Protected files and all 75 baseline
+hashes remain unchanged; only loader/random-seed changes among the audited native boot resources.
+Pending state stays absent. The operator confirms all three requested menu/startup/reboot visuals,
+then asks for a more distinctive palette and Monaspace Krypton typography. Independent LTS, poweroff,
+dracut, GRUB, real encryption input and recovery acceptance remain open.

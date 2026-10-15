@@ -3,7 +3,9 @@
 Updated: 2026-10-15. Stage: **MVP candidate; acceptance In Progress**.
 The physical CachyOS Niri desktop is deployed and returns after reboot at 100% scale with the slim
 information bar. The corrected native-style Plymouth and active Limine image adapter are fixture
-Tested and deployed from clean e7e652a. Exact active-image checks and installed verification pass; reapplication was interrupted by target connectivity loss, and controlled boot observation remains pending.
+Tested and deployed from clean e7e652a. Exact active-image checks, installed verification and completed
+zero-change reapplication pass. The normal-kernel reboot returns the desktop; the operator confirms
+Limine, startup and reboot branding. A requested typography/palette refinement is the next design task.
 The first Plymouth activation failed visual acceptance and is not counted as a successful boot theme.
 
 | Capability | Status and actual evidence |
@@ -16,8 +18,8 @@ The first Plymouth activation failed visual acceptance and is not counted as a s
 | Shell/terminal | Native temporary-home Bash/Starship checks pass; personal files and default Fish preserved |
 | Login | SDDM clone/activity/ambiguity fixtures Tested; physical target branding disabled; authentication/restore pending |
 | GRUB | Preservation/dispatch/reapplication/recovery fixtures Tested; independent native boot/restore pending |
-| Limine | Graphical fixture passes 301 tasks with four expected refusals; graphical appearance deployed; protected entry/argument/snapshot bytes verified; physical appearance pending |
-| Plymouth | Native two-step preview passes 48 tasks and all three modes; selection, native mkinitcpio generation and exact active-image assets verified; controlled appearance observation pending |
+| Limine | Graphical fixture passes 301 tasks with four expected refusals; protected entry/argument/snapshot bytes verified; operator confirms the deployed menu appearance after reboot |
+| Plymouth | Native two-step preview passes 48 tasks and all three modes; mkinitcpio/source/active-image checks pass; operator confirms normal-kernel startup and reboot appearance; poweroff/LTS/recovery remain open |
 | Image/cache adapters | Two-image nested-entry lifecycle passes 767 tasks with two expected stale-pin refusals; binding/enrollment/FAT fixtures pass 368 tasks with five refusals and check mode 220 tasks with four refusals |
 | Recovery/state | Generic and loader regression suite passes 966 tasks with seven expected refusals; native classic desktop recovery Tested; newer desktop/boot recovery pending |
 
@@ -53,17 +55,32 @@ snapshot sections, remain unchanged. All 19 native cache/history/EFI resources a
 baseline hashes remain intact. There are now 75 private baseline manifests. Only the two intended
 source images and limine.conf change among the 76 tracked native/personal resources.
 
-Identical reapplication reaches 1337 successful tasks with zero changes, then SSH becomes unreachable
-(one unreachable, zero component failures). This is an interrupted test, not a completed zero-change
-reapplication. The protected transient attempt marker was present during that run and may remain;
-the last verified deployment still records clean e7e652a. IPv4/IPv6 SSH and ping fail afterward; the
-known local hostname still resolves to the recorded address. The planned controlled reboot has not
-been requested. The operator has been asked to wake/reconnect the machine and report any console test.
+The first reapplication loses connectivity after 1337 successful tasks/zero changes; a resumed run
+also encounters a brief LAN failure after 758 tasks/zero changes. Neither interrupted run counts as
+completed idempotency. After reconnection, a clean detached checkout of the same e7e652a source and
+the identical configuration passes 1490 tasks with zero changes, unreachable hosts or failures.
+Both generator invocations are skipped. Installed verification again passes 284 tasks/zero changes.
+The pending marker clears normally; all 75 private baseline hashes and tracked resources match the
+reconnection audit. Native hourly Snapper cleanup refreshed limine.conf.old to the current config
+before this run; all 18 other native boot/cache/EFI resources and the active config remain unchanged.
+Temporary sleep inhibitors expire or are stopped; no persistent power policy changes are made.
+
+The guarded reboot request validates all four source/staged images, both pins, all theme assets,
+the verified clean revision, cleared pending markers and original recovery baselines before execution.
+A one-time 15-second boot-menu request is accepted. The new boot ID is
+68011c7a-65dc-41c9-8da8-cf8253bd82d1, running unchanged 7.2.9-2-cachyos via Limine 12.9.3 and the
+native CachyOS.linux-cachyos entry. SSH/SDDM and Plymouth start/quit services succeed; the previous
+boot records a successful Plymouth reboot-screen service. Qubix Niri/Noctalia return with wallpaper
+and bar layers, no dock layer, and eDP-1 at 1920x1080/100% scale. The temporary target inhibitor is gone.
+All protected files and 75 baseline hashes match the preboot audit; among the 19 native boot resources,
+only loader/random-seed changes across boot. Pending state remains absent. The operator answers yes
+for Limine, startup and reboot visuals, then requests more distinctive colours and Monaspace Krypton.
+Automatic deployment state remains files-verified; this explicit console evidence is recorded here.
 
 ## Limits and next gate
 
-- Reconnect the test machine, complete same-source reapplication and verify pending state clears.
-  Then run the guarded reboot and obtain console observations of Limine/startup/shutdown.
+- Design and test the requested Monaspace Krypton/palette refinement; retain native prompt behavior.
+- Obtain separate poweroff and LTS observations; reboot-screen acceptance does not prove poweroff.
 - Test independent GRUB and dracut boots, LTS boot, login authentication, encrypted-root input where
   relevant, physical shortcuts/locking/portals and current desktop/boot restoration in disposable VMs.
 - Fixed image/kernel mappings require reinspection after package updates. Stale native pins and

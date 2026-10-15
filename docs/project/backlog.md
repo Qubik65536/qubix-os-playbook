@@ -52,28 +52,30 @@ Objective: safe GRUB branding. Scope: active configuration evidence, minimal act
 
 ## F08 — Limine adapter (Feature)
 
-Status: Implemented 8–12 candidate; independent version/preservation/stale-restoration fixtures Tested; reboot/restore open.
+Status: Implemented 8–12 candidate; independent version/preservation/stale-restoration fixtures Tested; native Limine 12 normal-kernel reboot/menu confirmed; restore open.
 
-Appearance follow-up: the version-12 adapter now supplies a boot-accessible Qubix wallpaper and supported palette/margins/font scaling. Preservation, reapplication, restoration and three unsafe-input fixtures pass; deployment passes; visual acceptance remains pending. The explicitly authorized physical target now has graphical Limine files installed; controlled boot appearance and recovery remain pending.
+Appearance follow-up: the version-12 adapter now supplies a boot-accessible Qubix wallpaper and supported palette/margins/font scaling. Preservation, reapplication, restoration and three unsafe-input fixtures pass; deployment and zero-change native reapplication pass. The operator confirms the menu after a controlled normal-kernel reboot. Requested typography/palette refinement and native recovery remain open.
 
 Objective: safe Limine branding; mandatory MVP. Scope: installed-version-supported settings, active-path validation and minimal edits. Acceptance: unchanged entries/arguments, VM boot and recovery. Depends on F02/F06; independent of F07. Tests: Limine-specific syntax where supported, VM and preservation. Docs: supported directives/versions and recovery.
 
 ## F09 — Plymouth with two generators (Feature)
 
-Status: Implemented; simulated dispatch/archive/font/preview/kernel guards and preservation of literal snapshot-hook appends Tested. Native isolated boot/shutdown/reboot circular rendering and synthetic prompt pass with preservation/cleanup. Native mkinitcpio generation and exact active-image contents pass; controlled boot/poweroff, dracut, encryption and restore remain open; see the [activation proposal](plymouth-test-plan.md).
+Status: Implemented; simulated dispatch/archive/font/preview/kernel guards and preservation of literal snapshot-hook appends Tested. Native isolated boot/shutdown/reboot circular rendering and synthetic prompt pass with preservation/cleanup. Native mkinitcpio generation and exact active-image contents pass; normal-kernel startup/reboot visuals confirmed; poweroff, LTS, dracut, encryption and restore remain open; see the [activation proposal](plymouth-test-plan.md).
 
 Objective: startup splash independent of loader. Scope: Qubix theme, dracut/mkinitcpio minimal integration and conditional rebuild. Acceptance: resources verified, both combinations boot/show splash, unrelated settings preserved and restore passes. Depends on F02/F06. Tests: two independent generator VM runs, reapplication and recovery. Docs: image selection, compatibility, recovery.
 
-Native-style correction: source now replaces the rejected scripted layout with two-step, a small spinner and bottom watermark. The 48-task native preview passes all three animations, native password rendering, invalid-module control, preservation and cleanup. Active Limine image synchronization and repeat physical observation are the next gates.
+Native-style correction: source now replaces the rejected scripted layout with two-step, a small spinner and bottom watermark. The 48-task native preview passes all three animations, native password rendering, invalid-module control, preservation and cleanup. Active Limine image synchronization and normal-kernel startup/reboot observations now pass. Next: design/test the requested distinctive palette and Monaspace Krypton typography.
 
 Active-image repair: explicit Limine 12 cache/kernel bindings, content-addressed staging, atomic
 module/pin replacement, exact active-archive checks and config-first recovery are Implemented.
 Binding refusal/check-mode fixtures and earlier-baseline alias enrollment/FAT mode fixtures pass;
 the 767-task nested-entry lifecycle and 1077-task target no-write preview pass. Native deployment passes
 1542 tasks; installed verification passes 284 tasks with zero changes. Exact four-image extraction/pins,
-19 native boot resources and 32 earlier baseline hashes pass. Reapplication is interrupted after 1337
-successful tasks/zero changes by target connectivity loss; reconnect, complete reapplication and run the
-guarded reboot before claiming boot appearance acceptance. Future maintenance: design reviewed ownership/recovery rebasing after kernel updates or
+19 native boot resources and 32 earlier baseline hashes pass. After two connectivity interruptions,
+same-source reapplication passes 1490 tasks with zero changes and skips both rebuilds; installed
+verification again passes 284 tasks/zero changes and pending state clears. The guarded reboot returns
+SSH/SDDM/Qubix at 100% scale; the operator confirms menu/startup/reboot branding.
+Future maintenance: design reviewed ownership/recovery rebasing after kernel updates or
 expanding a narrower text/splash-only appearance baseline; current guards refuse unsafe transitions.
 
 ## T01 — MVP acceptance (Testing)

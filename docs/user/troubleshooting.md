@@ -37,3 +37,9 @@ last verified deployment. Reconnect and rerun the same source/configuration, the
 verification and unchanged reapplication before reboot. A successful earlier deployment does not
 turn a later unreachable run into a completed idempotency test. Keep the test machine awake during
 long file/backup checks; do not disable unrelated power settings or remove recovery state to bypass them.
+
+For brief LAN interruptions, prefix your normal deployment command with `ANSIBLE_SSH_RETRIES=6`
+to allow bounded SSH reconnection attempts. This retries connection failures, not a failed component
+validation, and does not make deployment transactional. Keep the same clean checkout, inventory and
+configuration for an idempotency test. After reconnection, inspect pending state and run the normal
+verification workflow; never reboot on the assumption that an unreachable run completed.
