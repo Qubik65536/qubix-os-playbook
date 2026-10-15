@@ -21,6 +21,8 @@ There is no multi-component atomic transaction. Ansible check mode is an approxi
 
 Inventory and privilege escalation are standard Ansible operator inputs. The local inventory is explicit, with no implicit deployment to arbitrary hosts. Standalone verification must not require privilege escalation for ordinary readable facts; permission failures must be actionable, not interpreted as absent components.
 
+Discovery includes the installed Noctalia CLI version when its executable is measured. The read-only probe runs in check mode and reports unknown when Noctalia is absent, allowing components to distinguish standalone releases from legacy or unsupported shells. Package names alone do not establish this API compatibility.
+
 Bootstrap profile resolution loads defaults, the allowlisted profile, and an optional operator mapping (`qubix`), in that order with recursive dictionary merge. Scalar/list replacement is deliberate. Unknown keys and malformed types are rejected, so a misspelled opt-out cannot accidentally activate another component.
 
 Recovery stores content, metadata, original absence and target paths before overwriting default resources. Owned assets are reconciled idempotently; unrelated files must remain untouched. Revision tracking includes Git commit and effective configuration digest, with dirty-tree detection. It is not whole-system rollback.

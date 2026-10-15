@@ -9,6 +9,7 @@
       service_manager: '{{ ansible_facts.service_mgr }}'
       binaries: '{{ qubix_discovery_binaries }}'
       niri_version: '{{ qubix_discovery_niri_version.stdout }}'
+      noctalia_version: '{{ qubix_discovery_noctalia_version.stdout | default("unknown") }}'
       packages: >-
         {{ qubix_discovery_packages.stdout_lines
            | select('match', '^(' ~ qubix_discovery_package_names | join('|') ~ ')([- ]|$)')

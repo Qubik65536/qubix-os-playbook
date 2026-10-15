@@ -14,6 +14,7 @@
       env: {}
     qubix_discovery_binaries: {pacman: true, niri: true}
     qubix_discovery_niri_version: {stdout: 'niri fixture-version'}
+    qubix_discovery_noctalia_version: {stdout: 'noctalia v5.2.1'}
     qubix_discovery_packages:
       stdout_lines: ['niri 25.08', 'sddm 0.21', 'noctalia-shell 1.0', 'unrelated 1.0', 'grub 2.12']
     qubix_discovery_path_stats:
@@ -44,6 +45,7 @@
       - qubix_discovery_evidence.packages == ['niri 25.08', 'sddm 0.21', 'noctalia-shell 1.0', 'grub 2.12']
       - qubix_discovery_evidence.paths == ['/etc/niri/config.kdl']
       - qubix_discovery_evidence.niri_version == 'niri fixture-version'
+      - qubix_discovery_evidence.noctalia_version == 'noctalia v5.2.1'
       - qubix_discovery_evidence.desktop_hint == 'unknown'
       - qubix_discovery_evidence.display_manager.configured_unit == '/usr/lib/systemd/system/sddm.service'
       - qubix_discovery_evidence.display_manager.active_units == ['sddm']

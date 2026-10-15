@@ -73,6 +73,14 @@
   changed_when: false
   check_mode: false
 
+- name: Read installed Noctalia version
+  ansible.builtin.command:
+    argv: [/usr/bin/noctalia, --version]
+  register: qubix_discovery_noctalia_version
+  changed_when: false
+  check_mode: false
+  when: qubix_discovery_binaries.noctalia
+
 - name: Require explicit typed discovery privilege
   ansible.builtin.assert:
     that: [qubix_discovery_privileged is boolean]
