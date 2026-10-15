@@ -12,6 +12,8 @@ The bitmap contains all 256 IBM CP437 cells, including control graphics and conn
 it is 5120 bytes, not a PSF/TTF file. The TTF covers extended Latin, combining marks, punctuation and
 available CP437 characters. Native fallback remains necessary for other scripts; this is not a
 complete Monaspace installation. [The contact sheet](cp437-contact-sheet.png) shows the bitmap.
+The TTF also embeds the full copyright/OFL text in its name table, so generators that copy only
+the selected font into an initramfs retain the notice and license with that copy.
 
 To regenerate from the repository root with optional developer tools:
 

@@ -81,6 +81,13 @@ def main():
     for record in font["name"].names:
         if record.nameID in names:
             record.string = names[record.nameID].encode(record.getEncoding())
+    # Native generators copy only the font into initramfs; retain its full license in the file.
+    license_text = (args.output / "OFL.txt").read_text()
+    font["name"].setName(license_text.splitlines()[0], 0, 3, 1, 0x409)
+    for record in font["name"].names:
+        if record.nameID == 13:
+            record.string = license_text.encode(record.getEncoding())
+    font["name"].setName(license_text, 13, 3, 1, 0x409)
     ttf = args.output / "QubixBootMono-Regular.ttf"
     font.save(ttf, reorderTables=True)
     raster = ImageFont.truetype(str(args.source), 13, layout_engine=ImageFont.Layout.BASIC)
