@@ -5,7 +5,8 @@ The physical CachyOS Niri desktop is deployed and returns after reboot at 100% s
 information bar. The corrected native-style Plymouth and active Limine image adapter are fixture
 Tested and deployed from clean e7e652a. Exact active-image checks, installed verification and completed
 zero-change reapplication pass. The normal-kernel reboot returns the desktop; the operator confirms
-Limine, startup and reboot branding. The requested typography/palette refinement is In Progress in source.
+Limine, startup and reboot branding. The requested typography/palette refinement is Implemented in source;
+its activation remains pending.
 The first Plymouth activation failed visual acceptance and is not counted as a successful boot theme.
 
 The [midnight/Krypton refinement](../architecture/boot-design.md) is now Implemented for Plymouth in
@@ -14,6 +15,13 @@ outlined wordmark. Native Pango all-mode animation/prompt rendering and a separa
 boot/prompt control pass with exact final font resolution, preservation and cleanup (50 tasks);
 the two-generator fixture passes 409 tasks with five expected refusals. Re-exporting all 38 PNGs
 with Inkscape 1.4.3 gives identical checksums. This refinement is not yet activated on the target.
+Limine's matching CP437 font, midnight cube wallpaper and separate heading/help/selection palette are
+also Implemented. The exact 15-key graphical-baseline upgrade, preservation, reapplication, restoration
+and eight refusal cases pass 726 tasks; the independent global check-mode control passes 21 tasks
+without metadata writes. Native no-write preview passes 1197 tasks/40 proposed changes, followed by
+an audit of unchanged protected files, 75 baselines and no pending markers. Image/cache lifecycle
+regressions pass 771 tasks; bindings pass 368 normal/220 check-mode tasks, and loader/recovery checks
+pass 752/232 tasks. These remain fixture results, separate from the already confirmed e7e652a boot.
 
 | Capability | Status and actual evidence |
 |---|---|

@@ -38,16 +38,43 @@
   register: qubix_bootloader_limine_earlier_bytes
   when: qubix_bootloader_limine_earlier_baseline.stat.exists
 
-- name: Refuse expanding appearance ownership over a narrower existing baseline
+- name: Resolve retained appearance keys without changing metadata
+  ansible.builtin.set_fact:
+    qubix_bootloader_limine_earlier_keys: >-
+      {{ (qubix_bootloader_limine_earlier_bytes.content | default('e30=') | b64decode | from_json)
+      ['limine_appearance_keys'] | default([]) }}
+
+- name: Identify the exact previous graphical ownership contract
+  ansible.builtin.set_fact:
+    qubix_bootloader_limine_font_upgrade: >-
+      {{ qubix_profile_resolved.bootloader.limine_version == 12 and
+      qubix_bootloader_limine_earlier_baseline.stat.exists and
+      qubix_bootloader_limine_earlier_keys | sort == qubix_bootloader_limine_graphical_base_keys | sort }}
+
+- name: Refuse unreviewed expansion over narrower existing baselines
   ansible.builtin.assert:
     that:
       - >-
         qubix_bootloader_limine_managed_keys | difference(
         (qubix_bootloader_limine_earlier_bytes.content | b64decode | from_json).limine_appearance_keys
-        | default(qubix_bootloader_limine_text_keys)) | length == 0
+        | default(qubix_bootloader_limine_text_keys)) | length == 0 or qubix_bootloader_limine_font_upgrade
     fail_msg: >-
       Earlier Limine ownership is narrower; restore/review that baseline before expanding appearance ownership.
   when: qubix_bootloader_limine_earlier_baseline.stat.exists
+
+- name: Validate font ownership upgrade without mutating the first baseline
+  ansible.builtin.include_role:
+    name: qubix_files
+    tasks_from: limine_appearance_metadata
+  vars:
+    qubix_files_state_dir: '{{ qubix_root | default("") }}/var/lib/qubix/backup'
+    qubix_files_target: '{{ qubix_root | default("") }}{{ qubix_profile_resolved.bootloader.config_path }}'
+    qubix_files_id: '{{ qubix_profile_resolved.bootloader.config_path | hash("sha256") }}'
+    qubix_files_resource:
+      path: '{{ qubix_profile_resolved.bootloader.config_path }}'
+      limine_appearance_keys: '{{ qubix_bootloader_limine_managed_keys }}'
+      limine_appearance_upgrade_from: '{{ qubix_bootloader_limine_graphical_base_keys }}'
+  when: qubix_bootloader_limine_font_upgrade
 
 - name: Validate the graphical ESP location and native enrollment boundary
   ansible.builtin.include_tasks: limine_preflight.yml
@@ -66,13 +93,23 @@
       - qubix_bootloader_preserved | regex_findall('(?im)^[ \t]*interface_branding_colou?r[ \t]*:') | length <= 1
   when: qubix_profile_resolved.bootloader.limine_version == 12
 
+- name: Reject duplicate spelling aliases for help colours
+  ansible.builtin.assert:
+    that:
+      - >-
+        qubix_bootloader_preserved | regex_findall('(?im)^[ \t]*interface_help_colou?r' ~ item ~ '[ \t]*:')
+        | length <= 1
+    fail_msg: 'Ambiguous repeated Limine help colour aliases; refusing guessed precedence.'
+  loop: ['', _bright]
+  when: qubix_profile_resolved.bootloader.limine_version == 12
+
 - name: Initialize Limine resource definitions
   ansible.builtin.set_fact:
     qubix_bootloader_resources: []
 
 - name: Load attributed wallpaper metadata for the graphical adapter
   ansible.builtin.include_vars:
-    file: '{{ role_path }}/../../assets/wallpaper/manifest.yml'
+    file: '{{ role_path }}/../../assets/boot/manifest.yml'
     name: qubix_bootloader_limine_wallpaper
   when: qubix_profile_resolved.bootloader.limine_version == 12
 
@@ -80,11 +117,28 @@
   ansible.builtin.set_fact:
     qubix_bootloader_resources:
       - path: '{{ qubix_bootloader_directory }}/qubix/wallpaper.png'
-        source: '{{ role_path }}/../../assets/wallpaper/qubix.png'
+        source: '{{ role_path }}/../../assets/boot/wallpaper.png'
         sha256: '{{ qubix_bootloader_limine_wallpaper.sha256 }}'
         mode: '{{ qubix_bootloader_limine_file_mode }}'
         directory_mode: '{{ qubix_bootloader_limine_directory_mode }}'
         component: bootloader
+  when: qubix_profile_resolved.bootloader.limine_version == 12
+
+- name: Load attributed boot font metadata
+  ansible.builtin.include_vars:
+    file: '{{ role_path }}/../../assets/fonts/manifest.json'
+    name: qubix_bootloader_font
+  when: qubix_profile_resolved.bootloader.limine_version == 12
+
+- name: Place complete CP437 font and license on the confirmed boot filesystem
+  ansible.builtin.set_fact:
+    qubix_bootloader_resources: >-
+      {{ qubix_bootloader_resources + [{'path': qubix_bootloader_directory ~ '/qubix/' ~ item.filename,
+      'source': role_path ~ '/../../assets/fonts/' ~ item.filename, 'sha256': item.sha256,
+      'mode': qubix_bootloader_limine_file_mode, 'directory_mode': qubix_bootloader_limine_directory_mode,
+      'component': 'bootloader'}] }}
+  loop: >-
+    {{ qubix_bootloader_font.files | default([]) | rejectattr('filename', 'equalto', 'QubixBootMono-Regular.ttf') }}
   when: qubix_profile_resolved.bootloader.limine_version == 12
 
 - name: Prepare marked appearance while preserving all entry bytes
@@ -93,6 +147,8 @@
       {{ qubix_bootloader_resources + [{'path': qubix_profile_resolved.bootloader.config_path,
       'component': 'bootloader', 'mode': qubix_bootloader_active_stat.stat.mode,
       'limine_appearance_keys': qubix_bootloader_limine_managed_keys,
+      'limine_appearance_upgrade_from': (qubix_bootloader_limine_graphical_base_keys
+      if qubix_bootloader_limine_font_upgrade else []),
       'content': lookup('template', 'limine.conf.j2') ~
       (qubix_bootloader_preserved | regex_replace(
       '(?im)^[ \t]*(' ~ qubix_bootloader_limine_managed_keys | join('|') ~ ')[ \t]*:[^\n]*(?:\n|$)', ''))}] }}

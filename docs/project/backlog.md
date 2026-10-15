@@ -56,6 +56,12 @@ Status: Implemented 8–12 candidate; independent version/preservation/stale-res
 
 Appearance follow-up: the version-12 adapter now supplies a boot-accessible Qubix wallpaper and supported palette/margins/font scaling. Preservation, reapplication, restoration and three unsafe-input fixtures pass; deployment and zero-change native reapplication pass. The operator confirms the menu after a controlled normal-kernel reboot. Requested typography/palette refinement and native recovery remain open.
 
+The requested Krypton refinement is Implemented in source: complete 8x20 CP437 font, midnight cube
+wallpaper and explicit heading/help/selection colours. The reviewed 15-key graphical ownership
+upgrade retains first-original bytes and unrelated metadata; normal lifecycle passes 726 tasks with
+eight expected refusals, and a global check-mode control passes 21 tasks with no metadata writes.
+Deploy/observe the refinement; independent native recovery remains open.
+
 Objective: safe Limine branding; mandatory MVP. Scope: installed-version-supported settings, active-path validation and minimal edits. Acceptance: unchanged entries/arguments, VM boot and recovery. Depends on F02/F06; independent of F07. Tests: Limine-specific syntax where supported, VM and preservation. Docs: supported directives/versions and recovery.
 
 ## F09 — Plymouth with two generators (Feature)

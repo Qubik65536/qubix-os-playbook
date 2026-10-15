@@ -1,0 +1,54 @@
+---
+- name: Seed the graphical predecessor with an intact original
+  ansible.builtin.copy:
+    dest: '{{ qubix_root }}/var/lib/qubix/backup/{{ "/boot/limine.conf" | hash("sha256") }}.original'
+    content: '{{ qubix_test_native_limine }}{{ qubix_test_font_case.original_suffix | default("") }}'
+    mode: '0600'
+
+- name: Seed the retained graphical predecessor metadata
+  ansible.builtin.copy:
+    dest: '{{ qubix_root }}/var/lib/qubix/backup/{{ "/boot/limine.conf" | hash("sha256") }}.json'
+    content: '{{ qubix_test_font_legacy_metadata | to_nice_json }}'
+    mode: '0600'
+
+- name: Seed the current predecessor with controlled local drift
+  ansible.builtin.copy:
+    dest: '{{ qubix_root }}/boot/limine.conf'
+    content: '{{ qubix_test_font_legacy_config }}{{ qubix_test_font_case.current_suffix | default("") }}'
+    mode: '0600'
+
+- name: Seed the verified receipt or intentional mismatch
+  ansible.builtin.copy:
+    dest: '{{ qubix_root }}/var/lib/qubix/backup/{{ "/boot/limine.conf" | hash("sha256") }}.receipt'
+    content: >-
+      {{ ((qubix_test_font_legacy_config ~ (qubix_test_font_case.current_suffix | default(''))) | hash('sha256'))
+      if qubix_test_font_case.match_receipt | default(true) else 'stale-receipt' }}
+    mode: '0600'
+
+- name: Reset upgrade refusal outcome
+  ansible.builtin.set_fact:
+    qubix_test_font_refused: false
+
+- name: Require reviewed appearance-upgrade refusal
+  block:
+    - name: Plan font upgrade without writing recovery metadata
+      ansible.builtin.include_role:
+        name: qubix_bootloader
+  rescue:
+    - name: Require the expected upgrade diagnostic
+      ansible.builtin.assert:
+        that: [qubix_test_font_case.error in (ansible_failed_result | to_json)]
+    - name: Record rejected font upgrade
+      ansible.builtin.set_fact:
+        qubix_test_font_refused: true
+
+- name: Read the baseline after rejected upgrade
+  ansible.builtin.slurp:
+    src: '{{ qubix_root }}/var/lib/qubix/backup/{{ "/boot/limine.conf" | hash("sha256") }}.json'
+  register: qubix_test_font_rejected_baseline
+
+- name: Require refusal and unchanged original ownership metadata
+  ansible.builtin.assert:
+    that:
+      - qubix_test_font_refused
+      - qubix_test_font_rejected_baseline.content | b64decode | from_json == qubix_test_font_legacy_metadata

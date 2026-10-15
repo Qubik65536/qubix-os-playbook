@@ -5,6 +5,22 @@
   gather_subset: ['!all', min]
   become: false
   vars:
+    qubix_test_limine_legacy_keys:
+      - interface_branding
+      - interface_branding_color
+      - interface_branding_colour
+      - term_foreground
+      - term_background
+      - term_foreground_bright
+      - term_background_bright
+      - term_palette
+      - term_palette_bright
+      - wallpaper
+      - wallpaper_style
+      - backdrop
+      - term_font_scale
+      - term_margin
+      - term_margin_gradient
     qubix_discovery_report:
       evidence:
         binaries: {limine: true}
@@ -63,10 +79,12 @@
         - name: Require wallpaper path exact entry preservation and explicit ownership
           ansible.builtin.assert:
             that:
-              - qubix_bootloader_resources | length == 2
+              - qubix_bootloader_resources | length == 4
               - qubix_bootloader_resources[0].path == '/boot/qubix/wallpaper.png'
               - "'wallpaper: boot():/qubix/wallpaper.png' in qubix_bootloader_resources[-1].content"
               - "'term_font_scale: 2x2' in qubix_bootloader_resources[-1].content"
+              - "'term_font_size: 8x20' in qubix_bootloader_resources[-1].content"
+              - "'term_font: boot():/qubix/QubixBootMono-8x20.bin' in qubix_bootloader_resources[-1].content"
               - >-
                 qubix_bootloader_resources[-1].content.split('/CachyOS')[1] ==
                 qubix_test_native_limine.split('/CachyOS')[1]
@@ -84,6 +102,89 @@
             qubix_files_resources: '{{ qubix_bootloader_resources }}'
 
         - name: Replan graphical Limine
+          ansible.builtin.include_role:
+            name: qubix_bootloader
+
+        - name: Read the first graphical baseline for the predecessor-upgrade test
+          ansible.builtin.slurp:
+            src: '{{ qubix_root }}/var/lib/qubix/backup/{{ "/boot/limine.conf" | hash("sha256") }}.json'
+          register: qubix_test_font_first_baseline
+
+        - name: Describe the exact earlier graphical contract and candidate
+          ansible.builtin.set_fact:
+            qubix_test_font_legacy_metadata: >-
+              {{ qubix_test_font_first_baseline.content | b64decode | from_json |
+              combine({'limine_appearance_keys': qubix_test_limine_legacy_keys,
+              'test_retained_field': 'original-value'}) }}
+            qubix_test_font_legacy_config: >-
+              {{ qubix_test_graphical_candidate | regex_replace('(?im)^(' ~
+              qubix_bootloader_resources[-1].limine_appearance_keys |
+              difference(qubix_test_limine_legacy_keys) | join('|') ~ ')[ \t]*:[^\n]*\n', '') }}
+
+        - name: Refuse stale original stale receipt and locally owned new font directives
+          ansible.builtin.include_tasks: ../tasks/limine-font-upgrade-rejection.yml
+          loop:
+            - original_suffix: '# changed original'
+              error: Original or active Limine content changed
+            - match_receipt: false
+              error: Original or active Limine content changed
+            - current_suffix: 'term_font: boot():/personal-font.bin'
+              error: A new appearance directive already belongs
+          loop_control:
+            loop_var: qubix_test_font_case
+
+        - name: Restore the intact first-original fixture bytes
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/var/lib/qubix/backup/{{ "/boot/limine.conf" | hash("sha256") }}.original'
+            content: '{{ qubix_test_native_limine }}'
+            mode: '0600'
+
+        - name: Restore the valid predecessor configuration
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/boot/limine.conf'
+            content: '{{ qubix_test_font_legacy_config }}'
+            mode: '0600'
+
+        - name: Restore its exact receipt
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/var/lib/qubix/backup/{{ "/boot/limine.conf" | hash("sha256") }}.receipt'
+            content: '{{ qubix_test_font_legacy_config | hash("sha256") }}'
+            mode: '0600'
+
+        - name: Plan the exact predecessor upgrade
+          ansible.builtin.include_role:
+            name: qubix_bootloader
+
+        - name: Inspect metadata after read-only upgrade planning
+          ansible.builtin.slurp:
+            src: '{{ qubix_root }}/var/lib/qubix/backup/{{ "/boot/limine.conf" | hash("sha256") }}.json'
+          register: qubix_test_font_planned_baseline
+
+        - name: Require planning to preserve the earlier recovery record
+          ansible.builtin.assert:
+            that:
+              - qubix_test_font_planned_baseline.content | b64decode | from_json == qubix_test_font_legacy_metadata
+
+        - name: Apply the reviewed font upgrade after preview
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_resources: '{{ qubix_bootloader_resources }}'
+
+        - name: Read the upgraded recovery metadata
+          ansible.builtin.slurp:
+            src: '{{ qubix_root }}/var/lib/qubix/backup/{{ "/boot/limine.conf" | hash("sha256") }}.json'
+          register: qubix_test_font_upgraded_baseline
+
+        - name: Require only reviewed ownership keys to change
+          ansible.builtin.assert:
+            that:
+              - >-
+                qubix_test_font_upgraded_baseline.content | b64decode | from_json ==
+                qubix_test_font_legacy_metadata | combine({'limine_appearance_keys':
+                qubix_bootloader_resources[-1].limine_appearance_keys})
+
+        - name: Replan the completed graphical font upgrade
           ansible.builtin.include_role:
             name: qubix_bootloader
 
@@ -143,6 +244,12 @@
             - path: /boot/limine.conf
               content: '{{ qubix_test_native_limine }}wallpaper: boot():/duplicate.png'
               error: Ambiguous repeated Limine wallpaper
+            - path: /boot/limine.conf
+              content: |
+                {{ qubix_test_native_limine }}
+                interface_help_color: 123456
+                interface_help_colour: 654321
+              error: Ambiguous repeated Limine help colour
             - path: '/var/lib/qubix/backup/{{ "/boot/limine.conf" | hash("sha256") }}.json'
               content: '{"limine_appearance_keys": []}'
               error: Earlier Limine ownership is narrower

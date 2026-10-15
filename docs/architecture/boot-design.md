@@ -1,6 +1,7 @@
 # Boot visual design
 
-Status: **Plymouth refinement Implemented and native-preview Tested; Limine font integration In Progress**.
+Status: **Implemented; Limine lifecycle/refusal/check-mode fixtures and native Plymouth preview Tested;
+physical refinement activation pending**.
 This refines the operator-confirmed Limine/native two-step design from e7e652a.
 Menu, startup and reboot branding already work on the authorized target; the operator now
 requests a more distinctive palette and GitHub Monaspace Krypton. This document defines that change

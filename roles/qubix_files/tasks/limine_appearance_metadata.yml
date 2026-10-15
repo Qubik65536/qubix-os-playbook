@@ -1,0 +1,97 @@
+---
+- name: Inspect existing graphical recovery manifest without redirects
+  ansible.builtin.stat:
+    path: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.json'
+    follow: false
+  register: qubix_files_appearance_manifest_stat
+
+- name: Require the retained graphical baseline
+  ansible.builtin.assert:
+    that: [qubix_files_appearance_manifest_stat.stat.isreg | default(false)]
+
+- name: Read retained graphical recovery metadata
+  ansible.builtin.slurp:
+    src: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.json'
+  register: qubix_files_appearance_manifest_bytes
+
+- name: Resolve existing appearance ownership
+  ansible.builtin.set_fact:
+    qubix_files_appearance_baseline: '{{ qubix_files_appearance_manifest_bytes.content | b64decode | from_json }}'
+
+- name: Permit only the explicitly reviewed graphical predecessor or completed upgrade
+  ansible.builtin.assert:
+    that:
+      - qubix_files_appearance_baseline.path == qubix_files_resource.path
+      - qubix_files_appearance_baseline.existed
+      - >-
+        qubix_files_appearance_baseline.limine_appearance_keys | sort in
+        [qubix_files_resource.limine_appearance_upgrade_from | sort,
+        qubix_files_resource.limine_appearance_keys | sort]
+    fail_msg: 'Existing graphical ownership differs; refusing an unreviewed appearance upgrade.'
+
+- name: Validate the exact retained original and receipt before extending ownership
+  when: >-
+    qubix_files_appearance_baseline.limine_appearance_keys | sort !=
+    qubix_files_resource.limine_appearance_keys | sort
+  block:
+    - name: Inspect original receipt and current config without redirects
+      ansible.builtin.stat:
+        path: '{{ item }}'
+        follow: false
+        checksum_algorithm: sha256
+      loop:
+        - '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.original'
+        - '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.receipt'
+        - '{{ qubix_files_target }}'
+      register: qubix_files_appearance_stats
+
+    - name: Require regular original receipt and active config
+      ansible.builtin.assert:
+        that: [item.stat.isreg | default(false)]
+      loop: '{{ qubix_files_appearance_stats.results }}'
+      loop_control:
+        label: '{{ item.item }}'
+
+    - name: Read original receipt and active config without execution
+      ansible.builtin.slurp:
+        src: '{{ item.item }}'
+      loop: '{{ qubix_files_appearance_stats.results }}'
+      register: qubix_files_appearance_bytes
+      loop_control:
+        label: '{{ item.item }}'
+
+    - name: Require intact original bytes and current verified receipt
+      ansible.builtin.assert:
+        that:
+          - qubix_files_appearance_stats.results[0].stat.checksum == qubix_files_appearance_baseline.checksum
+          - >-
+            qubix_files_appearance_stats.results[2].stat.checksum ==
+            qubix_files_appearance_bytes.results[1].content | b64decode | trim
+        fail_msg: 'Original or active Limine content changed; refusing appearance ownership expansion.'
+
+    - name: Require new directives absent from original and preserved current content
+      ansible.builtin.assert:
+        that:
+          - >-
+            not qubix_files_appearance_bytes.results[0].content | b64decode is
+            regex('(?im)^[ \t]*' ~ item ~ '[ \t]*:')
+          - >-
+            not (qubix_files_appearance_bytes.results[2].content | b64decode |
+            regex_replace('(?ms)^# BEGIN QUBIX BOOT\n.*?^# END QUBIX BOOT\n?', '')) is
+            regex('(?im)^[ \t]*' ~ item ~ '[ \t]*:')
+        fail_msg: >-
+          A new appearance directive already belongs to native or personal configuration; review recovery first.
+      loop: >-
+        {{ qubix_files_resource.limine_appearance_keys |
+        difference(qubix_files_resource.limine_appearance_upgrade_from) }}
+
+    - name: Extend only reviewed appearance keys while retaining all original recovery fields
+      ansible.builtin.copy:
+        dest: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.json'
+        content: >-
+          {{ qubix_files_appearance_baseline | combine({'limine_appearance_keys':
+          qubix_files_resource.limine_appearance_keys}) | to_nice_json }}
+        owner: '{{ qubix_files_owner }}'
+        group: '{{ qubix_files_group }}'
+        mode: '0600'
+      when: qubix_files_limine_appearance_write | default(false) and not ansible_check_mode

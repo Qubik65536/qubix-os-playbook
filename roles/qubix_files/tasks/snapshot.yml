@@ -87,3 +87,9 @@
   vars:
     qubix_files_limine_metadata_write: true
   when: qubix_files_resource.limine_module_aliases | default([]) | length > 0
+
+- name: Extend only validated graphical font ownership before activation
+  ansible.builtin.include_tasks: limine_appearance_metadata.yml
+  vars:
+    qubix_files_limine_appearance_write: true
+  when: qubix_files_resource.limine_appearance_upgrade_from | default([]) | length > 0

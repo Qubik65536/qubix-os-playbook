@@ -1,7 +1,7 @@
 ---
 qubix_bootloader_newline: "\n"
 qubix_bootloader_limine_text_keys: [interface_branding, term_foreground, term_background]
-qubix_bootloader_limine_graphical_keys:
+qubix_bootloader_limine_graphical_base_keys:
   - interface_branding
   - interface_branding_color
   - interface_branding_colour
@@ -17,5 +17,14 @@ qubix_bootloader_limine_graphical_keys:
   - term_font_scale
   - term_margin
   - term_margin_gradient
+qubix_bootloader_limine_font_keys:
+  - term_font
+  - term_font_size
+  - interface_help_color
+  - interface_help_colour
+  - interface_help_color_bright
+  - interface_help_colour_bright
+qubix_bootloader_limine_graphical_keys: >-
+  {{ qubix_bootloader_limine_graphical_base_keys + qubix_bootloader_limine_font_keys }}
 qubix_bootloader_limine_enrollment_no: >-
   ^[ \t]*ENABLE_ENROLL_LIMINE_CONFIG[ \t]*=[ \t]*(?:no|"no"|'no')[ \t]*(?:#.*)?$

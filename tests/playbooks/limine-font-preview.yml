@@ -1,0 +1,100 @@
+---
+- name: Validate graphical font ownership upgrade under real CLI check mode
+  hosts: localhost
+  gather_facts: true
+  gather_subset: ['!all', min]
+  become: false
+  vars:
+    qubix_test_font_original: "timeout: 5\n/CachyOS\nprotocol: linux\npath: boot():/native/kernel\n"
+    qubix_test_font_current: |
+      # BEGIN QUBIX BOOT
+      interface_branding: Qubix OS
+      # END QUBIX BOOT
+      timeout: 5
+      /CachyOS
+      protocol: linux
+      path: boot():/native/kernel
+    qubix_test_font_before: [interface_branding]
+    qubix_test_font_after: [interface_branding, term_font, term_font_size]
+  tasks:
+    - name: Require invocation with global check mode
+      ansible.builtin.assert:
+        that: [ansible_check_mode]
+
+    - name: Create only a disposable test directory
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-font-preview-
+      register: qubix_test_font_tmp
+      check_mode: false
+
+    - name: Resolve controlled fixture paths
+      ansible.builtin.set_fact:
+        qubix_files_state_dir: '{{ qubix_test_font_tmp.path }}/backup'
+        qubix_files_target: '{{ qubix_test_font_tmp.path }}/limine.conf'
+        qubix_files_id: '{{ "/boot/limine.conf" | hash("sha256") }}'
+        qubix_test_font_baseline:
+          path: /boot/limine.conf
+          existed: true
+          checksum: '{{ qubix_test_font_original | hash("sha256") }}'
+          limine_appearance_keys: '{{ qubix_test_font_before }}'
+          retained: first-original-value
+
+    - name: Exercise real check-mode write guard with cleanup
+      block:
+        - name: Prepare private test-only backup storage
+          ansible.builtin.file:
+            path: '{{ qubix_files_state_dir }}'
+            state: directory
+            mode: '0700'
+          check_mode: false
+
+        - name: Seed original current receipt and ownership fixture bytes
+          ansible.builtin.copy:
+            dest: '{{ item.path }}'
+            content: '{{ item.content }}'
+            mode: '0600'
+          loop:
+            - path: '{{ qubix_files_target }}'
+              content: '{{ qubix_test_font_current }}'
+            - path: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.original'
+              content: '{{ qubix_test_font_original }}'
+            - path: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.receipt'
+              content: '{{ qubix_test_font_current | hash("sha256") }}'
+            - path: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.json'
+              content: '{{ qubix_test_font_baseline | to_nice_json }}'
+          check_mode: false
+
+        - name: Validate the writable metadata path without actually writing in check mode
+          ansible.builtin.include_role:
+            name: qubix_files
+            tasks_from: limine_appearance_metadata
+          vars:
+            qubix_files_limine_appearance_write: true
+            qubix_files_resource:
+              path: /boot/limine.conf
+              limine_appearance_upgrade_from: '{{ qubix_test_font_before }}'
+              limine_appearance_keys: '{{ qubix_test_font_after }}'
+
+        - name: Read ownership after global preview
+          ansible.builtin.slurp:
+            src: '{{ qubix_files_state_dir }}/{{ qubix_files_id }}.json'
+          register: qubix_test_font_preview_metadata
+
+        - name: Read current config after global preview
+          ansible.builtin.slurp:
+            src: '{{ qubix_files_target }}'
+          register: qubix_test_font_preview_current
+
+        - name: Require no ownership or activation changes
+          ansible.builtin.assert:
+            that:
+              - qubix_test_font_preview_metadata.content | b64decode | from_json == qubix_test_font_baseline
+              - qubix_test_font_preview_current.content | b64decode == qubix_test_font_current
+      always:
+        - name: Remove only the disposable font preview fixture
+          ansible.builtin.file:
+            path: '{{ qubix_test_font_tmp.path }}'
+            state: absent
+          check_mode: false

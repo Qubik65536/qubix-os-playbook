@@ -52,6 +52,13 @@ It checks the native two-step plugin against an invalid-module control, captures
 modes and a synthetic password prompt. A private bubblewrap namespace, pseudoterminal and Xwayland
 server isolate daemon IPC and devices. A reader drains early tty debug output. Verify actual
 plugin mappings, clean daemon exits, unchanged host selection/session and zero leftover processes.
+The refined preview binds its exact Qubix Boot Mono subset in a private font tree, checks the native
+font resolver and records the selected SHA256. It preserves native host fonts and uses a private
+fontconfig cache. Pango renders all three modes; a separate namespace substitutes the installed
+FreeType label implementation for its boot/password control, matching the packaged early-boot font
+path without replacing host plugins. Re-export checksums with Inkscape 1.4.3 match across all 38 PNGs.
+Optional font/art tools and regeneration are documented under [boot assets](../../assets/boot/README.md)
+and [font assets](../../assets/fonts/README.md); they are not target or ordinary CI dependencies.
 Logs/screenshots remain ignored. Review spinner, watermark and prompt captures manually; this test
 does not prove native initramfs packaging, firmware graphics, encrypted-root input or actual shutdown.
 
@@ -63,3 +70,10 @@ refusal after cached image/kernel drift. Smaller controls cover missing/duplicat
 no persistent preview state, compatible appearance-baseline alias enrollment and FAT permission
 planning. Their fake generators/digest tools inspect only disposable roots; native boot remains
 separate. Shared CI invokes these through scripts/test.sh with a 30-minute job timeout.
+
+The graphical fixture also seeds the exact earlier 15-key recovery contract, tests font/help
+ownership enrollment, retains unknown original metadata fields and checks exact restoration.
+Stale originals/receipts and new directives outside Qubix ownership must fail. Run
+`ansible-playbook tests/playbooks/limine-font-preview.yml --check` for the independent global
+check-mode no-metadata-write control; invoking a normal playbook task with check_mode alone does
+not change Ansible's global ansible_check_mode flag used by orchestration guards.

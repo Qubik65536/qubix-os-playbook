@@ -6,7 +6,7 @@ Both adapters are mandatory for MVP. `bootloader.enabled` remains false by defau
 
 ## Graphical Limine revision
 
-Status: **Implemented; preservation/reapplication/restoration and three refusal fixtures Tested; physical appearance pending**. Install the existing attributed Qubix wallpaper at /boot/qubix/wallpaper.png and use a version-supported boot(): URI, blue-gray terminal palette, restrained margins/font size and Qubix heading. Replace only the documented global appearance directives in one marked block; preserve timeout/default selection, every entry, kernel path/argument and snapshot. Reject duplicate globals, shadowed/ambiguous active configurations and native config enrollment requiring unsupported EFI changes. Keep the factory wallpaper and native theme files intact. Test exact reapplication, restoration and negative cases before physical boot observation.
+Status: **Implemented; preservation/reapplication/restoration fixtures Tested; e7e652a physical menu confirmed; Krypton refinement activation pending**. The refined version-12 adapter installs a midnight cube wallpaper at /boot/qubix/wallpaper.png, the complete 8x20 CP437 Qubix Boot Mono bitmap and OFL. The font derives from GitHub Monaspace Krypton; see its [provenance and coverage](../../assets/fonts/README.md). Version-supported boot(): URIs select the assets, with ice-blue headings/help, a steel-blue selection palette and restrained margins. Replace only explicit global appearance directives in one marked block; preserve timeout/default selection, every entry, kernel path/argument and snapshot. Reject duplicate globals/colour aliases, shadowed configurations and native enrollment requiring unsupported EFI changes. Keep factory wallpaper/theme files intact. The [design](../architecture/boot-design.md) defines this refinement; native menu observation remains necessary after activation.
 
 Plymouth's explicitly bound active-image staging may also update selected module_path aliases/digests. Config recovery metadata must record those aliases and ignore only those expected changes during preservation checks; every other entry byte remains protected. See the [active-image contract](plymouth.md#active-limine-image-repair). This is separate from ordinary Limine appearance and does not permit kernel or entry replacement.
 
@@ -14,7 +14,7 @@ GRUB supports `/boot/grub/grub.cfg` and `/boot/grub2/grub.cfg` only when the exi
 
 Limine requires a confirmed booted major version 8–12, native entry format and a regular active limine.conf under /boot or /efi. Versions 8–11 retain text/colour branding; version 12 adds the graphical defaults above using the exact installed-version documentation. Graphical activation requires an ESP-root config and rejects shadowing and native enrollment. Duplicate directives and malformed markers fail. Entry sections and kernel arguments are preserved. There is no claimed Limine syntax-check command; fixture preservation checks do not establish boot validity.
 
-The earlier text/colour adapter left the physical target bootloader-disabled. The graphical version-12 candidate is now fixture-tested and deployed from clean e7e652a; controlled boot appearance remains pending. It supplies Limine-native appearance rather than loading a GRUB theme.txt; independent VM boot/recovery evidence remains required. See the [installed-version reference](https://github.com/Limine-Bootloader/Limine/blob/v12.9.3/CONFIG.md).
+The earlier text/colour adapter left the physical target bootloader-disabled. Graphical e7e652a is deployed and its normal-kernel menu is operator-confirmed. The new font/palette revision has separate fixture/preview gates. It supplies Limine-native appearance rather than loading a GRUB theme.txt; independent VM recovery evidence remains required. See the [installed-version reference](https://github.com/Limine-Bootloader/Limine/blob/v12.9.3/CONFIG.md).
 
 Restore returns the original activation file and removes newly created named resources using recorded baselines. Before restoring an existing activation file, the boot adapter compares preserved content with the first baseline, ignoring only well-formed Qubix markers, the recorded managed Limine appearance directives and trailing line breaks. Changed entries, snapshot sections, kernel arguments or unrelated hook commands require reviewed native recovery; even force cannot authorize stale baseline replacement. Reapplication must not erase this protection merely by refreshing receipts. Boot-chain evidence, successful boot into original entries, encrypted-root prompts where applicable, and live-media/VM-snapshot recovery must be verified before MVP acceptance. Do not replace a loader to test branding: use a separate VM installation for each adapter.
 
@@ -34,3 +34,11 @@ that earlier baseline before changing ownership; do not delete backups to bypass
 Adding explicit Plymouth aliases to a compatible earlier appearance baseline is supported and
 tested, preserving original bytes and first metadata. Routine kernel/cache updates still require
 reinspection of fixed mappings and review of any stale recovery pins.
+
+One reviewed exception permits the exact earlier 15-key graphical contract to gain the six new
+font/help keys. Require intact first-original bytes/hash, a matching current receipt and absence of
+each new key in the original and outside the current Qubix block. Check mode validates without
+writing; actual application extends only appearance ownership before activation, preserving original
+bytes/checksum, UID/GID/mode, module aliases and unrelated fields. Other narrower baselines and stale
+or locally owned new directives remain refusals. Restoration removes the new font/license only when
+their own baselines record original absence, and still restores the exact original configuration.

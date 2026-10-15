@@ -4,6 +4,8 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Added Krypton-derived CP437 text, midnight cube artwork and distinct heading/help/selection colours to Limine 12. Guarded earlier graphical-baseline enrollment preserves original recovery bytes/fields; normal and no-write upgrade fixtures pass.
+
 - Refined Plymouth with a midnight-blue gradient, original ice-blue vector ring and outlined Krypton wordmark. Native all-mode/prompt preview selects the exact renamed subset and preserves the host; activation of this refinement is pending.
 
 - Added reproducible, OFL-attributed Krypton-derived boot font assets: a renamed 154 KB Latin subset and complete 5 KB CP437 bitmap.
