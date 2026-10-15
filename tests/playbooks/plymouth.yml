@@ -105,7 +105,8 @@
                 #!/usr/bin/env bash
                 printf '%s\n' usr/share/plymouth/themes/qubix/qubix.plymouth \
                   usr/share/plymouth/themes/qubix/qubix.script \
-                  usr/share/plymouth/themes/qubix/logo.png usr/lib/plymouth/script.so usr/bin/plymouthd
+                  usr/share/plymouth/themes/qubix/logo.png usr/lib/plymouth/script.so usr/bin/plymouthd \
+                  usr/lib/plymouth/label-freetype.so usr/share/fonts/Plymouth.ttf
 
         - name: Plan dracut adapter
           ansible.builtin.include_role:
@@ -202,12 +203,15 @@
           ansible.builtin.assert:
             that: ["'--nopost -p test' in qubix_test_calls.content | b64decode"]
 
-        - name: Simulate missing generated archive resources
+        - name: Simulate theme files present but missing native font resources
           ansible.builtin.copy:
             dest: '{{ qubix_root }}/inspect-fake'
             content: |
               #!/usr/bin/env bash
-              printf '%s\\n' 'archive without Qubix assets'
+              printf '%s\n' usr/share/plymouth/themes/qubix/qubix.plymouth \
+                usr/share/plymouth/themes/qubix/qubix.script \
+                usr/share/plymouth/themes/qubix/logo.png usr/lib/plymouth/script.so usr/bin/plymouthd \
+                usr/lib/plymouth/label-freetype.so
             mode: '0755'
 
         - name: Request deliberate repair and reset failure outcome

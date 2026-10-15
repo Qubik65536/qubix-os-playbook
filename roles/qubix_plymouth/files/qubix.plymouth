@@ -1,6 +1,6 @@
 [Plymouth Theme]
 Name=Qubix OS
-Description=Qubix startup splash with native password and question callbacks
+Description=Qubix circular boot, reboot and poweroff splash with native input callbacks
 ModuleName=script
 
 [script]

@@ -1,0 +1,76 @@
+---
+- name: Preview the real Plymouth theme without host activation or image generation
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  roles:
+    - qubix_profile
+    - qubix_discovery
+  tasks:
+    - name: Require a real explicitly requested renderer preview
+      ansible.builtin.assert:
+        that:
+          - not ansible_check_mode
+          - qubix_discovery_report.evidence.binaries.get('plymouth', false)
+
+    - name: Create private unprivileged splash preview directory
+      ansible.builtin.tempfile:
+        state: directory
+        path: /tmp
+        prefix: qubix-plymouth-preview.
+      register: qubix_splash_preview
+
+    - name: Test native parser and private Xwayland renderer with cleanup
+      block:
+        - name: Create isolated candidate theme directory
+          ansible.builtin.file:
+            path: '{{ qubix_splash_preview.path }}/theme'
+            state: directory
+            mode: '0700'
+
+        - name: Copy exact production theme and test-only helper
+          ansible.builtin.copy:
+            src: '{{ item.source }}'
+            dest: '{{ qubix_splash_preview.path }}/{{ item.destination }}'
+            mode: '0600'
+          loop:
+            - {source: ../../roles/qubix_plymouth/files/qubix.plymouth, destination: theme/qubix.plymouth}
+            - {source: ../../roles/qubix_plymouth/files/qubix.script, destination: theme/qubix.script}
+            - {source: ../../assets/branding/logo.png, destination: theme/logo.png}
+            - {source: files/plymouth-smoke.py, destination: smoke.py}
+
+        - name: Supply selection only within the isolated namespace
+          ansible.builtin.copy:
+            dest: '{{ qubix_splash_preview.path }}/plymouthd.conf'
+            content: |
+              [Daemon]
+              Theme=qubix
+              ShowDelay=0
+            mode: '0600'
+
+        - name: Run actual parser and boot shutdown reboot renderers without host devices
+          ansible.builtin.command:
+            argv: [/usr/bin/python3, '{{ qubix_splash_preview.path }}/smoke.py', '{{ qubix_splash_preview.path }}']
+          changed_when: true
+      always:
+        - name: Find native splash evidence before cleanup
+          ansible.builtin.find:
+            paths: '{{ qubix_splash_preview.path }}'
+            patterns: ['*.png', '*.log', result.json]
+          register: qubix_splash_artifacts
+
+        - name: Fetch only the isolated test evidence
+          ansible.builtin.fetch:
+            src: '{{ item.path }}'
+            dest: >-
+              {{ playbook_dir }}/../../.cache/native-plymouth/{{
+              inventory_hostname | regex_replace('[^A-Za-z0-9_.-]', '_') }}/
+            flat: true
+          loop: '{{ qubix_splash_artifacts.files }}'
+          loop_control:
+            label: '{{ item.path | basename }}'
+
+        - name: Remove only this preview directory
+          ansible.builtin.file:
+            path: '{{ qubix_splash_preview.path }}'
+            state: absent

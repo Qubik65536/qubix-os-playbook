@@ -118,7 +118,8 @@
             #!/usr/bin/env bash
             printf '%s\n' usr/share/plymouth/themes/qubix/qubix.plymouth \
               usr/share/plymouth/themes/qubix/qubix.script \
-              usr/share/plymouth/themes/qubix/logo.png usr/lib/plymouth/script.so usr/bin/plymouthd
+              usr/share/plymouth/themes/qubix/logo.png usr/lib/plymouth/script.so usr/bin/plymouthd \
+              usr/lib/plymouth/label-freetype.so usr/share/fonts/Plymouth.ttf
       check_mode: false
     - name: Assert check-mode isolation with cleanup
       block:

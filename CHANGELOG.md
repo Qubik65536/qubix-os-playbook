@@ -4,6 +4,8 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Added branded circular Plymouth animation with boot, reboot and poweroff captions; native isolated parser/rendering/prompt tests pass. Image verification now requires label plugins and fonts; actual boot activation remains separate.
+
 - Preserved literal mkinitcpio hook appends while validating effective Plymouth/encryption order; unsafe mutations and duplicate Plymouth hooks fail in fixtures.
 
 - Added a 32 px information bar inspired by the olive-dusk reference, bounded application titles, CPU/RAM/temperature widgets and optional media; native wide-preview/title checks pass.

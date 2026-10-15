@@ -13,7 +13,7 @@ Updated: 2026-10-15. Stage: **Implemented MVP candidate, ready for operator VM t
 | Shell | Native Bash/Starship and controller fixtures Tested | Temporary-home native startup/TOML/prompt pass; default Fish and personal files preserved |
 | SDDM | Implemented | UI clone, actual INI lines, standalone/ambiguous/unsupported activity fixtures; authentication pending |
 | GRUB and Limine | Implemented | Independent preservation/reapplication/private-mode/absent-hook/stale-restore fixtures; native checker, boot/restore pending |
-| Plymouth/dracut/mkinitcpio | Implemented | Simulated dispatch/rebuild skip/archive failure, preserved literal hook appends, kernel restore and no-write preview; native generation/splash pending |
+| Plymouth/dracut/mkinitcpio | Implemented; isolated native splash Tested | Three circular-animation modes, native parser controls and synthetic prompt pass; hook/font/archive/kernel/check-mode fixtures pass; native generation/boot/restore pending |
 | Backup/restore/state | Fixtures and native desktop absence lifecycle Tested | Original-byte/mode/drift faults in fixtures; earlier 17-resource restoration passes; 24 current private baselines, 23 earlier hashes preserved; newer Noctalia and boot/image recovery pending |
 
 ## Commands and outcomes
@@ -30,6 +30,8 @@ SSH initially timed out because target sshd was inactive and UFW lacked an allow
 Native `tests/integration/niri.yml` passes: 62 tasks, eight temporary setup/cleanup changes, zero failures. Corrected validation uses `niri validate --config`; the installed CLI rejected the old option order. Niri, Foot and Fuzzel accept their production candidates and reject invalid controls. This establishes syntax only, not visual or companion startup behaviour.
 
 ## Limits and next gate
+
+Circular Plymouth branding is Implemented. The native isolated preview passes 47 tasks with seven temporary changes: boot/shutdown/reboot animation, positive/negative parser checks, a synthetic password prompt, unchanged host configuration/daemon and zero leftover processes. Mode captions and branding were inspected. The expanded generator fixture passes 386 tasks with five expected refusals; check-mode isolation passes 40 tasks. Native image generation, encrypted-root input, physical reboot/poweroff and image recovery remain pending. See the [splash guide](../user/plymouth.md) and [physical-target activation proposal](plymouth-test-plan.md).
 
 The 100% scale helper and slim information bar are Implemented; controller lifecycle and isolated native rendering are Tested. It uses measured jq/Niri IPC, changes only scale at startup/new connections, preserves existing-output manual adjustments and exits with the compositor. The expanded desktop fixture passes 68 tasks with seven expected refusals and zero changes. The native preview passes 62 tasks, validates 100% private output scale, shows changing application titles plus CPU/RAM readings, preserves main configuration/compositor and leaves zero processes. Temperature is unavailable and displayed as --. Primary deployment remains pending.
 

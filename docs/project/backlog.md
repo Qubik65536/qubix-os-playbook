@@ -60,7 +60,7 @@ Objective: safe Limine branding; mandatory MVP. Scope: installed-version-support
 
 ## F09 — Plymouth with two generators (Feature)
 
-Status: Implemented; simulated dispatch/archive/preview/kernel guards and preservation of literal snapshot-hook appends Tested; native generation/splash/restore open.
+Status: Implemented; simulated dispatch/archive/font/preview/kernel guards and preservation of literal snapshot-hook appends Tested. Native isolated boot/shutdown/reboot circular rendering and synthetic prompt pass with preservation/cleanup. Native image generation, real boot/poweroff/encryption and restore remain open; see the [activation proposal](plymouth-test-plan.md).
 
 Objective: startup splash independent of loader. Scope: Qubix theme, dracut/mkinitcpio minimal integration and conditional rebuild. Acceptance: resources verified, both combinations boot/show splash, unrelated settings preserved and restore passes. Depends on F02/F06. Tests: two independent generator VM runs, reapplication and recovery. Docs: image selection, compatibility, recovery.
 
