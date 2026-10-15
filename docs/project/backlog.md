@@ -66,7 +66,7 @@ Objective: safe Limine branding; mandatory MVP. Scope: installed-version-support
 
 ## F09 — Plymouth with two generators (Feature)
 
-Current visual correction: restore the original logo colours without filters and add a native scaled
+Current visual correction is deployed from clean e3bf16b: preserve original logo colours and add a native scaled
 desktop-cube background. Scope: artwork/definition, plugin capability preflight and archive inclusion;
 keep mappings/recovery ownership fixed. Acceptance: canonical logo crop matches pixel-for-pixel,
 all-mode/native-prompt preview renders the picture, active images contain exact resources and

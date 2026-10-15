@@ -233,4 +233,34 @@ both prompt renderers. Original-colour logo and background acceptance require a 
 The canonical logo crop comparison passes. Native preview passes 50 tasks, verifies picture rendering
 in boot/reboot/shutdown and Pango/FreeType prompts, preserves host configuration/daemon and leaves zero
 preview processes. Captures are inspected. Generator fixtures pass 409 tasks/five expected refusals;
-the global check-mode control passes 45 tasks without image generation. Target activation is pending.
+the global check-mode control passes 45 tasks without image generation. Target activation results follow.
+
+## Original-colour correction activation
+
+The no-write review passes 1190 tasks with exactly three proposed file changes and no failures.
+Post-preview audit confirms all 83 earlier manifests and protected resources unchanged, with no
+pending markers. Clean e3bf16b deployment passes 1637 tasks/23 changes/zero failures. Both approved
+--nopost presets rebuild; only their bound image references/pins change in Limine, whose appearance
+and all other configuration bytes remain unchanged.
+
+Independent extraction verifies all 39 runtime assets, including the original-colour watermark and
+background.png, and three exact font copies in each of four source/active images. Both pins match.
+All 19 native boot resources, 83 earlier manifests, first-original bytes/metadata, fonts and earlier
+stages remain unchanged. New original-absence records for the picture and two stages bring the private
+manifest count to 86. Only the two source images and limine.conf change among 76 tracked resources.
+
+Installed verification passes 300 tasks/zero changes. Identical reapplication passes 1591 tasks with
+zero changes or failures, skipping font-cache refresh and both image rebuilds. The post-run audit
+matches deployment exactly and pending markers clear normally. The guarded reboot rechecks all four
+images, both pins, all 39 assets and all 86 private manifest hashes before accepting the 15-second
+menu request at 16:38 EDT. Postboot health and renewed console acceptance remain separate observations.
+
+The target returns with boot ID 2305848b-690c-49bc-bee1-a5ba893c38a5, unchanged 7.2.9-2-cachyos
+and command line, and Limine 12.9.3/native CachyOS.linux-cachyos entry. SSH/SDDM and Plymouth
+start/quit services succeed. The prior journal records the reboot-splash start request without a
+persisted completion message; do not infer its visual acceptance from current service defaults.
+Qubix Niri/Noctalia return with bar/wallpaper, no dock and 1920x1080/100% scale. All 86 manifests,
+76 tracked resources, 11 owned boot assets, fonts, original recovery bytes/metadata and active config
+match the preboot audit; only loader/random-seed rotates. Pending markers and the temporary target
+inhibitor are absent. Original-colour logo/background console acceptance remains pending; independent
+poweroff, LTS, GRUB/dracut, real encryption input and recovery gates remain open.

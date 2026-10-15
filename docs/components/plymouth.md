@@ -1,10 +1,10 @@
 # Plymouth and initramfs adapters
 
 Status: **Corrective implementation deployed and normal-kernel startup/reboot appearance confirmed;
-Krypton/midnight refinement and higher-contrast, caption-free correction deployed;
+Krypton/midnight refinement and original-colour/picture correction deployed;
 renewed console acceptance pending**. Native
 two-step rendering, mkinitcpio generation, exact source/active-image contents, installed verification
-and completed zero-change reapplication pass through the f626188 contrast correction.
+and completed zero-change reapplication pass through the e3bf16b original-colour/picture correction.
 The first scripted attempt failed visual acceptance; see [recorded results](../project/plymouth-test-plan.md).
 Dracut, encrypted-root input and recovery retain independent acceptance gates.
 
@@ -32,8 +32,9 @@ remains Preserved. The attributed [asset manifest](../../assets/plymouth/manifes
 input files and adapted definition to their GPL-3.0 source revision; Qubix artwork
 retains Apache-2.0 attribution. The [asset guide](../../assets/plymouth/README.md) explains regeneration.
 
-The original-colour/picture correction is Implemented and native-preview Tested; activation is
-pending. Never recolour the logo: generation checks its crop against the canonical render. The native
+The original-colour/picture correction is deployed from clean e3bf16b. Native preview, image checks
+and zero-change reapplication pass; renewed console acceptance is pending. Never recolour the logo:
+generation checks its crop against the canonical render. The native
 plugin must support background.png and ScaleBackgroundImage before deployment writes. Its scaled
 picture keeps the prompt area subdued; other aspect ratios may stretch it and need separate acceptance.
 

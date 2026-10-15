@@ -2,18 +2,28 @@
 
 Updated: 2026-10-15. Stage: **MVP candidate; acceptance In Progress**.
 The physical CachyOS Niri desktop is deployed and returns after reboot at 100% scale with the slim
-information bar. The native-style Plymouth and active Limine image adapter are deployed from clean f626188.
+information bar. The native-style Plymouth and active Limine image adapter are deployed from clean e3bf16b.
 Exact active-image/font checks, installed verification and zero-change reapplication pass. A normal-kernel
 reboot returns the desktop. Following feedback on 87e824b, the higher-contrast correction removes
 decorative captions, reduces menu text and reuses the desktop cube wallpaper. It is deployed and
 native-preview/image/reapplication/reboot Tested; renewed console acceptance remains open.
 The first Plymouth activation failed visual acceptance and is not counted as a successful boot theme.
 The operator rejects the blue Plymouth logo tint and requests a background. The original-colour logo
-and native scaled desktop-cube background correction is Implemented and native-preview Tested;
-f626188 remains the deployed version. The logo crop matches a canonical render pixel-for-pixel.
+and native scaled desktop-cube background correction is deployed from clean e3bf16b;
+exact image checks and zero-change reapplication pass. The logo crop matches a canonical render pixel-for-pixel.
 All-mode/native Pango/FreeType picture/prompt previews pass 50 tasks with host preservation and
 cleanup. Generator fixtures pass 409 tasks/five expected refusals; global check-mode control passes
-45 tasks without image generation. Activation and renewed console acceptance remain pending.
+45 tasks without image generation. Deployment passes 1637 tasks/23 changes, installed verification
+passes 300 tasks/zero changes and identical reapplication passes 1591 tasks/zero changes. Both image
+rebuilds and font-cache refresh are skipped on reapplication. Renewed console acceptance remains pending.
+
+The guarded 16:38 EDT reboot returns with boot ID 2305848b-690c-49bc-bee1-a5ba893c38a5,
+unchanged 7.2.9-2-cachyos/arguments and native Limine 12.9.3 entry. SSH/SDDM and Plymouth start/quit
+succeed; Qubix Niri/Noctalia return with bar/wallpaper, no dock and 100% scale. All 86 manifests,
+76 tracked resources, 11 owned boot assets and fonts match the preboot audit. Original recovery
+bytes/metadata and active configuration remain unchanged; only native loader/random-seed rotates.
+Pending markers and the temporary inhibitor are absent. The prior journal records reboot-splash
+startup but does not retain a completion message; its appearance still needs console confirmation.
 
 The [midnight/Krypton refinement](../architecture/boot-design.md) is now Implemented for Plymouth in
 source: a 154 KB renamed subset with embedded OFL, gradient background, original vector ring and
@@ -138,7 +148,7 @@ among native boot files. Pending markers and the temporary target inhibitor are 
 
 ## Limits and next gate
 
-- Obtain console acceptance of the deployed contrast/caption/menu-size correction; retain native prompt behavior.
+- Obtain console acceptance of the original-colour Plymouth logo/background and current Limine menu; retain native prompt behavior.
 - Obtain separate poweroff and LTS observations; reboot-screen acceptance does not prove poweroff.
 - Test independent GRUB and dracut boots, LTS boot, login authentication, encrypted-root input where
   relevant, physical shortcuts/locking/portals and current desktop/boot restoration in disposable VMs.

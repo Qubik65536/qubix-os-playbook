@@ -28,7 +28,8 @@ this intentionally replaces the firmware-background presentation within Plymouth
 
 ### Original-colour logo and picture background correction
 
-Status: **Implemented; native preview and generator/check-mode fixtures Tested, activation pending**,
+Status: **Implemented and deployed from clean e3bf16b; native preview, image checks, zero-change
+reapplication and normal-kernel boot health Tested; renewed console acceptance pending**,
 following operator feedback on f626188. Its blue logo tint is rejected.
 Render the canonical logo.svg directly, retaining its original colours and shading. Keep the
 near-white caption-free wordmark and spinner. Add a subtle desktop-cube picture on a blue-charcoal

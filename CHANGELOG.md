@@ -4,7 +4,7 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
-- Restored Plymouth's original logo colours and added a native scaled desktop-cube background with a pixel-preservation guard. Native all-mode/prompt previews and generator/check-mode fixtures pass; activation is pending.
+- Restored Plymouth's original logo colours and added a native scaled desktop-cube background with a pixel-preservation guard. Native all-mode/prompt previews, exact source/active-image checks, zero-change reapplication and normal-kernel boot health pass after clean e3bf16b deployment; renewed console acceptance is pending.
 
 - Increased boot-screen contrast, removed decorative captions, reduced the Limine font to 1x1 and reused the detailed desktop cube wallpaper. Clean f626188 deployment, exact four-image/pin verification, zero-change reapplication and normal-kernel reboot pass; renewed console acceptance is pending.
 - Deployed the Krypton refinement from clean 87e824b: four-image/font verification, zero-change reapplication and normal-kernel reboot pass; the operator requests the contrast/layout correction above.

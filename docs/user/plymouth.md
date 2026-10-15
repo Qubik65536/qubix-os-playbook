@@ -14,11 +14,9 @@ for native prompts; the generator must resolve that exact file. The font's Latin
 [documented](../../assets/fonts/README.md); other early-boot scripts are not validated. Native prompts
 remain available. The playbook preserves
 kernel arguments, encryption settings, boot entries and service units. The refinement's native private
-preview passes, including FreeType prompts. Clean 87e824b boots successfully; the operator requests
-the higher-contrast, caption-free correction described here. That correction is deployed from clean
-f626188 with exact active-image checks and zero-change reapplication; renewed console acceptance remains open.
-The subsequent original-colour/picture correction passes native preview and generator fixtures;
-its activation is pending. Native background scaling is required; other aspect ratios may stretch
+preview passes, including FreeType prompts. The original-colour/picture correction is deployed from
+clean e3bf16b with exact source/active-image checks and zero-change reapplication. Renewed console
+acceptance remains pending. Native background scaling is required; other aspect ratios may stretch
 the picture. See the [current results](../project/plymouth-test-plan.md).
 
 ## Preview without activation
