@@ -44,6 +44,7 @@ environment['XDG_CONFIG_HOME'] = str(root / 'home/.config')
 environment['XDG_CACHE_HOME'] = str(root / 'home/.cache')
 environment['XDG_STATE_HOME'] = str(root / 'home/.local/state')
 environment['XDG_DATA_HOME'] = str(root / 'home/.local/share')
+environment['NOCTALIA_LOG_LEVEL'] = 'debug'
 for directory in ['HOME', 'XDG_CONFIG_HOME', 'XDG_CACHE_HOME', 'XDG_STATE_HOME', 'XDG_DATA_HOME']:
     pathlib.Path(environment[directory]).mkdir(parents=True, exist_ok=True)
 test_state = pathlib.Path(environment['XDG_STATE_HOME']) / 'qubix/noctalia'
@@ -53,6 +54,22 @@ log = (root / 'session.log').open('w')
 process = subprocess.Popen(['/usr/bin/dbus-run-session', '--', '/usr/bin/niri', '--config', str(root / 'config.kdl'), '--', '/usr/bin/python3', str(root / 'inner.py'), str(root)], env=environment, stdout=log, stderr=log, start_new_session=True)
 result = {'status': 'failed', 'error': 'No result from nested compositor'}
 try:
+    # Resize only the test-owned nested window, leaving the operator's windows intact.
+    parent_env = dict(environment, NIRI_SOCKET=parent['NIRI_SOCKET'])
+    for attempt in range(50):
+        windows = json.loads(subprocess.check_output(['/usr/bin/niri', 'msg', '--json', 'windows'], env=parent_env, text=True))
+        owned = [w for w in windows if w.get('pid') and os.getpgid(w['pid']) == process.pid]
+        if owned:
+            assert len(owned) == 1, owned
+            test_id = str(owned[0]['id'])
+            outputs = json.loads(subprocess.check_output(['/usr/bin/niri', 'msg', '--json', 'outputs'], env=parent_env, text=True))
+            width = min(1280, min(o['logical']['width'] for o in outputs.values() if o.get('logical')) - 48)
+            for args in [('move-window-to-floating', '--id', test_id), ('set-window-width', '--id', test_id, str(width)), ('set-window-height', '--id', test_id, '720')]:
+                subprocess.run(['/usr/bin/niri', 'msg', 'action', *args], env=parent_env, capture_output=True, timeout=5, check=True)
+            break
+        time.sleep(0.1)
+    else:
+        raise AssertionError('No test-owned nested window appeared')
     for attempt in range(350):
         if (root / 'result.json').exists():
             result = json.loads((root / 'result.json').read_text())

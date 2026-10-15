@@ -36,45 +36,88 @@ global = true
 
 [bar.default]
 position = "top"
-thickness = 40
-margin_edge = 10
-margin_ends = 16
-radius = 12
-radius_top_left = 12
-radius_top_right = 12
-radius_bottom_left = 12
-radius_bottom_right = 12
+thickness = 32
+margin_edge = 6
+margin_ends = 10
+radius = 6
+radius_top_left = 6
+radius_top_right = 6
+radius_bottom_left = 6
+radius_bottom_right = 6
 concave_edge_corners = false
 background_opacity = 0.0
 border_width = 0.0
 shadow = false
-widget_spacing = 10
+widget_spacing = 6
+font_scale = 0.9
 capsule = true
-capsule_fill = "surface"
+capsule_fill = "#11191f"
 capsule_foreground = "on_surface"
-capsule_thickness = 0.9
-capsule_padding = 12
-capsule_radius = 12.0
+capsule_thickness = 0.875
+capsule_padding = 8
+capsule_radius = 6.0
 capsule_opacity = 1.0
-capsule_border = "#56728bcc"
+capsule_border = "#56728b66"
 capsule_border_width = 1.0
-start = ["launcher", "workspaces", "shortcuts"]
-center = ["clock"]
-end = ["tray", "notifications", "network", "volume", "battery", "control-center", "session"]
+start = ["launcher", "workspaces", "shortcuts", "active-window"]
+center = ["media"]
+end = ["cpu", "ram", "temp", "tray", "network", "volume", "battery", "notifications", "clock", "control-center", "session"]
 
 [widget.launcher]
 custom_image = "/usr/share/qubix/branding/logo.png"
 custom_image_colorize = false
-scale = 2.0
-capsule_padding = 4
+scale = 1.5
+capsule_padding = 3
 capsule_fill = "primary"
 
 [widget.clock]
+format = "{:%a %d · %H:%M}"
 font_weight = 600
-capsule_fill = "surface_variant"
 
 [widget.workspaces]
-capsule_fill = "surface_variant"
+capsule_fill = "#17232d"
+
+[widget.active-window]
+type = "active_window"
+display = "icon_and_text"
+icon_size = 14
+min_length = 40
+max_length = 190
+title_scroll = "on_hover"
+show_empty_label = false
+
+[widget.media]
+hide_when_no_media = true
+hide_album_art = true
+hide_artist = true
+min_length = 60
+max_length = 150
+title_scroll = "on_hover"
+
+[widget.cpu]
+type = "sysmon"
+stat = "cpu_usage"
+custom_label = "CPU"
+show_glyph = false
+visualization = "none"
+highlight_color = "primary"
+
+[widget.ram]
+type = "sysmon"
+stat = "ram_used"
+custom_label = "RAM"
+show_glyph = false
+visualization = "none"
+highlight_color = "primary"
+
+[widget.temp]
+type = "sysmon"
+stat = "cpu_temp"
+visualization = "none"
+highlight_color = "primary"
+
+[widget.network]
+show_label = false
 
 [widget.shortcuts]
 type = "custom_button"

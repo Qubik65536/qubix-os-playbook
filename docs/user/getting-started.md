@@ -105,6 +105,8 @@ Existing personal dotfiles and `/etc/niri/config.kdl` remain intact. The additio
 
 ## 4. Try the Qubix session
 
+The 32 px dark-module bar shows a bounded active application title, CPU load, used RAM, CPU temperature when available, optional active media and the usual session controls. Unsupported sensor readings show --. On narrow outputs Noctalia may omit earlier modules that do not fit; simplify the widget list in its settings if needed.
+
 Qubix supplies 100% scaling at session start and whenever a screen is newly connected or reconnected. Niri's preferred resolution and refresh rate remain unchanged. You can adjust an already-connected screen through Noctalia for the current session; the helper does not continuously reset it. This default belongs to the Qubix session and does not rewrite personal/native output files. The helper's --once mode is used only for explicit activation in an already-running session.
 
 After deployment, log out when convenient and select **Qubix Niri** in a login manager that offers Wayland session selection. Keep native Niri available as a fallback.

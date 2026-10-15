@@ -76,16 +76,24 @@ try:
     command(['/usr/bin/niri', 'msg', 'action', 'screenshot-screen', '--path', str(root / 'wallpaper.png'), '--show-pointer', 'false'])
     for number in range(2):
         log = (root / ('foot-' + str(number) + '.log')).open('w')
-        children.append(subprocess.Popen(['/usr/bin/foot', '--config=' + str(root / 'foot.ini'), '--app-id=qubix-native-' + str(number), '--title=Qubix Noctalia desktop test', '/bin/bash', '--noprofile', '--norc', '-c', 'printf "Qubix OS Playbook\\nNoctalia and rounded window test\\n"; sleep 60'], stdout=log, stderr=log))
+        children.append(subprocess.Popen(['/usr/bin/foot', '--config=' + str(root / 'foot.ini'), '--app-id=qubix-native-' + str(number), '--title=Qubix desktop test ' + str(number), '/bin/bash', '--noprofile', '--norc', '-c', 'printf "Qubix OS Playbook\\nNoctalia and rounded window test\\n"; sleep 60'], stdout=log, stderr=log))
     def foot_windows():
         windows = query('windows')
         return windows if len([w for w in windows if str(w.get('app_id', '')).startswith('qubix-native-')]) == 2 else None
     windows = wait_for(foot_windows, 'Foot windows')
     before_focus = next(w['id'] for w in windows if w.get('is_focused'))
+    first_title = focused_window()['title']
+    time.sleep(0.4)
+    shell('notification-clear-active')
+    command(['/usr/bin/niri', 'msg', 'action', 'screenshot-screen', '--path', str(root / 'title-first.png'), '--show-pointer', 'false'])
     command(['/usr/bin/niri', 'msg', 'action', 'focus-column-left'])
     time.sleep(0.4)
     after_focus = next(w['id'] for w in query('windows') if w.get('is_focused'))
     assert before_focus != after_focus, 'IPC navigation did not change focus'
+    assert first_title != focused_window()['title'], 'Focused test title did not change'
+    result['active_titles'] = [first_title, focused_window()['title']]
+    shell('notification-clear-active')
+    command(['/usr/bin/niri', 'msg', 'action', 'screenshot-screen', '--path', str(root / 'title-second.png'), '--show-pointer', 'false'])
     result['windows'] = windows
     result['focus_changed'] = True
     width_before = focused_window()['layout']['tile_size'][0]
