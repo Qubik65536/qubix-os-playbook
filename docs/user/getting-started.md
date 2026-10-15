@@ -133,7 +133,7 @@ Run this from a free TTY, not inside an existing graphical session. In a tempora
 | Super+F1 | Compact shortcut overlay |
 | Super+Shift+E | Exit session |
 
-The top bar groups each component in its own rounded pill. Click its keyboard button or press Super+Shift+/ for the shortcut cheatsheet. Search by action or key, scroll through the categories, and close with Escape, Close or an outside click. The list follows Qubix's managed bindings; personal Niri overrides are not included.
+The top bar groups each component in its own rounded pill. Click its keyboard button or press Super+Shift+/ for the shortcut cheatsheet. Search by action or key, scroll through the categories, and close with Escape, Close or an outside click. The list follows Qubix's managed bindings; personal Niri overrides are not included. Follow the [README regeneration guide](../../README.md#regenerate-the-shortcut-cheatsheet) after changing the repository's bindings.
 
 Check wallpaper, bar, notifications, launcher, terminal and keyboard navigation visually. A successful file install is not graphical verification. Review session logs if companions fail. Native user services may start a second bar or notification service; collect their status before changing anything. When upgrading the classic Qubix session, log out and select it again: reloading KDL alone does not replace existing Waybar/Mako/Swaybg processes.
 
