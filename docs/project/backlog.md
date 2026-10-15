@@ -60,7 +60,7 @@ The requested Krypton refinement is Implemented in source: complete 8x20 CP437 f
 wallpaper and explicit heading/help/selection colours. The reviewed 15-key graphical ownership
 upgrade retains first-original bytes and unrelated metadata; normal lifecycle passes 726 tasks with
 eight expected refusals, and a global check-mode control passes 21 tasks with no metadata writes.
-Clean 87e824b deployment, zero-change reapplication and normal-kernel reboot pass. The operator requests higher contrast, smaller menu text and the detailed desktop cube wallpaper; deploy/observe that correction. Independent native recovery remains open.
+Clean 87e824b deployment, zero-change reapplication and normal-kernel reboot pass. The operator requests higher contrast, smaller menu text and the detailed desktop cube wallpaper; the correction is now deployed from clean f626188 with exact image/pin checks and zero-change reapplication. Obtain renewed console feedback; independent native recovery remains open.
 
 Objective: safe Limine branding; mandatory MVP. Scope: installed-version-supported settings, active-path validation and minimal edits. Acceptance: unchanged entries/arguments, VM boot and recovery. Depends on F02/F06; independent of F07. Tests: Limine-specific syntax where supported, VM and preservation. Docs: supported directives/versions and recovery.
 
@@ -70,7 +70,7 @@ Status: Implemented; simulated dispatch/archive/font/preview/kernel guards and p
 
 Objective: startup splash independent of loader. Scope: Qubix theme, dracut/mkinitcpio minimal integration and conditional rebuild. Acceptance: resources verified, both combinations boot/show splash, unrelated settings preserved and restore passes. Depends on F02/F06. Tests: two independent generator VM runs, reapplication and recovery. Docs: image selection, compatibility, recovery.
 
-Native-style correction: source replaces the rejected scripted layout with two-step, a small spinner and bottom watermark. Active Limine image synchronization and normal-kernel startup/reboot observations pass for e7e652a. The requested midnight palette, vector ring and Krypton-derived wordmark/prompt subset are now Implemented in source; native preview selects the exact font and passes animation/prompt/preservation/cleanup checks. The two-generator fixture passes 409 tasks with five expected refusals. Clean 87e824b deployment/reapplication/reboot pass; the operator requests higher contrast and removal of captions. Deploy/observe that correction; real encryption, LTS and recovery remain open.
+Native-style correction: source replaces the rejected scripted layout with two-step, a small spinner and bottom watermark. Active Limine image synchronization and normal-kernel startup/reboot observations pass for e7e652a. The requested midnight palette, vector ring and Krypton-derived wordmark/prompt subset are now Implemented in source; native preview selects the exact font and passes animation/prompt/preservation/cleanup checks. The two-generator fixture passes 409 tasks with five expected refusals. Clean 87e824b deployment/reapplication/reboot pass; the operator requests higher contrast and removal of captions. The correction is deployed from clean f626188 with exact image/pin checks and zero-change reapplication. Obtain renewed console feedback; real encryption, LTS and recovery remain open.
 
 Active-image repair: explicit Limine 12 cache/kernel bindings, content-addressed staging, atomic
 module/pin replacement, exact active-archive checks and config-first recovery are Implemented.

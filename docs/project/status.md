@@ -2,11 +2,11 @@
 
 Updated: 2026-10-15. Stage: **MVP candidate; acceptance In Progress**.
 The physical CachyOS Niri desktop is deployed and returns after reboot at 100% scale with the slim
-information bar. The native-style Plymouth and active Limine image adapter are deployed from clean 87e824b.
+information bar. The native-style Plymouth and active Limine image adapter are deployed from clean f626188.
 Exact active-image/font checks, installed verification and zero-change reapplication pass. A normal-kernel
-reboot returns the desktop; the operator reports that the refined screens work but need higher contrast,
-smaller menu text, no decorative captions and a cube background matching the desktop. That correction
-is Implemented and native-preview Tested; activation and subjective visual acceptance remain open.
+reboot returns the desktop. Following feedback on 87e824b, the higher-contrast correction removes
+decorative captions, reduces menu text and reuses the desktop cube wallpaper. It is deployed and
+native-preview/image/reapplication/reboot Tested; renewed console acceptance remains open.
 The first Plymouth activation failed visual acceptance and is not counted as a successful boot theme.
 
 The [midnight/Krypton refinement](../architecture/boot-design.md) is now Implemented for Plymouth in
@@ -33,8 +33,8 @@ pass 752/232 tasks. These fixture results remain separate from native reboot and
 | Shell/terminal | Native temporary-home Bash/Starship checks pass; personal files and default Fish preserved |
 | Login | SDDM clone/activity/ambiguity fixtures Tested; physical target branding disabled; authentication/restore pending |
 | GRUB | Preservation/dispatch/reapplication/recovery fixtures Tested; independent native boot/restore pending |
-| Limine | Graphical fixture passes 301 tasks with four expected refusals; protected entry/argument/snapshot bytes verified; operator confirms the deployed menu appearance after reboot |
-| Plymouth | Native two-step preview passes 48 tasks and all three modes; mkinitcpio/source/active-image checks pass; operator confirms normal-kernel startup and reboot appearance; poweroff/LTS/recovery remain open |
+| Limine | Refined graphical fixture passes 726 tasks/eight expected refusals; native normal-kernel reboot and protected entry/argument/snapshot bytes verified; earlier appearance confirmed, current contrast acceptance pending |
+| Plymouth | Refined native preview passes 50 tasks, all modes and Pango/FreeType prompts; exact four-image/font/pin checks and normal-kernel reboot pass; earlier appearance confirmed, current contrast acceptance and poweroff/LTS/recovery remain open |
 | Image/cache adapters | Two-image nested-entry lifecycle passes 767 tasks with two expected stale-pin refusals; binding/enrollment/FAT fixtures pass 368 tasks with five refusals and check mode 220 tasks with four refusals |
 | Recovery/state | Generic and loader regression suite passes 966 tasks with seven expected refusals; native classic desktop recovery Tested; newer desktop/boot recovery pending |
 
@@ -114,11 +114,25 @@ are now explicit follow-up requirements rather than accepted design results.
 The contrast correction passes the 726-task Limine lifecycle/refusal fixture and the 50-task native
 Plymouth preview: three animation modes, synthetic prompts under Pango and forced FreeType, exact
 font selection, host preservation and zero leftover preview processes. The captures were inspected;
-deployment and console acceptance of the correction remain pending.
+clean f626188 deployment passes 1617 tasks/84 changes, installed verification passes 298 tasks/zero
+changes, and identical reapplication passes 1572 tasks/zero changes. Both generators and font-cache
+refresh are skipped on reapplication. Four-image extraction verifies 38 runtime assets and three exact
+font copies per image; both pins match. All 81 earlier manifests and all 19 native boot files remain
+unchanged; only two original-absence records for the new stages are added. The preboot audit confirms
+83 private manifests, unchanged protected Limine bytes, preserved original recovery bytes and no
+pending markers. The first activation attempt stopped at SSH authentication before writes; the
+refreshed-connection retry is the completed result above. Renewed console acceptance remains open.
+
+The 15:32 EDT guarded reboot returns with boot ID 8301a46f-e336-47cb-af51-9dbeb679c839,
+unchanged normal kernel/arguments and native Limine entry. SSH/SDDM, Plymouth start/quit and the prior
+reboot-screen service succeed. Qubix Niri/Noctalia return with bar/wallpaper, no dock and 100% scale.
+All 83 manifests, 76 tracked resources, nine owned boot assets and fonts match the preboot audit;
+original recovery bytes/metadata and active config are unchanged. Only loader/random-seed rotates
+among native boot files. Pending markers and the temporary target inhibitor are absent.
 
 ## Limits and next gate
 
-- Complete the requested contrast/caption/menu-size correction and obtain console feedback; retain native prompt behavior.
+- Obtain console acceptance of the deployed contrast/caption/menu-size correction; retain native prompt behavior.
 - Obtain separate poweroff and LTS observations; reboot-screen acceptance does not prove poweroff.
 - Test independent GRUB and dracut boots, LTS boot, login authentication, encrypted-root input where
   relevant, physical shortcuts/locking/portals and current desktop/boot restoration in disposable VMs.

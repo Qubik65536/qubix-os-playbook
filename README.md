@@ -7,7 +7,9 @@ SDDM branding, both GRUB and Limine, and Plymouth with dracut/mkinitcpio are imp
 The CachyOS desktop starts at 100% scale; the corrected Limine/native-style Plymouth deployment
 and exact boot-image checks pass on the authorized target. Identical-source reapplication passes
 with zero changes, and a normal-kernel reboot returns the desktop. The operator confirms the
-Limine, startup and reboot branding. Independent loader/generator, authentication and current boot
+Limine, startup and reboot branding. The higher-contrast, caption-free update is deployed with smaller
+Krypton menu text and the desktop cube wallpaper; its renewed console acceptance is pending.
+Independent loader/generator, authentication and current boot
 recovery tests remain acceptance gates. See [actual evidence](docs/project/status.md).
 
 Get started:

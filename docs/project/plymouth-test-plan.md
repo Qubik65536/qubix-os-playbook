@@ -181,3 +181,34 @@ decorative captions and reduces menu scaling to 1x1. The menu wallpaper reuses t
 cube. Font files, recovery ownership and activation/image mappings are unchanged. Repeat native
 preview, no-write review, exact-image verification and reapplication before the authorized reboot;
 record visual acceptance separately. Independent poweroff/LTS/GRUB/dracut/recovery gates stay open.
+## Contrast correction activation
+
+Clean f626188 passes static validation, the 726-task Limine fixture/eight expected refusals, and the
+50-task isolated native Plymouth preview. The latter verifies all three animation modes, Pango and
+forced-FreeType prompts, exact font selection, host preservation and cleanup. Captures are inspected.
+The no-write target review passes 1175 tasks/34 proposed file changes; a subsequent audit confirms
+unchanged protected resources, all 81 manifests and no pending markers.
+
+The initial activation attempt stops at expired SSH authentication after 14 successful tasks/zero
+changes, before any deployment write. Refreshing the pinned connection allows the complete retry:
+1617 tasks/84 changes/zero failures. Both confirmed --nopost presets rebuild. Independent extraction
+of all four source/active images verifies the 38 revised runtime assets, three exact font copies per
+image and both BLAKE2b pins. All 19 native boot files, 81 earlier manifests, original recovery bytes,
+root fonts, kernel/entry/argument/snapshot content and earlier Qubix stages remain unchanged. Only the
+two intended source images and limine.conf change among 76 tracked native/personal resources.
+Two new stage-absence records bring the private manifest count to 83.
+
+Installed verification passes 298 tasks/zero changes; identical-source reapplication passes 1572
+tasks/zero changes, skipping font-cache refresh and both generator invocations. The post-run audit
+matches deployment exactly, including all 83 manifests; pending markers clear normally. The guarded
+reboot checks exact state/images/pins/assets/native files/baselines and accepts the 15-second menu
+request at 15:32 EDT. Postboot health and renewed console acceptance are recorded separately below.
+
+The target returns with boot ID 8301a46f-e336-47cb-af51-9dbeb679c839, unchanged 7.2.9-2-cachyos
+and command line, Limine 12.9.3/native CachyOS.linux-cachyos entry, and successful SSH/SDDM,
+Plymouth start/quit and prior reboot-screen services. Qubix Niri/Noctalia return with bar/wallpaper,
+no dock and 1920x1080/100% scale. All 83 private manifests, 76 tracked resources, nine owned boot
+assets, root fonts, original recovery bytes/metadata and active configuration match the preboot audit.
+Only loader/random-seed rotates among native boot resources. Pending markers and the transient target
+inhibitor are absent. Renewed console acceptance of contrast/font size remains pending; physical
+poweroff, LTS, independent GRUB/dracut, real encryption input and recovery gates remain open.

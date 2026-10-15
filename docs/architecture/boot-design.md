@@ -1,7 +1,8 @@
 # Boot visual design
 
 Status: **Implemented and deployed from clean 87e824b; normal-kernel reboot works;
-contrast/layout correction Implemented and native-preview Tested, activation pending**.
+contrast/layout correction deployed from clean f626188 and native-preview/image/reapplication/reboot Tested;
+renewed console acceptance pending**.
 This refines the operator-confirmed Limine/native two-step design from e7e652a.
 Menu, startup and reboot branding already work on the authorized target; the operator now
 requests a more distinctive palette and GitHub Monaspace Krypton. This document defines that change

@@ -13,7 +13,8 @@ for native prompts; the generator must resolve that exact file. The font's Latin
 remain available. The playbook preserves
 kernel arguments, encryption settings, boot entries and service units. The refinement's native private
 preview passes, including FreeType prompts. Clean 87e824b boots successfully; the operator requests
-the higher-contrast, caption-free correction described here. Its physical acceptance remains open.
+the higher-contrast, caption-free correction described here. That correction is deployed from clean
+f626188 with exact active-image checks and zero-change reapplication; renewed console acceptance remains open.
 
 ## Preview without activation
 
