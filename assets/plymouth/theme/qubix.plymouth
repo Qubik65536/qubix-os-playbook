@@ -18,12 +18,12 @@ WatermarkHorizontalAlignment=.5
 WatermarkVerticalAlignment=.93
 Transition=none
 TransitionDuration=0.0
-BackgroundStartColor=0x0b121c
-BackgroundEndColor=0x15283b
+BackgroundStartColor=0x070c12
+BackgroundEndColor=0x101b26
 ProgressBarBackgroundColor=0x293f54
-ProgressBarForegroundColor=0x91b6d4
-ConsoleLogTextColor=0xcddeeb
-ConsoleLogBackgroundColor=0x0b121c
+ProgressBarForegroundColor=0xedf6ff
+ConsoleLogTextColor=0xf4f8fc
+ConsoleLogBackgroundColor=0x070c12
 DialogClearsFirmwareBackground=true
 MessageBelowAnimation=true
 

@@ -160,3 +160,24 @@ other fields, including module aliases. Fonts/licenses gain their own original-a
 Rebuild only the same two matching mkinitcpio presets with --nopost, stage verified new images while
 retaining earlier stages, verify exact archive/font/pin contents and zero-change reapplication, then
 perform the already authorized guarded reboot and record the new console observations separately.
+
+## Krypton activation and contrast follow-up
+
+Clean 87e824b activation passes 1645 tasks/102 changes/zero failures. Installed verification passes
+298 tasks/zero changes. All four generated/active images contain the exact 38 runtime assets and
+three copies of the final font; both BLAKE2b pins match. Identical reapplication passes 1572 tasks
+with zero changes, skipping both generators and font-cache refresh. The ownership extension changes
+only the reviewed Limine key list; all earlier original recovery bytes remain intact.
+
+The guarded 14:29 EDT reboot returns with boot ID d160a3aa-3c19-4935-b59c-fe45c539c4c4,
+unchanged normal kernel/arguments, Limine 12.9.3/native entry, successful Plymouth start/quit and
+previous reboot-screen services. Qubix returns at 100% scale with bar/wallpaper and no dock. All
+81 private manifests, 76 tracked resources, seven owned boot assets and root fonts match the
+preboot audit. Only the native loader/random-seed rotates; pending markers and temporary inhibitor
+are absent. The operator reports working screens but rejects their contrast/layout.
+
+The requested correction brightens foregrounds/cube/ring over darker blue surfaces, removes both
+decorative captions and reduces menu scaling to 1x1. The menu wallpaper reuses the canonical desktop
+cube. Font files, recovery ownership and activation/image mappings are unchanged. Repeat native
+preview, no-write review, exact-image verification and reapplication before the authorized reboot;
+record visual acceptance separately. Independent poweroff/LTS/GRUB/dracut/recovery gates stay open.

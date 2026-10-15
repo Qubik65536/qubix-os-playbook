@@ -1,7 +1,7 @@
 # Boot visual design
 
-Status: **Implemented; Limine lifecycle/refusal/check-mode fixtures and native Plymouth preview Tested;
-physical refinement activation pending**.
+Status: **Implemented and deployed from clean 87e824b; normal-kernel reboot works;
+contrast/layout correction Implemented and native-preview Tested, activation pending**.
 This refines the operator-confirmed Limine/native two-step design from e7e652a.
 Menu, startup and reboot branding already work on the authorized target; the operator now
 requests a more distinctive palette and GitHub Monaspace Krypton. This document defines that change
@@ -10,13 +10,18 @@ Preserved under the existing [boot contract](boot.md).
 
 ## Visual direction
 
-Use a shared midnight-blue background, muted steel-blue #56728b accents, ice-blue foreground and
-subtle cyan highlights. Keep strong foreground/background contrast and a quiet composition.
-The menu remains readable over restrained geometric Qubix artwork. Its selected entry should stand
-out from secondary help text without hiding native entry names or recovery options. Plymouth keeps
-the native two-step renderer, small circular animation and standard password/keyboard controls;
+Use a shared near-black blue background, steel-blue #56728b accents and near-white foreground.
+The first midnight revision boots successfully, but the operator finds both screens low contrast,
+the menu text too large and decorative captions unnecessary. Correct those issues by reusing the
+desktop's detailed cube wallpaper, darkening the menu surface and brightening text/help. Keep only
+the native Qubix OS heading; omit wallpaper slogans and Plymouth's PLAYBOOK caption/underline.
+Render the existing 8x20 menu font at 1x1 instead of 2x2. Limine selects entries using reverse video,
+so its normal foreground/background pair must remain strongly contrasting; the bright background
+setting alone does not define the selected row. See the [native renderer](https://github.com/Limine-Bootloader/Limine/blob/v12.x/common/menu.c).
+Plymouth keeps the native two-step renderer, small circular animation and standard password/keyboard controls;
 replace its generic white/black treatment with the same dark blue palette, tinted spinner and a
-compact Krypton wordmark. Use the theme's gradient background consistently for boot/reboot/poweroff;
+compact, near-white Krypton wordmark with a brighter shaded cube. Use a darker gradient and brighter
+ring consistently for boot/reboot/poweroff;
 this intentionally replaces the firmware-background presentation within Plymouth, not firmware data.
 
 ## Typography and assets
@@ -57,6 +62,8 @@ and locally edited new directives must still fail safely. Other ownership expans
 
 1. Validate provenance, font names/coverage, bitmap dimensions and deterministic generated checksums.
 2. Inspect wordmark, spinner and menu-font contact sheet at their intended sizes.
+   For the contrast correction, inspect the desktop-derived wallpaper, caption-free wordmark and
+   native animation/prompt previews; verify reduced menu scale and preserved configuration in fixtures.
 3. Exercise fresh installation, earlier graphical-baseline upgrade, zero-change reapplication, exact
    restoration and refusal of stale/local edits in disposable filesystem fixtures.
 4. Run the real native Plymouth preview in all three modes, including a password-prompt control,

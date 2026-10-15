@@ -82,7 +82,7 @@
               - qubix_bootloader_resources | length == 4
               - qubix_bootloader_resources[0].path == '/boot/qubix/wallpaper.png'
               - "'wallpaper: boot():/qubix/wallpaper.png' in qubix_bootloader_resources[-1].content"
-              - "'term_font_scale: 2x2' in qubix_bootloader_resources[-1].content"
+              - "'term_font_scale: 1x1' in qubix_bootloader_resources[-1].content"
               - "'term_font_size: 8x20' in qubix_bootloader_resources[-1].content"
               - "'term_font: boot():/qubix/QubixBootMono-8x20.bin' in qubix_bootloader_resources[-1].content"
               - >-

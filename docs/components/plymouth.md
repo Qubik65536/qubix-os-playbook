@@ -1,9 +1,9 @@
 # Plymouth and initramfs adapters
 
 Status: **Corrective implementation deployed and normal-kernel startup/reboot appearance confirmed;
-Krypton/midnight refinement Implemented and native-preview Tested, activation pending**. Native
+Krypton/midnight refinement deployed; higher-contrast, caption-free correction In Progress**. Native
 two-step rendering, mkinitcpio generation, exact source/active-image contents, installed verification
-and completed zero-change reapplication pass for e7e652a.
+and completed zero-change reapplication pass for e7e652a and the 87e824b Krypton refinement.
 The first scripted attempt failed visual acceptance; see [recorded results](../project/plymouth-test-plan.md).
 Dracut, encrypted-root input and recovery retain independent acceptance gates.
 

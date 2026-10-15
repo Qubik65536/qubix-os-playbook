@@ -2,11 +2,11 @@
 
 Updated: 2026-10-15. Stage: **MVP candidate; acceptance In Progress**.
 The physical CachyOS Niri desktop is deployed and returns after reboot at 100% scale with the slim
-information bar. The corrected native-style Plymouth and active Limine image adapter are fixture
-Tested and deployed from clean e7e652a. Exact active-image checks, installed verification and completed
-zero-change reapplication pass. The normal-kernel reboot returns the desktop; the operator confirms
-Limine, startup and reboot branding. The requested typography/palette refinement is Implemented in source;
-its activation remains pending.
+information bar. The native-style Plymouth and active Limine image adapter are deployed from clean 87e824b.
+Exact active-image/font checks, installed verification and zero-change reapplication pass. A normal-kernel
+reboot returns the desktop; the operator reports that the refined screens work but need higher contrast,
+smaller menu text, no decorative captions and a cube background matching the desktop. That correction
+is Implemented and native-preview Tested; activation and subjective visual acceptance remain open.
 The first Plymouth activation failed visual acceptance and is not counted as a successful boot theme.
 
 The [midnight/Krypton refinement](../architecture/boot-design.md) is now Implemented for Plymouth in
@@ -14,14 +14,14 @@ source: a 154 KB renamed subset with embedded OFL, gradient background, original
 outlined wordmark. Native Pango all-mode animation/prompt rendering and a separate forced-FreeType
 boot/prompt control pass with exact final font resolution, preservation and cleanup (50 tasks);
 the two-generator fixture passes 409 tasks with five expected refusals. Re-exporting all 38 PNGs
-with Inkscape 1.4.3 gives identical checksums. This refinement is not yet activated on the target.
+with Inkscape 1.4.3 gives identical checksums. The refinement is activated; see the deployment evidence below.
 Limine's matching CP437 font, midnight cube wallpaper and separate heading/help/selection palette are
 also Implemented. The exact 15-key graphical-baseline upgrade, preservation, reapplication, restoration
 and eight refusal cases pass 726 tasks; the independent global check-mode control passes 21 tasks
 without metadata writes. Native no-write preview passes 1197 tasks/40 proposed changes, followed by
 an audit of unchanged protected files, 75 baselines and no pending markers. Image/cache lifecycle
 regressions pass 771 tasks; bindings pass 368 normal/220 check-mode tasks, and loader/recovery checks
-pass 752/232 tasks. These remain fixture results, separate from the already confirmed e7e652a boot.
+pass 752/232 tasks. These fixture results remain separate from native reboot and console evidence.
 
 | Capability | Status and actual evidence |
 |---|---|
@@ -92,9 +92,33 @@ only loader/random-seed changes across boot. Pending state remains absent. The o
 for Limine, startup and reboot visuals, then requests more distinctive colours and Monaspace Krypton.
 Automatic deployment state remains files-verified; this explicit console evidence is recorded here.
 
+## Krypton deployment and reboot
+
+Clean 87e824b deployment passes 1645 tasks/102 changes/zero failures. Installed verification passes
+298 tasks with zero changes; identical reapplication passes 1572 tasks with zero changes and skips
+font-cache refresh and both image rebuilds. Exact extraction of all four source/active images verifies
+38 runtime assets and all three packaged copies of the final subset; both BLAKE2b pins match.
+The 15-to-21-key recovery metadata upgrade preserves original bytes and unrelated fields. All 74
+other earlier manifests and 32 original baseline hashes remain intact; there are 81 private manifests.
+Protected Limine content outside the appearance block and two owned module references is unchanged.
+
+The guarded 14:29 EDT reboot returns with boot ID d160a3aa-3c19-4935-b59c-fe45c539c4c4,
+unchanged 7.2.9-2-cachyos and command line, Limine 12.9.3/native CachyOS entry, successful SSH/SDDM
+and Plymouth start/quit services, and a successful prior reboot-screen service. Qubix Niri/Noctalia
+return at 1920x1080/100% with bar/wallpaper layers and no dock. All 81 manifests, 76 tracked resources,
+seven owned boot assets, root fonts and original recovery bytes match the preboot audit; only the
+native loader/random-seed rotates. Pending markers and the temporary inhibitor are absent.
+The operator reports “Works, needs visual adjustment”; contrast, captions, menu size and wallpaper
+are now explicit follow-up requirements rather than accepted design results.
+
+The contrast correction passes the 726-task Limine lifecycle/refusal fixture and the 50-task native
+Plymouth preview: three animation modes, synthetic prompts under Pango and forced FreeType, exact
+font selection, host preservation and zero leftover preview processes. The captures were inspected;
+deployment and console acceptance of the correction remain pending.
+
 ## Limits and next gate
 
-- Design and test the requested Monaspace Krypton/palette refinement; retain native prompt behavior.
+- Complete the requested contrast/caption/menu-size correction and obtain console feedback; retain native prompt behavior.
 - Obtain separate poweroff and LTS observations; reboot-screen acceptance does not prove poweroff.
 - Test independent GRUB and dracut boots, LTS boot, login authentication, encrypted-root input where
   relevant, physical shortcuts/locking/portals and current desktop/boot restoration in disposable VMs.

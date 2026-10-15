@@ -4,9 +4,12 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Increased boot-screen contrast, removed decorative captions, reduced the Limine font to 1x1 and reused the detailed desktop cube wallpaper. Native deployment/visual acceptance of this correction is pending.
+- Deployed the Krypton refinement from clean 87e824b: four-image/font verification, zero-change reapplication and normal-kernel reboot pass; the operator requests the contrast/layout correction above.
+
 - Added Krypton-derived CP437 text, midnight cube artwork and distinct heading/help/selection colours to Limine 12. Guarded earlier graphical-baseline enrollment preserves original recovery bytes/fields; normal and no-write upgrade fixtures pass.
 
-- Refined Plymouth with a midnight-blue gradient, original ice-blue vector ring and outlined Krypton wordmark. Native all-mode/prompt preview selects the exact renamed subset and preserves the host; activation of this refinement is pending.
+- Refined Plymouth with a midnight-blue gradient, original ice-blue vector ring and outlined Krypton wordmark. Native all-mode/prompt preview selects the exact renamed subset and preserves the host; the initial refinement is deployed; the contrast/layout correction awaits activation.
 
 - Added reproducible, OFL-attributed Krypton-derived boot font assets: a renamed 154 KB Latin subset and complete 5 KB CP437 bitmap.
 

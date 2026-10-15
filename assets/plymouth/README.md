@@ -1,7 +1,8 @@
 # Native spinner assets
 
 The theme uses the native two-step renderer and input controls with a midnight-blue gradient,
-an original 32 px ice-blue vector spinner and a compact, outlined Krypton-derived Qubix wordmark.
+an original 32 px near-white vector spinner and a compact, outlined Krypton-derived Qubix wordmark.
+The darker gradient and brighter shaded cube improve contrast; decorative captions are omitted.
 Boot, reboot and shutdown share this composition. Firmware-background rendering is disabled within
 the theme; firmware data, graphics hardware settings and kernel arguments are preserved.
 

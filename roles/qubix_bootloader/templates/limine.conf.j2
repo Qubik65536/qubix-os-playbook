@@ -1,24 +1,25 @@
 # BEGIN QUBIX BOOT
 interface_branding: Qubix OS
-term_foreground: CFDAE2
 {% if qubix_profile_resolved.bootloader.limine_version == 12 %}
-interface_branding_color: B6D8F0
-interface_help_color: 7894AD
-interface_help_color_bright: C9E6F8
-term_background: C00B121C
-term_foreground_bright: EDF7FF
+term_foreground: EDF4FA
+interface_branding_color: F4F8FC
+interface_help_color: B8CAD8
+interface_help_color_bright: F4F8FC
+term_background: 600A1016
+term_foreground_bright: FFFFFF
 term_background_bright: 56728B
-term_palette: 0B121C;DC9290;98C6B2;D5BF95;56728B;B7A8D0;8CBECF;CDDEEB
-term_palette_bright: 405970;F3B1AA;B7DFCA;EDDCB7;9EC2DF;D4C4EA;B7DEEC;EDF7FF
+term_palette: 0A1016;E7A09E;B0D6C5;E2CFAC;8CB4D5;C6B8DD;A5D2E2;EDF4FA
+term_palette_bright: 718CA4;FFC3BE;CCECDD;F6E9CF;BADCF5;E5D8F5;D0EEF8;FFFFFF
 wallpaper: boot():/qubix/wallpaper.png
 wallpaper_style: stretched
 backdrop: 0B121C
 term_font: boot():/qubix/QubixBootMono-8x20.bin
 term_font_size: 8x20
-term_font_scale: 2x2
+term_font_scale: 1x1
 term_margin: 48
 term_margin_gradient: 8
 {% else %}
+term_foreground: CFDAE2
 term_background: 001B242C
 {% endif %}
 # END QUBIX BOOT

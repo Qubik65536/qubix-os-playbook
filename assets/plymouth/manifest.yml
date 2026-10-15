@@ -38,128 +38,128 @@ files:
   - filename: qubix.plymouth
     source: assets/plymouth/theme/qubix.plymouth
     license: GPL-3.0-only
-    sha256: b4c74e33222496e335610d3de300e8848acdd60aa828350f5f37d830c8171ad3
+    sha256: f515c6bb7154caca3da024699742b07bad50765215246b9fc955d37136348661
   - filename: throbber-0001.png
     source: assets/plymouth/theme/throbber-0001.png
     license: GPL-3.0-only
-    sha256: ce36a4adcc40760340e4c1b2fd991416a21215d77401661b93c2159a735f021b
+    sha256: 6ff3f9b2b11ae56dbf76835cce9979e10ee2c917c622ab5da3cc9e67c551e11b
   - filename: throbber-0002.png
     source: assets/plymouth/theme/throbber-0002.png
     license: GPL-3.0-only
-    sha256: bf99673f69d11f2ff26157d15bd13457772cc57cc7f44ee1184ae5e3294e2b3d
+    sha256: 79c8d8059f04ad3e30383c2217beb1beee42cc3b95155e7b7c5dce8aa8697af1
   - filename: throbber-0003.png
     source: assets/plymouth/theme/throbber-0003.png
     license: GPL-3.0-only
-    sha256: b53670f3212be80ef394cb75123668984da59eb8c933309d369a6bf17a859eeb
+    sha256: b61fda62588d3f708742c1f34ed44a1035e41e52dd3c090e2e2a2ca3612207d3
   - filename: throbber-0004.png
     source: assets/plymouth/theme/throbber-0004.png
     license: GPL-3.0-only
-    sha256: 4737e5b779a2e2037244593cb93b21f5701eb95bc21c179d2bcc3129240683dc
+    sha256: 6fc1188841ea94dbd3f4db3c4ff78bb2ce46ee246634a84741544d9cbbf69980
   - filename: throbber-0005.png
     source: assets/plymouth/theme/throbber-0005.png
     license: GPL-3.0-only
-    sha256: 1ad9f3926187c3c48b96d4d3c1c0c48062c70b15c9912b848494aa856deecad5
+    sha256: 4176fb1256b807cafec0e31e67bee52ae897288a43457a0f608c2219efcd7a1a
   - filename: throbber-0006.png
     source: assets/plymouth/theme/throbber-0006.png
     license: GPL-3.0-only
-    sha256: 59169ee5fb708dd340675a0ee1eb75895ccd921924cdd100d0d411c06d8ad435
+    sha256: 11c666bf2d837baa735304e87a6311f5d4535d1a198a8423bac6ed3c78aa1d72
   - filename: throbber-0007.png
     source: assets/plymouth/theme/throbber-0007.png
     license: GPL-3.0-only
-    sha256: d9ef45790213c6f5a7598862ed07f37a895eeedb6d56669cede5fd0dd2df6079
+    sha256: eea2aee74bc344138664d8723c20f6426802c0c7fb1dcd0cbe497e3d5932cdc4
   - filename: throbber-0008.png
     source: assets/plymouth/theme/throbber-0008.png
     license: GPL-3.0-only
-    sha256: d659cf4af34411775cdd9258db685eba78ceea5c6bb6601e3fd0572c32787b4f
+    sha256: f279f21d194ae83bfbf6406c316bf920e275c6b280ff27a89ef06551fe08c220
   - filename: throbber-0009.png
     source: assets/plymouth/theme/throbber-0009.png
     license: GPL-3.0-only
-    sha256: df402a643341bcf813be6636cb8bd0aa4c5d4770519047f0a62dab991ef891a2
+    sha256: 990a874e7fef1fadcf390cf49c3eddac43e927ca79c43a834efac75fbf0c56b7
   - filename: throbber-0010.png
     source: assets/plymouth/theme/throbber-0010.png
     license: GPL-3.0-only
-    sha256: 636c0855e1bac16a5b4758c332d6662712129930a7bcd89a1e677c4d34ed95f8
+    sha256: 8598df426c6cd463ab42314e6883e41015331cee6821001c96e6bc660e12b40f
   - filename: throbber-0011.png
     source: assets/plymouth/theme/throbber-0011.png
     license: GPL-3.0-only
-    sha256: c4a0ba9c9b9dfa820644a0efcab5f91cf46ba148d64dfd2242553be75debf640
+    sha256: dbfb2a6c4e3f3403e8cb33e4ef46438a7a31235fe8b167c60e7b053aebb4e317
   - filename: throbber-0012.png
     source: assets/plymouth/theme/throbber-0012.png
     license: GPL-3.0-only
-    sha256: 32682e28bbb9ab6793b3b7d88c79eafec60d65d954e388c358bb30dbcc7f868d
+    sha256: 6293eb4824c394599d69b3d3909ccbff5ffada9ff12c1287efc7c2b20fb1aca6
   - filename: throbber-0013.png
     source: assets/plymouth/theme/throbber-0013.png
     license: GPL-3.0-only
-    sha256: 3bec2a13e9cddfa1e44920667702a6fa880fbf3f252b675fdad3edce2ae5984b
+    sha256: d5a7bdc75a5401632f1e6f7829f08bc72dd45dc5ee796aa99aee5f63e50f953e
   - filename: throbber-0014.png
     source: assets/plymouth/theme/throbber-0014.png
     license: GPL-3.0-only
-    sha256: 0cf681f83c50f2e9803951787de522b866d70593825a5c524c9c259052714536
+    sha256: ffc060b37ac48397bc8168ae36d1175633db62e58d4343c2166975dd2048c47b
   - filename: throbber-0015.png
     source: assets/plymouth/theme/throbber-0015.png
     license: GPL-3.0-only
-    sha256: 598cea5ac430cd571d313b13b3e15ffe906c0771a9512a2cfa564dcf32821744
+    sha256: a031db91d7f02cf02ec57ff0720d8cc1decfbbf603da676e1c9d922b240ec4dc
   - filename: throbber-0016.png
     source: assets/plymouth/theme/throbber-0016.png
     license: GPL-3.0-only
-    sha256: ceefe70a5f17228c0811163ba0c972ebf03745fb409fc407c3343bdef492eb5e
+    sha256: 4fb73eec83300ef2e1e0ac47a7951ad85a4842664c4f0e915e252776707ceb8d
   - filename: throbber-0017.png
     source: assets/plymouth/theme/throbber-0017.png
     license: GPL-3.0-only
-    sha256: 9e4de4b134cb3161aa89a02e66f67e28c26d7e05b290e78236e03574ac4f2101
+    sha256: 85feabf351a301887f292c1bee7f1d837dd0001644a254cd182dbdfd25c9ad1a
   - filename: throbber-0018.png
     source: assets/plymouth/theme/throbber-0018.png
     license: GPL-3.0-only
-    sha256: 8939c65d90f3dfef4f0325457d99304a48dcfe26621cdf14f56ae3a733b10b64
+    sha256: 6e4b823a9dc689646575dc1ee62efaa99ff82b6132630e305bb68c0e62f04983
   - filename: throbber-0019.png
     source: assets/plymouth/theme/throbber-0019.png
     license: GPL-3.0-only
-    sha256: 365f1487c887266ba25ab92e2ca794395ccd0cb9759f612e5111381b4b577bb5
+    sha256: 4255c669bdd6ee1dcfade8435800eb0de6d38334ba1684f8118efd3b9462cb72
   - filename: throbber-0020.png
     source: assets/plymouth/theme/throbber-0020.png
     license: GPL-3.0-only
-    sha256: 11fd689127837627e65cb1fa7139527a4bc00c558b6f59678af05752a03c3147
+    sha256: 9d979d401c39346bd5920d6da05f19fc9d17877b335b3ca98979fbaafdd96436
   - filename: throbber-0021.png
     source: assets/plymouth/theme/throbber-0021.png
     license: GPL-3.0-only
-    sha256: ba4355a02f33e109b6ac9ff1f20d0b6e6ab45efc576c408f377de281225a0af6
+    sha256: e819fca5cd77e1da30d81d38316f61b5d66b664cd2973332f978564f62deb717
   - filename: throbber-0022.png
     source: assets/plymouth/theme/throbber-0022.png
     license: GPL-3.0-only
-    sha256: abb82dcab30f559a7af2527161c2326c8c1d8fa50fbddaa9425520df1c4f8b40
+    sha256: f741084d6ebe2d3527a47089951bed5804a7b76b7d60b7bffce4cf44698bcec4
   - filename: throbber-0023.png
     source: assets/plymouth/theme/throbber-0023.png
     license: GPL-3.0-only
-    sha256: 25c842c9b3882273601a94c4c3b2f2a48a7b3eae5fec0e6007e7e84742455b59
+    sha256: 40fda973077f684add7354672deddb24a65c24ea128026c9f1257d33632f2a24
   - filename: throbber-0024.png
     source: assets/plymouth/theme/throbber-0024.png
     license: GPL-3.0-only
-    sha256: a012b871acdf0a0ee354b6107bdadd7ab79f6e0e39dcaae6bf603a52bac56e14
+    sha256: ef2ec9e85740ab636eba9d2ef65c1523931efe049c936cfd939c4ab918cb9392
   - filename: throbber-0025.png
     source: assets/plymouth/theme/throbber-0025.png
     license: GPL-3.0-only
-    sha256: 6bae8dc12080df3f9724c2e17e9fb023b07e94856c55f3d949b080490fc68c48
+    sha256: e2e45e8d899adcfc557a8d86f0b7c1e8e90811a1c279db1509f359239b97b36d
   - filename: throbber-0026.png
     source: assets/plymouth/theme/throbber-0026.png
     license: GPL-3.0-only
-    sha256: 20fcd18aa440702bb338b01bca32596d3a7bbddff701048d9254a1306963663d
+    sha256: 570a85152b2192301c1915ac74a848063d8d2d00f5cd9861dbb3c6461daf7a29
   - filename: throbber-0027.png
     source: assets/plymouth/theme/throbber-0027.png
     license: GPL-3.0-only
-    sha256: dae4dc451de67d0907b79a420b4d961d3cccde7809633171df49d41bd500f716
+    sha256: 92030f4162d7cd8e42920b89b3dd5437bdd7c98a757ab4e0b346ba2514b530f3
   - filename: throbber-0028.png
     source: assets/plymouth/theme/throbber-0028.png
     license: GPL-3.0-only
-    sha256: cb8a355b0464f70fbf3eb7363b6be95e2a74e1ccd05310b7628ae9a0bc8da9c3
+    sha256: 1a701de723f06565dabb45cab9e34c045f77d494b86a4d42c2355d6ee974f2ab
   - filename: throbber-0029.png
     source: assets/plymouth/theme/throbber-0029.png
     license: GPL-3.0-only
-    sha256: 14754633c5a293a0cf96bf81a87c52ab2b9bc4629ed30193612d30e7db5efa7b
+    sha256: 6c77ff88867a523a1c3426ac4f28cd7aaec0972bf34c7f762f6dd951cbb9d6b2
   - filename: throbber-0030.png
     source: assets/plymouth/theme/throbber-0030.png
     license: GPL-3.0-only
-    sha256: 132c8f3aedd0c29ff74520b716eb65b56b5061b517f8db608646aa5fc4e9d775
+    sha256: ddbed9cbd013d9e9262dee74a6f0631e1f899a7c87b96b762f3288059caa9f6b
   - filename: watermark.png
     source: assets/plymouth/theme/watermark.png
     license: Apache-2.0
-    sha256: ec52e887c4bf88566c3e9c28e4f68d09785254ad21f7b9080a64917bacfad1d0
+    sha256: 8c01265138a3d764120212f8b57c8af3f2c256370d20da9192e5d407a37c81b3
