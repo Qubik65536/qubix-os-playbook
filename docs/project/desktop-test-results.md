@@ -126,3 +126,26 @@ The deployed defaults were reloaded in the existing Qubix primary session. Niri 
 The fresh post-deployment audit matches all 76 native/personal resource snapshots, including the intentionally absent retired native login entry. The default Fish shell, retirement backup and all 23 existing private baseline hashes remain unchanged. The new power entry brings private baseline manifests to 24. State records clean revision bbea600, files-verified and no pending attempt; graphical_session_verified and boot_verified remain false.
 
 Physical shortcut handling, actual launcher application/power actions, portals, GUI authentication, lock/unlock and native recovery of the newer Noctalia resources remain operator acceptance items. Login, bootloader and Plymouth components stayed disabled. Local evidence remains ignored under .cache/native-desktop/, .cache/controls-*.log and .cache/controls-preservation-audit.json.
+
+## Bar visibility and logo correction
+
+Date: 2026-10-15. Clean source ce72276 corrects the undersized launcher image and understated module styling. Inspection found the previous compact settings installed in the running Qubix profile with no bar/widget GUI overrides. Noctalia 5.2's launcher image uses a 16 px base box; transparent artwork margins make the visible cube smaller.
+
+The corrected launcher scale doubles the image box to 32 px while preserving the original attributed PNG. The transparent bar is 40 px high with 36 px modules, 12 px module radii, stronger #56728b outlines, opaque fills and wider separation. Before/after isolated screenshots were inspected and visibly show the larger cube and clearer boundaries. The native test preserves the parent compositor, native/personal settings and Qubix GUI preferences, with zero leftover test processes.
+
+| Check | Actual outcome |
+|---|---|
+| scripts/validate.sh | All static checks pass |
+| tests/playbooks/desktop.yml | 62 tasks, zero changes/failures, six expected refusals |
+| tests/integration/desktop.yml | 62 tasks, eight temporary changes, zero failures; warning-free shell validation and rendering pass |
+| bootstrap.sh deploy | 408 tasks, three changes, zero failures |
+| Same-revision/configuration reapplication | 408 tasks, zero changes/failures |
+| bootstrap.sh verify --tags installed | 64 tasks, zero changes/failures |
+
+Active-profile config-reload returns ok and installed settings report the 32 px image box and stronger outline. The visible bar/wallpaper layers remain, the dock remains absent, and Niri PID 931, Noctalia PID 1002 and the boot ID are unchanged. This records live activation separately from the inspected isolated screenshots; complete physical interaction acceptance remains pending.
+
+The final audit matches all 76 native/personal snapshots and all 24 private baseline hashes. The retired native-session backup and default Fish shell also remain unchanged. Deployment state records clean ce72276, files-verified and no pending attempt; graphical/boot acceptance flags remain false.
+
+Read-only Limine inspection still finds the native boot():/limine-splash.png wallpaper and no Qubix marker. Only branding, Niri and shell are selected. The adapter's current heading/two-colour contract does not provide BlueBuild's graphical GRUB layout; richer Limine appearance remains recorded under F08. No boot configuration or initramfs resources changed.
+
+Evidence is ignored under .cache/bar-logo-*.log, .cache/bar-logo-preservation-audit.json, .cache/bar-logo-before/ and .cache/native-desktop/.
