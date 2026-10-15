@@ -1,4 +1,8 @@
 ---
+- name: Verify exact native font selection without refreshing caches
+  ansible.builtin.include_tasks: verify_font.yml
+  when: qubix_root | default('') == ''
+
 - name: Inspect exact declared generator outputs
   ansible.builtin.include_tasks: verify_archive.yml
   vars:

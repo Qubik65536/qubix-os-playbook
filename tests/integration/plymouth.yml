@@ -34,6 +34,18 @@
             dest: '{{ qubix_splash_preview.path }}/theme/'
             mode: '0600'
 
+        - name: Create isolated font directory
+          ansible.builtin.file:
+            path: '{{ qubix_splash_preview.path }}/fonts'
+            state: directory
+            mode: '0700'
+
+        - name: Copy exact subset without installing it on the host
+          ansible.builtin.copy:
+            src: ../../assets/fonts/QubixBootMono-Regular.ttf
+            dest: '{{ qubix_splash_preview.path }}/fonts/QubixBootMono-Regular.ttf'
+            mode: '0600'
+
         - name: Copy test-only isolated renderer helper
           ansible.builtin.copy:
             src: files/plymouth-smoke.py
@@ -57,7 +69,7 @@
         - name: Find native splash evidence before cleanup
           ansible.builtin.find:
             paths: '{{ qubix_splash_preview.path }}'
-            patterns: ['*.png', '*.log', result.json]
+            patterns: ['*.png', '*.log', '*result.json']
           register: qubix_splash_artifacts
 
         - name: Fetch only the isolated test evidence

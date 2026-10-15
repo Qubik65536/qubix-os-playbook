@@ -132,3 +132,31 @@ hashes remain unchanged; only loader/random-seed changes among the audited nativ
 Pending state stays absent. The operator confirms all three requested menu/startup/reboot visuals,
 then asks for a more distinctive palette and Monaspace Krypton typography. Independent LTS, poweroff,
 dracut, GRUB, real encryption input and recovery acceptance remain open.
+
+## Reviewed midnight and Krypton refinement
+
+After confirming the corrected menu/startup/reboot visuals, the operator requests a more distinctive
+text/background palette and GitHub Monaspace Krypton, including a subset where useful. The
+[design contract](../architecture/boot-design.md) defines the shared midnight/steel-blue/ice-blue
+composition, complete CP437 menu font and renamed, OFL-attributed 154 KB native prompt subset.
+Plymouth keeps its native two-step controls and small ring; all three modes now use the theme's blue
+gradient instead of firmware background. Early freetype text has the documented subset coverage;
+real encrypted-root/localized prompt acceptance remains separate.
+
+The isolated native preview passes all three animations, exact subset selection, a synthetic native
+prompt, negative module control, host preservation and cleanup. The target no-write preview passes
+1197 tasks with 40 proposed changes and zero failures. A subsequent audit confirms unchanged protected
+resources, all 75 private baseline hashes, absent pending markers and 3.47 GiB free on /boot.
+The standalone-font copyright/OFL embedding follow-up is metadata-only and receives a final native
+font/render check before activation. Existing desktop/profile/kernel/image mappings remain unchanged.
+That final preview passes 50 tasks: Pango boot/reboot/shutdown, the negative module control, and
+separate forced-FreeType boot/password rendering. Both resolve final font SHA256
+fe5d940039391c7b2d842a5221d190a39ddfc09c2e2799de61a104a8fb022b22, preserve host selection/session
+and leave zero preview processes. The captured FreeType prompt is visually inspected.
+
+Limine's existing exact 15-key graphical recovery contract may gain only the six reviewed font/help
+keys after original bytes/hash, current receipt and absence checks. Retain its original bytes and all
+other fields, including module aliases. Fonts/licenses gain their own original-absence records.
+Rebuild only the same two matching mkinitcpio presets with --nopost, stage verified new images while
+retaining earlier stages, verify exact archive/font/pin contents and zero-change reapplication, then
+perform the already authorized guarded reboot and record the new console observations separately.

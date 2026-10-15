@@ -4,7 +4,9 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
-- Added reproducible, OFL-attributed Krypton-derived boot font assets: a renamed 145 KB Latin subset and complete 5 KB CP437 bitmap. Boot role integration is the next step.
+- Refined Plymouth with a midnight-blue gradient, original ice-blue vector ring and outlined Krypton wordmark. Native all-mode/prompt preview selects the exact renamed subset and preserves the host; activation of this refinement is pending.
+
+- Added reproducible, OFL-attributed Krypton-derived boot font assets: a renamed 154 KB Latin subset and complete 5 KB CP437 bitmap.
 
 - Deployed graphical Limine and native-style Plymouth from clean e7e652a; exact source/active-image assets, pins, installed verification and preservation pass. Identical-source reapplication completes with zero changes. The normal-kernel reboot returns Qubix at 100% scale, and the operator confirms menu/startup/reboot branding.
 

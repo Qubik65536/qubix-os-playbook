@@ -1,0 +1,28 @@
+---
+- name: Resolve the selected font with the installed Plymouth helper
+  ansible.builtin.command:
+    argv: ['{{ qubix_plymouth_font_binary }}', Qubix Boot Mono 12]
+  changed_when: false
+  check_mode: false
+  register: qubix_plymouth_resolved_font
+
+- name: Reject silent fallback to a different typeface
+  ansible.builtin.assert:
+    that:
+      - qubix_plymouth_resolved_font.stdout | trim == '/usr/share/fonts/qubix/QubixBootMono-Regular.ttf'
+    fail_msg: 'The native Plymouth resolver did not select Qubix Boot Mono; refusing a falsely branded image.'
+
+- name: Inspect the exact font selected for native image generation
+  ansible.builtin.stat:
+    path: '{{ qubix_plymouth_resolved_font.stdout | trim }}'
+    follow: false
+    checksum_algorithm: sha256
+  register: qubix_plymouth_selected_font
+
+- name: Require the attributed subset bytes
+  ansible.builtin.assert:
+    that:
+      - qubix_plymouth_selected_font.stat.isreg | default(false)
+      - >-
+        qubix_plymouth_selected_font.stat.checksum == (qubix_plymouth_font.files |
+        selectattr('filename', 'equalto', 'QubixBootMono-Regular.ttf') | first).sha256

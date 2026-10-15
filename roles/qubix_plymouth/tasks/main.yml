@@ -159,6 +159,39 @@
   ansible.builtin.set_fact:
     qubix_plymouth_resources: []
 
+- name: Load exact Krypton-derived subset metadata
+  ansible.builtin.include_vars:
+    file: '{{ role_path }}/../../assets/fonts/manifest.json'
+    name: qubix_plymouth_font
+
+- name: Inspect native font resolver and cache tools before writes
+  ansible.builtin.stat:
+    path: '{{ item }}'
+    follow: false
+    get_checksum: false
+  loop: ['{{ qubix_plymouth_font_binary }}', '{{ qubix_plymouth_font_cache_binary }}']
+  register: qubix_plymouth_font_tools
+  when: qubix_root | default('') == ''
+
+- name: Require executable native font tools for real image generation
+  ansible.builtin.assert:
+    that: [item.stat.isreg | default(false), item.stat.executable | default(false)]
+    fail_msg: 'Plymouth Krypton integration requires the native font resolver and fc-cache.'
+  loop: '{{ qubix_plymouth_font_tools.results }}'
+  loop_control:
+    label: '{{ item.item }}'
+  when: qubix_root | default('') == ''
+
+- name: Prepare only the enabled splash subset and retained OFL
+  ansible.builtin.set_fact:
+    qubix_plymouth_resources: >-
+      {{ qubix_plymouth_resources + [{'path': '/usr/share/fonts/qubix/' ~ item.filename,
+      'component': 'plymouth', 'source': role_path ~ '/../../assets/fonts/' ~ item.filename,
+      'sha256': item.sha256}] }}
+  loop: '{{ qubix_plymouth_font.files | rejectattr("filename", "equalto", "QubixBootMono-8x20.bin") }}'
+  loop_control:
+    label: '{{ item.filename }}'
+
 - name: Prepare exact licensed native spinner and Qubix watermark assets
   ansible.builtin.set_fact:
     qubix_plymouth_resources: >-

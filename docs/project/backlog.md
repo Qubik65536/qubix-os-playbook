@@ -64,7 +64,7 @@ Status: Implemented; simulated dispatch/archive/font/preview/kernel guards and p
 
 Objective: startup splash independent of loader. Scope: Qubix theme, dracut/mkinitcpio minimal integration and conditional rebuild. Acceptance: resources verified, both combinations boot/show splash, unrelated settings preserved and restore passes. Depends on F02/F06. Tests: two independent generator VM runs, reapplication and recovery. Docs: image selection, compatibility, recovery.
 
-Native-style correction: source now replaces the rejected scripted layout with two-step, a small spinner and bottom watermark. The 48-task native preview passes all three animations, native password rendering, invalid-module control, preservation and cleanup. Active Limine image synchronization and normal-kernel startup/reboot observations now pass. Next: design/test the requested distinctive palette and Monaspace Krypton typography.
+Native-style correction: source replaces the rejected scripted layout with two-step, a small spinner and bottom watermark. Active Limine image synchronization and normal-kernel startup/reboot observations pass for e7e652a. The requested midnight palette, vector ring and Krypton-derived wordmark/prompt subset are now Implemented in source; native preview selects the exact font and passes animation/prompt/preservation/cleanup checks. The two-generator fixture passes 409 tasks with five expected refusals. Deploy and independently observe the refined candidate; real encryption, LTS and recovery remain open.
 
 Active-image repair: explicit Limine 12 cache/kernel bindings, content-addressed staging, atomic
 module/pin replacement, exact active-archive checks and config-first recovery are Implemented.

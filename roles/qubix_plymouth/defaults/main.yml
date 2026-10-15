@@ -4,3 +4,5 @@ qubix_plymouth_mkinitcpio_binary: /usr/bin/mkinitcpio
 qubix_plymouth_lsinitrd_binary: /usr/bin/lsinitrd
 qubix_plymouth_lsinitcpio_binary: /usr/bin/lsinitcpio
 qubix_plymouth_b2sum_binary: /usr/bin/b2sum
+qubix_plymouth_font_binary: /usr/lib/plymouth/plymouth-font-file
+qubix_plymouth_font_cache_binary: /usr/bin/fc-cache

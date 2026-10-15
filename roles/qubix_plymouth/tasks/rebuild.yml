@@ -26,6 +26,16 @@
 - name: Prepare recovery and perform required regeneration
   when: qubix_plymouth_needs_rebuild and not ansible_check_mode
   block:
+    - name: Refresh only the Qubix font directory before native generation
+      ansible.builtin.command:
+        argv: ['{{ qubix_plymouth_font_cache_binary }}', --force, /usr/share/fonts/qubix]
+      changed_when: true
+      when: qubix_root | default('') == ''
+
+    - name: Verify native font selection before any image mutation
+      ansible.builtin.include_tasks: verify_font.yml
+      when: qubix_root | default('') == ''
+
     - name: Snapshot every affected image before executing a generator
       ansible.builtin.include_role:
         name: qubix_files

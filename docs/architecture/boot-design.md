@@ -1,7 +1,8 @@
 # Boot visual design
 
-Status: **Planned refinement** of the operator-confirmed Limine/native two-step design from
-e7e652a. Menu, startup and reboot branding already work on the authorized target; the operator now
+Status: **Plymouth refinement Implemented and native-preview Tested; Limine font integration In Progress**.
+This refines the operator-confirmed Limine/native two-step design from e7e652a.
+Menu, startup and reboot branding already work on the authorized target; the operator now
 requests a more distinctive palette and GitHub Monaspace Krypton. This document defines that change
 before implementation. Boot entries, kernel arguments, native cache/history and EFI binaries remain
 Preserved under the existing [boot contract](boot.md).
@@ -30,9 +31,11 @@ characters and diagnostic symbols. Render a contact sheet before activation and 
 No TTF/WOFF file is handed directly to Limine. Supported font/help directives become explicit managed
 appearance keys, with additive boot-accessible assets and FAT-aware modes.
 
-For Plymouth, derive a static, renamed TTF subset covering the shipped labels, CP437 and extended
-Latin/combining marks rather than every Monaspace family/weight. Retain a native fallback for text
-outside that subset; document coverage. Install the subset only for the enabled splash component.
+For Plymouth, derive a static, renamed TTF subset covering the shipped labels, available CP437 and
+extended Latin/combining marks rather than every Monaspace family/weight. Preserve native host fonts
+and document coverage. The installed freetype renderer uses its packaged Plymouth.ttf directly;
+early-boot text outside the subset is unvalidated and has no promised font fallback. Install the subset
+only for the enabled splash component.
 Resolve the exact font before generation, include it in the rebuild fingerprint, and verify the
 actual active archives contain the font. Render the wordmark as paths/PNG so it does not depend on
 runtime font discovery. Asset-generation tools are optional developer dependencies, not deployment

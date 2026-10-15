@@ -1,8 +1,9 @@
 # Plymouth and initramfs adapters
 
-Status: **Corrective implementation deployed; controlled boot appearance pending**. Native two-step
-rendering, mkinitcpio generation, exact source/active-image contents and installed verification pass.
-Reapplication is interrupted by connectivity loss; no controlled reboot follows this revision yet.
+Status: **Corrective implementation deployed and normal-kernel startup/reboot appearance confirmed;
+Krypton/midnight refinement Implemented and native-preview Tested, activation pending**. Native
+two-step rendering, mkinitcpio generation, exact source/active-image contents, installed verification
+and completed zero-change reapplication pass for e7e652a.
 The first scripted attempt failed visual acceptance; see [recorded results](../project/plymouth-test-plan.md).
 Dracut, encrypted-root input and recovery retain independent acceptance gates.
 
@@ -21,13 +22,22 @@ until restoration; automatic garbage collection is outside this repair.
 
 ## Native splash style revision
 
-Status: **Implemented; isolated native preview Tested**. The theme follows the inspected CachyOS
-`two-step` layout: black/firmware background, a 32 px white spinner at 70% height and a modest
-Qubix watermark near the bottom. Plymouth supplies the native password/question/message controls.
+Status: **Implemented; isolated native preview Tested**. The refined theme uses the native
+`two-step` layout: a midnight-blue gradient, an original 32 px ice-blue spinner at 70% height and
+a shaded Qubix cube/Krypton wordmark near the bottom. All three modes use this gradient rather than
+the firmware-background presentation, without altering firmware data. Native password/question/message controls remain.
 There is no large central title or routine startup/shutdown caption. The original CachyOS theme
 remains Preserved. The attributed [asset manifest](../../assets/plymouth/manifest.yml) pins neutral
-spinner/input files and the adapted definition to their GPL-3.0 source revision; Qubix artwork
+input files and adapted definition to their GPL-3.0 source revision; Qubix artwork
 retains Apache-2.0 attribution. The [asset guide](../../assets/plymouth/README.md) explains regeneration.
+
+Install only the attributed 154 KB Qubix Boot Mono subset and OFL in /usr/share/fonts/qubix/ when
+Plymouth is enabled. Include their hashes in the rebuild fingerprint. Before a required rebuild,
+refresh only this font directory and require the native plymouth-font-file helper to select the
+exact subset path/checksum. Unchanged reapplication skips both cache refresh and generation;
+installed verification resolves the font without writing caches. Native mkinitcpio packages the
+selected file as /usr/share/fonts/Plymouth.ttf. The subset's Latin coverage is explicit; early native
+freetype rendering of other scripts is unvalidated. Existing host fonts remain preserved.
 
 The earlier script design passed isolated rendering but failed operator acceptance; it is replaced
 in source and on the target by the native definition. Obsolete script/logo files from that
@@ -37,7 +47,11 @@ The private native preview tests module loading against an invalid-module contro
 in boot/shutdown/reboot and a synthetic password prompt. It uses an unprivileged bubblewrap namespace,
 private Xwayland/daemon/socket/TTY, read-only host mounts and no DRM/VT devices. It captures only the
 test window, checks preservation and cleans up processes. Preview does not establish physical boot,
-firmware background or encrypted-root input acceptance. See the [splash guide](../user/plymouth.md).
+encrypted-root input acceptance. It binds the exact candidate subset in its private font tree and
+verifies native resolution; no host font is installed during preview. See the [splash guide](../user/plymouth.md).
+The refined preview also forces the installed FreeType label module within the private mount
+namespace, renders its boot/password control and verifies the packaged font without changing host
+plugins. Pango tests all three modes; the separate FreeType result covers early-boot text behavior.
 
 The role changes only Theme in `/etc/plymouth/plymouthd.conf`, retaining ShowDelay and unrelated
 settings. It requires the installed two-step plugin, an existing splash argument and explicit

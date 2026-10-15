@@ -79,6 +79,11 @@ def main():
     assert vertical[0] == vertical[-1] != 0, 'Boot menu vertical borders must join cells'
     assert any(row & 0x81 == 0x81 for row in bitmap[0xC4 * 20:0xC5 * 20])
     assert all(code in fonts['subset_codepoints'] for code in range(32, 127))
+    boot_art = load('assets/boot/manifest.yml')
+    assert boot_art['license'] == 'Apache-2.0'
+    assert hashlib.sha256((ROOT / 'assets/boot/wallpaper.png').read_bytes()).hexdigest() == boot_art['sha256']
+    assert '<text' not in (ROOT / 'assets/boot/wallpaper.svg').read_text(), 'Boot lettering must be outlined'
+    assert '<text' not in (ROOT / 'assets/plymouth/watermark.svg').read_text(), 'Splash lettering must be outlined'
     splash = load('assets/plymouth/manifest.yml')
     assert splash['license'] == 'GPL-3.0-only' and len(splash['revision']) == 40
     assert {asset['filename'] for asset in splash['files']} == {
@@ -92,8 +97,9 @@ def main():
     native.read(ROOT / 'assets/plymouth/theme/qubix.plymouth')
     assert native['Plymouth Theme']['ModuleName'] == 'two-step'
     assert native['two-step']['ImageDir'] == '/usr/share/plymouth/themes/qubix'
+    assert native['two-step']['Font'] == 'Qubix Boot Mono 12'
     for mode in ('boot-up', 'shutdown', 'reboot'):
-        assert native[mode].getboolean('UseFirmwareBackground') and not native[mode].getboolean('UseEndAnimation')
+        assert not native[mode].getboolean('UseFirmwareBackground') and not native[mode].getboolean('UseEndAnimation')
     desktop = ROOT / 'roles/qubix_niri/templates'
     shell = tomllib.loads((desktop / 'noctalia.toml.j2').read_text())
     assert not shell['theme']['templates']['enable_builtin_templates']
