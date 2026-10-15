@@ -38,6 +38,20 @@ def wait_for(predicate, label):
         time.sleep(0.2)
     raise AssertionError(label + ' did not appear')
 
+def focused_window():
+    return next(w for w in query('windows') if w.get('is_focused'))
+
+def configured_resize(key):
+    # Exercise the action actually assigned in this rendered candidate.
+    line = next(line for line in (root / 'config.kdl').read_text().splitlines()
+                if line.lstrip().startswith(key + ' '))
+    match = re.search(r'\{\s*(set-column-width|set-window-height|reset-window-height)(?:\s+"([^"]+)")?;\s*\}', line)
+    assert match, 'Expected a supported resize action for ' + key
+    args = ['/usr/bin/niri', 'msg', 'action', match[1]]
+    if match[2] is not None:
+        args.append(match[2])
+    command(args)
+
 result = {'socket': native_socket, 'display': os.environ['WAYLAND_DISPLAY'], 'bus': os.environ['DBUS_SESSION_BUS_ADDRESS']}
 children = []
 try:
@@ -65,6 +79,28 @@ try:
     assert before_focus != after_focus, 'IPC navigation did not change focus'
     result['windows'] = windows
     result['focus_changed'] = True
+    width_before = focused_window()['layout']['tile_size'][0]
+    configured_resize('Mod+Ctrl+Right')
+    width_grown = wait_for(lambda: focused_window()['layout']['tile_size'][0]
+                           if focused_window()['layout']['tile_size'][0] > width_before + 1 else None,
+                           'Column width growth')
+    configured_resize('Mod+Ctrl+Left')
+    wait_for(lambda: focused_window()['layout']['tile_size'][0] < width_grown - 1, 'Column width reduction')
+    full_height = focused_window()['layout']['tile_size'][1]
+    command(['/usr/bin/niri', 'msg', 'action', 'consume-or-expel-window-right'])
+    wait_for(lambda: focused_window()['layout']['tile_size'][1] < full_height - 10, 'Stacked test windows')
+    height_before = focused_window()['layout']['tile_size'][1]
+    configured_resize('Mod+Ctrl+Down')
+    height_grown = wait_for(lambda: focused_window()['layout']['tile_size'][1]
+                            if focused_window()['layout']['tile_size'][1] > height_before + 1 else None,
+                            'Window height growth')
+    configured_resize('Mod+Ctrl+Up')
+    wait_for(lambda: focused_window()['layout']['tile_size'][1] < height_grown - 1, 'Window height reduction')
+    configured_resize('Mod+Ctrl+R')
+    wait_for(lambda: abs(query('windows')[0]['layout']['tile_size'][1]
+                         - query('windows')[1]['layout']['tile_size'][1]) <= 2, 'Automatic window height reset')
+    result['resize'] = {'width_before': width_before, 'width_grown': width_grown,
+                        'height_before': height_before, 'height_grown': height_grown, 'reset': True}
     owner = command(['/usr/bin/dbus-send', '--session', '--print-reply', '--dest=org.freedesktop.DBus', '/org/freedesktop/DBus', 'org.freedesktop.DBus.GetConnectionUnixProcessID', 'string:org.freedesktop.Notifications'])
     owner_pid = int(re.search(r'uint32 (\d+)', owner)[1])
     assert (pathlib.Path('/proc') / str(owner_pid) / 'comm').read_text().strip() == 'noctalia'

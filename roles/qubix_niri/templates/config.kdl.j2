@@ -23,6 +23,15 @@ binds {
     Mod+W hotkey-overlay-title="Windows / Close window" repeat=false { close-window; }
     Mod+Q hotkey-overlay-title="Windows / Close window" repeat=false { close-window; }
     Mod+Ctrl+W hotkey-overlay-title="Windows / Toggle tabbed column" { toggle-column-tabbed-display; }
+    Mod+Ctrl+Left hotkey-overlay-title="Windows / Resize column narrower" { set-column-width "-5%"; }
+    Mod+Ctrl+H hotkey-overlay-title="Windows / Resize column narrower" { set-column-width "-5%"; }
+    Mod+Ctrl+Right hotkey-overlay-title="Windows / Resize column wider" { set-column-width "+5%"; }
+    Mod+Ctrl+L hotkey-overlay-title="Windows / Resize column wider" { set-column-width "+5%"; }
+    Mod+Ctrl+Up hotkey-overlay-title="Windows / Resize window shorter" { set-window-height "-5%"; }
+    Mod+Ctrl+K hotkey-overlay-title="Windows / Resize window shorter" { set-window-height "-5%"; }
+    Mod+Ctrl+Down hotkey-overlay-title="Windows / Resize window taller" { set-window-height "+5%"; }
+    Mod+Ctrl+J hotkey-overlay-title="Windows / Resize window taller" { set-window-height "+5%"; }
+    Mod+Ctrl+R hotkey-overlay-title="Windows / Reset window height" { reset-window-height; }
     Mod+Shift+E hotkey-overlay-title="Session / Exit session" { quit; }
     Mod+X hotkey-overlay-title="Session / Session menu" { spawn "/usr/share/qubix/bin/qubix-noctalia" "msg" "panel-toggle" "session"; }
     Mod+Alt+L hotkey-overlay-title="Session / Lock screen" { spawn "/usr/share/qubix/bin/qubix-noctalia" "msg" "session" "lock"; }

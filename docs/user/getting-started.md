@@ -126,6 +126,9 @@ Run this from a free TTY, not inside an existing graphical session. In a tempora
 | Super+N | Notification centre |
 | Super+W or Super+Q | Close focused window |
 | Super+H/J/K/L | Navigate windows/columns |
+| Super+Ctrl+Left/Right or H/L | Resize column width |
+| Super+Ctrl+Up/Down or K/J | Resize window height |
+| Super+Ctrl+R | Reset automatic window height |
 | Super+Tab or Super+O | Overview |
 | Alt+Tab | Noctalia window switcher |
 | Super+Shift+S | Screenshot |
@@ -134,6 +137,8 @@ Run this from a free TTY, not inside an existing graphical session. In a tempora
 | Super+Shift+E | Exit session |
 
 The top bar groups each component in its own rounded pill. Click its keyboard button or press Super+Shift+/ for the shortcut cheatsheet. Search by action or key, scroll through the categories, and close with Escape, Close or an outside click. The list follows Qubix's managed bindings; personal Niri overrides are not included. Follow the [README regeneration guide](../../README.md#regenerate-the-shortcut-cheatsheet) after changing the repository's bindings.
+
+Resize shortcuts use 5% steps. Tiled windows in one column share its width; height changes are easiest to see with two windows stacked in the column. The reset shortcut returns the focused window to automatic height.
 
 Check wallpaper, bar, notifications, launcher, terminal and keyboard navigation visually. A successful file install is not graphical verification. Review session logs if companions fail. Native user services may start a second bar or notification service; collect their status before changing anything. When upgrading the classic Qubix session, log out and select it again: reloading KDL alone does not replace existing Waybar/Mako/Swaybg processes.
 

@@ -4,6 +4,8 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Documented cheatsheet regeneration in README and added labelled window-resize shortcuts with complete generated-binding coverage and native sizing checks.
+
 - Separated Noctalia bar widgets into rounded capsules on a transparent surface; native preview and preservation checks pass.
 - Added a searchable Noctalia shortcut panel with category cards/keycaps, generated from managed Niri bindings; open it from the bar or Super+Shift+/.
 

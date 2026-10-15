@@ -37,6 +37,16 @@ The presenter is a small local Noctalia plugin using its installed declarative U
 
 Acceptance: warning-free native TOML/KDL validation, valid plugin manifest/entry paths, matching generated shortcut data, native bar/panel screenshots, successful IPC open/close and search, zero-change reapplication, unchanged native configuration/compositor, and no leftover preview processes. Test the candidate in a nested session before deployment. The currently selected native CachyOS session must remain intact; select Qubix Niri to use these defaults.
 
+### Resize and launcher/layout revision
+
+Status: **Resize bindings Implemented and native actions Tested; launcher/bar/dock changes Planned**. Super+Ctrl+Left/Right (or H/L) adjust column width in 5% steps, Super+Ctrl+Up/Down (or K/J) adjust window height in the same steps, and Super+Ctrl+R resets automatic height. Tiled windows share column width; height controls are most apparent when windows are stacked. Keep labelled bindings in the canonical KDL so regeneration includes these controls.
+
+Supply a pinned **Power options** launcher entry that opens Noctalia's existing session panel. Enable its native Session provider in global launcher search for lock/logout/sleep/reboot/shutdown terms; retain `/session` for the full action list. Super+Space keeps opening the launcher, Super+X keeps opening the session panel, and the Control Center's native power entry remains available. Use native session actions/backends without custom privileged commands.
+
+Refine the separate floating bar components using the compact modules, restrained borders and spacing observed in the [Ryoku showroom](https://ryoku.dev/showroom), especially the pink-room reference. Target 36 px bar thickness, 10 px module radii, 8 px component spacing and the existing #56728b palette. This is visual inspiration; no Ryoku source, artwork or runtime is imported. Disable the Noctalia dock and its reserved bottom area; launcher, overview and window switcher provide application access.
+
+Acceptance: generated binding coverage including resize labels, native KDL/TOML validation, observed width/height changes in the isolated test, visible launcher power entry/results without executing power actions, screenshots with no dock layer, preserved main compositor/personal configuration, and zero-change reapplication. Update native fixtures for the resulting production candidates. Deploy and reload the active Qubix shell after these checks; reboot is unnecessary.
+
 ## Shortcut contract
 
 `Mod` is Super in the main session and Alt in a nested Niri test. DMS's [published Niri bindings](https://github.com/AvengeMedia/DankMaterialShell/blob/master/core/internal/config/embedded/niri-binds.kdl) inform the core map. Noctalia IPC implements shell actions. These are desktop shortcuts; application copy/paste remains Ctrl+C/V.
@@ -56,6 +66,9 @@ Acceptance: warning-free native TOML/KDL validation, valid plugin manifest/entry
 | Super+Shift+H/J/K/L or arrow keys | Move tiled windows |
 | Super+Shift+T | Toggle floating |
 | Super+Ctrl+W | Toggle tabbed column; relocated from DMS's Super+W |
+| Super+Ctrl+Left/Right or H/L | Decrease/increase column width in 5% steps |
+| Super+Ctrl+Up/Down or K/J | Decrease/increase window height in 5% steps |
+| Super+Ctrl+R | Reset automatic window height |
 | Super+Alt+L | Lock through Noctalia |
 | Super+X | Session/power menu |
 | Super+Shift+E | Niri's confirmed session exit |

@@ -39,11 +39,21 @@
         qubix_test_shortcuts: >-
           {{ (qubix_niri_resources | selectattr('path', 'equalto',
           '/usr/share/qubix/noctalia/plugins/shortcuts/bindings.json') | first).content | from_json }}
+        qubix_test_bind_keys: >-
+          {{ qubix_niri_config_content.split('binds {', 1)[1]
+          | regex_findall('(?m)^[ \t]+([^\s/{]+)[ \t]+[^\n]*\{') }}
 
     - name: Reject empty duplicated or stale shortcut display data
       ansible.builtin.assert:
         that:
           - qubix_test_shortcuts | length > 40
+          - qubix_test_shortcuts | map('first') | sort == qubix_test_bind_keys | sort
+          - >-
+            qubix_test_shortcuts | map('last')
+            | reject('match', '^(Applications|Windows|Navigation|Session|Media) / .+$') | list | length == 0
+          - "'Windows / Resize column wider' in (qubix_test_shortcuts | map('last') | list)"
+          - "'Windows / Resize window shorter' in (qubix_test_shortcuts | map('last') | list)"
+          - "'Windows / Reset window height' in (qubix_test_shortcuts | map('last') | list)"
           - >-
             qubix_test_shortcuts | map('first') | unique | length == qubix_test_shortcuts | length
           - >-
