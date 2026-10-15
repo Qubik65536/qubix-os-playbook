@@ -52,7 +52,7 @@
             content: '{{ item.content }}'
             mode: '0644'
           loop:
-            - {path: /usr/lib/plymouth/script.so, content: fixture-plugin}
+            - {path: /usr/lib/plymouth/two-step.so, content: fixture-plugin}
             - {path: /boot/vmlinuz-test, content: preserved-kernel}
             - {path: /boot/initramfs-test.img, content: original-primary}
             - {path: /boot/initramfs-test-fallback.img, content: original-fallback}
@@ -104,9 +104,20 @@
               script: |
                 #!/usr/bin/env bash
                 printf '%s\n' usr/share/plymouth/themes/qubix/qubix.plymouth \
-                  usr/share/plymouth/themes/qubix/qubix.script \
-                  usr/share/plymouth/themes/qubix/logo.png usr/lib/plymouth/script.so usr/bin/plymouthd \
+                  usr/share/plymouth/themes/qubix/watermark.png \
+                  usr/lib/plymouth/two-step.so usr/bin/plymouthd \
                   usr/lib/plymouth/label-freetype.so usr/share/fonts/Plymouth.ttf
+                printf '%s\n' usr/share/plymouth/themes/qubix/bullet.png
+                printf '%s\n' usr/share/plymouth/themes/qubix/capslock.png
+                printf '%s\n' usr/share/plymouth/themes/qubix/entry.png
+                printf '%s\n' usr/share/plymouth/themes/qubix/keyboard.png
+                printf '%s\n' usr/share/plymouth/themes/qubix/keymap-render.png
+                printf '%s\n' usr/share/plymouth/themes/qubix/lock.png
+                printf '%s\n' usr/share/plymouth/themes/qubix/qubix.plymouth
+                for frame in {1..30}; do
+                  printf 'usr/share/plymouth/themes/qubix/throbber-%04d.png\n' "$frame"
+                done
+                printf '%s\n' usr/share/plymouth/themes/qubix/watermark.png
 
         - name: Plan dracut adapter
           ansible.builtin.include_role:
@@ -209,9 +220,20 @@
             content: |
               #!/usr/bin/env bash
               printf '%s\n' usr/share/plymouth/themes/qubix/qubix.plymouth \
-                usr/share/plymouth/themes/qubix/qubix.script \
-                usr/share/plymouth/themes/qubix/logo.png usr/lib/plymouth/script.so usr/bin/plymouthd \
+                usr/share/plymouth/themes/qubix/watermark.png \
+                usr/lib/plymouth/two-step.so usr/bin/plymouthd \
                 usr/lib/plymouth/label-freetype.so
+              printf '%s\n' usr/share/plymouth/themes/qubix/bullet.png
+              printf '%s\n' usr/share/plymouth/themes/qubix/capslock.png
+              printf '%s\n' usr/share/plymouth/themes/qubix/entry.png
+              printf '%s\n' usr/share/plymouth/themes/qubix/keyboard.png
+              printf '%s\n' usr/share/plymouth/themes/qubix/keymap-render.png
+              printf '%s\n' usr/share/plymouth/themes/qubix/lock.png
+              printf '%s\n' usr/share/plymouth/themes/qubix/qubix.plymouth
+              for frame in {1..30}; do
+                printf 'usr/share/plymouth/themes/qubix/throbber-%04d.png\n' "$frame"
+              done
+              printf '%s\n' usr/share/plymouth/themes/qubix/watermark.png
             mode: '0755'
 
         - name: Request deliberate repair and reset failure outcome

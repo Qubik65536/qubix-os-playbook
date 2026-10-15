@@ -64,6 +64,8 @@ Status: Implemented; simulated dispatch/archive/font/preview/kernel guards and p
 
 Objective: startup splash independent of loader. Scope: Qubix theme, dracut/mkinitcpio minimal integration and conditional rebuild. Acceptance: resources verified, both combinations boot/show splash, unrelated settings preserved and restore passes. Depends on F02/F06. Tests: two independent generator VM runs, reapplication and recovery. Docs: image selection, compatibility, recovery.
 
+Native-style correction: source now replaces the rejected scripted layout with two-step, a small spinner and bottom watermark. The 48-task native preview passes all three animations, native password rendering, invalid-module control, preservation and cleanup. Active Limine image synchronization and repeat physical observation are the next gates.
+
 ## T01 — MVP acceptance (Testing)
 
 Status: In Progress; SSH details supplied, connected after service/firewall setup; privileged read-only discovery passes. Approved physical desktop deployment, reapplication, earlier absence restoration, nested rendering and primary startup/reload pass; physical interaction, newer Noctalia recovery, login and VM boot tests remain pending. Next gate is native acceptance of the Noctalia redesign plus the remaining independent login/boot tests.

@@ -29,6 +29,8 @@ SSH initially timed out because target sshd was inactive and UFW lacked an allow
 
 Native `tests/integration/niri.yml` passes: 62 tasks, eight temporary setup/cleanup changes, zero failures. Corrected validation uses `niri validate --config`; the installed CLI rejected the old option order. Niri, Foot and Fuzzel accept their production candidates and reject invalid controls. This establishes syntax only, not visual or companion startup behaviour.
 
+The native-style Plymouth revision is Implemented in source: two-step spinner, bottom watermark and strict runtime-asset archive checks. Native preview passes 48 tasks with eight temporary changes, all three animations, an invalid-module control, native password rendering, host preservation and zero leftover processes. Generator fixtures pass 395 tasks with five expected refusals; check-mode isolation passes 42 tasks. Revised deployment remains pending.
+
 ## Limits and next gate
 
 The first physical Plymouth reboot **fails visual acceptance**: startup still shows CachyOS, and the operator rejects the large scripted shutdown design. Root files/archives verified correctly, but Limine boots separate BLAKE2-pinned cached images outside the first mapping. SSH/SDDM/Qubix session return; 100% scaling starts automatically (1920x1080). Implement the [active-image repair and native-style revision](../components/plymouth.md#active-limine-image-repair), then repeat physical observation. The [target results](plymouth-test-plan.md#recorded-results) preserve the actual success/failure boundaries.

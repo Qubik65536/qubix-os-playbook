@@ -20,7 +20,7 @@
         prefix: qubix-plymouth-preview.
       register: qubix_splash_preview
 
-    - name: Test native parser and private Xwayland renderer with cleanup
+    - name: Test native module loading and private Xwayland renderer with cleanup
       block:
         - name: Create isolated candidate theme directory
           ansible.builtin.file:
@@ -28,16 +28,17 @@
             state: directory
             mode: '0700'
 
-        - name: Copy exact production theme and test-only helper
+        - name: Copy exact native production theme
           ansible.builtin.copy:
-            src: '{{ item.source }}'
-            dest: '{{ qubix_splash_preview.path }}/{{ item.destination }}'
+            src: ../../assets/plymouth/theme/
+            dest: '{{ qubix_splash_preview.path }}/theme/'
             mode: '0600'
-          loop:
-            - {source: ../../roles/qubix_plymouth/files/qubix.plymouth, destination: theme/qubix.plymouth}
-            - {source: ../../roles/qubix_plymouth/files/qubix.script, destination: theme/qubix.script}
-            - {source: ../../assets/branding/logo.png, destination: theme/logo.png}
-            - {source: files/plymouth-smoke.py, destination: smoke.py}
+
+        - name: Copy test-only isolated renderer helper
+          ansible.builtin.copy:
+            src: files/plymouth-smoke.py
+            dest: '{{ qubix_splash_preview.path }}/smoke.py'
+            mode: '0600'
 
         - name: Supply selection only within the isolated namespace
           ansible.builtin.copy:
@@ -48,7 +49,7 @@
               ShowDelay=0
             mode: '0600'
 
-        - name: Run actual parser and boot shutdown reboot renderers without host devices
+        - name: Run native module control and boot shutdown reboot renderers without host devices
           ansible.builtin.command:
             argv: [/usr/bin/python3, '{{ qubix_splash_preview.path }}/smoke.py', '{{ qubix_splash_preview.path }}']
           changed_when: true

@@ -8,7 +8,7 @@ Status: **Candidate adapters Implemented; fixtures Tested; native desktop file l
 | Login | Unambiguously active SDDM, regular compatible Breeze tree | Preview/authentication/sessions/restore |
 | GRUB | Confirmed /boot/grub[2]/grub.cfg sourcing custom.cfg; native checker/tools | Checker/menu/original-entry boot/restore |
 | Limine | Confirmed regular limine.conf under /boot or /efi, observed major 8–12 | Menu/original-entry boot/restore |
-| dracut | Plymouth/script plugin/lsinitrd, existing splash token, confirmed plain images/kernel mapping | Generation/archive/splash/unlock/restore |
+| dracut | Plymouth/two-step plugin/lsinitrd, existing splash token, confirmed plain images/kernel mapping | Generation/archive/splash/unlock/restore |
 | mkinitcpio | Same splash requirements, lsinitcpio, literal main HOOKS plus literal append-only drop-ins, selected literal presets covering all outputs | Generation/hooks/archive Tested physically; splash/unlock/restore pending |
 | Fedora/KDE | Unsupported, no adapters | Post-MVP |
 

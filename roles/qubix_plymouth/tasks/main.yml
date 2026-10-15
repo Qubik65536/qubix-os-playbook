@@ -48,12 +48,12 @@
         | intersect(qubix_profile_resolved.plymouth.images | map(attribute='kernel_image') | list) | length == 0
     fail_msg: 'An initramfs destination must never overwrite a declared kernel image.'
 
-- name: Inspect installed script plugin
+- name: Inspect installed native spinner plugin
   ansible.builtin.stat:
-    path: '{{ qubix_root | default("") }}/usr/lib/plymouth/script.so'
+    path: '{{ qubix_root | default("") }}/usr/lib/plymouth/two-step.so'
   register: qubix_plymouth_plugin
 
-- name: Require script plugin instead of silently selecting an unusable theme
+- name: Require the native spinner plugin instead of selecting an unusable theme
   ansible.builtin.assert:
     that: [qubix_plymouth_plugin.stat.isreg | default(false)]
 
@@ -134,28 +134,29 @@
       '[Daemon]' ~ qubix_plymouth_newline ~ 'Theme=qubix'))
       if qubix_plymouth_conf is regex('(?m)^\[Daemon\]') else qubix_plymouth_daemon ~ qubix_plymouth_conf) }}
 
-- name: Load attributed logo definition
+- name: Load attributed native theme definition
   ansible.builtin.include_vars:
-    file: '{{ role_path }}/../../assets/branding/manifest.yml'
-    name: qubix_plymouth_branding
+    file: '{{ role_path }}/../../assets/plymouth/manifest.yml'
+    name: qubix_plymouth_theme
 
-- name: Prepare standalone theme and selection resources
+- name: Initialize native theme resources
   ansible.builtin.set_fact:
-    qubix_plymouth_resources:
-      - path: /usr/share/plymouth/themes/qubix/logo.png
-        component: plymouth
-        source: '{{ role_path }}/../../assets/branding/logo.png'
-        sha256: '{{ (qubix_plymouth_branding.files | selectattr("filename", "equalto", "logo.png") | first).sha256 }}'
-      - path: /usr/share/plymouth/themes/qubix/qubix.plymouth
-        component: plymouth
-        content: '{{ lookup("file", role_path ~ "/files/qubix.plymouth", rstrip=false) }}'
-      - path: /usr/share/plymouth/themes/qubix/qubix.script
-        component: plymouth
-        content: '{{ lookup("file", role_path ~ "/files/qubix.script", rstrip=false) }}'
-      - path: /etc/plymouth/plymouthd.conf
-        component: plymouth
-        content: '{{ qubix_plymouth_selection }}'
-        mode: '{{ qubix_plymouth_conf_stat.stat.mode | default("0644") }}'
+    qubix_plymouth_resources: []
+
+- name: Prepare exact licensed native spinner and Qubix watermark assets
+  ansible.builtin.set_fact:
+    qubix_plymouth_resources: >-
+      {{ qubix_plymouth_resources + [{'path': '/usr/share/plymouth/themes/qubix/' ~ item.filename,
+      'component': 'plymouth', 'source': role_path ~ '/../../' ~ item.source, 'sha256': item.sha256}] }}
+  loop: '{{ qubix_plymouth_theme.files }}'
+  loop_control:
+    label: '{{ item.filename }}'
+
+- name: Prepare preserved daemon settings with only the selected theme changed
+  ansible.builtin.set_fact:
+    qubix_plymouth_resources: >-
+      {{ qubix_plymouth_resources + [{'path': '/etc/plymouth/plymouthd.conf', 'component': 'plymouth',
+      'content': qubix_plymouth_selection, 'mode': qubix_plymouth_conf_stat.stat.mode | default('0644')}] }}
 
 - name: Prepare only the confirmed generator adapter
   ansible.builtin.include_tasks: '{{ qubix_profile_resolved.plymouth.initramfs_backend }}.yml'

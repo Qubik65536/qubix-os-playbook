@@ -4,6 +4,8 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Replaced the rejected scripted splash with a native two-step spinner, modest Qubix watermark and attributed neutral input assets; archive checks cover all runtime assets.
+
 - Added graphical Limine 12 defaults with Qubix wallpaper, palette and font/margin settings, exact recovery metadata and refusal of shadowed/enrolled configurations; fixtures pass.
 
 - Added branded circular Plymouth animation with boot, reboot and poweroff captions; native isolated parser/rendering/prompt tests pass. Image verification now requires label plugins and fonts; actual boot activation remains separate.

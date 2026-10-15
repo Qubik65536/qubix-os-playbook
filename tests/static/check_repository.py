@@ -65,6 +65,21 @@ def main():
         assert digest == asset["sha256"], f"Changed source asset without manifest update: {source}"
     wallpaper = load("assets/wallpaper/manifest.yml")
     assert hashlib.sha256((ROOT / "assets/wallpaper/qubix.png").read_bytes()).hexdigest() == wallpaper["sha256"]
+    splash = load('assets/plymouth/manifest.yml')
+    assert splash['license'] == 'GPL-3.0-only' and len(splash['revision']) == 40
+    assert {asset['filename'] for asset in splash['files']} == {
+        'qubix.plymouth', 'watermark.png', 'COPYING', 'NOTICE', 'bullet.png', 'entry.png',
+        'capslock.png', 'lock.png', 'keyboard.png', 'keymap-render.png',
+        *(f'throbber-{index:04}.png' for index in range(1, 31))}
+    for asset in splash['files']:
+        assert asset['source'] == 'assets/plymouth/theme/' + asset['filename']
+        assert hashlib.sha256((ROOT / asset['source']).read_bytes()).hexdigest() == asset['sha256']
+    native = configparser.ConfigParser()
+    native.read(ROOT / 'assets/plymouth/theme/qubix.plymouth')
+    assert native['Plymouth Theme']['ModuleName'] == 'two-step'
+    assert native['two-step']['ImageDir'] == '/usr/share/plymouth/themes/qubix'
+    for mode in ('boot-up', 'shutdown', 'reboot'):
+        assert native[mode].getboolean('UseFirmwareBackground') and not native[mode].getboolean('UseEndAnimation')
     desktop = ROOT / 'roles/qubix_niri/templates'
     shell = tomllib.loads((desktop / 'noctalia.toml.j2').read_text())
     assert not shell['theme']['templates']['enable_builtin_templates']

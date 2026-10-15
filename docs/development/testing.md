@@ -47,4 +47,10 @@ Acceptance requires successful native rendering, unchanged original compositor P
 
 ## Native splash preview
 
-Run tests/integration/plymouth.yml explicitly using the [splash guide](../user/plymouth.md). It uses the installed script parser and actual Plymouth daemon with positive/negative parser controls, three mode captures, changed animation pixels and a synthetic password prompt. A private bubblewrap namespace, pseudoterminal and Xwayland server keep daemon IPC and devices away from the host splash. A reader drains early tty debug output. Verify actual script-plugin mappings, clean daemon exits, unchanged host selection/session and zero leftover processes. Logs/screenshots remain ignored. Review the three captions and prompt images manually; this test does not prove native initramfs packaging, encrypted-root input, DRM or actual shutdown.
+Run tests/integration/plymouth.yml explicitly using the [splash guide](../user/plymouth.md).
+It checks the native two-step plugin against an invalid-module control, captures three animated
+modes and a synthetic password prompt. A private bubblewrap namespace, pseudoterminal and Xwayland
+server isolate daemon IPC and devices. A reader drains early tty debug output. Verify actual
+plugin mappings, clean daemon exits, unchanged host selection/session and zero leftover processes.
+Logs/screenshots remain ignored. Review spinner, watermark and prompt captures manually; this test
+does not prove native initramfs packaging, firmware graphics, encrypted-root input or actual shutdown.

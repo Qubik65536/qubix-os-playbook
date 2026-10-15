@@ -1,8 +1,0 @@
-[Plymouth Theme]
-Name=Qubix OS
-Description=Qubix circular boot, reboot and poweroff splash with native input callbacks
-ModuleName=script
-
-[script]
-ImageDir=/usr/share/plymouth/themes/qubix
-ScriptFile=/usr/share/plymouth/themes/qubix/qubix.script

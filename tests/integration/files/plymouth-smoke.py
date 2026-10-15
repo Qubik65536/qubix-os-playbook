@@ -1,5 +1,5 @@
-# Test-only native Plymouth parser/rendering; never contacts the host splash daemon.
-import ctypes
+# Test-only native Plymouth module/rendering; never contacts the host splash daemon.
+import configparser
 import hashlib
 import json
 import os
@@ -16,26 +16,15 @@ def run(args, **kwargs):
     return subprocess.run(args, capture_output=True, text=True, timeout=10, check=True, **kwargs)
 
 
-def parse(path):
-    library = ctypes.CDLL('/usr/lib/plymouth/script.so', mode=os.RTLD_LAZY | os.RTLD_LOCAL)
-    library.script_parse_file.argtypes = [ctypes.c_char_p]
-    library.script_parse_file.restype = ctypes.c_void_p
-    library.script_parse_op_free.argtypes = [ctypes.c_void_p]
-    library.script_parse_op_free.restype = None
-    tree = library.script_parse_file(os.fsencode(path))
-    assert tree, 'Native parser returned no syntax tree'
-    library.script_parse_op_free(tree)
-
-
 def inside(root):
     assert os.getuid() == 0 and not pathlib.Path('/dev/dri').exists()
     assert pathlib.Path('/etc/plymouth/plymouthd.conf').read_text().strip() == '[Daemon]\nTheme=qubix\nShowDelay=0'
-    valid = run([sys.executable, __file__, '--parse', str(root / 'theme/qubix.script')])
-    assert not valid.stderr.strip(), 'Native parser rejected the production theme: ' + valid.stderr
-    (root / 'invalid.script').write_text('if (')
-    invalid = run([sys.executable, __file__, '--parse', str(root / 'invalid.script')])
-    assert 'Parser error' in invalid.stderr, 'Native parser missed the invalid control'
-    result = {'native_parser': True, 'negative_parser': True, 'modes': {}}
+    definition = root / 'theme/qubix.plymouth'
+    candidate = definition.read_text()
+    config = configparser.ConfigParser()
+    config.read_string(candidate)
+    assert config['Plymouth Theme']['ModuleName'] == 'two-step'
+    result = {'native_module': True, 'negative_module': False, 'modes': {}}
     xlog = (root / 'xwayland.log').open('w')
     xserver = subprocess.Popen(['/usr/bin/Xwayland', ':98', '-geometry', '800x600', '-nolisten', 'tcp', '-ac', '-nocursor'], stdout=xlog, stderr=xlog)
     try:
@@ -46,7 +35,8 @@ def inside(root):
             time.sleep(0.1)
         else:
             raise AssertionError('Private Xwayland was not ready')
-        for mode in ('boot', 'shutdown', 'reboot'):
+        for mode in ('invalid', 'boot', 'shutdown', 'reboot'):
+            definition.write_text(candidate.replace('ModuleName=two-step', 'ModuleName=qubix-invalid-control') if mode == 'invalid' else candidate)
             log = (root / (mode + '.log')).open('w')
             master, slave = pty.openpty()
             terminal = os.ttyname(slave)
@@ -66,7 +56,7 @@ def inside(root):
             reader.start()
             daemon = subprocess.Popen([
                 '/usr/bin/plymouthd', '--no-daemon', '--no-boot-log', '--graphical-boot',
-                '--tty=' + terminal, '--mode=' + mode, '--pid-file=' + str(root / (mode + '.pid')),
+                '--tty=' + terminal, '--mode=' + ('boot' if mode == 'invalid' else mode), '--pid-file=' + str(root / (mode + '.pid')),
                 '--debug', '--debug-file=' + str(root / (mode + '-debug.log')),
                 '--kernel-command-line=quiet splash plymouth.ignore-serial-consoles',
             ], stdout=log, stderr=log)
@@ -82,7 +72,12 @@ def inside(root):
                     raise AssertionError('Isolated Plymouth was not ready')
                 run(['/usr/bin/plymouth', 'show-splash'])
                 time.sleep(0.8)
-                assert '/usr/lib/plymouth/script.so' in pathlib.Path('/proc', str(daemon.pid), 'maps').read_text(), 'Native script plugin is not mapped'
+                mapped = '/usr/lib/plymouth/two-step.so' in pathlib.Path('/proc', str(daemon.pid), 'maps').read_text()
+                if mode == 'invalid':
+                    assert not mapped, 'Invalid module unexpectedly loaded the native spinner'
+                    result['negative_module'] = True
+                    continue
+                assert mapped, 'Native two-step plugin is not mapped'
                 first = root / (mode + '.png')
                 second = root / (mode + '-motion.png')
                 run(['/usr/bin/magick', 'import', '-window', 'root', str(first)])
@@ -115,11 +110,12 @@ def inside(root):
                 os.close(master)
             assert daemon.returncode == 0, 'Private splash daemon did not exit cleanly'
             text = (root / (mode + '-debug.log')).read_text()
-            assert "Loading boot splash theme '/usr/share/plymouth/themes//qubix/qubix.plymouth'" in text and 'parsing script file' in text, 'Production theme was not loaded'
+            assert "Loading boot splash theme '/usr/share/plymouth/themes//qubix/qubix.plymouth'" in text, 'Production theme was not loaded'
             assert not any(error in text.lower() for error in ('script error', 'parse error', 'parser error')), text[-1500:]
         result['status'] = 'passed'
         (root / 'result.json').write_text(json.dumps(result, indent=2))
     finally:
+        definition.write_text(candidate)
         xserver.terminate()
         xserver.wait(timeout=3)
 
@@ -185,9 +181,7 @@ def outside(root):
     print(json.dumps(result))
 
 
-if sys.argv[1] == '--parse':
-    parse(pathlib.Path(sys.argv[2]))
-elif sys.argv[1] == '--inside':
+if sys.argv[1] == '--inside':
     inside(pathlib.Path(sys.argv[2]))
 else:
     outside(pathlib.Path(sys.argv[1]))

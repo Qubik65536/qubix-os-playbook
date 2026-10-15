@@ -10,26 +10,34 @@ After generation, stage verified image copies under a Qubix-owned, content-addre
 
 ## Native splash style revision
 
-Status: **Planned corrective contract**. Follow the inspected native CachyOS two-step layout: black/firmware background, its small white spinner at 70% height and a modest Qubix watermark near the bottom. Use Plymouth's native two-step renderer and native prompt controls, preserving the original CachyOS theme. Import only neutral spinner/input assets with their GPL license, source revision and checksums; supply original Qubix branding. No large central title or routine startup/shutdown captions. Validate boot/reboot/shutdown animation and native prompts in the isolated preview, then verify the actual active boot images before physical acceptance.
+Status: **Implemented; isolated native preview Tested**. The theme follows the inspected CachyOS
+`two-step` layout: black/firmware background, a 32 px white spinner at 70% height and a modest
+Qubix watermark near the bottom. Plymouth supplies the native password/question/message controls.
+There is no large central title or routine startup/shutdown caption. The original CachyOS theme
+remains Preserved. The attributed [asset manifest](../../assets/plymouth/manifest.yml) pins neutral
+spinner/input files and the adapted definition to their GPL-3.0 source revision; Qubix artwork
+retains Apache-2.0 attribution. The [asset guide](../../assets/plymouth/README.md) explains regeneration.
 
-## Circular boot and poweroff branding
+The earlier script design passed isolated rendering but failed operator acceptance; it is replaced
+in source and remains selected on the target until deployment. Obsolete script/logo files from that
+installation are inert when `ModuleName=two-step` is selected and remain in recovery records.
 
-Status: **Implemented and preview Tested; design rejected by operator**. The initial script keeps a large Qubix logo/title over a blue-gray background with mode captions. It remains deployed during the native-style revision above. Native shutdown/reboot services already use the selected theme; no service replacement or PAM change is required.
+The private native preview tests module loading against an invalid-module control, actual animation
+in boot/shutdown/reboot and a synthetic password prompt. It uses an unprivileged bubblewrap namespace,
+private Xwayland/daemon/socket/TTY, read-only host mounts and no DRM/VT devices. It captures only the
+test window, checks preservation and cleans up processes. Preview does not establish physical boot,
+firmware background or encrypted-root input acceptance. See the [splash guide](../user/plymouth.md).
 
-Before activation, test the actual script parser and boot/shutdown/reboot rendering in an unprivileged bubblewrap namespace with a private Xwayland window, private /run and network namespace, read-only host mounts and no DRM/VT devices. The preview must never contact the system Plymouth daemon. Capture only the test window, verify animation, parser rejection of an invalid control, mode captions, prompts, cleanup and preserved host configuration. Image verification must require a native label plugin and packaged font resources because the title, captions and circle use Image.Text. Preview success does not establish initramfs generation or reboot/poweroff acceptance.
-
-The inspected physical target already has Plymouth, a script plugin, splash argument and native poweroff/reboot units. Its two plain CachyOS/LTS images now select qubix after explicitly approved activation. Its literal HOOKS+=(sd-btrfs-overlayfs) drop-in remains Preserved. The mkinitcpio adapter supports narrowly parsed literal append arrays, validates the complete hook order and rejects replacements, expansion, operators and duplicate Plymouth hooks. Drop-in hashes participate in the rebuild fingerprint; the files are never managed or executed during discovery. Preservation/refusal fixtures and native generation pass. Do not remove snapshot integration to make deployment pass.
-
-Prepare exact existing kernel/image/preset mappings, a no-write deployment preview, backups and recovery steps before requesting physical-target activation. Actual image regeneration and boot/poweroff observation remain a distinct authorized step.
-
-The native isolated test passes all three animation modes, positive/negative parser controls and a synthetic password prompt, with preserved host selection/session and no leftover processes. Captured mode captions were visually inspected. This is renderer evidence rather than a physical boot result. Follow the [splash guide](../user/plymouth.md) and [reviewed physical-target proposal](../project/plymouth-test-plan.md).
-
-The named script theme manages logo, normal/message/question/password display callbacks and selection in `/etc/plymouth/plymouthd.conf`. Existing ShowDelay and unrelated settings remain preserved. Password callbacks display only a bullet count; the script does not log or store password input. Require an installed script plugin, an existing `splash` kernel argument and explicit generator confirmation. Kernel arguments are never rewritten.
+The role changes only Theme in `/etc/plymouth/plymouthd.conf`, retaining ShowDelay and unrelated
+settings. It requires the installed two-step plugin, an existing splash argument and explicit
+generator confirmation. Native shutdown/reboot services supply the mode; services, encryption
+settings and kernel arguments are never rewritten. Archive checks require every runtime theme
+asset, daemon, native two-step/label plugins and fonts before recording success.
 
 `plymouth.images` maps each existing plain initramfs path to an installed kernel version and its unchanged kernel_image path. The adapter snapshots every affected image before regeneration. Image backups record the associated kernel hash; restoration refuses stale images after a kernel change, even with a drift override. UKI generation/signing is outside current support.
 
 Dracut receives only an additive module drop-in and generates explicit images with `--no-uefi --force image kernel`. Mkinitcpio supports one literal main HOOKS array plus literal append-only drop-ins, inserts Plymouth after systemd/udev and before encryption, and preserves other hook ordering/settings. Competing HOOKS replacements, complex/alternate preset configuration and UKIs fail. Declared images must exactly cover selected preset outputs, including fallback images. `--nopost -p preset` prevents native post hooks from modifying boot entries.
 
-An input fingerprint skips unchanged regeneration. A pending marker survives failure and triggers retry; `force_rebuild: true` permits an explicit repair and should then return to false. Native `lsinitrd` or `lsinitcpio` checks for theme files, daemon, script/label plugins and fonts. Image receipts and success fingerprint are committed only after those checks; kernel hashes must remain unchanged.
+An input fingerprint skips unchanged regeneration. A pending marker survives failure and triggers retry; `force_rebuild: true` permits an explicit repair and should then return to false. Native `lsinitrd` or `lsinitcpio` checks for theme files, daemon, two-step/label plugins and fonts. Image receipts and success fingerprint are committed only after those checks; kernel hashes must remain unchanged.
 
 Check mode performs no image generation, image backups or success-marker writes. Operator acceptance separately requires dracut and mkinitcpio native generation, a real reboot/splash, encrypted-root input where relevant, unchanged entries/arguments, reapplication and restoration. See [restoration](../user/restoration.md).

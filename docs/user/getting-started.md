@@ -213,7 +213,7 @@ Preview/deploy with `--ask-become-pass`, then installed verification with `--tag
 
 ## 7. Optional Plymouth and initramfs
 
-Plymouth is independent of the loader. Keep it disabled until the active generator, existing image paths and kernel mapping are known. The current boot must already contain `splash`; Qubix never inserts kernel arguments. An installed script plugin is required. UKIs, signing changes and complex mkinitcpio configurations are unsupported.
+Plymouth is independent of the loader. Keep it disabled until the active generator, existing image paths and kernel mapping are known. The current boot must already contain `splash`; Qubix never inserts kernel arguments. An installed two-step plugin is required. UKIs, signing changes and complex mkinitcpio configurations are unsupported.
 
 For dracut, merge this section with your **actual** version and paths:
 

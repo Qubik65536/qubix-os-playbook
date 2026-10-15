@@ -9,7 +9,7 @@ Get started:
 - [User getting-started guide](docs/user/getting-started.md): prepare the target, deploy and test the desktop, then opt into login/boot/splash tests.
 - [Human developer getting-started guide](docs/development/getting-started.md): set up tools, understand the code and run fixtures.
 - [SSH access and target information](docs/user/collecting-target-info.md): share connection details so the agent can inspect your test machine.
-- [Boot and poweroff splash guide](docs/user/plymouth.md): preview circular branding, review image mappings and plan activation/recovery.
+- [Boot and poweroff splash guide](docs/user/plymouth.md): preview native-style spinner branding, review image mappings and plan activation/recovery.
 
 After controller setup, a remote inventory with a `qubix_targets` group and the guide’s `config/local.yml`:
 

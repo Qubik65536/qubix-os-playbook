@@ -1,0 +1,5 @@
+Neutral spinner and input assets are copied unmodified from CachyOS/cachyos-plymouth-theme, revision 27c453a1d65597d9773af349836bd67665267e87.
+https://github.com/CachyOS/cachyos-plymouth-theme
+The source theme credits Jimmac/Plymouth and supplies GPL version 3; see COPYING.
+qubix.plymouth adapts the source's two-step definition for the Qubix asset path and branding.
+The Qubix watermark uses the Apache-2.0 Qubix artwork attributed in assets/branding/NOTICE.
