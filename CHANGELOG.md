@@ -4,6 +4,8 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Added reproducible, OFL-attributed Krypton-derived boot font assets: a renamed 145 KB Latin subset and complete 5 KB CP437 bitmap. Boot role integration is the next step.
+
 - Deployed graphical Limine and native-style Plymouth from clean e7e652a; exact source/active-image assets, pins, installed verification and preservation pass. Identical-source reapplication completes with zero changes. The normal-kernel reboot returns Qubix at 100% scale, and the operator confirms menu/startup/reboot branding.
 
 - Added explicit Limine cache bindings, verified content-addressed image staging, native BLAKE2b pin activation and config-first recovery; native cache/history/EFI files remain preserved.

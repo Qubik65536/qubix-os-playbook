@@ -1,0 +1,3 @@
+# Optional asset-generation tools; never installed on deployment targets.
+fonttools==4.67.0
+pillow==12.3.0

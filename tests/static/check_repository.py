@@ -65,6 +65,20 @@ def main():
         assert digest == asset["sha256"], f"Changed source asset without manifest update: {source}"
     wallpaper = load("assets/wallpaper/manifest.yml")
     assert hashlib.sha256((ROOT / "assets/wallpaper/qubix.png").read_bytes()).hexdigest() == wallpaper["sha256"]
+    fonts = json.loads((ROOT / 'assets/fonts/manifest.json').read_text())
+    assert fonts['family'] == 'Qubix Boot Mono' and fonts['license'] == 'OFL-1.1'
+    assert fonts['bitmap_cell'] == [8, 20] and fonts['bitmap_glyphs'] == 256
+    assert set(fonts['geometric_cp437_fallbacks']) == {3, 4, 5, 6, 13, 14, 23, 127, 244, 245}
+    for asset in fonts['files']:
+        data = (ROOT / 'assets/fonts' / asset['filename']).read_bytes()
+        assert hashlib.sha256(data).hexdigest() == asset['sha256'] and len(data) == asset['bytes']
+    bitmap = (ROOT / 'assets/fonts/QubixBootMono-8x20.bin').read_bytes()
+    assert len(bitmap) == 5120
+    assert all(any(bitmap[i * 20:(i + 1) * 20]) for i in set(range(256)) - {0, 32, 255})
+    vertical = bitmap[0xB3 * 20:0xB4 * 20]
+    assert vertical[0] == vertical[-1] != 0, 'Boot menu vertical borders must join cells'
+    assert any(row & 0x81 == 0x81 for row in bitmap[0xC4 * 20:0xC5 * 20])
+    assert all(code in fonts['subset_codepoints'] for code in range(32, 127))
     splash = load('assets/plymouth/manifest.yml')
     assert splash['license'] == 'GPL-3.0-only' and len(splash['revision']) == 40
     assert {asset['filename'] for asset in splash['files']} == {

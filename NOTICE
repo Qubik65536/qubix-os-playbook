@@ -15,3 +15,8 @@ makes no claim of authorship over the original artwork.
 Native Plymouth spinner/input assets and the adapted two-step definition
 are GPL-3.0-only from CachyOS/cachyos-plymouth-theme. See
 assets/plymouth/README.md, assets/plymouth/theme/NOTICE and COPYING.
+
+Qubix Boot Mono font derivatives originate from Monaspace Krypton Frozen
+Regular, GitHub Next Monaspace v1.400. Copyright (c) 2023, GitHub.
+The derivatives retain SIL OFL 1.1 and use renamed primary font names.
+See assets/fonts/README.md, manifest.json and OFL.txt for exact provenance.
