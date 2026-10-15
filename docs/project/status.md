@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM testing**. Full MVP acceptance remains In Progress; SSH is connected to a physical CachyOS ThinkPad after service/firewall setup and host-key confirmation. Desktop deployment, installed verification, zero-change reapplication and isolated nested rendering pass. Native desktop restoration passes; primary-session/VM acceptance remains pending.
+Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM testing**. Full MVP acceptance remains In Progress; SSH is connected to a physical CachyOS ThinkPad after service/firewall setup and host-key confirmation. Desktop deployment, installed verification, zero-change reapplication and isolated nested rendering pass. Earlier classic desktop restoration passes; Noctalia recovery and primary-session/VM acceptance remain pending.
 
 | Capability | Status | Actual evidence |
 |---|---|---|
@@ -9,7 +9,7 @@ Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM t
 | Profile/identity/discovery | Tested in fixtures | 25 profile + 11 host + 7 identity cases; independent manager activity; normal/check zero changes |
 | Live CachyOS inspection | Tested on physical target | CachyOS/Linux/systemd; explicit privileged metadata for private /boot; 38 tasks, zero changes/failures |
 | Branding | Tested in fixtures and native deployment | Exact installed resources, zero-change reapplication, original-file preservation |
-| Niri/wallpaper/companions | Noctalia grammar/nested rendering Tested; primary migration pending | Bar/dock/wallpaper/launcher/notifications and IPC render with #56728b palette; native Niri/Noctalia/dconf hashes and compositor preserved |
+| Niri/wallpaper/companions | Noctalia files/grammar/nested rendering Tested; primary acceptance pending | Native deployment/verification pass; reapplication has zero changes; bar/dock/wallpaper/launcher/notifications render with #56728b palette; 76 native/personal resources preserved |
 | Shell | Native Bash/Starship and controller fixtures Tested | Temporary-home native startup/TOML/prompt pass; default Fish and personal files preserved |
 | SDDM | Implemented | UI clone, actual INI lines, standalone/ambiguous/unsupported activity fixtures; authentication pending |
 | GRUB and Limine | Implemented | Independent preservation/reapplication/private-mode/absent-hook/stale-restore fixtures; native checker, boot/restore pending |
@@ -39,6 +39,8 @@ The operator authorized desktop-only preparation, including native Snapper/Limin
 
 ## Repeatable native desktop evidence
 
-The optional tests/integration/desktop.yml workflow passes: 64 tasks, five temporary setup/test/evidence/cleanup changes, zero failures. It runs the production configuration in a nested window on a private D-Bus session, with temporary HOME/config/cache paths. Native wallpaper/bar layers, two Foot windows, Fuzzel rendering, Mako notification receipt and IPC focus navigation pass. Screenshots were inspected; the original Niri service PID and session endpoints remain unchanged. Evidence is retained only under ignored .cache/native-desktop/ on the controller. Physical keys, login, portals, Polkit and lock/unlock remain acceptance items.
+The earlier classic workflow at revision 28cc112 passed 64 tasks, five temporary setup/test/evidence/cleanup changes and zero failures. It ran production configuration in a nested window on private D-Bus with temporary HOME/config/cache. Wallpaper/bar layers, Foot windows, Fuzzel, Mako notifications and IPC navigation passed, preserving the original compositor. The current Noctalia workflow is recorded below; screenshots/logs remain ignored local artifacts. Physical keys, login, portals, Polkit and lock/unlock remain acceptance items.
 
 Boot recovery fixtures now also prove that native entries/hook changes survive rejected restoration after reapplication, with force false and true. The expanded boot suite passes 724 tasks (five expected rescued refusals); shared recovery passes 229 tasks (two expected rescued refusals). Native boot/recovery remains unverified.
+
+The Noctalia redesign is deployed from clean source revision 4dc23f6. Native grammar passes 63 tasks; the revised nested preview passes 59 tasks and preserves the direct SDDM compositor, native configuration hashes and session endpoints with zero leftover test processes. Deployment passes 343 tasks, reapplication passes 338 tasks with zero changes, and installed verification passes 62 tasks with zero changes. All 76 audited native/personal resources, the Fish shell and 17 earlier baseline hashes remain preserved; 20 private baseline manifests now include the three new Noctalia resources. The authorized reboot returns SSH/native SDDM, valid installed Niri/Noctalia configurations and the available Qubix session entry; user session selection is pending. See the [Noctalia results](desktop-test-results.md#noctalia-redesign). Primary-session physical keys, application startup, authentication, locking, portals and native recovery of the new resources remain open.
