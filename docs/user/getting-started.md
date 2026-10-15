@@ -107,6 +107,8 @@ Existing personal dotfiles and `/etc/niri/config.kdl` remain intact. The additio
 
 After deployment, log out when convenient and select **Qubix Niri** in a login manager that offers Wayland session selection. Keep native Niri available as a fallback.
 
+The standard playbook preserves the native session entry. If you separately authorize its retirement, restore its backup before removing/restoring the Qubix session files; see the [operator-directed retirement and recovery procedure](../project/live-test-plan.md#operator-authorized-native-session-retirement-and-reboot). The Niri compositor package is still required by Qubix.
+
 If your existing manager, such as a fixed-command greetd setup, does not expose a session picker, log out, open a free VM TTY, sign in as your ordinary user and run:
 
 ```bash

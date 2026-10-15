@@ -1,6 +1,6 @@
 # Niri desktop and appearance
 
-Status: **Noctalia candidate Implemented; controller ownership/version fixtures, native Niri/Foot/Noctalia grammar and isolated rendering Tested; primary-session migration pending**. Earlier classic-companion deployment/rendering remains recorded in the native results.
+Status: **Noctalia candidate Implemented; controller ownership/version fixtures, native Niri/Foot/Noctalia grammar and isolated rendering Tested; primary-session startup Tested; interaction/recovery checks pending**. Earlier classic-companion deployment/rendering remains recorded in the native results.
 
 The role requires measured Niri, Foot and standalone Noctalia >=5.2.0 and <6.0.0. Discovery reads Noctalia's actual version; binary presence alone is insufficient. Missing tools and unsupported versions fail before component writes. Native Niri/Noctalia/Alacritty settings remain preserved.
 
@@ -20,4 +20,4 @@ Select **Qubix Niri** at login. From a free TTY after logout, niri --session --c
 
 The native grammar workflow validates production candidates and rejects invalid controls in its private temporary directory. The nested workflow renders these definitions with temporary path substitutions, private D-Bus and test-only state overrides. It measures the main Niri process even when SDDM launches it directly rather than through niri.service, preserving its PID and session endpoints. It does not prove physical shortcuts, authentication, lock/unlock or portal behaviour.
 
-Restore returns the first system-file baselines. Old Qubix classic-companion files remain inert on upgrade and retain their existing backup receipts; restoration includes recorded legacy resources. Packages and user-owned Qubix GUI overrides remain. Switching to the native session restores native shell preferences without overwriting them. Test the Noctalia primary session and second-deploy idempotency before recording full desktop acceptance.
+Restore returns the first system-file baselines. Old Qubix classic-companion files remain inert on upgrade and retain their existing backup receipts; restoration includes recorded legacy resources. Packages and user-owned Qubix GUI overrides remain. When its entry is retained, switching to the native session restores native shell preferences without overwriting them. An operator-directed native-entry retirement is outside normal deployment/restoration; restore that entry first using the [documented private backup](../project/live-test-plan.md#operator-authorized-native-session-retirement-and-reboot). Qubix requires the compositor package; personal configuration stays intact. Test the Noctalia primary session and second-deploy idempotency before recording full desktop acceptance.

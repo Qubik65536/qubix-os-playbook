@@ -2,7 +2,7 @@
 
 An Ansible framework for deploying Qubix branding and desktop defaults onto existing Linux installations. The first target is **CachyOS with Niri**. Qubix reproduces its managed configuration, not the complete operating system.
 
-**Status: MVP candidate ready for disposable-VM testing.** Branding, a separate Qubix Niri session, Noctalia shell/wallpaper, rounded #56728b appearance, shell defaults, SDDM branding, both GRUB and Limine, and Plymouth with both dracut and mkinitcpio are implemented. Static checks and isolated fixtures pass. The first desktop candidate's installation, syntax, preservation, zero-change reapplication, restoration and nested rendering pass. The Noctalia redesign passes native parser and isolated rendering/preservation checks; its primary-session migration is tracked separately. Main-session, authentication, native image generation and reboot recovery remain VM acceptance gates. See [actual evidence](docs/project/status.md).
+**Status: MVP candidate ready for disposable-VM testing.** Branding, a separate Qubix Niri session, Noctalia shell/wallpaper, rounded #56728b appearance, shell defaults, SDDM branding, both GRUB and Limine, and Plymouth with both dracut and mkinitcpio are implemented. Static checks and isolated fixtures pass. The first desktop candidate's installation, syntax, preservation, zero-change reapplication, restoration and nested rendering pass. The Noctalia redesign passes native parser and isolated rendering/preservation checks; primary-session startup now passes on the authorized target. Main-session interaction, authentication, native image generation and recovery remain acceptance gates. See [actual evidence](docs/project/status.md).
 
 Get started:
 

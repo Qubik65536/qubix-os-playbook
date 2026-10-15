@@ -1,6 +1,6 @@
 # Qubix Niri desktop design
 
-Status: **Noctalia integration Implemented; native grammar and isolated rendering Tested; primary-session migration pending**. The earlier classic-companion candidate remains documented for recovery history. [ADR-0012](../decisions/ADR-0012.md) records the new direction.
+Status: **Noctalia integration Implemented; native grammar and isolated rendering Tested; primary-session startup Tested; interaction/recovery checks pending**. The earlier classic-companion candidate remains documented for recovery history. [ADR-0012](../decisions/ADR-0012.md) records the new direction.
 
 ## Composition and ownership
 

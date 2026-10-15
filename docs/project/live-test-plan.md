@@ -21,3 +21,19 @@ Preview first, then apply/verify the selected profile. Do not restart the displa
 ## Remaining independent work
 
 Breeze is absent; the current login adapter cannot be selected on this target without further preparation or a validated adapter for an installed factory theme. Do not replace SDDM or install a desktop environment just to obtain a theme. GRUB is absent; both bootloaders and both image generators still need disposable-VM acceptance. No physical-machine loader theme, image rebuild or reboot is included here.
+
+## Operator-authorized native-session retirement and reboot
+
+Status: Native-entry backup/removal, reboot return and Qubix primary-session startup Tested. After the bar/shortcut deployment, the operator explicitly requested reboot and allowed removal of CachyOS's default Niri. This authorizes a target-specific exception to native session-entry preservation; it does not change the default playbook policy.
+
+Keep the installed Niri compositor and native personal configuration: Qubix's session uses that compositor directly. On this inspected target the niri package owns /usr/share/wayland-sessions/niri.desktop, there is no separate cachyos-niri-settings package, and qubix-niri.desktop is now the only available session entry. Validate the installed Qubix KDL/Noctalia/plugin and inspect all configured session directories before retirement.
+
+Back up the exact native desktop entry under the private /var/lib/qubix/retired-sessions/ directory before removing its login entry. Refuse redirected paths or a differing existing backup, and verify the backup before removal. Leave the display manager, its authentication configuration and personal dotfiles intact. This is an operator-directed host operation outside normal deploy/restore reconciliation; no package uninstall, loader change or initramfs generation is required. A package upgrade may recreate the native session entry.
+
+Recovery from a TTY or SSH, before restoring/removing the Qubix session:
+
+```bash
+sudo install -o root -g root -m 0644 /var/lib/qubix/retired-sessions/niri.desktop /usr/share/wayland-sessions/niri.desktop
+```
+
+Reboot only after confirming Qubix remains the available session and its native validators pass. After reboot, check changed boot ID, returning SSH/SDDM and the selected primary session's configuration/layers. Physical keys, lock/unlock, portals and GUI authentication remain separate acceptance items. See the [recorded result](desktop-test-results.md#native-session-retirement-and-primary-startup).
