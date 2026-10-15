@@ -19,7 +19,7 @@ On the VM, keep its existing Niri installation and display manager.
 Preview the selected desktop transaction before installation, especially on a physical machine:
 
 ```bash
-pacman -Sp --needed --print-format '%n %v' foot fuzzel waybar mako swaybg starship
+pacman -Sp --needed --print-format '%n %v' noctalia foot starship
 ```
 
 Native CachyOS Snapper/Limine package hooks can create snapshots and refresh menu entries. Those effects occurred in the [recorded native desktop test](../project/desktop-test-results.md); they are package preparation effects, independently of Qubix boot branding. Review the actual transaction and keep normal hooks enabled.
@@ -27,7 +27,8 @@ Native CachyOS Snapper/Limine package hooks can create snapshots and refresh men
 Install the selected desktop companions and SSH prerequisites yourself:
 
 ```bash
-sudo pacman -S --needed python openssh foot fuzzel waybar mako swaybg starship
+sudo pacman -S --needed python openssh noctalia foot starship
+noctalia --version
 sudo systemctl enable --now sshd
 ip -brief address
 whoami
@@ -98,7 +99,7 @@ export ANSIBLE_PIPELINING=true
 ./bootstrap.sh verify -i inventory/target.local.ini -e @config/local.yml --tags installed --ask-pass --ask-become-pass
 ```
 
-Missing prerequisites stop deployment before component writes. The native Niri, Foot and Fuzzel parsers validate candidate files before activation. A parser failure may leave earlier inert files installed; backups support recovery. Check mode performs no backup/state writes and cannot validate files it has not installed.
+Missing prerequisites stop deployment before component writes. The native Niri, Foot and Noctalia parsers validate candidate files before activation. Standalone Noctalia >=5.2.0 and <6.0.0 is required; legacy Quickshell/v4 does not satisfy this profile. A parser failure may leave earlier inert files installed; backups support recovery. Check mode performs no backup/state writes and cannot validate files it has not installed.
 
 Existing personal dotfiles and `/etc/niri/config.kdl` remain intact. The additional session uses `/etc/niri/qubix/config.kdl` explicitly, so it does not inherit your personal Niri configuration. Qubix installs named resources, not a replacement operating system.
 
@@ -116,17 +117,21 @@ Run this from a free TTY, not inside an existing graphical session. In a tempora
 
 | Key | Action |
 |---|---|
-| Super+Return | Foot terminal |
-| Super+D | Fuzzel launcher |
-| Super+Q | Close focused window |
+| Super+T or Super+Return | Foot terminal |
+| Super+Space or Super+D | Noctalia launcher |
+| Super+V | Clipboard history |
+| Super+Comma | Noctalia settings |
+| Super+N | Notification centre |
+| Super+W or Super+Q | Close focused window |
 | Super+H/J/K/L | Navigate windows/columns |
-| Super+O | Overview |
+| Super+Tab or Super+O | Overview |
+| Alt+Tab | Noctalia window switcher |
 | Super+Shift+S | Screenshot |
 | Super+Shift+E | Exit session |
 
-Check wallpaper, bar, notifications, launcher, terminal and keyboard navigation visually. A successful file install is not graphical verification. Review session logs if companions fail. Native user services may start a second bar or notification service; collect their status before changing anything.
+Check wallpaper, bar, notifications, launcher, terminal and keyboard navigation visually. A successful file install is not graphical verification. Review session logs if companions fail. Native user services may start a second bar or notification service; collect their status before changing anything. When upgrading the classic Qubix session, log out and select it again: reloading KDL alone does not replace existing Waybar/Mako/Swaybg processes.
 
-If a KDE Polkit agent executable is measured, it starts in the Qubix session; otherwise GUI privilege prompts need manual preparation and native testing. Foot starts a login shell. Bash receives additive system defaults; existing user Starship configuration takes precedence and personal initialization runs normally. For Zsh, optional adoption is a manual decision: after backing up your own `.zshrc`, you can add `source /usr/share/qubix/shell/qubix.zsh`. The playbook never edits it or runs `chsh`.
+Noctalia provides the shell's Polkit agent; test GUI privilege prompts and lock/unlock manually. Its Qubix defaults use rounded windows/panels and the #56728b accent. The complete [appearance and shortcut contract](../architecture/desktop-design.md) explains shell ownership. GUI changes are stored in the Qubix-only user state namespace and override managed defaults; native Noctalia settings remain preserved. Noctalia app-theme templates are disabled. Foot starts a login shell. Bash receives additive system defaults; existing user Starship configuration takes precedence and personal initialization runs normally. For Zsh, optional adoption is a manual decision: after backing up your own `.zshrc`, you can add `source /usr/share/qubix/shell/qubix.zsh`. The playbook never edits it or runs `chsh`.
 
 Fish remains your existing shell when it is the account default; automatic Fish prompt integration is not implemented. To explicitly try the Qubix Starship prompt in one Fish terminal after deployment, without editing dotfiles:
 

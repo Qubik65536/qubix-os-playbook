@@ -9,7 +9,7 @@ Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM t
 | Profile/identity/discovery | Tested in fixtures | 25 profile + 11 host + 7 identity cases; independent manager activity; normal/check zero changes |
 | Live CachyOS inspection | Tested on physical target | CachyOS/Linux/systemd; explicit privileged metadata for private /boot; 38 tasks, zero changes/failures |
 | Branding | Tested in fixtures and native deployment | Exact installed resources, zero-change reapplication, original-file preservation |
-| Niri/wallpaper/companions | Native syntax/files/nested rendering Tested | Niri/Foot/Fuzzel controls pass; wallpaper/bar/terminal/launcher/notifications/IPC navigation render; primary session pending |
+| Niri/wallpaper/companions | Noctalia grammar/nested rendering Tested; primary migration pending | Bar/dock/wallpaper/launcher/notifications and IPC render with #56728b palette; native Niri/Noctalia/dconf hashes and compositor preserved |
 | Shell | Native Bash/Starship and controller fixtures Tested | Temporary-home native startup/TOML/prompt pass; default Fish and personal files preserved |
 | SDDM | Implemented | UI clone, actual INI lines, standalone/ambiguous/unsupported activity fixtures; authentication pending |
 | GRUB and Limine | Implemented | Independent preservation/reapplication/private-mode/absent-hook/stale-restore fixtures; native checker, boot/restore pending |
@@ -23,7 +23,7 @@ Updated: 2026-10-14. Stage: **Implemented MVP candidate, ready for operator VM t
 - `bash scripts/collect-target-info.sh --help`: exit 0. Actual macOS invocation: expected exit 2; Linux collector completed with permission failures labelled, followed by successful privileged metadata discovery.
 - `./bootstrap.sh verify`: actual macOS rejection, exit 2 and zero changes; expected guard, not supported-host acceptance.
 
-Fake generators/inspectors and archive listings prove dispatch/guards, not native initramfs generation. Desktop tests render definitions, not a compositor. Native Niri validation now passes on CachyOS; Foot/Fuzzel validation, actual file deployment and isolated nested rendering pass; primary-session acceptance remains pending. Controller fixtures write only disposable roots under `.cache/tests/`. The native grammar test creates/removes its own user-owned temporary directory; its eight changes are temporary setup/cleanup.
+Fake generators/inspectors and archive listings prove dispatch/guards, not native initramfs generation. Desktop tests render definitions, not a compositor. Native grammar passes for the Noctalia redesign; earlier classic candidate installation and nested rendering evidence remains recorded. The new shell's primary-session acceptance is pending. Controller fixtures write only disposable roots under `.cache/tests/`. The native grammar test creates/removes its own user-owned temporary directory; its eight changes are temporary setup/cleanup.
 
 SSH initially timed out because target sshd was inactive and UFW lacked an allow rule. The operator enabled access and confirmed the ED25519 fingerprint. Password authentication works; no credentials are saved in inventory or Git. The target reports no virtualization and runs Niri 26.04, Noctalia 5.2.1/Alacritty, SDDM 0.21.0, Limine 12.9.3 and mkinitcpio 42.2. Bootctl identifies the current Limine loader; read-only inspection itself changed no boot configuration. Later approved package hooks refreshed Limine snapshot entries.
 

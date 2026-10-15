@@ -1,0 +1,83 @@
+# Qubix shell defaults. GUI overrides belong to the Qubix-only user state root.
+[theme]
+source = "custom"
+custom_palette = "Qubix"
+mode = "dark"
+
+[theme.templates]
+enable_builtin_templates = false
+enable_community_templates = false
+builtin_ids = []
+community_ids = []
+
+[shell]
+corner_radius_scale = 1.35
+setup_wizard_enabled = false
+polkit_agent = true
+telemetry_enabled = false
+external_ip_enabled = false
+screen_time_enabled = false
+launch_apps_custom_command = "/usr/share/qubix/bin/qubix-noctalia --application $CMD"
+
+[shell.panel]
+launcher_placement = "floating"
+launcher_position = "center"
+clipboard_placement = "floating"
+clipboard_position = "center"
+shadow = true
+
+[shell.launcher]
+fetch_exchange_rates = false
+
+[bar.default]
+position = "top"
+thickness = 36
+margin_edge = 8
+margin_ends = 12
+radius = 16
+radius_top_left = 16
+radius_top_right = 16
+radius_bottom_left = 16
+radius_bottom_right = 16
+concave_edge_corners = false
+border = "primary"
+border_width = 1.0
+start = ["launcher", "workspaces"]
+center = ["clock"]
+end = ["tray", "notifications", "network", "volume", "battery", "control-center", "session"]
+
+[widget.launcher]
+custom_image = "/usr/share/qubix/branding/logo.png"
+custom_image_colorize = false
+
+[dock]
+enabled = true
+position = "bottom"
+icon_size = 36
+margin_edge = 8
+radius = 20
+radius_top_left = 20
+radius_top_right = 20
+radius_bottom_left = 20
+radius_bottom_right = 20
+concave_edge_corners = false
+launcher_position = "start"
+show_running = true
+reserve_space = true
+
+[wallpaper]
+enabled = true
+directory = "/usr/share/qubix"
+fill_mode = "crop"
+transition = ["fade"]
+
+[wallpaper.default]
+path = "/usr/share/qubix/wallpaper.png"
+
+[notification]
+enable_daemon = true
+border_color = "primary"
+
+[plugins]
+enabled = []
+auto_update = "none"

@@ -1,5 +1,5 @@
 ---
-- name: Test installed desktop in an isolated nested Niri window
+- name: Test production desktop candidates in an isolated nested Niri window
   hosts: qubix_targets
   gather_facts: false
   become: false
@@ -16,8 +16,9 @@
       ansible.builtin.assert:
         that: [qubix_profile_resolved.niri.enabled]
 
-    - name: Verify deployed resources and syntax first
-      ansible.builtin.import_tasks: ../../playbooks/tasks/verify-installed.yml
+    - name: Render measured production candidates without installing a session
+      ansible.builtin.include_role:
+        name: qubix_niri
 
     - name: Create private user-owned native test directory
       ansible.builtin.tempfile:
@@ -28,6 +29,44 @@
 
     - name: Run optional rendering and preservation checks with cleanup
       block:
+        - name: Create private candidate configuration directories
+          ansible.builtin.file:
+            path: '{{ qubix_smoke_directory.path }}/{{ item }}'
+            state: directory
+            mode: '0700'
+          loop: [config/noctalia/palettes, assets]
+
+        - name: Define exact candidate paths within the owned test directory
+          ansible.builtin.set_fact:
+            qubix_smoke_paths:
+              /etc/qubix/foot.ini: foot.ini
+              /etc/qubix/noctalia/config.toml: config/noctalia/config.toml
+              /etc/qubix/noctalia/palettes/Qubix.json: config/noctalia/palettes/Qubix.json
+              /usr/share/qubix/bin/qubix-noctalia: qubix-noctalia
+              /etc/niri/qubix/config.kdl: config.kdl
+
+        - name: Copy production wallpaper to a private candidate path
+          ansible.builtin.copy:
+            src: '{{ playbook_dir }}/../../assets/wallpaper/qubix.png'
+            dest: '{{ qubix_smoke_directory.path }}/assets/wallpaper.png'
+            mode: '0600'
+
+        - name: Write production definitions with only test-path substitutions
+          ansible.builtin.copy:
+            dest: '{{ qubix_smoke_directory.path }}/{{ qubix_smoke_paths[item.path] }}'
+            content: >-
+              {{ item.content
+              | replace('/usr/share/qubix/wallpaper.png', qubix_smoke_directory.path ~ '/assets/wallpaper.png')
+              | replace('/etc/qubix/foot.ini', qubix_smoke_directory.path ~ '/foot.ini')
+              | replace('/usr/share/qubix/bin/qubix-noctalia', qubix_smoke_directory.path ~ '/qubix-noctalia')
+              | replace('NOCTALIA_CONFIG_HOME=/etc/qubix',
+                        'NOCTALIA_CONFIG_HOME=' ~ qubix_smoke_directory.path ~ '/config') }}
+            mode: '{{ item.mode | default("0600") }}'
+            validate: '{{ item.validate | default(omit) }}'
+          loop: '{{ qubix_niri_resources | selectattr("path", "in", qubix_smoke_paths) | list }}'
+          loop_control:
+            label: '{{ item.path }}'
+
         - name: Transfer native-only test helpers
           ansible.builtin.copy:
             src: 'files/niri-smoke-{{ item }}.py'
@@ -35,11 +74,11 @@
             mode: '0600'
           loop: [inner, outer]
 
-        - name: Exercise native companions in an isolated temporary session
+        - name: Exercise Noctalia in an isolated temporary session
           ansible.builtin.command:
             argv: [/usr/bin/python3, '{{ qubix_smoke_directory.path }}/outer.py', '{{ qubix_smoke_directory.path }}']
           changed_when: true # The explicitly invoked test opens/closes its own temporary graphical window.
-          timeout: 90
+          timeout: 120
 
       always:
         - name: Preserve evidence even after a failed native test

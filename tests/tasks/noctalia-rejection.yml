@@ -1,0 +1,25 @@
+---
+- name: Set unsupported desktop evidence
+  ansible.builtin.set_fact:
+    qubix_discovery_report:
+      evidence:
+        binaries: '{{ qubix_test_noctalia_case.binaries }}'
+        noctalia_version: '{{ qubix_test_noctalia_case.version }}'
+    qubix_test_rejected: false
+
+- name: Require unsupported Noctalia prerequisites to fail
+  block:
+    - name: Attempt unsupported desktop
+      ansible.builtin.include_role:
+        name: qubix_niri
+  rescue:
+    - name: Require the dependency or version diagnostic
+      ansible.builtin.assert:
+        that: [qubix_test_noctalia_case.error in (ansible_failed_result | to_json)]
+    - name: Record expected rejection
+      ansible.builtin.set_fact:
+        qubix_test_rejected: true
+
+- name: Require rejection before reporting success
+  ansible.builtin.assert:
+    that: [qubix_test_rejected]

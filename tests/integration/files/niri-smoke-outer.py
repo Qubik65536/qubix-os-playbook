@@ -1,7 +1,9 @@
-# Native test helper only; requires an already-running main Niri service.
+# Native test helper only; requires an already-running main Niri compositor.
 import json
+import hashlib
 import os
 import pathlib
+import re
 import signal
 import subprocess
 import sys
@@ -19,8 +21,21 @@ assert root.is_dir() and not root.is_symlink() and root.stat().st_uid == os.getu
 session = dict(line.split('=', 1) for line in subprocess.check_output(['systemctl', '--user', 'show-environment'], text=True).splitlines() if '=' in line)
 keys = ['WAYLAND_DISPLAY', 'NIRI_SOCKET', 'XDG_RUNTIME_DIR', 'DBUS_SESSION_BUS_ADDRESS']
 parent = {k: session[k] for k in keys}
-main_pid = subprocess.check_output(['systemctl', '--user', 'show', 'niri.service', '--property=MainPID', '--value'], text=True).strip()
-assert main_pid != '0' and pathlib.Path(parent['NIRI_SOCKET']).is_socket()
+service_pid = subprocess.check_output(['systemctl', '--user', 'show', 'niri.service', '--property=MainPID', '--value'], text=True).strip()
+socket_pid = re.search(r'\.(\d+)\.sock$', parent['NIRI_SOCKET'])
+assert socket_pid and pathlib.Path(parent['NIRI_SOCKET']).is_socket()
+main_pid = int(socket_pid[1])
+main_process = pathlib.Path('/proc') / str(main_pid)
+assert main_process.stat().st_uid == os.getuid() and (main_process / 'comm').read_text().strip() == 'niri'
+assert service_pid in ('0', str(main_pid)), 'The service and selected session disagree'
+native_paths = [pathlib.Path.home() / p for p in (
+    '.config/niri/config.kdl', '.config/noctalia/config.toml', '.config/dconf/user',
+    '.local/state/noctalia/settings.toml')]
+
+def native_hashes():
+    return {str(p): hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None for p in native_paths}
+
+before_hashes = native_hashes()
 (root / 'parent.json').write_text(json.dumps({'socket': parent['NIRI_SOCKET'], 'display': parent['WAYLAND_DISPLAY']}))
 environment = dict(os.environ, **parent)
 environment.pop('NIRI_SOCKET', None)
@@ -28,13 +43,17 @@ environment['HOME'] = str(root / 'home')
 environment['XDG_CONFIG_HOME'] = str(root / 'home/.config')
 environment['XDG_CACHE_HOME'] = str(root / 'home/.cache')
 environment['XDG_STATE_HOME'] = str(root / 'home/.local/state')
-for directory in ['HOME', 'XDG_CONFIG_HOME', 'XDG_CACHE_HOME', 'XDG_STATE_HOME']:
+environment['XDG_DATA_HOME'] = str(root / 'home/.local/share')
+for directory in ['HOME', 'XDG_CONFIG_HOME', 'XDG_CACHE_HOME', 'XDG_STATE_HOME', 'XDG_DATA_HOME']:
     pathlib.Path(environment[directory]).mkdir(parents=True, exist_ok=True)
+test_state = pathlib.Path(environment['XDG_STATE_HOME']) / 'qubix/noctalia'
+test_state.mkdir(parents=True, mode=0o700)
+(test_state / 'settings.toml').write_text('[shell]\npolkit_agent = false\nclipboard_enabled = false\noffline_mode = true\n[lockscreen]\nenabled = false\n')
 log = (root / 'session.log').open('w')
-process = subprocess.Popen(['/usr/bin/dbus-run-session', '--', '/usr/bin/niri', '--config', '/etc/niri/qubix/config.kdl', '--', '/usr/bin/python3', str(root / 'inner.py'), str(root)], env=environment, stdout=log, stderr=log, start_new_session=True)
+process = subprocess.Popen(['/usr/bin/dbus-run-session', '--', '/usr/bin/niri', '--config', str(root / 'config.kdl'), '--', '/usr/bin/python3', str(root / 'inner.py'), str(root)], env=environment, stdout=log, stderr=log, start_new_session=True)
 result = {'status': 'failed', 'error': 'No result from nested compositor'}
 try:
-    for attempt in range(200):
+    for attempt in range(350):
         if (root / 'result.json').exists():
             result = json.loads((root / 'result.json').read_text())
             break
@@ -93,10 +112,12 @@ finally:
     after = dict(line.split('=', 1) for line in subprocess.check_output(['systemctl', '--user', 'show-environment'], text=True).splitlines() if '=' in line)
     after_pid = subprocess.check_output(['systemctl', '--user', 'show', 'niri.service', '--property=MainPID', '--value'], text=True).strip()
     result['native_environment_preserved'] = all(after.get(k) == v for k, v in parent.items())
-    result['native_compositor_preserved'] = after_pid == main_pid
+    result['native_compositor_preserved'] = after_pid == service_pid and main_process.exists() and (main_process / 'comm').read_text().strip() == 'niri'
+    result['native_configuration_preserved'] = native_hashes() == before_hashes
     result['cleanup_signalled_remaining'] = len(remaining)
     (root / 'result.json').write_text(json.dumps(result, indent=2))
     print(json.dumps(result, indent=2))
 assert result['status'] == 'passed', result.get('error')
 assert result['native_environment_preserved'] and result['native_compositor_preserved']
+assert result['native_configuration_preserved'], 'Native Niri/Noctalia/dconf settings changed'
 assert result['cleanup_remaining'] == 0, 'Temporary test processes remain'

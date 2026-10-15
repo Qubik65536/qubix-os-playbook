@@ -4,7 +4,7 @@ Status: **Candidate adapters Implemented; fixtures Tested; native desktop file l
 
 | Selection | Supported candidate contract | Pending native acceptance |
 |---|---|---|
-| CachyOS Niri | Exact ID=cachyos, Linux/systemd/Pacman/Niri; measured Foot/Fuzzel/Waybar/Mako/Swaybg | Main-session keys/default shell/portals/Polkit/lock/unlock |
+| CachyOS Niri | Exact ID=cachyos, Linux/systemd/Pacman/Niri; measured Foot and standalone Noctalia >=5.2.0 and <6.0.0 | Main-session keys/default shell/portals/Polkit/lock/unlock |
 | Login | Unambiguously active SDDM, regular compatible Breeze tree | Preview/authentication/sessions/restore |
 | GRUB | Confirmed /boot/grub[2]/grub.cfg sourcing custom.cfg; native checker/tools | Checker/menu/original-entry boot/restore |
 | Limine | Confirmed regular limine.conf under /boot or /efi, observed major 8–12 | Menu/original-entry boot/restore |
@@ -16,7 +16,7 @@ UKIs/signing and complex/alternate mkinitcpio outputs are unsupported. Other man
 
 Discovery measures identity/version, binaries/packages, kernel arguments, alias/standalone manager activity, paths and hints. SSH hints can be absent. Tools alone cannot establish firmware selection or image ownership; operator confirmation is required.
 
-Reviewed CachyOS uses Noctalia/Quickshell and the reference uses DMS. This candidate supplies a separate classic companion session after measuring prerequisites, preserving native configuration. The CachyOS KDE authentication agent starts only if measured. The observed target below was inspected before companion selection.
+The inspected CachyOS installation uses standalone Noctalia 5.2.1; the reference uses DMS. The [new desktop design](desktop-design.md) uses the installed Noctalia shell with Qubix-specific defaults/state and DMS-inspired shortcuts. Noctalia supplies its own Polkit agent. Legacy Quickshell/v4 is unsupported by this profile. Native preferences remain preserved; earlier classic-companion evidence below is historical.
 
 Probe failures stay errors, not absence. Record combinations here only after [VM acceptance](../user/verification.md). Partial native desktop evidence is recorded below; no full MVP combination has passed yet.
 

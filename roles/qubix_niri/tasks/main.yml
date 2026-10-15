@@ -1,12 +1,28 @@
 ---
-- name: Require measured classic desktop companion capabilities
+- name: Require measured Noctalia desktop capabilities
   ansible.builtin.assert:
     that:
       - qubix_discovery_report.evidence.binaries.get(item, false)
     fail_msg: >-
       Qubix Niri requires installed {{ item }}.
       Install missing prerequisites on the test VM, then inspect again.
-  loop: [niri, foot, fuzzel, waybar, mako, swaybg]
+  loop: [niri, foot, noctalia]
+
+- name: Extract measured standalone Noctalia version
+  ansible.builtin.set_fact:
+    qubix_niri_noctalia_version: >-
+      {{ qubix_discovery_report.evidence.noctalia_version | default('unknown')
+      | regex_search('[0-9]+\.[0-9]+\.[0-9]+') | default('', true) }}
+
+- name: Require a measured supported Noctalia release
+  ansible.builtin.assert:
+    that:
+      - qubix_niri_noctalia_version | length > 0
+      - qubix_niri_noctalia_version is version('5.2.0', '>=')
+      - qubix_niri_noctalia_version is version('6.0.0', '<')
+    fail_msg: >-
+      Qubix Niri requires standalone Noctalia >=5.2.0 and <6.0.0.
+      Observed {{ qubix_discovery_report.evidence.noctalia_version | default('unknown') }}.
 
 - name: Require branding for desktop appearance
   ansible.builtin.assert:

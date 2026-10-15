@@ -4,6 +4,11 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Adopted a Noctalia 5 desktop profile with #56728b accents, rounded windows/bar/dock and DMS/macOS-inspired shortcuts.
+- Added measured Noctalia version guards, native TOML validation and palette/terminal colour consistency checks.
+- Isolated Qubix shell state/data and Noctalia dark-mode writes while preserving application settings.
+- Updated the native preview for production candidates, direct SDDM launches, Noctalia IPC and native configuration preservation.
+
 - Established project scope, architecture, safety requirements, and development workflow.
 - Added local Ansible controller configuration and locked development dependencies.
 - Added strict profile resolution, CachyOS Niri discovery, read-only verification/preflight and a minimal Bash entrypoint.

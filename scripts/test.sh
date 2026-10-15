@@ -8,6 +8,7 @@ export ANSIBLE_HOME="$repo_dir/.cache/ansible"
 mkdir -p .cache/tests
 bash tests/shell/defaults.sh
 bash tests/shell/bootstrap.sh
+bash tests/shell/noctalia.sh
 
 for mode in normal check; do
   set --

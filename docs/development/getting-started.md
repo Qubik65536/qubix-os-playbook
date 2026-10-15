@@ -54,7 +54,7 @@ For example, changing a Niri binding needs a valid KDL candidate and its user-vi
 
 `./scripts/test.sh` runs production roles against synthetic evidence and isolated filesystem roots under `.cache/tests`. It covers profile rejection, identity/discovery, branding preview/reapplication, backups/drift/restoration/failure state, desktop definitions, SDDM cloning, both loader plans, both image-generator dispatches, incomplete rebuilds, kernel-aware restore and Plymouth no-write preview.
 
-Plymouth fixtures use **fake executable tools** and fake archive listings. They prove orchestration and guards, not a real initramfs. Desktop fixtures do not run the native Niri/Foot parser. All fixtures must avoid actual host `/etc`, `/boot` and personal configuration. Logs identify expected rescued failures; unexpected failures stop the suite. See [testing](testing.md).
+Plymouth fixtures use **fake executable tools** and fake archive listings. They prove orchestration and guards, not a real initramfs. Desktop fixtures do not run the native Niri/Foot/Noctalia parsers. All fixtures must avoid actual host `/etc`, `/boot` and personal configuration. Logs identify expected rescued failures; unexpected failures stop the suite. See [testing](testing.md).
 
 For a focused run:
 
@@ -71,7 +71,7 @@ ansible-playbook tests/playbooks/plymouth-preview.yml --check
 
 Follow the [user getting-started guide](../user/getting-started.md), and collect [target evidence](../user/collecting-target-info.md) first. Keep host inventory and overrides ignored. Never run boot deployment against the development controller.
 
-Test desktop first. Capture native parser output, preserved-file checksums, actual companion behaviour and the second deployment recap. On an already-deployed target with its original Niri service running, the optional native smoke workflow opens a temporary nested window and saves evidence without changing the main session:
+Test desktop first. Capture native parser output, preserved-file checksums, actual companion behaviour and the second deployment recap. With Noctalia/Foot installed and a main Niri compositor running, the optional native smoke workflow renders the production candidates into temporary paths, opens a nested window and saves evidence without changing the main session. Direct SDDM launches and user-service launches are supported:
 
 ```bash
 ansible-playbook tests/integration/niri.yml -i inventory/target.local.ini -e @config/local.yml --ask-pass --ask-become-pass

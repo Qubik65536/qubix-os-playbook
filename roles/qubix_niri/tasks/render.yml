@@ -17,18 +17,21 @@
     qubix_niri_resources: >-
       {{ qubix_niri_resources + [{'path': item.path, 'component': 'niri',
       'content': lookup('template', item.template)}
-      | combine({'validate': item.validate} if item.validate is defined else {})] }}
+      | combine({'validate': item.validate} if item.validate is defined else {})
+      | combine({'mode': item.mode} if item.mode is defined else {})] }}
   loop:
     - {path: /etc/niri/qubix/theme.kdl, template: theme.kdl.j2}
     - path: /etc/qubix/foot.ini
       template: foot.ini.j2
       validate: /usr/bin/foot --check-config --config %s
-    - path: /etc/qubix/fuzzel.ini
-      template: fuzzel.ini.j2
-      validate: /usr/bin/fuzzel --check-config --config %s
-    - {path: /etc/qubix/waybar.json, template: waybar.json.j2}
-    - {path: /etc/qubix/waybar.css, template: waybar.css.j2}
-    - {path: /etc/qubix/mako.conf, template: mako.conf.j2}
+    - {path: /etc/qubix/noctalia/palettes/Qubix.json, template: palette.json.j2}
+    - path: /etc/qubix/noctalia/config.toml
+      template: noctalia.toml.j2
+      validate: /usr/bin/noctalia config validate %s
+    - path: /usr/share/qubix/bin/qubix-noctalia
+      template: noctalia.sh.j2
+      validate: /usr/bin/bash -n %s
+      mode: '0755'
 
 - name: Place parser-validated configuration before session activation
   ansible.builtin.set_fact:

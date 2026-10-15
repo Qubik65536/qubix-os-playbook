@@ -22,7 +22,7 @@ Objective: first useful safe mutation. Scope: canonical Qubix assets, attributio
 
 ## F03 — CachyOS Niri default activation (Feature)
 
-Status: Implemented candidate; Niri/Foot/Fuzzel syntax, native file preservation/idempotency and isolated nested companions Tested; primary-session gate open.
+Status: Noctalia redesign Implemented; native Niri/Foot/Noctalia grammar, dependency/version fixtures and isolated rendering Tested; primary-session migration pending. Earlier classic file-lifecycle/rendering evidence remains historical; new primary-session gate open.
 
 Objective: begin a usable Qubix desktop on an actual target. Scope: live report, supported KDL candidate, theme include, detected companion commands and preservation policy. Acceptance: `niri validate`, user/system originals preserved, actual wallpaper/launcher/bar/notifications/terminal work in VM, second run unchanged. Depends on F02, F06 backup preparation for default activation, and live VM evidence. Tests: parser + preservation + VM graphical session. Docs: Niri, compatibility, user deployment and recovery.
 
@@ -64,7 +64,7 @@ Objective: startup splash independent of loader. Scope: Qubix theme, dracut/mkin
 
 ## T01 — MVP acceptance (Testing)
 
-Status: In Progress; SSH details supplied, connected after service/firewall setup; privileged read-only discovery passes. Approved physical desktop deployment, reapplication, absence restoration and nested rendering pass; primary-session/login/VM boot tests pending. Next gate is native acceptance, not new adapter implementation.
+Status: In Progress; SSH details supplied, connected after service/firewall setup; privileged read-only discovery passes. Approved physical desktop deployment, reapplication, absence restoration and nested rendering pass; primary-session/login/VM boot tests pending. Next gate is native acceptance of the Noctalia redesign plus the remaining independent login/boot tests.
 
 Objective: complete scope evidence. Scope: end-to-end desktop/login/loader/splash, reapplication, configuration preservation, diagnostics and recovery. Acceptance: all [MVP criteria](scope.md) pass with recorded versions and evidence. Depends on F03–F09. Tests: disposable VM matrix. Docs: compatibility/status, release readiness and changelog.
 

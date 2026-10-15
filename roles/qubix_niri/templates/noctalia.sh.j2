@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Use Noctalia's profile roots; applications keep ordinary XDG configuration.
+set -euo pipefail
+if [[ "${1:-}" == --application ]]; then
+  shift
+  if (( $# == 0 )); then exit 2; fi
+  if [[ "${QUBIX_NATIVE_GSETTINGS_BACKEND_SET:-0}" == 1 ]]; then
+    export GSETTINGS_BACKEND="$QUBIX_NATIVE_GSETTINGS_BACKEND"
+  else
+    unset GSETTINGS_BACKEND
+  fi
+  unset QUBIX_NATIVE_GSETTINGS_BACKEND QUBIX_NATIVE_GSETTINGS_BACKEND_SET
+  exec "$@"
+fi
+# Noctalia 5.2 always invokes gsettings; keep that preference write transient.
+if [[ "${GSETTINGS_BACKEND+x}" == x ]]; then
+  export QUBIX_NATIVE_GSETTINGS_BACKEND_SET=1
+  export QUBIX_NATIVE_GSETTINGS_BACKEND="$GSETTINGS_BACKEND"
+else
+  export QUBIX_NATIVE_GSETTINGS_BACKEND_SET=0
+fi
+export GSETTINGS_BACKEND=memory
+export NOCTALIA_CONFIG_HOME=/etc/qubix
+export NOCTALIA_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}/qubix"
+export NOCTALIA_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/qubix"
+export TERMINAL=/usr/bin/foot
+exec /usr/bin/noctalia "$@"

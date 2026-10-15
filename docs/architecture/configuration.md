@@ -32,7 +32,7 @@ qubix:
     presets: []
 ```
 
-The current profile enables branding, an additional Qubix Niri session and shell defaults. All candidate components have implementations; unsupported selections still fail explicitly. Bootloader and Plymouth remain opt-in until VM testing. No fallback from a mistyped profile or backend.
+The current profile enables branding, an additional Qubix Niri session and shell defaults. Its [desktop design](desktop-design.md) uses measured standalone Noctalia with separate Qubix defaults and GUI state; desktop shell selection is fixed for this initial profile. All candidate components have implementations; unsupported selections still fail explicitly. Bootloader and Plymouth remain opt-in until VM testing. No fallback from a mistyped profile or backend.
 
 Booleans must be YAML booleans, not strings. Each nested mapping allows only documented keys. `user_config` initially accepts only `preserve`; an adoption interface requires its own consent and recovery design. `change_default_shell` must be false during bootstrap. Login backend allows `auto`, `sddm`, `greetd`, `gdm`, `lightdm`; bootloader allows `auto`, `grub`, `limine`; initramfs allows `auto`, `dracut`, `mkinitcpio`. Allowing a value in the schema does not implement an adapter.
 

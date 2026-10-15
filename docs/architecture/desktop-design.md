@@ -1,6 +1,6 @@
 # Qubix Niri desktop design
 
-Status: **Accepted design; Noctalia integration Planned**. The deployed first candidate still uses the classic companions. [ADR-0012](../decisions/ADR-0012.md) records the new direction.
+Status: **Noctalia integration Implemented; native grammar and isolated rendering Tested; primary-session migration pending**. The earlier classic-companion candidate remains documented for recovery history. [ADR-0012](../decisions/ADR-0012.md) records the new direction.
 
 ## Composition and ownership
 
@@ -17,7 +17,7 @@ Status: **Accepted design; Noctalia integration Planned**. The deployed first ca
 
 The additional Qubix Niri session keeps its explicit system configuration. Native Niri, Noctalia, Alacritty, Fish, user dotfiles and output/hardware settings remain preserved. Noctalia uses `/etc/qubix/noctalia/` for managed defaults and palettes, with Qubix-only user state and data under the ordinary XDG state/data roots' `qubix/` namespace. GUI changes override supplied shell defaults in that state namespace. They are user-owned and are not reset by deployment or removed by system-file restoration. Other applications keep their ordinary XDG paths.
 
-Noctalia's application theme templates are disabled: palette changes must not rewrite personal GTK/Qt/terminal/browser configurations. No additional Waybar, Mako or Swaybg process is started by the new Qubix configuration. Existing classic companion packages and old Qubix companion files remain available for recorded-baseline recovery; deployment does not remove packages. Noctalia's own Polkit agent supplies GUI authentication prompts; no external agent is started by Qubix. Authentication and lock/unlock require operator testing; PAM remains preserved.
+Noctalia's application theme templates are disabled: palette changes must not rewrite personal GTK/Qt/terminal/browser configurations. Noctalia 5.2.1 also unconditionally writes the GSettings dark-mode preference; the profile launcher uses a transient memory backend for the shell and restores the caller's original backend for applications launched through Noctalia. Native dconf settings remain preserved. No additional Waybar, Mako or Swaybg process is started by the new Qubix configuration. Existing classic companion packages and old Qubix companion files remain available for recorded-baseline recovery; deployment does not remove packages. Noctalia's own Polkit agent supplies GUI authentication prompts; no external agent is started by Qubix. Authentication and lock/unlock require operator testing; PAM remains preserved.
 
 ## Appearance
 
@@ -55,7 +55,7 @@ Audio, microphone, media and brightness keys call Noctalia's installed IPC comma
 
 ## Acceptance and migration
 
-Require measured Niri, Foot and supported Noctalia before component writes. Validate generated Niri KDL, Foot INI and Noctalia TOML using their installed parsers; check all palette roles. Install the session entry last. Existing Qubix baselines remain immutable.
+Require measured Niri, Foot and supported Noctalia before component writes. Validate generated Niri KDL, Foot INI and Noctalia TOML using their installed parsers; check all palette roles and include complete terminal colours, required by the Noctalia 5.2 palette loader. A custom palette name alone does not prove that its colours loaded. Install the session entry last. Existing Qubix baselines remain immutable.
 
 The native nested test must use a distinct Wayland display/private D-Bus session and temporary Qubix state/data/cache. It must support the existing Niri process whether launched by a user service or directly by SDDM. Disable test-only Polkit registration and clipboard persistence, prove shell/bar/wallpaper/launcher/notification/window rendering and IPC, preserve the original compositor and clean up temporary processes. Main-session physical shortcuts, dock interactions, authentication, lock/unlock and portal behaviour require operator verification.
 

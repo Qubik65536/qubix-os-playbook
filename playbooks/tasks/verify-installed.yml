@@ -20,6 +20,15 @@
   check_mode: false
   when: qubix_profile_resolved.niri.enabled
 
+- name: Validate installed Noctalia shell defaults with the target parser
+  ansible.builtin.command:
+    argv: [/usr/bin/noctalia, config, validate, /etc/qubix/noctalia/config.toml]
+  changed_when: false
+  check_mode: false
+  register: qubix_verify_noctalia
+  failed_when: qubix_verify_noctalia.rc != 0 or qubix_verify_noctalia.stdout is search('(?m)^(WARN|ERROR)')
+  when: qubix_profile_resolved.niri.enabled
+
 - name: Verify selected image resources without rebuilding
   ansible.builtin.include_role:
     name: qubix_plymouth

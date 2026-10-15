@@ -1,7 +1,10 @@
 """Repository-only documentation and definition consistency checks; not a runtime app."""
 from pathlib import Path
 import hashlib
+import configparser
+import json
 import re
+import tomllib
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -61,6 +64,25 @@ def main():
         assert digest == asset["sha256"], f"Changed source asset without manifest update: {source}"
     wallpaper = load("assets/wallpaper/manifest.yml")
     assert hashlib.sha256((ROOT / "assets/wallpaper/qubix.png").read_bytes()).hexdigest() == wallpaper["sha256"]
+    desktop = ROOT / 'roles/qubix_niri/templates'
+    shell = tomllib.loads((desktop / 'noctalia.toml.j2').read_text())
+    assert not shell['theme']['templates']['enable_builtin_templates']
+    assert not shell['theme']['templates']['enable_community_templates']
+    palette = json.loads((desktop / 'palette.json.j2').read_text())['dark']
+    roles = {'mPrimary', 'mOnPrimary', 'mSecondary', 'mOnSecondary', 'mTertiary', 'mOnTertiary',
+             'mError', 'mOnError', 'mSurface', 'mOnSurface', 'mSurfaceVariant', 'mOnSurfaceVariant',
+             'mOutline', 'mShadow', 'mHover', 'mOnHover'}
+    assert set(palette) == roles | {'terminal'}, 'Incomplete Noctalia 5.2 palette causes silent fallback'
+    assert all(re.fullmatch(r'#[0-9a-fA-F]{6}', palette[key]) for key in roles)
+    focus = re.search(r'active-color "(#[0-9a-fA-F]+)"', (desktop / 'theme.kdl.j2').read_text())[1]
+    assert focus.lower() == palette['mPrimary'].lower(), 'Compositor and shell accents differ'
+    foot = configparser.ConfigParser()
+    foot.read(desktop / 'foot.ini.j2')
+    for name in ('foreground', 'background'):
+        assert palette['terminal'][name] == '#' + foot['colors-dark'][name]
+    for index, name in enumerate(('black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white')):
+        for kind, prefix in (('normal', 'regular'), ('bright', 'bright')):
+            assert palette['terminal'][kind][name] == '#' + foot['colors-dark'][prefix + str(index)]
     print(f"Repository consistency passed ({len(documents)} Markdown files, profile/default/schema agreement).")
 
 

@@ -3,12 +3,16 @@
   ansible.builtin.set_fact:
     qubix_native_companion_resource: >-
       {{ qubix_niri_resources | selectattr('path', 'equalto', qubix_native_companion.path) | first }}
-    qubix_native_companion_path: '{{ qubix_native_directory.path }}/{{ qubix_native_companion.name }}.ini'
+    qubix_native_companion_path: >-
+      {{ qubix_native_directory.path }}/{{ qubix_native_companion.name }}.{{
+      qubix_native_companion.path | split('.') | last }}
 
 - name: Write deliberately invalid companion control
   ansible.builtin.copy:
     dest: '{{ qubix_native_companion_path }}'
-    content: "[not-a-section]\nunknown-key=yes\n"
+    content: >-
+      {{ '[shell]\ncorner_radius_scale = "invalid"\n' if qubix_native_companion.name == 'noctalia'
+      else '[not-a-section]\nunknown-key=yes\n' }}
     mode: '0600'
 
 - name: Require installed companion parser to reject the invalid control
@@ -28,3 +32,8 @@
   ansible.builtin.command:
     cmd: '{{ qubix_native_companion_resource.validate | replace("%s", qubix_native_companion_path) }}'
   changed_when: false
+  register: qubix_native_companion_positive
+  failed_when: >-
+    qubix_native_companion_positive.rc != 0 or
+    (qubix_native_companion.name == 'noctalia' and
+    qubix_native_companion_positive.stdout is search('(?m)^(WARN|ERROR)'))
