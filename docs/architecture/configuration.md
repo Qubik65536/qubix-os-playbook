@@ -17,6 +17,7 @@ qubix:
     enabled: false
     backend: auto
     theme_source: breeze
+    activation: existing
   bootloader:
     enabled: false
     backend: auto
@@ -47,7 +48,13 @@ Booleans must be YAML booleans, not strings. Each nested mapping allows only doc
 
 Existing non-Qubix system defaults require backup and an explicit activation policy before replacement. Additive fragments are preferred. A file's presence does not prove the application loaded it.
 
-Login currently supports already-active SDDM with `theme_source: breeze` and validated background/type options. Other managers and incompatible source themes are rejected before configuration writes. Native authentication QML is copied unchanged; no PAM or service replacement/restart occurs.
+Login supports already-active SDDM with `theme_source: breeze`, `activation: existing` and
+validated background/type options. Its native authentication QML is copied unchanged.
+Noctalia Greeter uses explicit `backend: greetd`, `theme_source: noctalia` and
+`activation: prepare|existing`. Preparation requires greetd inactive and stages its appearance;
+existing requires only greetd active and the measured native wrapper already selected.
+Both preserve PAM, services and session startup. See the authoritative
+[login component contract](../components/login.md) and [operator guide](../user/login.md).
 
 Boot activation requires `backend: grub|limine`, confirmed `config_path` and `confirm_active: true`. Limine additionally requires the observed booted major `limine_version` (8–12). Auto/unknown configurations fail before writes. Native configs and boot entries remain preserved except minimal supported appearance changes.
 

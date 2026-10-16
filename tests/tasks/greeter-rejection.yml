@@ -1,0 +1,24 @@
+---
+- name: Reset expected greeter refusal
+  ansible.builtin.set_fact:
+    qubix_test_greeter_rejected: false
+
+- name: Exercise a specific unsafe greeter request
+  block:
+    - name: Attempt unsafe greeter preparation
+      ansible.builtin.include_role:
+        name: qubix_login
+    - name: Reject accidental acceptance
+      ansible.builtin.fail:
+        msg: 'Unexpected acceptance of unsafe greeter request.'
+  rescue:
+    - name: Require the intended diagnostic
+      ansible.builtin.assert:
+        that: [qubix_test_greeter_diagnostic in (ansible_failed_result | to_json)]
+    - name: Record expected greeter refusal
+      ansible.builtin.set_fact:
+        qubix_test_greeter_rejected: true
+
+- name: Require the unsafe request to have failed
+  ansible.builtin.assert:
+    that: [qubix_test_greeter_rejected]

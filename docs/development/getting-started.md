@@ -27,7 +27,7 @@ Read [CONTRIBUTING](../../CONTRIBUTING.md), [AGENTS](../../AGENTS.md), [status](
 | `roles/qubix_discovery/`, `config/platforms/cachyos.yml` | Read-only native evidence and classification |
 | `playbooks/tasks/plan.yml` | Prerequisites, ordered per-component resource definitions |
 | `roles/qubix_niri/`, `roles/qubix_shell/` | Desktop templates and additive shell defaults |
-| `roles/qubix_login/` | Active SDDM source cloning and precedence checks |
+| `roles/qubix_login/` | Active SDDM cloning or Noctalia Greeter preparation/appearance with native settings preserved |
 | `roles/qubix_bootloader/tasks/` | Independent ordinary GRUB/Limine adapter task files |
 | `roles/qubix_plymouth/tasks/` | Generator preparation, conditional regeneration and archive checks |
 | `roles/qubix_files/` | Path guards, original baselines, atomic copy validation, receipts and restore |
@@ -62,6 +62,8 @@ For a focused run:
 mkdir -p .cache/tests
 ansible-playbook tests/playbooks/desktop.yml
 ansible-playbook tests/playbooks/login.yml
+ansible-playbook tests/playbooks/noctalia-greeter.yml
+ansible-playbook tests/playbooks/noctalia-greeter.yml --check
 ansible-playbook tests/playbooks/bootloader.yml
 ansible-playbook tests/playbooks/plymouth.yml
 ansible-playbook tests/playbooks/plymouth-preview.yml --check

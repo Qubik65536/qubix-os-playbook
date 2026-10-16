@@ -1,0 +1,10 @@
+---
+- name: Reapply one installed resource
+  ansible.builtin.include_role:
+    name: qubix_files
+  vars:
+    qubix_files_resources: ['{{ qubix_test_resource }}']
+
+- name: Require unchanged resource bytes and mode
+  ansible.builtin.assert:
+    that: [not qubix_files_write.changed]

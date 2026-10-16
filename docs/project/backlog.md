@@ -60,7 +60,15 @@ Objective: Qubix terminal experience. Scope: detected applications and additive 
 
 ## F05 — Login theme (Feature)
 
-Status: Implemented SDDM candidate; cloning/activity fixtures Tested; authentication/restore gate open.
+Status: Implemented SDDM candidate and Noctalia Greeter preparation; fixture/native acceptance In Progress.
+
+The [Noctalia contract](../components/login.md) adds explicit inactive preparation and existing-greetd
+appearance, a separate package preparation playbook and operator guides for manager cutover and
+fingerprints. It shares Qubix's desktop palette/wallpaper while preserving PAM, native services,
+session/keyboard/output/auth settings and mutable sync state. Package installation is Tested;
+remaining evidence is in [login test results](login-test-results.md). Next: reviewed manager
+transition, physical password login/Niri return, local fingerprint enrollment/fallback and recovery.
+Keep boot entry identities and native distribution labels preserved.
 
 Objective: brand supported active manager without changing authentication/session. Scope: detected manager's supported theme hooks only. Acceptance: login and Niri startup succeed, PAM unchanged, restoration tested. Depends on F03. Tests: VM login and revert. Docs: manager/version support and recovery.
 

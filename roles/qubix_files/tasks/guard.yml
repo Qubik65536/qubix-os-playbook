@@ -2,7 +2,10 @@
 - name: Validate named resource boundary
   ansible.builtin.assert:
     that:
-      - qubix_files_resource.path is match('^/(etc/|usr/share/|boot/|efi/)')
+      - >-
+        qubix_files_resource.path is match('^/(etc/|usr/share/|boot/|efi/)') or
+        (qubix_files_resource.component == 'login' and
+        qubix_files_resource.path == '/var/lib/noctalia-greeter/greeter.toml')
       - "'..' not in qubix_files_resource.path.split('/')"
       - "'//' not in qubix_files_resource.path"
       - qubix_files_resource.path not in ['/etc/os-release', '/etc/passwd', '/etc/shadow']

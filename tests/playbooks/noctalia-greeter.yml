@@ -1,0 +1,311 @@
+---
+- name: Test Noctalia Greeter appearance without native services authentication or packages
+  hosts: localhost
+  gather_facts: true
+  gather_subset: ['!all', min]
+  vars:
+    qubix_login_python: '{{ ansible_playbook_python }}'
+    qubix_test_greeter_input: |
+      # operator settings
+      [session]
+      default = "Other Session"
+      [keyboard]
+      layout = "de"
+      [output]
+      scale = 1.5
+      [auth]
+      allow_empty_password = false
+      request_timeout = 120
+      [appearance]
+      scheme = "Noctalia"
+      password_style = "random"
+      font_family = "sans-serif"
+      [appearance.wallpaper]
+      path = "/old.png"
+      [appearance.wallpapers.DP-1]
+      path = "/operator.png"
+    qubix_test_greetd_input: |
+      [terminal]
+      vt = 2
+      [default_session]
+      command = "/usr/bin/noctalia-greeter-session"
+      user = "{{ ansible_facts.user_id }}"
+    qubix_profile_resolved:
+      branding: {enabled: true}
+      niri: {enabled: true}
+      login: {enabled: true, backend: greetd, theme_source: noctalia, activation: prepare}
+    qubix_discovery_report:
+      evidence:
+        display_manager: {active_units: [sddm]}
+  tasks:
+    - name: Create isolated fixture root even in global check mode
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-greeter-
+      register: qubix_test_tmp
+      check_mode: false
+
+    - name: Resolve disposable ownership and paths
+      ansible.builtin.set_fact:
+        qubix_root: '{{ qubix_test_tmp.path }}'
+        qubix_files_owner: '{{ ansible_facts.user_id }}'
+        qubix_files_group: '{{ ansible_facts.user_gid | string }}'
+
+    - name: Exercise appearance and recovery while guaranteeing fixture cleanup
+      block:
+        - name: Create fixture-only directories
+          ansible.builtin.file:
+            path: '{{ qubix_root }}{{ item }}'
+            state: directory
+            mode: '0750'
+          loop: [/usr/bin, /etc/greetd, /var/lib/noctalia-greeter]
+          check_mode: false
+
+        - name: Seed no-effect package executables
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/usr/bin/{{ item }}'
+            content: |
+              #!/bin/sh
+              printf '%s\n' 'noctalia-greeter 1.6.0'
+            mode: '0755'
+          loop: [noctalia-greeter, noctalia-greeter-session, noctalia-greeter-compositor]
+          check_mode: false
+
+        - name: Seed original operator configurations
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}{{ item.path }}'
+            content: '{{ item.content }}'
+            mode: '0600'
+          loop:
+            - {path: /var/lib/noctalia-greeter/greeter.toml, content: '{{ qubix_test_greeter_input }}'}
+            - {path: /var/lib/noctalia-greeter/sync.toml, content: 'operator sync bytes'}
+            - {path: /etc/greetd/config.toml, content: '{{ qubix_test_greetd_input }}'}
+          check_mode: false
+
+        - name: Prepare production appearance from inactive greetd
+          ansible.builtin.include_role:
+            name: qubix_login
+
+        - name: Require complete shared palette and preserved operator settings
+          ansible.builtin.assert:
+            that:
+              - qubix_login_resources | length == 2
+              - qubix_test_candidate.appearance.palette | length == 16
+              - qubix_test_candidate.appearance.palette.primary == qubix_login_palette.mPrimary
+              - qubix_test_candidate.appearance.wallpaper.path == '/usr/share/qubix/wallpaper.png'
+              - qubix_test_candidate.appearance.wallpapers['DP-1'].path == '/operator.png'
+              - qubix_test_candidate.appearance.password_style == 'random'
+              - qubix_test_candidate.appearance.font_family == 'sans-serif'
+              - qubix_test_candidate.session.default == 'Other Session'
+              - qubix_test_candidate.keyboard.layout == 'de'
+              - qubix_test_candidate.output.scale == 1.5
+              - qubix_test_candidate.auth.request_timeout == 120
+              - not qubix_test_candidate.auth.allow_empty_password
+          vars:
+            qubix_test_candidate: '{{ qubix_login_candidate_probe.stdout | from_json }}'
+
+        - name: Install or preview backed-up appearance using production engine
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_resources: '{{ qubix_login_resources }}'
+
+        - name: Replan actual installed appearance for byte idempotency
+          ansible.builtin.include_role:
+            name: qubix_login
+          when: not ansible_check_mode
+
+        - name: Reapply each resource and assert no copy changed
+          ansible.builtin.include_tasks: ../tasks/greeter-reapply.yml
+          loop: '{{ qubix_login_resources }}'
+          loop_control:
+            loop_var: qubix_test_resource
+          when: not ansible_check_mode
+
+        - name: Exercise original restoration
+          ansible.builtin.include_role:
+            name: qubix_files
+            tasks_from: restore
+          when: not ansible_check_mode
+
+        - name: Read preserved original files after restoration or preview
+          ansible.builtin.slurp:
+            src: '{{ qubix_root }}{{ item }}'
+          loop:
+            - /var/lib/noctalia-greeter/greeter.toml
+            - /var/lib/noctalia-greeter/sync.toml
+            - /etc/greetd/config.toml
+          register: qubix_test_preserved
+
+        - name: Require original appearance sync and greetd bytes
+          ansible.builtin.assert:
+            that:
+              - qubix_test_preserved.results[0].content | b64decode == qubix_test_greeter_input
+              - qubix_test_preserved.results[1].content | b64decode == 'operator sync bytes'
+              - qubix_test_preserved.results[2].content | b64decode == qubix_test_greetd_input
+
+        - name: Select only an already-active greetd
+          ansible.builtin.set_fact:
+            qubix_profile_resolved: >-
+              {{ qubix_profile_resolved | combine({'login': {'activation': 'existing'}}, recursive=true) }}
+            qubix_discovery_report: {evidence: {display_manager: {active_units: [greetd]}}}
+
+        - name: Accept the measured existing native wrapper without editing greetd
+          ansible.builtin.include_role:
+            name: qubix_login
+
+        - name: Seed an existing greetd with a different greeter command
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/etc/greetd/config.toml'
+            content: |
+              [default_session]
+              command = "agreety --cmd /bin/sh"
+              user = "greeter"
+            mode: '0600'
+          check_mode: false
+
+        - name: Refuse to replace the existing greeter command
+          ansible.builtin.include_tasks: ../tasks/greeter-rejection.yml
+          vars:
+            qubix_test_greeter_diagnostic: 'must already launch'
+
+        - name: Restore only fixture greetd input
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/etc/greetd/config.toml'
+            content: '{{ qubix_test_greetd_input }}'
+            mode: '0600'
+          check_mode: false
+
+        - name: Test existing manager refusal cases
+          ansible.builtin.include_tasks: ../tasks/greeter-manager-rejection.yml
+          loop: [[], [sddm], [greetd, sddm]]
+          loop_control:
+            loop_var: qubix_test_managers
+
+        - name: Refuse preparation while greetd is active
+          ansible.builtin.set_fact:
+            qubix_profile_resolved: >-
+              {{ qubix_profile_resolved | combine({'login': {'activation': 'prepare'}}, recursive=true) }}
+            qubix_discovery_report: {evidence: {display_manager: {active_units: [greetd]}}}
+
+        - name: Require preparation activity refusal
+          ansible.builtin.include_tasks: ../tasks/greeter-rejection.yml
+          vars:
+            qubix_test_greeter_diagnostic: 'inactive greetd for prepare'
+
+        - name: Return to inactive preparation
+          ansible.builtin.set_fact:
+            qubix_discovery_report: {evidence: {display_manager: {active_units: [sddm]}}}
+
+        - name: Exercise unsupported measured versions
+          ansible.builtin.include_tasks: ../tasks/greeter-version-rejection.yml
+          loop: ['1.5.9', '1.7.0', unknown]
+          loop_control:
+            loop_var: qubix_test_version
+
+        - name: Restore supported no-effect binary
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/usr/bin/noctalia-greeter'
+            content: |
+              #!/bin/sh
+              printf '%s\n' 'noctalia-greeter 1.6.0'
+            mode: '0755'
+          check_mode: false
+
+        - name: Seed valid but noncanonical appearance syntax
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/var/lib/noctalia-greeter/greeter.toml'
+            content: 'appearance = { scheme = "Noctalia" }'
+            mode: '0600'
+          check_mode: false
+
+        - name: Require noncanonical configuration refusal
+          ansible.builtin.include_tasks: ../tasks/greeter-rejection.yml
+          vars:
+            qubix_test_greeter_diagnostic: 'canonical [appearance]'
+
+        - name: Seed malformed TOML
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/var/lib/noctalia-greeter/greeter.toml'
+            content: '[appearance'
+            mode: '0600'
+          check_mode: false
+
+        - name: Require parser failure before writes
+          ansible.builtin.include_tasks: ../tasks/greeter-rejection.yml
+          vars:
+            qubix_test_greeter_diagnostic: 'TOMLDecodeError'
+
+        - name: Remove only fixture config to test original absence
+          ansible.builtin.file:
+            path: '{{ qubix_root }}/var/lib/noctalia-greeter/greeter.toml'
+            state: absent
+          check_mode: false
+
+        - name: Prepare absent configuration with safe defaults
+          ansible.builtin.include_role:
+            name: qubix_login
+
+        - name: Require preparation to leave auth input and output defaults unset
+          ansible.builtin.assert:
+            that:
+              - (qubix_login_candidate_probe.stdout | from_json).keys() | list == ['appearance']
+
+        - name: Exercise original absence in an independent recovery root
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_root: '{{ qubix_test_tmp.path }}/absence'
+            qubix_files_resources: '{{ qubix_login_resources[:1] }}'
+
+        - name: Restore original absence through the production recovery engine
+          ansible.builtin.include_role:
+            name: qubix_files
+            tasks_from: restore
+          vars:
+            qubix_files_root: '{{ qubix_test_tmp.path }}/absence'
+          when: not ansible_check_mode
+
+        - name: Inspect restored absence or untouched check-mode path
+          ansible.builtin.stat:
+            path: '{{ qubix_test_tmp.path }}/absence/var/lib/noctalia-greeter/greeter.toml'
+          register: qubix_test_greeter_absence
+
+        - name: Require no file after original-absence restoration or preview
+          ansible.builtin.assert:
+            that: [not qubix_test_greeter_absence.stat.exists]
+
+        - name: Refuse any other greeter state file through the shared resource boundary
+          block:
+            - name: Attempt ownership of operator sync state
+              ansible.builtin.include_role:
+                name: qubix_files
+                tasks_from: guard
+              vars:
+                qubix_files_resource: {path: /var/lib/noctalia-greeter/sync.toml, component: login}
+            - name: Reject accidental sync-state ownership
+              ansible.builtin.fail:
+                msg: 'Unexpected sync-state ownership.'
+          rescue:
+            - name: Require boundary-specific refusal
+              ansible.builtin.assert:
+                that: ['"outside Qubix customization boundaries" in ansible_failed_result.msg']
+
+        - name: Redirect absent fixture config to an existing native file
+          ansible.builtin.file:
+            src: '{{ qubix_root }}/etc/greetd/config.toml'
+            dest: '{{ qubix_root }}/var/lib/noctalia-greeter/greeter.toml'
+            state: link
+          check_mode: false
+
+        - name: Require redirect refusal
+          ansible.builtin.include_tasks: ../tasks/greeter-rejection.yml
+          vars:
+            qubix_test_greeter_diagnostic: 'Redirected or non-file'
+      always:
+        - name: Remove only disposable greeter fixture root
+          ansible.builtin.file:
+            path: '{{ qubix_test_tmp.path }}'
+            state: absent
+          check_mode: false

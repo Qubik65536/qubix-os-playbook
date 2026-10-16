@@ -12,6 +12,7 @@ login:
   enabled: false
   backend: auto
   theme_source: breeze
+  activation: existing
 bootloader:
   enabled: false
   backend: auto

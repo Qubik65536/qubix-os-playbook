@@ -1,6 +1,15 @@
 # Project status
 
 Updated: 2026-10-16. Stage: **MVP candidate; acceptance In Progress**.
+Noctalia Greeter preparation **Implemented; fixtures/native UI preview Tested; file/login gates pending**. CachyOS
+Greeter 1.6.0-1 and greetd 0.10.3-2.1 install alongside active SDDM; the separate package playbook
+passes 47 tasks/one package transaction. Native snapshot hooks update Limine; prior recovery bytes
+remain intact. The new appearance adapter shares the desktop palette/wallpaper, preserves native
+input/output/auth/session/sync configuration and never switches services. The
+[greeter guide](../user/login.md), [fingerprint guide](../user/fingerprint.md) and
+[test results](login-test-results.md) distinguish preview/file evidence from real login acceptance.
+Noctalia's system label remains native CachyOS; Limine already has the Qubix OS heading.
+
 Power footer/lock-close fix **Implemented; controller/native regression, installation, live footer and
 reapplication Tested**. Clean e80b697 restores corner prompts/Cancel and dispatches only after animated
 closure. Native no-effect recorder confirms the panel is closed before dispatch (66 tasks/11 temporary

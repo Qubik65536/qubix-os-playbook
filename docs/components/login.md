@@ -1,4 +1,45 @@
-# SDDM login branding
+# Login appearance
+
+## Noctalia Greeter preparation and existing greetd
+
+Status: **Implemented; local fixtures and native client rendering Tested; native file/login gates pending**.
+Focused task: install the CachyOS `noctalia-greeter` package alongside
+the current manager, supply the existing Qubix desktop palette/wallpaper, and document fingerprint
+enrollment and a separately reviewed manager cutover. The existing SDDM adapter remains supported.
+
+Contract (documented before implementation):
+
+- `login.backend: greetd`, `theme_source: noctalia`, `activation: prepare` prepares the native
+  `/var/lib/noctalia-greeter/greeter.toml` and an additive greetd configuration example. It must
+  reject an active greetd, so preparation cannot silently reconfigure an existing login screen.
+- `activation: existing` (the default) accepts only an already-active greetd whose existing
+  configuration launches `/usr/bin/noctalia-greeter-session`. It manages appearance alone.
+  Neither mode edits `/etc/greetd/config.toml`, PAM, services, accounts or native session files.
+- Support is measured Noctalia Greeter 1.6.x, using the released declarative appearance interface.
+  Require the installed wrapper/compositor, a real package-created state directory and Qubix
+  branding/Niri resources. Reject unsupported combinations and redirects before resource writes.
+- Managed appearance uses all sixteen roles from the same Qubix palette as Noctalia, the existing
+  cube wallpaper, dark mode and matching corner radii. Preserve mutable `sync.toml`, keyboard,
+  monitor, user, authentication and session settings in an existing greeter configuration.
+- Package installation is an explicit, separate preparation playbook; bootstrap never installs
+  packages or switches display managers. Native package hooks can refresh Snapper/Limine menus;
+  record those effects separately from Qubix appearance writes.
+- The shared first-baseline engine owns only the exact greeter configuration path under `/var/lib`;
+  it backs up existing bytes and metadata, records original absence and supports drift-safe recovery.
+- Fingerprint setup is operator documentation: hardware detection, enrollment, verification,
+  service-specific PAM review, password fallback and restoration. No automatic PAM modification.
+- Noctalia's native distribution label comes from os-release and has no measured supported
+  override; retain CachyOS identity. Limine already uses `interface_branding: Qubix OS`; native
+  entry names/IDs, snapshots and kernel arguments remain preserved.
+
+Acceptance: focused normal/check-mode fixtures cover preparation, existing-manager gating,
+palette agreement, malformed/unsupported inputs, redirects, preservation, file installation,
+zero-change reapplication and original restoration. Static checks pass. Native evidence must
+separately record package/file installation, TOML parsing, reference/custom preview screenshots,
+preservation and cleanup. A real greetd password login, Niri return, fingerprint login and reboot
+remain separate operator/VM gates; preparing files never claims authentication acceptance.
+
+## SDDM
 
 Status: Implemented candidate; cloned-UI and unsupported-manager fixtures Tested; native preview/login needs VM.
 

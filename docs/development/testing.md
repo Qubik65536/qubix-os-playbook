@@ -42,6 +42,16 @@ Record exact commands and outcomes in [status](../project/status.md). Broaden te
 
 Additional isolated fixtures cover baselines/drift/repeated restore/validator failure/pending state, desktop definitions/Noctalia version gates, SDDM cloning/standalone activity/ambiguity, independent GRUB/Limine preservation/private-mode/reapplication/file restoration, both fake generators, incomplete archives, rebuild skipping, kernel-aware restore and no-write splash preview. Shell fixtures verify explicit/user/default Starship precedence without changing HOME or personal files. The [developer guide](getting-started.md) lists focused runs; fake tools never prove native generation or boot success.
 
+`tests/playbooks/noctalia-greeter.yml` runs in normal and global check mode through `scripts/test.sh`.
+It uses no-effect executables and temporary filesystem roots to exercise appearance parsing,
+preserved operator settings, manager/version refusals and shared recovery. The optional native
+`tests/integration/login.yml` preview requires installed Noctalia Greeter 1.6.x, an active Niri
+desktop and bubblewrap. It renders the actual UI client under nested Niri with fake passwd data,
+private state and D-Bus, no system bus and a nonexistent greetd socket. It captures reference/Qubix
+screenshots, verifies personal-state and primary-process preservation and cleans up test processes.
+It does not exercise the greeter's bundled compositor, VT/DRM, PAM, login or a fingerprint scan.
+See [login test results](../project/login-test-results.md).
+
 Wrapper fixtures reject normal and compact deploy/restore tag options before Ansible invocation. Native private login/boot/splash checks require read-only privilege escalation; existing activation-file modes are retained.
 
 Run native grammar checks explicitly with `ansible-playbook tests/integration/niri.yml -i INVENTORY --ask-pass`; add `-e '{"qubix_discovery_privileged": true}' --ask-become-pass` if boot metadata is private. CI syntax/lint checks this playbook but never runs it against a host. It uses the production render task file, checks invalid controls, validates Niri plus installed Foot/Noctalia candidates and removes its private temporary files. Missing companions are skipped here, but deployment requires them. It does not prove companion startup or a graphical session.

@@ -3,7 +3,7 @@ qubix_profile_keys:
   branding: [enabled]
   niri: [enabled, user_config]
   shell: [enabled, change_default_shell]
-  login: [enabled, backend, theme_source]
+  login: [enabled, backend, theme_source, activation]
   bootloader: [enabled, backend, config_path, confirm_active, limine_version]
   plymouth: [enabled, early_graphics, initramfs_backend, confirm_active, force_rebuild, images, presets]
 qubix_profile_choices:
@@ -13,6 +13,12 @@ qubix_profile_choices:
   - component: login
     key: backend
     values: [auto, sddm, greetd, gdm, lightdm]
+  - component: login
+    key: theme_source
+    values: [breeze, noctalia]
+  - component: login
+    key: activation
+    values: [existing, prepare]
   - component: bootloader
     key: backend
     values: [auto, grub, limine]

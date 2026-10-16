@@ -1,0 +1,11 @@
+---
+- name: Seed conflicting or inactive native managers
+  ansible.builtin.set_fact:
+    qubix_discovery_report:
+      evidence:
+        display_manager: {active_units: '{{ qubix_test_managers }}'}
+
+- name: Require existing manager refusal
+  ansible.builtin.include_tasks: greeter-rejection.yml
+  vars:
+    qubix_test_greeter_diagnostic: 'only already-active greetd'

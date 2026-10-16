@@ -1,0 +1,73 @@
+---
+- name: Preview the native greeter in a private nested Niri without authentication
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  roles:
+    - qubix_profile
+    - qubix_discovery
+  tasks:
+    - name: Require explicit inactive Noctalia preparation and an actual preview
+      ansible.builtin.assert:
+        that:
+          - not ansible_check_mode
+          - qubix_profile_resolved.login.enabled
+          - qubix_profile_resolved.login.backend == 'greetd'
+          - qubix_profile_resolved.login.theme_source == 'noctalia'
+          - qubix_profile_resolved.login.activation == 'prepare'
+
+    - name: Plan prerequisites and candidate resources without installation
+      ansible.builtin.include_tasks: ../../playbooks/tasks/plan.yml
+
+    - name: Create a private temporary native-preview root
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: qubix-login-preview.
+      register: qubix_login_preview_root
+
+    - name: Render and capture the installed native greeter without a greetd socket
+      block:
+        - name: Write candidate and test-only helper in the temporary root
+          ansible.builtin.copy:
+            dest: '{{ qubix_login_preview_root.path }}/{{ item.name }}'
+            content: '{{ item.content }}'
+            mode: '0600'
+          loop:
+            - {name: candidate.toml, content: '{{ qubix_login_candidate }}'}
+            - name: preview.py
+              content: '{{ lookup("file", playbook_dir ~ "/files/login-preview.py") }}'
+          loop_control:
+            label: '{{ item.name }}'
+
+        - name: Capture reference and Qubix appearance in a private nested session
+          ansible.builtin.command:
+            argv:
+              - /usr/bin/python3
+              - '{{ qubix_login_preview_root.path }}/preview.py'
+              - '{{ qubix_login_preview_root.path }}'
+          changed_when: false
+          register: qubix_login_preview_result
+
+        - name: Fetch sanitized native comparison evidence
+          ansible.builtin.fetch:
+            src: '{{ qubix_login_preview_root.path }}/{{ item }}'
+            dest: '{{ playbook_dir }}/../../.cache/native-login/{{ inventory_hostname }}/'
+            flat: true
+          loop: [reference.png, qubix.png, result.json, nested.log, reference.log, qubix.log]
+
+        - name: Report rendering and cleanup scope
+          ansible.builtin.debug:
+            msg: '{{ qubix_login_preview_result.stdout | from_json }}'
+      always:
+        - name: Retain native diagnostics even after a failed preview
+          ansible.builtin.fetch:
+            src: '{{ qubix_login_preview_root.path }}/{{ item }}'
+            dest: '{{ playbook_dir }}/../../.cache/native-login/{{ inventory_hostname }}/'
+            flat: true
+            fail_on_missing: false
+          loop: [nested.log, reference.log, qubix.log]
+
+        - name: Remove only the private preview root
+          ansible.builtin.file:
+            path: '{{ qubix_login_preview_root.path }}'
+            state: absent

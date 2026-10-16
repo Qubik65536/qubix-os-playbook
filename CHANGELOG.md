@@ -4,6 +4,11 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Added Noctalia Greeter 1.6.x appearance preparation with the shared Qubix palette and cube wallpaper,
+  preserved input/output/auth/session/sync settings and drift-safe file recovery. A separate native
+  package playbook installs prerequisites alongside SDDM. Added login/cutover and fingerprint guides;
+  native distribution identity and boot entries remain preserved. Authentication acceptance is separate.
+
 - Restore lower-left power-menu prompts and lower-right Cancel, and defer confirmed actions until
   the native close animation completes so Lock cannot leave the countdown visible at one second.
   Require committed screenshot comparisons for visual customizations. Clean e80b697 native no-effect

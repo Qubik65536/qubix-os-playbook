@@ -72,6 +72,18 @@
       - not qubix_profile_resolved.shell.change_default_shell
     fail_msg: 'Automatic default-shell changes are unsupported; use false.'
 
+- name: Require compatible login appearance selections
+  ansible.builtin.assert:
+    that:
+      - >-
+        (qubix_profile_resolved.login.theme_source == 'breeze' and
+        qubix_profile_resolved.login.backend in ['auto', 'sddm'] and
+        qubix_profile_resolved.login.activation == 'existing') or
+        (qubix_profile_resolved.login.theme_source == 'noctalia' and
+        qubix_profile_resolved.login.backend == 'greetd')
+    fail_msg: 'Login requires Breeze/existing SDDM or Noctalia/explicit greetd; prepare is only supported for Noctalia.'
+  when: qubix_profile_resolved.login.enabled
+
 - name: Identify requested components
   ansible.builtin.set_fact:
     qubix_profile_enabled: >-

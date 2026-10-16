@@ -1,0 +1,14 @@
+---
+- name: Seed unsupported no-effect version output
+  ansible.builtin.copy:
+    dest: '{{ qubix_root }}/usr/bin/noctalia-greeter'
+    content: |
+      #!/bin/sh
+      printf '%s\n' 'noctalia-greeter {{ qubix_test_version }}'
+    mode: '0755'
+  check_mode: false
+
+- name: Require measured version refusal
+  ansible.builtin.include_tasks: greeter-rejection.yml
+  vars:
+    qubix_test_greeter_diagnostic: 'requires measured 1.6.x'

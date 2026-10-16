@@ -5,14 +5,17 @@ Status: **Candidate adapters Implemented; fixtures Tested; native desktop file l
 | Selection | Supported candidate contract | Pending native acceptance |
 |---|---|---|
 | CachyOS Niri | Exact ID=cachyos, Linux/systemd/Pacman/Niri; measured Foot/jq and standalone Noctalia >=5.2.0 and <6.0.0 | Main-session keys/default shell/portals/Polkit/lock/unlock |
-| Login | Unambiguously active SDDM, regular compatible Breeze tree | Preview/authentication/sessions/restore |
+| Login | Active SDDM/Breeze, or Noctalia Greeter 1.6.x with explicit greetd preparation/existing mode | Native client preview Tested; greetd authentication/DRM/sessions/restore gates separate |
 | GRUB | Confirmed /boot/grub[2]/grub.cfg sourcing custom.cfg; native checker/tools | Checker/menu/original-entry boot/restore |
 | Limine | Confirmed regular limine.conf under /boot or /efi, observed major 8–12 | Menu/original-entry boot/restore |
 | dracut | Plymouth/two-step plugin/lsinitrd, existing splash token, confirmed plain images/kernel mapping | Generation/archive/splash/unlock/restore |
 | mkinitcpio | Same splash requirements, lsinitcpio, literal main HOOKS plus literal append-only drop-ins, selected literal presets covering all outputs | Generation/hooks/archive Tested physically; splash/unlock/restore pending |
 | Fedora/KDE | Unsupported, no adapters | Post-MVP |
 
-UKIs/signing and complex/alternate mkinitcpio outputs are unsupported. Other managers preserve login and reject enabled branding; the Qubix desktop can use a free TTY.
+UKIs/signing and complex/alternate mkinitcpio outputs are unsupported. Other login combinations
+preserve login and reject enabled appearance; the Qubix desktop can use a free TTY.
+The [Noctalia Greeter contract](../components/login.md) describes inactive preparation and
+already-active greetd appearance; neither switches display managers or modifies PAM.
 
 The Plymouth picture background requires native two-step support for background.png and
 ScaleBackgroundImage. Real-host preflight checks both capabilities in the installed plugin before

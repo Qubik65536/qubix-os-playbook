@@ -215,6 +215,11 @@ Preview/deploy with `--ask-become-pass`, then installed verification with `--tag
 
 ## 7. Optional Plymouth and initramfs
 
+For the optional Noctalia Greeter instead of SDDM appearance, follow the separate
+[login preparation guide](login.md). It preserves the current manager until a reviewed cutover.
+The [fingerprint guide](fingerprint.md) covers local enrollment, desktop unlock and optional
+greetd authentication without automatic PAM changes.
+
 Plymouth is independent of the loader. Keep it disabled until the active generator, existing image paths and kernel mapping are known. The current boot must already contain `splash`; Qubix never inserts kernel arguments. An installed two-step plugin is required. UKIs, signing changes and complex mkinitcpio configurations are unsupported.
 
 For dracut, merge this section with your **actual** version and paths:

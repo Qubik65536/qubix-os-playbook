@@ -1,0 +1,191 @@
+---
+- name: Require explicit preparation or an already-active greetd
+  ansible.builtin.assert:
+    that:
+      - qubix_profile_resolved.branding.enabled
+      - qubix_profile_resolved.niri.enabled
+      - >-
+        (qubix_profile_resolved.login.activation == 'prepare' and
+        'greetd' not in qubix_discovery_report.evidence.display_manager.active_units) or
+        (qubix_profile_resolved.login.activation == 'existing' and
+        qubix_discovery_report.evidence.display_manager.active_units == ['greetd'])
+    fail_msg: >-
+      Noctalia requires Qubix branding/Niri and inactive greetd for prepare,
+      or only already-active greetd for existing.
+
+- name: Inspect installed greeter executables and state ancestors without following links
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}{{ item }}'
+    follow: false
+    get_checksum: false
+  loop:
+    - /usr/bin/noctalia-greeter
+    - /usr/bin/noctalia-greeter-session
+    - /usr/bin/noctalia-greeter-compositor
+    - /var
+    - /var/lib
+    - /var/lib/noctalia-greeter
+    - /etc/greetd/config.toml
+    - /var/lib/noctalia-greeter/greeter.toml
+  register: qubix_login_native_paths
+
+- name: Require real package-installed greeter prerequisites
+  ansible.builtin.assert:
+    that:
+      - not item.stat.islnk | default(false)
+      - item.stat.isreg | default(false) and item.stat.executable | default(false)
+    fail_msg: 'Install Noctalia Greeter prerequisites with playbooks/prepare-login.yml before deployment.'
+  loop: '{{ qubix_login_native_paths.results[:3] }}'
+  loop_control:
+    label: '{{ item.item }}'
+
+- name: Require existing real state directories without changing ownership or permissions
+  ansible.builtin.assert:
+    that:
+      - item.stat.isdir | default(false)
+      - not item.stat.islnk | default(false)
+    fail_msg: 'Noctalia Greeter needs its real package-created state directory; initialize it before deployment.'
+  loop: '{{ qubix_login_native_paths.results[3:6] }}'
+  loop_control:
+    label: '{{ item.item }}'
+
+- name: Reject redirected or non-file native greeter configurations
+  ansible.builtin.assert:
+    that:
+      - not item.stat.islnk | default(false)
+      - not item.stat.exists or item.stat.isreg | default(false)
+    fail_msg: 'Redirected or non-file greeter configuration; refusing appearance writes.'
+  loop: '{{ qubix_login_native_paths.results[6:] }}'
+  loop_control:
+    label: '{{ item.item }}'
+
+- name: Measure installed Noctalia Greeter release
+  ansible.builtin.command:
+    argv: ['{{ qubix_root | default("") }}/usr/bin/noctalia-greeter', --version]
+  register: qubix_login_version_probe
+  changed_when: false
+  check_mode: false
+
+- name: Resolve measured greeter version
+  ansible.builtin.set_fact:
+    qubix_login_version: >-
+      {{ qubix_login_version_probe.stdout | regex_search('[0-9]+\.[0-9]+\.[0-9]+') | default('', true) }}
+
+- name: Require the reviewed Noctalia Greeter configuration interface
+  ansible.builtin.assert:
+    that:
+      - qubix_login_version | length > 0
+      - qubix_login_version is version('1.6.0', '>=')
+      - qubix_login_version is version('1.7.0', '<')
+    fail_msg: 'Noctalia Greeter appearance requires measured 1.6.x; review other releases before writes.'
+
+- name: Parse existing native greeter configuration without running it
+  ansible.builtin.command:
+    argv:
+      - '{{ qubix_login_python }}'
+      - -c
+      - >-
+        import json,pathlib,sys,tomllib;
+        p=pathlib.Path(sys.argv[1]);
+        print(json.dumps(tomllib.loads(p.read_text()) if p.exists() else {}))
+      - '{{ qubix_root | default("") }}{{ item }}'
+  loop: [/etc/greetd/config.toml, /var/lib/noctalia-greeter/greeter.toml]
+  register: qubix_login_native_config
+  changed_when: false
+  check_mode: false
+
+- name: Resolve preserved native configuration
+  ansible.builtin.set_fact:
+    qubix_login_greetd_config: '{{ qubix_login_native_config.results[0].stdout | from_json }}'
+    qubix_login_old_config: '{{ qubix_login_native_config.results[1].stdout | from_json }}'
+    qubix_login_palette: >-
+      {{ (lookup('file', role_path ~ '/../qubix_niri/templates/palette.json.j2') | from_json).dark
+      | dict2items | rejectattr('key', 'equalto', 'terminal') | items2dict }}
+
+- name: Require existing greetd to use the measured native session wrapper
+  ansible.builtin.assert:
+    that:
+      - qubix_login_greetd_config.get('default_session', {}).get('command', '') == '/usr/bin/noctalia-greeter-session'
+      - qubix_login_greetd_config.get('default_session', {}).get('user', '') | length > 0
+    fail_msg: >-
+      Existing greetd must already launch /usr/bin/noctalia-greeter-session;
+      Qubix never replaces a greeter command.
+  when: qubix_profile_resolved.login.activation == 'existing'
+
+- name: Require native state ownership to match the configured greeter account
+  ansible.builtin.assert:
+    that:
+      - qubix_login_greetd_config.get('default_session', {}).get('user', '') | length > 0
+      - >-
+        qubix_login_native_paths.results[5].stat.pw_name | default('') ==
+        qubix_login_greetd_config.get('default_session', {}).get('user', '')
+      - qubix_login_native_paths.results[5].stat.mode == '0750'
+    fail_msg: >-
+      Native greeter state must be mode 0750 and owned by greetd's configured default_session user;
+      initialize the package state explicitly before appearance deployment.
+
+- name: Read existing appearance bytes for minimal section replacement
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}/var/lib/noctalia-greeter/greeter.toml'
+  register: qubix_login_old_bytes
+  when: qubix_login_native_paths.results[-1].stat.exists
+
+- name: Retain all sections outside the three managed appearance tables
+  ansible.builtin.set_fact:
+    qubix_login_preserved_text: >-
+      {{ qubix_login_old_bytes.content | default('') | b64decode
+      | regex_replace('(?m)^# Qubix appearance; other greeter settings and sync.toml remain operator-owned.\n', '')
+      | regex_replace('(?ms)^\[appearance(?:\.palette|\.wallpaper)?\][ \t]*(?:#[^\n]*)?\n.*?(?=^\[|\Z)', '') }}
+
+- name: Validate preserved TOML and reject noncanonical appearance tables
+  ansible.builtin.command:
+    argv:
+      - '{{ qubix_login_python }}'
+      - -c
+      - 'import json,sys,tomllib; print(json.dumps(tomllib.loads(sys.stdin.read())))'
+    stdin: '{{ qubix_login_preserved_text }}'
+  register: qubix_login_preserved_probe
+  changed_when: false
+  check_mode: false
+
+- name: Refuse ambiguous appearance syntax rather than dropping settings
+  ansible.builtin.assert:
+    that:
+      - >-
+        (qubix_login_preserved_probe.stdout | from_json).get('appearance', {}).keys()
+        | difference(['wallpapers']) | length == 0
+      - qubix_login_old_config.get('appearance', {}) is mapping
+    fail_msg: >-
+      Use canonical [appearance], [appearance.palette], [appearance.wallpaper]
+      tables before Qubix appearance activation.
+
+- name: Compose native appearance while retaining input authentication and output sections
+  ansible.builtin.set_fact:
+    qubix_login_candidate: '{{ lookup("template", "greeter.toml.j2") }}'
+
+- name: Parse the complete candidate before any writes
+  ansible.builtin.command:
+    argv:
+      - '{{ qubix_login_python }}'
+      - -c
+      - 'import json,sys,tomllib; print(json.dumps(tomllib.loads(sys.stdin.read())))'
+    stdin: '{{ qubix_login_candidate }}'
+  register: qubix_login_candidate_probe
+  changed_when: false
+  check_mode: false
+
+- name: Define only appearance and an inactive operator-reviewed session example
+  ansible.builtin.set_fact:
+    qubix_login_resources:
+      - path: /var/lib/noctalia-greeter/greeter.toml
+        component: login
+        content: '{{ qubix_login_candidate }}'
+        mode: '0644'
+      - path: /usr/share/qubix/login/greetd-default-session.toml
+        component: login
+        content: |
+          # Example only: merge into /etc/greetd/config.toml after reviewing the existing account and terminal.
+          # Preserve native PAM, terminal, initial_session and other settings. Never copy this over the full config.
+          [default_session]
+          command = "/usr/bin/noctalia-greeter-session"
+          user = "greeter"

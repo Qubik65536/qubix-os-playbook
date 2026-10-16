@@ -1,0 +1,5 @@
+{% if qubix_login_preserved_text | trim %}
+{{ qubix_login_preserved_text.rstrip() }}
+
+{% endif %}
+{{ lookup('template', 'appearance.toml.j2') }}

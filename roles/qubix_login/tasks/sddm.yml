@@ -1,0 +1,156 @@
+---
+- name: Require active SDDM and supported source theme
+  ansible.builtin.assert:
+    that:
+      - qubix_profile_resolved.login.backend in ['auto', 'sddm']
+      - >-
+        (qubix_discovery_report.evidence.display_manager.active_units | default([])) == ['sddm'] or
+        (qubix_discovery_report.evidence.display_manager.active_units | default([]) | length == 0 and
+        'Id=sddm.service' in qubix_discovery_report.evidence.display_manager.activity and
+        'ActiveState=active' in qubix_discovery_report.evidence.display_manager.activity)
+      - >-
+        'ActiveState=active' not in qubix_discovery_report.evidence.display_manager.activity or
+        'Id=sddm.service' in qubix_discovery_report.evidence.display_manager.activity or
+        (qubix_discovery_report.evidence.display_manager.configured_unit | default('')).endswith('/sddm.service')
+      - qubix_profile_resolved.login.theme_source == 'breeze'
+      - qubix_profile_resolved.branding.enabled
+    fail_msg: 'Login branding requires already-active SDDM and an installed Breeze theme; managers are never replaced.'
+
+- name: Inspect factory theme namespace
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/usr/share/sddm/themes/breeze'
+    follow: false
+  register: qubix_login_source_root
+
+- name: Reject a missing or redirected source namespace
+  ansible.builtin.assert:
+    that: [qubix_login_source_root.stat.isdir | default(false)]
+    fail_msg: 'Factory Breeze theme must be a regular directory.'
+
+- name: Inspect installed source theme files without following links
+  ansible.builtin.find:
+    paths: '{{ qubix_root | default("") }}/usr/share/sddm/themes/breeze'
+    recurse: true
+    file_type: any
+    hidden: true
+    get_checksum: true
+    checksum_algorithm: sha256
+  register: qubix_login_source
+
+- name: Require source authentication UI and supported background mechanism
+  ansible.builtin.assert:
+    that:
+      - qubix_login_source.matched > 0
+      - qubix_login_source.files | selectattr('islnk') | list | length == 0
+      - >-
+        (qubix_root | default('') ~ '/usr/share/sddm/themes/breeze/Main.qml')
+        in (qubix_login_source.files | map(attribute='path') | list)
+    fail_msg: 'Breeze source is missing or redirected; cannot preserve its existing login UI.'
+
+- name: Read factory source theme options
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}/usr/share/sddm/themes/breeze/theme.conf'
+  register: qubix_login_options
+
+- name: Require the installed theme to expose background settings
+  ansible.builtin.assert:
+    that:
+      - qubix_login_options.content | b64decode is regex('(?m)^background=')
+      - qubix_login_options.content | b64decode is regex('(?m)^type=')
+    fail_msg: 'Installed Breeze lacks supported background/type options; refusing guessed theme settings.'
+
+- name: Inspect main SDDM configuration precedence
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/etc/sddm.conf'
+    follow: false
+  register: qubix_login_main_stat
+
+- name: Read main SDDM configuration when present
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}/etc/sddm.conf'
+  register: qubix_login_main_bytes
+  when: qubix_login_main_stat.stat.exists
+
+- name: Require an unambiguous Current setting in the main configuration
+  ansible.builtin.assert:
+    that:
+      - not qubix_login_main_stat.stat.islnk | default(false)
+      - >-
+        qubix_login_main_bytes.content | default('') | b64decode
+        | regex_findall('(?m)^Current\s*=') | length <= 1
+    fail_msg: 'Ambiguous/redirected SDDM main configuration; activation stopped.'
+
+- name: Inspect SDDM drop-in directory
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/etc/sddm.conf.d'
+  register: qubix_login_dropin_dir
+
+- name: Inspect later-precedence SDDM drop-ins
+  ansible.builtin.find:
+    paths: '{{ qubix_root | default("") }}/etc/sddm.conf.d'
+    patterns: '*.conf'
+  register: qubix_login_dropins
+  when: qubix_login_dropin_dir.stat.exists
+
+- name: Read possible later theme overrides
+  ansible.builtin.slurp:
+    src: '{{ item.path }}'
+  loop: >-
+    {{ qubix_login_dropins.files | default([]) | selectattr('path', 'gt',
+    qubix_root | default('') ~ '/etc/sddm.conf.d/zz-qubix.conf') | list }}
+  register: qubix_login_later
+  loop_control:
+    label: '{{ item.path }}'
+
+- name: Reject shadowed theme activation
+  ansible.builtin.assert:
+    that:
+      - not item.content | b64decode is regex('(?m)^[ \t]*Current[ \t]*=')
+    fail_msg: 'Later SDDM drop-in overrides Current; resolve it explicitly before Qubix activation.'
+  loop: '{{ qubix_login_later.results }}'
+  loop_control:
+    label: '{{ item.item.path }}'
+
+- name: Initialize cloned Qubix theme definitions
+  ansible.builtin.set_fact:
+    qubix_login_resources: []
+
+- name: Prepare installed theme files without changing authentication implementation
+  ansible.builtin.set_fact:
+    qubix_login_resources: >-
+      {{ qubix_login_resources + [{'path': '/usr/share/sddm/themes/qubix/' ~
+      item.path.split('/usr/share/sddm/themes/breeze/')[1], 'component': 'login',
+      'source': item.path, 'remote_source': true, 'sha256': item.checksum}] }}
+  loop: '{{ qubix_login_source.files | selectattr("isreg") | rejectattr("path", "search", "theme.conf.user$") | list }}'
+  loop_control:
+    label: '{{ item.path }}'
+
+- name: Define native INI appearance files with actual newlines
+  ansible.builtin.set_fact:
+    qubix_login_appearance:
+      - path: /usr/share/sddm/themes/qubix/theme.conf.user
+        component: login
+        content: |
+          [General]
+          background=/usr/share/qubix/branding/logo.png
+          type=image
+      - path: /etc/sddm.conf.d/zz-qubix.conf
+        component: login
+        content: |
+          [Theme]
+          Current=qubix
+
+- name: Place activation after cloned authentication resources
+  ansible.builtin.set_fact:
+    qubix_login_resources: '{{ qubix_login_resources + qubix_login_appearance }}'
+
+- name: Preserve main configuration while resolving its higher precedence theme setting
+  ansible.builtin.set_fact:
+    qubix_login_resources: >-
+      {{ qubix_login_resources + [{'path': '/etc/sddm.conf', 'component': 'login',
+      'mode': qubix_login_main_stat.stat.mode,
+      'content': qubix_login_main_bytes.content | b64decode
+      | regex_replace('(?m)^Current\s*=.*$', 'Current=qubix')}] }}
+  when:
+    - qubix_login_main_stat.stat.exists
+    - qubix_login_main_bytes.content | b64decode is regex('(?m)^Current\s*=')

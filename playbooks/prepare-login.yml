@@ -1,0 +1,79 @@
+---
+- name: Install Noctalia Greeter prerequisites without switching the display manager
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  roles:
+    - qubix_profile
+    - qubix_discovery
+  tasks:
+    - name: Require greetd to be inactive during package preparation
+      ansible.builtin.assert:
+        that: ['"greetd" not in qubix_discovery_report.evidence.display_manager.active_units']
+        fail_msg: >-
+          Package preparation is for inactive greetd;
+          maintain an active login manager through native package procedures.
+
+    - name: Read already-installed package names
+      ansible.builtin.command:
+        argv: [/usr/bin/pacman, -Qq]
+      register: qubix_login_installed_packages
+      changed_when: false
+      check_mode: false
+
+    - name: Resolve missing package prerequisites
+      ansible.builtin.set_fact:
+        qubix_login_missing_packages: >-
+          {{ ['greetd', 'noctalia-greeter'] | difference(qubix_login_installed_packages.stdout_lines) }}
+
+    - name: Show the exact native dependency transaction without downloading or installing
+      ansible.builtin.command:
+        argv: '{{ ["/usr/bin/pacman", "-Sp", "--print-format", "%n %v %s", "--"] + qubix_login_missing_packages }}'
+      register: qubix_login_package_preview
+      changed_when: false
+      check_mode: false
+      when: qubix_login_missing_packages | length > 0
+
+    - name: Report proposed native packages and hook boundary
+      ansible.builtin.debug:
+        msg:
+          - '{{ qubix_login_package_preview.stdout_lines | default([]) }}'
+          - >-
+            Native Pacman hooks may refresh snapshots and Limine menus;
+            bootstrap does not perform package installation.
+
+    - name: Install only the requested prerequisites through native Pacman
+      ansible.builtin.command:
+        argv: '{{ ["/usr/bin/pacman", "-S", "--needed", "--noconfirm", "--"] + qubix_login_missing_packages }}'
+      become: true
+      changed_when: true
+      when: qubix_login_missing_packages | length > 0
+
+    - name: Inspect the package-created greeter state directory
+      ansible.builtin.stat:
+        path: /var/lib/noctalia-greeter
+        follow: false
+      become: true
+      register: qubix_login_package_state
+
+    - name: Reject redirected or non-directory greeter state
+      ansible.builtin.assert:
+        that:
+          - not qubix_login_package_state.stat.islnk | default(false)
+          - not qubix_login_package_state.stat.exists or qubix_login_package_state.stat.isdir | default(false)
+
+    - name: Initialize absent state with only the package's native tmpfiles rule
+      ansible.builtin.command:
+        argv: [/usr/bin/systemd-tmpfiles, --create, /usr/lib/tmpfiles.d/noctalia-greeter.conf]
+      become: true
+      changed_when: true
+      when:
+        - not qubix_login_package_state.stat.exists
+        - not ansible_check_mode
+
+    - name: Explain the remaining appearance and activation steps
+      ansible.builtin.debug:
+        msg: >-
+          Prerequisites {{ 'proposed' if ansible_check_mode else 'installed' }}.
+          Select login.backend=greetd, theme_source=noctalia, activation=prepare to install Qubix appearance.
+          No service enable/start/stop, greetd config edit or PAM customization is performed here.

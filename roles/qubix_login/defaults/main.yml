@@ -1,0 +1,2 @@
+---
+qubix_login_python: '{{ ansible_facts.discovered_interpreter_python | default("/usr/bin/python3") }}'

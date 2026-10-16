@@ -50,6 +50,25 @@ qubix_test_profiles:
   - name: invalid login backend
     input: {login: {backend: unsafe}}
     error: login.backend must be one of
+  - name: invalid login theme
+    input: {login: {theme_source: unknown}}
+    error: login.theme_source must be one of
+  - name: invalid login activation
+    input: {login: {activation: true}}
+    error: login.activation must be one of
+  - name: refuse Breeze preparation
+    input: {login: {enabled: true, activation: prepare}}
+    error: Login requires Breeze/existing SDDM
+  - name: refuse implicit Noctalia backend
+    input: {login: {enabled: true, theme_source: noctalia}}
+    error: Login requires Breeze/existing SDDM
+  - name: refuse greetd with Breeze
+    input: {login: {enabled: true, backend: greetd}}
+    error: Login requires Breeze/existing SDDM
+  - name: supported inactive Noctalia preparation
+    input: {login: {enabled: true, backend: greetd, theme_source: noctalia, activation: prepare}}
+  - name: supported existing Noctalia appearance
+    input: {login: {enabled: true, backend: greetd, theme_source: noctalia}}
   - name: invalid boot backend
     input: {bootloader: {backend: systemd-boot}}
     error: bootloader.backend must be one of

@@ -1,0 +1,20 @@
+# Qubix appearance; other greeter settings and sync.toml remain operator-owned.
+[appearance]
+{% for key, value in qubix_login_old_config.get('appearance', {}).items() if key not in ['scheme', 'theme_mode', 'corner_radius_scale', 'palette', 'wallpaper', 'wallpapers'] %}
+{{ key | to_json }} = {{ value | to_json }}
+{% endfor %}
+{% if 'hide_logo' not in qubix_login_old_config.get('appearance', {}) %}
+"hide_logo" = true
+{% endif %}
+scheme = "Synced"
+theme_mode = "dark"
+corner_radius_scale = 1.35
+
+[appearance.palette]
+{% for key, value in qubix_login_palette.items() %}
+{{ key | regex_replace('^m', '') | regex_replace('([a-z])([A-Z])', '\\1_\\2') | lower }} = "{{ value }}"
+{% endfor %}
+
+[appearance.wallpaper]
+path = "/usr/share/qubix/wallpaper.png"
+fill_mode = "crop"

@@ -16,7 +16,7 @@ Record exact revision, resolved options, target/package/kernel/loader/generator 
 | Authentication | Existing login, GUI privilege and encrypted-root paths work; no PAM/encryption changes |
 | Preservation | Native/personal files and identity unchanged; unowned files survive |
 | Idempotency | Same revision/options second deploy has zero managed changes; unchanged images skip rebuild |
-| Login | Supported SDDM preview/authentication/native and Qubix sessions and restore succeed |
+| Login | Supported SDDM or greetd password authentication, Qubix session and recovery succeed; preview alone is insufficient |
 | GRUB | Native custom-hook checker, branded menu, original entries/arguments and restored boot succeed |
 | Limine | Confirmed supported version, branded menu, original entries/arguments and restored boot succeed |
 | dracut | Real generation/archive/splash/unlock/preservation/restoration succeed |

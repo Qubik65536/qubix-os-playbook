@@ -54,6 +54,16 @@ if ! ansible-playbook tests/playbooks/login.yml >.cache/tests/login.log 2>&1; th
 fi
 printf '%s\n' 'SDDM clone and unsupported-manager fixtures passed.'
 
+for mode in normal check; do
+  set --
+  if [[ "$mode" == check ]]; then set -- --check; fi
+  if ! ansible-playbook tests/playbooks/noctalia-greeter.yml "$@" >".cache/tests/greeter-$mode.log" 2>&1; then
+    cat ".cache/tests/greeter-$mode.log"
+    exit 1
+  fi
+done
+printf '%s\n' 'Noctalia Greeter preparation, preservation, refusal and recovery fixtures passed.'
+
 if ! ansible-playbook tests/playbooks/bootloader.yml >.cache/tests/bootloader.log 2>&1; then
   cat .cache/tests/bootloader.log
   exit 1

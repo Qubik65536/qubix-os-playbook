@@ -3,7 +3,7 @@
 An Ansible framework for deploying Qubix branding and desktop defaults onto existing Linux installations. The first target is **CachyOS with Niri**. Qubix reproduces its managed configuration, not the complete operating system.
 
 **Status: MVP candidate ready for testing.** Branding, Qubix Niri/Noctalia, shell defaults,
-SDDM branding, both GRUB and Limine, and Plymouth with dracut/mkinitcpio are implemented.
+SDDM branding, Noctalia Greeter appearance preparation, both GRUB and Limine, and Plymouth with dracut/mkinitcpio are implemented.
 The CachyOS desktop starts at 100% scale; the corrected Limine/native-style Plymouth deployment
 and exact boot-image checks pass on the authorized target. Identical-source reapplication passes
 with zero changes, and a normal-kernel reboot returns the desktop. The operator confirmed earlier
@@ -16,6 +16,7 @@ recovery tests remain acceptance gates. See [actual evidence](docs/project/statu
 Get started:
 
 - [User getting-started guide](docs/user/getting-started.md): prepare the target, deploy and test the desktop, then opt into login/boot/splash tests.
+- [Noctalia Greeter](docs/user/login.md) and [fingerprints](docs/user/fingerprint.md): prepare a matching login theme and configure local enrollment and password fallback.
 - [Human developer getting-started guide](docs/development/getting-started.md): set up tools, understand the code and run fixtures.
 - [SSH access and target information](docs/user/collecting-target-info.md): share connection details so the agent can inspect your test machine.
 - [Boot and poweroff splash guide](docs/user/plymouth.md): preview native-style spinner branding, review image mappings and plan activation/recovery.
