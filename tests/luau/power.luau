@@ -15,7 +15,10 @@ noctalia = {
 panel = {
     render = function(tree) test.tree = tree end,
     setNeedsFrameTick = function(enabled) test.ticks = enabled end,
-    close = function() onClose() end,
+    close = function()
+        test.closeRequested = true
+        if not test.deferClose then onClose() end
+    end,
 }
 ui = {}
 for _, kind in ipairs({"button", "column", "row", "glyph", "label", "progress"}) do
@@ -30,6 +33,8 @@ local function reset(locking)
     test.errors = {}
     test.locking = locking ~= false
     test.started = true
+    test.deferClose = false
+    test.closeRequested = false
     onOpen()
 end
 
@@ -186,6 +191,39 @@ tick(29)
 test.locking = false
 tick(100)
 idle() -- Locking disabled during a hold cannot become an unlocked suspend.
+
+-- Model the native animated close: completion arrives later than the timer callback.
+for _, action in ipairs({{1, "lock"}, {3, "lock-and-suspend"}, {5, "shutdown"}}) do
+    reset()
+    test.deferClose = true
+    clickAction(action[1])
+    tick(50)
+    assert(test.closeRequested, "Confirmation must request closure")
+    idle() -- Never lock while a final countdown frame is still visible.
+    onFrameTick(10000)
+    onKey(tostring(action[1]), true)
+    idle()
+    onClose() -- Host surface destruction/animation completion.
+    invoked(action[2])
+    onClose()
+    invoked(action[2]) -- Exactly once, including duplicate close notifications.
+end
+reset()
+test.deferClose = true
+clickAction(5)
+tick(50)
+closePanel() -- A late Cancel callback must discard the latched action.
+onClose()
+idle()
+
+reset()
+test.deferClose = true
+clickAction(3)
+tick(50)
+test.locking = false
+onClose()
+idle()
+assert(#test.errors == 1, "Recheck locking after the close animation")
 
 reset()
 test.started = false

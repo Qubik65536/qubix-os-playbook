@@ -11,6 +11,7 @@ local locking = false
 local held = {}
 local pending = nil
 local hovered = nil
+local confirmed = nil
 local message = "Hold 1–5 for 3s · Click for 5s · Esc cancels"
 
 local function available(index)
@@ -58,8 +59,18 @@ local function draw()
                 }),
             }))
     end
-    panel.render(ui.column({}, {
+    local prompt = message
+    if pending then
+        prompt = actions[pending.index].label .. " in "
+            .. tostring(math.ceil((pending.duration - pending.elapsed) / 1000)) .. "s"
+            .. (pending.kind == "hold" and " · Release to cancel" or " · Click again to cancel")
+    end
+    panel.render(ui.column({gap = 12}, {
         ui.row({gap = 12, align = "stretch"}, tiles),
+        ui.row({gap = 8, align = "center"}, {
+            ui.label({text = prompt, fontSize = 11, color = "on_surface_variant", flexGrow = 1}),
+            ui.button({text = "Cancel", glyph = "x", variant = "ghost", controlSize = "sm", onClick = "closePanel"}),
+        }),
     }))
 end
 
@@ -129,8 +140,17 @@ function onFrameTick(deltaMs)
         return
     end
     cancel()
-    opened = false -- Latch before dispatch: stale input/ticks cannot invoke twice.
+    opened = false -- Ignore stale input while the host finishes its close animation.
+    confirmed = index
     panel.close()
+end
+
+local function dispatch(index)
+    -- Noctalia can otherwise downgrade Lock & Suspend to an unlocked suspend.
+    if actions[index].needsLock and noctalia.getSetting("lockscreen.enabled") ~= true then
+        noctalia.notifyError("Power action cancelled", "Noctalia locking is disabled.")
+        return
+    end
     local started = noctalia.runAsync({"/usr/share/qubix/bin/qubix-noctalia", "msg", "session", actions[index].action},
         function(result)
             if result.exitCode ~= 0 or string.match(result.stdout or "", "^error:") then
@@ -143,6 +163,7 @@ function onFrameTick(deltaMs)
 end
 
 function onOpen()
+    confirmed = nil
     cancel()
     held = {}
     hovered = nil
@@ -153,13 +174,18 @@ function onOpen()
 end
 
 function onClose()
+    local index = confirmed
+    confirmed = nil -- Consume before dispatch; duplicate close callbacks must be inert.
     opened = false
     held = {}
     hovered = nil
     cancel()
+    -- Native onClose is queued by destroyPanel after the close animation completes.
+    if index then dispatch(index) end
 end
 
 function closePanel()
+    confirmed = nil
     onClose()
     panel.close()
 end

@@ -292,3 +292,45 @@ post-install audit: all 76 protected paths, 92 original recovery manifests and f
 are preserved, only the three expected applied receipts change, clean file-verification state is
 recorded and pending markers are absent. The temporary sudo credential is removed. No real power
 action or boot check ran; physical hold/release and click/Escape acceptance remain open.
+
+### Power footer and completed-close dispatch
+
+Status: **In Progress**. Restore the lower-left idle/countdown/cancellation prompts and lower-right
+Cancel button beneath the native tile row. Fix the reported Lock countdown remaining at “1” by
+dispatching only from the host's completed-close callback, after its close animation. Controller
+coverage must model deferred close and duplicate close notifications. A disposable native candidate
+replaces dispatch with a no-effect recorder and exposes a test-only input bridge; neither is shipped
+or available in the installed plugin. It checks cancellation and confirms that the panel is closed
+when the recorder runs. Real lock/unlock remains operator acceptance.
+
+Comparison screenshots are committed with visual changes from now on, rather than retained only in
+ignored caches. Capture the reference and changed states, name their revisions/environments, explain
+intentional differences and exclude personal content. An isolated preview proves rendering; capture
+the activated live result separately before claiming live visual acceptance.
+
+Native Noctalia 5.2.1, physical Niri 26.04 at 1920×1080/100% scale, with the destructive shutdown
+variant restored by clean 78cc3e1. These reference captures contain only the desktop and menu:
+
+![Native Noctalia reference](../assets/power-menu/native-noctalia-5.2.1.png)
+
+Guarded menu before this footer correction, deployed from 78cc3e1 in the same environment:
+
+![Guarded menu before footer correction](../assets/power-menu/guarded-before-footer.png)
+
+Footer correction candidate, isolated Noctalia 5.2.1/Niri 26.04 preview at 1280×720/100% scale.
+The native-sized tiles and shutdown highlight are preserved; only the footer adds height. Lock
+actions are intentionally disabled in this disposable environment. Test windows/notifications are
+synthetic; this is rendering evidence, not live activation.
+
+![Guarded footer preview](../assets/power-menu/guarded-footer-preview.png)
+
+Click countdown with its lower-left cancellation prompt and lower-right Cancel button. The
+selected Reboot handler is replaced by a test-only recorder; no real reboot is possible here.
+
+![Guarded countdown preview](../assets/power-menu/guarded-countdown-preview.png)
+
+The final-source native regression passes 66 tasks/11 temporary changes, including the no-effect recorder
+observing panelOpen=false and no active panel at dispatch. Cancellation, parser/plugin validation,
+parent environment/compositor/configuration preservation and cleanup pass. Controller regression
+also covers late Cancel, repeated close callbacks and locking disabled during close. Static validation
+and the 69-task ownership fixture pass (zero changes, seven expected refusals). Deployment is pending.

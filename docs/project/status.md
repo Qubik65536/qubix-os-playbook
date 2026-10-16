@@ -1,6 +1,11 @@
 # Project status
 
 Updated: 2026-10-16. Stage: **MVP candidate; acceptance In Progress**.
+Power footer/lock-close fix **Implemented; controller and native regression Tested**: corner
+guidance/Cancel and completed-close dispatch. Native no-effect recorder confirms a closed panel before
+dispatch (66 tasks/11 temporary changes). Static/ownership checks pass; deployment pending.
+Screenshot comparisons now accompany visual customization docs.
+
 Power-layout correction **Implemented; native/live comparison, deployment and reapplication Tested**:
 centred content, native 140 px panel height, badge placement and destructive Shut Down styling restored.
 Clean 78cc3e1 preview passes 323 tasks/three proposed changes; installation 407 tasks/seven changes,

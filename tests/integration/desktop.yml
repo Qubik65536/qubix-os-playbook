@@ -75,6 +75,27 @@
           loop_control:
             label: '{{ item.path }}'
 
+        - name: Replace power dispatch only in the isolated candidate with a no-effect recorder
+          ansible.builtin.replace:
+            path: '{{ qubix_smoke_directory.path }}/plugins/power/panel.luau'
+            regexp: '{{ (qubix_smoke_directory.path ~ "/qubix-noctalia") | regex_escape }}'
+            replace: '{{ qubix_smoke_directory.path }}/power-recorder.py'
+
+        - name: Add an input bridge only to the disposable candidate
+          ansible.builtin.blockinfile:
+            path: '{{ qubix_smoke_directory.path }}/plugins/power/panel.luau'
+            marker: '-- {mark} disposable test input'
+            block: |
+              function onIpc(event, payload)
+                  if event == "test-click" then clickAction(tonumber(payload)) end
+              end
+
+        - name: Install the no-effect power recorder only in the private test directory
+          ansible.builtin.copy:
+            src: files/niri-smoke-power.py
+            dest: '{{ qubix_smoke_directory.path }}/power-recorder.py'
+            mode: '0700'
+
         - name: Check the candidate plugin manifests and declared entry files
           ansible.builtin.command:
             argv: [/usr/bin/noctalia, plugins, lint, '{{ qubix_smoke_directory.path }}/plugins/{{ item }}']

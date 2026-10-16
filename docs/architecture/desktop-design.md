@@ -73,17 +73,25 @@ seconds to execute; releasing early cancels. Repeated key-down events must never
 Pressing another number cancels the hold and requires releasing the held keys before retrying.
 A button click starts a visible five-second countdown; clicking it again cancels, and selecting
 another starts a fresh countdown. Mixing mouse and held-key input cancels the current action.
-Escape, outside click, panel replacement/close and reopen clear all pending state.
+Escape, Cancel, outside click, panel replacement/close and reopen clear all pending state.
+
+Footer/lock-close correction: **Implemented; controller and native no-effect regression Tested; deployment pending**. Retain the native tile row and destructive Shut Down
+styling, adding a lower-left prompt and lower-right Cancel button beneath it (836-by-184 panel).
+Prompts describe idle, hold/release, click/repeat-click and cancellation states. After confirmation,
+latch the action and request closure; dispatch exactly once from the host's completed-close callback,
+not while its close animation is visible. Recheck lock availability before dispatch. Unconfirmed
+closure never dispatches. Acceptance: deferred-close controller regression, native/footer screenshots,
+installed/live checks and preserved cancellation behavior. Never exercise real power actions in
+unattended tests. See the [comparison screenshots and regression evidence](../project/desktop-test-results.md#power-footer-and-completed-close-dispatch).
 
 Native-layout correction: **Implemented; controller fixtures, native/live comparison, installation and zero-change reapplication Tested; physical input pending**. Match Noctalia 5.2's five 152-by-112 logical-pixel
-tiles, 12 px gaps, 28 px icons, 8 px icon/label gap and centred content in an 836-by-140 panel.
+tiles, 12 px gaps, 28 px icons, 8 px icon/label gap and centred content in the original 836-by-140 tile-only panel.
 Use symmetric upper/lower badge/progress slots so neither shifts the content centre. The declarative
 API lacks native overlay badges; retain the upper-right badge with that bounded approximation.
-Remove the extra footer; expose guidance through tooltips and countdown labels, with Escape/outside
-click and repeat-click cancellation. Shut Down uses the native error/on_error palette at rest and
+The footer correction above adds guidance below that unchanged tile row; retain tooltips and countdown labels. Shut Down uses the native error/on_error palette at rest and
 during confirmation; the native session action explicitly retains its destructive variant.
-Acceptance: inspect guarded/native captures for centred content, equal panel height and highlighted
-Shut Down; pass existing cancellation fixtures and warning-free native rendering. Record installation,
+Acceptance: inspect guarded/native captures for centred content, equal tile height, the deliberate
+footer height difference and highlighted Shut Down; pass existing cancellation fixtures and warning-free native rendering. Record installation,
 live activation and physical input separately. The [native session implementation](https://github.com/noctalia-dev/noctalia/blob/v5.2.1/src/shell/session/session_panel.cpp)
 and [button palette](https://github.com/noctalia-dev/noctalia/blob/v5.2.1/src/ui/controls/button.cpp)
 are the versioned reference. See the [comparison evidence](../project/desktop-test-results.md#native-style-power-menu).

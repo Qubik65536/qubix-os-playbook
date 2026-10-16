@@ -147,7 +147,17 @@ try:
     time.sleep(0.4)
     result['power_menu_status'] = json.loads(shell('status'))
     command(['/usr/bin/niri', 'msg', 'action', 'screenshot-screen', '--path', str(root / 'power-menu.png'), '--show-pointer', 'false'])
-    shell('panel-close', 'qubix/power:menu')
+    shell('plugin', 'qubix/power:menu', 'all', 'test-click', '4')
+    time.sleep(0.4)
+    command(['/usr/bin/niri', 'msg', 'action', 'screenshot-screen', '--path', str(root / 'power-menu-countdown.png'), '--show-pointer', 'false'])
+    shell('plugin', 'qubix/power:menu', 'all', 'test-click', '4') # Cancel using the same production callback.
+    time.sleep(0.3)
+    assert not (root / 'power-dispatch.json').exists(), 'Cancellation dispatched an action'
+    shell('plugin', 'qubix/power:menu', 'all', 'test-click', '4')
+    wait_for(lambda: (root / 'power-dispatch.json').is_file(), 'No-effect dispatch after animated close')
+    dispatch = json.loads((root / 'power-dispatch.json').read_text())
+    assert dispatch['action'] == 'reboot' and not dispatch['status']['panelOpen']
+    result['power_dispatch_after_close'] = dispatch
     shell('panel-open', 'session')
     wait_for(lambda: json.loads(shell('status')).get('activePanelId') == 'session', 'Native session menu reference')
     time.sleep(0.4)

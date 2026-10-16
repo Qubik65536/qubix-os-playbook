@@ -36,6 +36,10 @@ Scope and acceptance are in the [power confirmation contract](../architecture/de
 Next: operator checks of early-release/Escape and click cancellation, followed by newer-resource recovery acceptance.
 The Control Center's separate native menu retains tap-based countdown semantics.
 
+Footer/lock-close correction: Implemented; deferred-close/native no-effect regressions pass.
+Reference/footer/countdown screenshots accompany the docs. Finish deployment and live activation
+checks. Physical lock/unlock and cancellation acceptance follow.
+
 Native-layout correction: Implemented; content centring, footer removal and destructive Shut Down
 styling pass controller/native/live comparison checks. Clean 78cc3e1 installation, installed verification
 and zero-change reapplication Tested; preservation and credential cleanup pass. Next: physical

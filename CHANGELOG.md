@@ -4,6 +4,10 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Restore lower-left power-menu prompts and lower-right Cancel, and defer confirmed actions until
+  the native close animation completes so Lock cannot leave the countdown visible at one second.
+  Require committed screenshot comparisons for visual customizations.
+
 - Corrected power-tile content centring and native panel height, removed the extra footer,
   and restored Noctalia’s destructive Shut Down palette in both guarded and native menus.
   Clean 78cc3e1 installation, live five-button comparison and zero-change reapplication pass.
