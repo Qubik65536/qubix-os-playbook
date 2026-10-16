@@ -18,7 +18,7 @@ panel = {
     close = function() onClose() end,
 }
 ui = {}
-for _, kind in ipairs({"button", "column", "label", "progress"}) do
+for _, kind in ipairs({"button", "column", "row", "glyph", "label", "progress"}) do
     ui[kind] = function(props, children) return {kind = kind, props = props, children = children} end
 end
 
@@ -95,10 +95,19 @@ onKey("5", false)
 tick(1)
 invoked("reboot") -- An unrelated release does not cancel the active hold.
 
+reset()
+onKey("4", true)
+tick(29)
+onTileHover("true", "4")
+onTileHover("false", "4")
+idle() -- Pointer feedback cannot confirm or reset a keyboard hold.
+tick(1)
+invoked("reboot")
+
 for index, action in ipairs({"lock", "logout", "lock-and-suspend", "reboot", "shutdown"}) do
     reset()
     -- Exercise the actual rendered click callback rather than a duplicate dispatcher.
-    test.tree.children[2].children[index].props.onClick()
+    test.tree.children[1].children[index].props.onClick()
     tick(49)
     idle()
     tick(1)
@@ -152,8 +161,8 @@ for _, kind in ipairs({"hold", "click"}) do
 end
 
 reset(false)
-assert(not test.tree.children[2].children[1].props.enabled)
-assert(not test.tree.children[2].children[3].props.enabled)
+assert(test.tree.children[1].children[1].props.onClick == nil)
+assert(test.tree.children[1].children[3].props.onClick == nil)
 for _, key in ipairs({"1", "3"}) do
     onKey(key, true)
     tick(100)

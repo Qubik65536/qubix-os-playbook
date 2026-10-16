@@ -75,6 +75,18 @@ A button click starts a visible five-second countdown; clicking it again cancels
 another starts a fresh countdown. Mixing mouse and held-key input cancels the current action.
 Escape, Cancel, outside click, panel replacement/close and reopen clear all pending state.
 
+Native-style visual refinement: **Implemented; behavior fixtures and native comparison Tested; installation pending**. Match Noctalia 5.2's default session layout:
+one horizontal row of five 152-by-112 logical-pixel tiles, 12 px gaps, 28 px icons above centred
+labels and small number badges at the upper right. Use the existing palette, approximately 12 px
+tile radii and attached/auto placement. Remove the large heading and stacked full-width buttons.
+Keep a compact hint/Cancel footer for confirmation guidance; render seconds and a progress track
+inside the selected tile. Preserve three-second holds, five-second click timers and all cancellation
+rules. Acceptance: existing behavior fixtures pass, warning-free native plugin rendering, inspected
+native/guarded menu comparisons without clipping, and preservation of the parent session/settings.
+Record installation/reload and physical input separately from the visual preview.
+The [native session implementation](https://github.com/noctalia-dev/noctalia/blob/v5.2.1/src/shell/session/session_panel.cpp)
+and its versioned header supply the layout reference. See the [comparison evidence](../project/desktop-test-results.md#native-style-power-menu).
+
 Super+X, the bar power button and the pinned Power options entry open this panel. It uses the
 existing declarative UI runtime, captured press/release events and frame ticks (plugin API 26),
 without a service or new target package. Countdown ticks are bounded so a stalled renderer cannot

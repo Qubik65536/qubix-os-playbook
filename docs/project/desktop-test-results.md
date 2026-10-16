@@ -208,3 +208,28 @@ and boot acceptance flags. The source candidate's physical-input and recovery ga
 
 Evidence remains ignored under .cache/tests/power-*.log, .cache/native-desktop/qubix-test/,
 .cache/power-*.json and .cache/power-live.png. Local static validation passes after documenting results.
+
+## Native-style power menu
+
+Date: 2026-10-16. The operator requests closer resemblance to the original Noctalia session panel.
+The guarded menu now uses the native 152-by-112 px horizontal tiles, 12 px gaps, 28 px centred
+icons, matching label capitalization, filled shortcut badges and attached/auto placement. The
+panel is 836-by-184 px, with a compact hint/Cancel footer replacing the earlier large title,
+vertical button list and global progress strip. Countdown seconds/progress appear inside the
+selected tile. Confirmation behavior remains three-second key holds and five-second click timers.
+
+The no-effect behavior fixture passes, including a hover-during-hold case that must not confirm
+or reset elapsed time. Desktop ownership/version fixtures pass 69 tasks with zero changes and
+seven expected refusals. The final isolated native comparison passes 63 tasks/eight temporary
+changes, with warning-free configuration/plugin rendering, unchanged parent compositor/settings
+and zero leftover test processes. Its unprivileged discovery is restricted to desktop candidate
+paths; no private boot inspection is claimed.
+
+Both the revised panel and original native session panel were captured and inspected in the same
+private session. Tile geometry, borders, glyphs and badges match closely; labels/footer are legible
+and controls are not clipped. The guarded panel retains five entries with lock actions disabled;
+the original hides disabled lock entries and therefore shows three in this test. Neither menu
+executes a power action. Installation/reload and physical input acceptance remain pending.
+
+Evidence is ignored under .cache/tests/power-native-style-*.log and
+.cache/native-desktop/qubix-test/power-menu.png plus power-menu-native.png.

@@ -1,6 +1,12 @@
 # Project status
 
 Updated: 2026-10-16. Stage: **MVP candidate; acceptance In Progress**.
+Native-style power-menu refinement **Implemented; controller behavior, desktop ownership and native
+comparison Tested; deployment pending**. Match the original horizontal icon tiles, number badges
+and attached placement, retaining the confirmation behavior below. The native preview passes
+63 tasks/eight temporary changes, and the ownership fixture passes 69 tasks with zero changes and
+seven expected refusals. See the [comparison evidence](desktop-test-results.md#native-style-power-menu).
+
 Power confirmation **Implemented; native validation/rendering, deployment and reload Tested**: the
 [Qubix power panel](../architecture/desktop-design.md#power-action-countdown) requires a three-second
 number-key hold with early-release cancellation, or a cancellable five-second click countdown.

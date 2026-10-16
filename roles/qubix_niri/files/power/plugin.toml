@@ -1,6 +1,6 @@
 id = "qubix/power"
 name = "Qubix Power options"
-version = "1.0.0"
+version = "1.0.1"
 plugin_api = 26
 author = "Qubix"
 license = "Apache-2.0"
@@ -10,9 +10,9 @@ icon = "shutdown"
 [[panel]]
 id = "menu"
 entry = "panel.luau"
-width = 500
-height = 500
-placement = "floating"
-position = "center"
+width = 836
+height = 184
+placement = "attached"
+position = "auto"
 keyboard_focus = "exclusive"
 capture_keys = ["1", "2", "3", "4", "5"]

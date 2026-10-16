@@ -4,6 +4,9 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Restyled the guarded power menu to follow Noctalia's original horizontal icon tiles, number
+  badges and bar-attached placement, retaining key holds and cancellable click countdowns.
+
 - Added a guarded Qubix Power options panel: hold keys 1–5 for three seconds (release cancels),
   or click for a cancellable five-second countdown. Clean d415856 native validation/rendering,
   installation, live reload, installed verification and zero-change reapplication pass with

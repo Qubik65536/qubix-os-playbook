@@ -1,16 +1,17 @@
 -- Noctalia owns input focus and native power backends; this panel owns confirmation.
 local actions = {
     {action = "lock", label = "Lock", glyph = "lock", needsLock = true},
-    {action = "logout", label = "Log out", glyph = "logout"},
+    {action = "logout", label = "Log Out", glyph = "logout"},
     {action = "lock-and-suspend", label = "Lock & Suspend", glyph = "suspend", needsLock = true},
     {action = "reboot", label = "Reboot", glyph = "reboot"},
-    {action = "shutdown", label = "Shut down", glyph = "shutdown"},
+    {action = "shutdown", label = "Shut Down", glyph = "shutdown"},
 }
 local opened = false
 local locking = false
 local held = {}
 local pending = nil
-local message = "Hold a number for 3 seconds, or click for a 5-second countdown."
+local hovered = nil
+local message = "Hold 1–5 for 3s · Click for 5s · Esc cancels"
 
 local function available(index)
     return actions[index] ~= nil and (not actions[index].needsLock or locking)
@@ -23,28 +24,58 @@ end
 
 local function draw()
     if not opened then return end
-    local rows = {}
+    local tiles = {}
     for index, entry in ipairs(actions) do
-        table.insert(rows, ui.button({key = tostring(index), text = tostring(index) .. "  ·  " .. entry.label,
-            glyph = entry.glyph, contentAlign = "start", controlSize = "lg", enabled = available(index),
-            variant = pending and pending.index == index and "primary" or "outline",
-            onClick = function() clickAction(index) end}))
+        local active = pending and pending.index == index
+        local enabled = available(index)
+        local fill = active and "primary" or (hovered == index and enabled and "primary/0.2" or "surface_variant")
+        local foreground = active and "on_primary" or "on_surface"
+        local seconds = active and math.ceil((pending.duration - pending.elapsed) / 1000) or nil
+        local icon = active
+            and ui.label({text = tostring(seconds), fontSize = 28, fontWeight = "bold", color = foreground})
+            or ui.glyph({name = entry.glyph, size = 28, color = foreground})
+        table.insert(tiles, ui.column({key = tostring(index), width = 152, height = 112,
+            paddingH = 4, paddingV = 4, gap = 0, align = "center", justify = "center",
+            fill = fill, radius = 12, border = "outline", borderWidth = 1,
+            opacity = enabled and 1 or 0.4,
+            onClick = enabled and function() clickAction(index) end or nil,
+            onHover = "onTileHover"}, {
+                ui.row({justify = "end", width = 144, height = 20}, {
+                    ui.column({paddingH = 6, paddingV = 3, radius = 3, fill = "on_surface_variant"}, {
+                        ui.label({text = tostring(index), fontSize = 10, color = "surface"}),
+                    }),
+                }),
+                ui.column({gap = 6, align = "center", justify = "center", flexGrow = 1}, {
+                    icon,
+                    ui.label({text = entry.label, fontSize = 15, color = foreground, textAlign = "center"}),
+                }),
+                ui.progress({progress = active and pending.elapsed / pending.duration or 0,
+                    width = 128, height = 3, fill = foreground, track = "outline/0.15",
+                    opacity = active and 1 or 0}),
+            }))
     end
     local status = message
-    local progress = 0
     if pending then
-        progress = pending.elapsed / pending.duration
         status = actions[pending.index].label .. " in "
             .. tostring(math.ceil((pending.duration - pending.elapsed) / 1000)) .. "s"
-            .. (pending.kind == "hold" and " · Keep holding; release to cancel." or " · Click again to cancel.")
+            .. (pending.kind == "hold" and " · Release to cancel" or " · Click again to cancel")
     end
-    panel.render(ui.column({gap = 12, padding = 12}, {
-        ui.label({text = "Power options", fontSize = 25, fontWeight = "bold", color = "on_surface"}),
-        ui.column({gap = 8}, rows),
-        ui.progress({progress = progress, height = 5, fill = "primary", track = "surface_variant"}),
-        ui.label({text = status, fontSize = 12, maxLines = 3, color = "on_surface_variant"}),
-        ui.button({text = "Cancel", glyph = "x", variant = "ghost", onClick = "closePanel"}),
+    panel.render(ui.column({gap = 12}, {
+        ui.row({gap = 12, align = "stretch"}, tiles),
+        ui.row({gap = 8, align = "center"}, {
+            ui.label({text = status, fontSize = 11, color = "on_surface_variant", flexGrow = 1}),
+            ui.button({text = "Cancel", glyph = "x", variant = "ghost", controlSize = "sm", onClick = "closePanel"}),
+        }),
     }))
+end
+
+function onTileHover(state, key)
+    local index = tonumber(key)
+    local nextHover = state == "true" and index or nil
+    if state ~= "true" and hovered ~= index then return end
+    if hovered == nextHover then return end
+    hovered = nextHover
+    draw()
 end
 
 local function arm(index, kind)
@@ -57,7 +88,7 @@ function clickAction(index)
     if not opened or not available(index) then return end
     local same = pending and pending.kind == "click" and pending.index == index
     cancel()
-    message = "Cancelled. Hold a number or click to try again."
+    message = "Cancelled · Hold a number or click to try again"
     -- A mouse activation cannot confirm a keyboard hold, even when its timer is nearly done.
     if next(held) == nil and not same then arm(index, "click") else draw() end
 end
@@ -70,7 +101,7 @@ function onKey(chord, pressed)
         held[chord] = nil
         if pending and pending.kind == "hold" and pending.index == index then
             cancel()
-            message = "Cancelled on release. Hold the number to try again."
+            message = "Cancelled on release · Hold the number to try again"
             draw()
         end
         return
@@ -80,7 +111,7 @@ function onKey(chord, pressed)
     cancel()
     for other in pairs(held) do
         if other ~= chord then
-            message = "Cancelled. Release all number keys before trying again."
+            message = "Cancelled · Release all number keys before trying again"
             draw()
             return
         end
@@ -120,15 +151,17 @@ end
 function onOpen()
     cancel()
     held = {}
+    hovered = nil
     locking = noctalia.getSetting("lockscreen.enabled") == true
     opened = true
-    message = "Hold a number for 3 seconds, or click for a 5-second countdown."
+    message = "Hold 1–5 for 3s · Click for 5s · Esc cancels"
     draw()
 end
 
 function onClose()
     opened = false
     held = {}
+    hovered = nil
     cancel()
 end
 

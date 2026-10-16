@@ -53,7 +53,10 @@ The optional tests/integration/desktop.yml workflow tests rendered production ca
 Acceptance requires successful native rendering, unchanged original compositor PID/session endpoints and cleanup of test processes/files. The workflow must fail when the main compositor/socket is unavailable; it never starts or replaces the main session. Native Niri/Noctalia/dconf and Qubix-only GUI settings hashes must remain unchanged. Cleanup targets only the temporary compositor process group and its distinct socket. The test does not prove physical key events, login, portals, Polkit, lock/unlock or reboot behaviour. Run it explicitly when evaluating a candidate; a visible temporary window is expected. Installed-resource verification remains a separate bootstrap.sh verify --tags installed command. Syntax checks alone do not establish these results.
 
 The power-menu entry now opens `qubix/power:menu`; native lint checks both local plugin manifests.
-The preview opens and captures that panel without activating a power action. Native Control Center
+The preview opens and captures that panel and the original native session menu as a visual reference,
+without activating a power action. Lock entries are disabled/hidden respectively in the private test.
+An unprivileged visual-only run may limit `qubix_discovery_evidence_paths` to desktop candidates;
+that run does not inspect private boot metadata. Native Control Center
 countdowns and physical hold/release cancellation require separate operator checks before acceptance.
 
 ## Native splash preview

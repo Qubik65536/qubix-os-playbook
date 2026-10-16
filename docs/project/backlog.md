@@ -36,6 +36,11 @@ Scope and acceptance are in the [power confirmation contract](../architecture/de
 Next: operator checks of early-release/Escape and click cancellation, followed by newer-resource recovery acceptance.
 The Control Center's separate native menu retains tap-based countdown semantics.
 
+Native-style refinement: Implemented; behavior/ownership checks and final native comparison Tested;
+installation pending. Match the original horizontal icon tiles, badge
+styling and attached placement while preserving confirmation. Inspect both captured menus before
+activation, then verify installed bytes, reload and unchanged reapplication.
+
 ## F04 — Shell/terminal defaults (Feature)
 
 Status: Implemented; shell precedence fixtures and temporary-home native Bash/Starship initialization Tested; normal account startup gate open.
