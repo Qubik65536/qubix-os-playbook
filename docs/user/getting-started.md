@@ -4,6 +4,8 @@ Status: **Implemented MVP candidate; desktop file lifecycle and nested rendering
 
 ## 1. Prepare your controller and VM
 
+For a quick overview before deploying, read [implemented features](../features.md).
+
 Use the existing repository checkout on your Mac or Linux controller. The candidate commits are local: cloning GitHub does not include them until they are published. Ansible transfers files over SSH, so the VM does not need a repository checkout.
 
 On the controller, use Python 3.12 or newer (the validated environment uses 3.13):

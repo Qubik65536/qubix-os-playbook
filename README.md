@@ -15,6 +15,7 @@ recovery tests remain acceptance gates. See [actual evidence](docs/project/statu
 
 Get started:
 
+- [Implemented features](docs/features.md): a plain-language inventory with implementation links and testing limits.
 - [User getting-started guide](docs/user/getting-started.md): prepare the target, deploy and test the desktop, then opt into login/boot/splash tests.
 - [Noctalia Greeter](docs/user/login.md) and [fingerprints](docs/user/fingerprint.md): compact login, QubixOS captions, graphical enrollment and password fallback.
 - [Human developer getting-started guide](docs/development/getting-started.md): set up tools, understand the code and run fixtures.

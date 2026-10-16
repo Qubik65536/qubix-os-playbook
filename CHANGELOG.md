@@ -4,6 +4,9 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Add a user/developer feature overview with implementation links and explicit distinctions
+  between implemented behavior, test evidence and pending physical acceptance.
+
 - Add an optional GTK 4/GJS fingerprint enrollment window with finger selection, measured progress,
   retry guidance, cancellation, saved-finger protection and explicit verification. Add separately
   installed, checksum-pinned UI-only Noctalia/Greeter builds for QubixOS captions and smaller,

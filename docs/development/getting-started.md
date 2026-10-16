@@ -4,6 +4,8 @@ This guide assumes you want to understand, change and test Qubix OS Playbook. Yo
 
 ## Set up a checkout
 
+Start with [implemented features](../features.md) for a user-facing overview and links into the implementation.
+
 Use the existing local checkout for this candidate; its commits have not been pushed. Once published, ordinary Git cloning is sufficient. Work from the repository root:
 
 ```bash
