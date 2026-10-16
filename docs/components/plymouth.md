@@ -10,9 +10,9 @@ Dracut, encrypted-root input and recovery retain independent acceptance gates.
 
 ## Early graphics repair
 
-Status: **Implemented; native mkinitcpio installation, exact image checks and unchanged
-reapplication Tested; startup console acceptance pending**.
-The operator reports a blank startup followed by the three-square text
+Status: **Implemented; native mkinitcpio installation, exact image checks, unchanged
+reapplication and operator-observed normal startup Tested**.
+The operator reported a blank startup followed by the three-square text
 fallback. On the confirmed ThinkPad, simpledrm is available at 1.38 s, Plymouth starts at 1.57 s,
 and amdgpu finishes initialization at 7.95 s. Theme selection alone does not enable early simpledrm.
 The explicit `plymouth.early_graphics: simpledrm` opt-in (default `preserve`) selects the
@@ -32,8 +32,10 @@ the exact selected configuration, theme assets, three font copies and DRM render
 pins match. All 86 prior manifests and five original backup files, 21 native boot files and 45
 protected configuration/font files remain unchanged. Reapplication passes 1607 tasks with no
 managed resource changes; its two changes save controller evidence and stop the temporary inhibitor.
-Both generators and font-cache refresh are skipped. The running desktop is unchanged; no reboot
-has been performed for this repair. See the [native evidence](../project/plymouth-test-plan.md#startup-fallback-repair).
+Both generators and font-cache refresh are skipped. The preboot desktop is unchanged. The operator
+subsequently confirms the Qubix splash appears and the desktop returns after the requested normal
+reboot. This is console evidence; no post-reboot SSH preservation audit is claimed. See the
+[native evidence](../project/plymouth-test-plan.md#startup-fallback-repair).
 
 Acceptance: typed configuration and malformed-selection refusals pass; fixtures prove preserved
 settings, renderer rejection, conditional regeneration and unchanged reapplication. The target

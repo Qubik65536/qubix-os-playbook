@@ -12,8 +12,8 @@ same host with its previously pinned key. Read-only journal evidence shows simpl
 Plymouth at 1.57 s and amdgpu ready at 7.95 s; the configured theme remains qubix.
 The [early graphics contract](../components/plymouth.md#early-graphics-repair) defines an explicit
 native `UseSimpledrm=1` opt-in, preserving timing, modules, arguments and original artwork.
-Local fixtures and native installation/archive/reapplication checks are Tested; startup console
-acceptance remains pending.
+Local fixtures, native installation/archive/reapplication checks and operator-observed normal
+startup are Tested.
 Reinspect both confirmed mappings, free space and exact active images, retain first recovery
 bytes, preview without writes, deploy/reapply and verify preservation before a console boot check.
 
@@ -38,8 +38,10 @@ post-installation state, with no pending markers.
 
 Post-run checks retain boot ID 2305848b-690c-49bc-bee1-a5ba893c38a5, Niri PID 15607 and Noctalia
 PID 15697, active SSH/SDDM and eDP-1 at 1920x1080/100% scale. The inhibitor is inactive and native
-authentication failure records are empty. No reboot is performed for this repair. Next acceptance
-gate: observe normal startup at the console; retain separate LTS, poweroff, encryption and recovery gates.
+authentication failure records are empty. These checks precede the final console boot. The operator
+then answers “Qubix splash appears and desktop returns” after the requested normal/default-kernel
+reboot. This accepts the startup fallback repair. No post-reboot SSH preservation audit is performed;
+retain separate LTS, poweroff, encryption, dracut and recovery gates.
 
 ### Existing native mapping
 

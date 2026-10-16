@@ -66,18 +66,19 @@ Objective: safe Limine branding; mandatory MVP. Scope: installed-version-support
 
 ## F09 — Plymouth with two generators (Feature)
 
-Startup fallback repair Implemented; native acceptance In Progress: the operator now reports blank startup followed by the
+Startup fallback repair Implemented and normal startup Tested: the operator reported blank startup followed by the
 three-square text fallback, superseding prior appearance acceptance for the current revision.
 The measured early simpledrm/native GPU gap motivates an explicit early graphics opt-in and
 required DRM archive checks. See the [repair acceptance criteria](../components/plymouth.md#early-graphics-repair).
 Focused fixtures pass 521 tasks with ten expected refusals; schema, global check-mode and Limine
-lifecycle checks pass. Native results follow; startup console acceptance remains open.
+lifecycle checks pass. Native results follow; the operator confirms repaired startup.
 
 Native deployment from clean 0324e27, installed verification, exact four-image/font/DRM/pin checks
 and unchanged reapplication now pass. All earlier recovery bytes and native boot files remain
-intact; the same desktop session remains active and the temporary inhibitor is removed. Next:
-obtain startup console acceptance after a normal reboot. Do not count service or archive success
-as a graphical startup result.
+intact; the preboot desktop session remains active and the temporary inhibitor is removed. The
+operator subsequently confirms the Qubix splash appears and the desktop returns after the requested
+normal reboot. Next: independent LTS, poweroff, encryption, dracut and recovery acceptance;
+post-reboot SSH preservation is not independently audited for this repair.
 
 Current visual correction is deployed from clean e3bf16b: preserve original logo colours and add a native scaled
 desktop-cube background. Scope: artwork/definition, plugin capability preflight and archive inclusion;

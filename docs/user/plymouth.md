@@ -1,8 +1,8 @@
 # Boot, reboot and poweroff splash
 
 Status: native-style theme and early graphics repair Implemented; native preview, mkinitcpio generation,
-installation, exact active-image verification and unchanged reapplication Tested. Current startup
-console acceptance is pending after the reported text fallback. Independent poweroff/LTS/recovery checks remain open. The first physical
+installation, exact active-image verification and unchanged reapplication Tested. The operator
+confirms the repaired Qubix startup splash and return to the desktop. Independent poweroff/LTS/recovery checks remain open. The first physical
 activation used verified generator outputs but missed Limine's active cached images; startup still
 showed CachyOS, and the operator rejected the earlier scripted shutdown layout. See
 [current evidence](../project/plymouth-test-plan.md). Plymouth supplies the splash after the bootloader
@@ -35,8 +35,9 @@ writes; the changed selection triggers the existing backed-up image rebuild and 
 ShowDelay, DeviceTimeout, GPU modules and boot arguments remain preserved. This repair requires
 its own startup console observation; the private X11 preview cannot prove DRM startup.
 The reviewed ThinkPad now has this setting from clean 0324e27 in both generator outputs and both
-active images. Exact image/pin checks and unchanged reapplication pass. Reboot normally and observe
-startup before counting this repair as visually accepted.
+active images. Exact image/pin checks and unchanged reapplication pass. The operator confirms
+the Qubix splash and desktop return after a normal reboot. Other machines still require their own
+startup observation.
 
 ### Isolated theme preview
 

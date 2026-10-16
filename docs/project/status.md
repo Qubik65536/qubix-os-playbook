@@ -1,10 +1,10 @@
 # Project status
 
 Updated: 2026-10-15. Stage: **MVP candidate; acceptance In Progress**.
-Startup fallback repair **Implemented; target acceptance In Progress**: the operator reports a blank screen followed by the
+Startup fallback repair **Implemented and normal startup Tested**: the operator reported a blank screen followed by the
 three-square text fallback on the current revision. SSH through Tailscale confirms Theme=qubix;
 simpledrm is ready at 1.38 s, Plymouth starts at 1.57 s and amdgpu is ready at 7.95 s.
-Prior archive/service health does not establish current graphical startup acceptance. The focused
+Prior archive/service health alone did not establish graphical startup acceptance. The focused
 [early graphics repair](../components/plymouth.md#early-graphics-repair) retains separate source,
 installation and console gates.
 The generator fixture passes 521 tasks/ten expected refusals, schema/discovery 492 tasks/zero
@@ -16,8 +16,9 @@ are skipped. All 86 earlier manifests/five original backup files, 21 native boot
 protected configuration/font files and 11 earlier owned boot files remain unchanged; only two
 new stages and their absence records are added. Pending markers are absent. The same boot ID,
 Niri PID 15607 and Noctalia PID 15697 remain, with eDP-1 at 1920x1080/100% scale. SSH/SDDM are active,
-the inhibitor is inactive and native authentication failure records are empty. This repair has
-not been rebooted; startup console acceptance remains open.
+the inhibitor is inactive and native authentication failure records are empty. These are preboot
+checks. The operator subsequently confirms the Qubix splash appears and the desktop returns after
+the requested normal reboot. No post-reboot SSH preservation audit is claimed for this repair.
 
 The physical CachyOS Niri desktop is deployed and returns after reboot at 100% scale with the slim
 information bar. The native-style Plymouth and active Limine image adapter are deployed from clean e3bf16b.
@@ -68,7 +69,7 @@ pass 752/232 tasks. These fixture results remain separate from native reboot and
 | Login | SDDM clone/activity/ambiguity fixtures Tested; physical target branding disabled; authentication/restore pending |
 | GRUB | Preservation/dispatch/reapplication/recovery fixtures Tested; independent native boot/restore pending |
 | Limine | Refined graphical fixture passes 726 tasks/eight expected refusals; native normal-kernel reboot and protected entry/argument/snapshot bytes verified; earlier appearance confirmed, current contrast acceptance pending |
-| Plymouth | Early graphics repair deployed from 0324e27; exact four-image/font/DRM/pin checks, preservation and unchanged reapplication pass; current startup console acceptance and poweroff/LTS/recovery remain open |
+| Plymouth | Early graphics repair deployed from 0324e27; exact four-image/font/DRM/pin checks, preservation and unchanged reapplication pass; operator confirms repaired startup and desktop return; poweroff/LTS/recovery remain open |
 | Image/cache adapters | Two-image nested-entry lifecycle passes 767 tasks with two expected stale-pin refusals; binding/enrollment/FAT fixtures pass 368 tasks with five refusals and check mode 220 tasks with four refusals |
 | Recovery/state | Generic and loader regression suite passes 966 tasks with seven expected refusals; native classic desktop recovery Tested; newer desktop/boot recovery pending |
 
