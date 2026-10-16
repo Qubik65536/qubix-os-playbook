@@ -8,6 +8,10 @@ and completed zero-change reapplication pass through the e3bf16b original-colour
 The first scripted attempt failed visual acceptance; see [recorded results](../project/plymouth-test-plan.md).
 Dracut, encrypted-root input and recovery retain independent acceptance gates.
 
+The subtle wordmark revision makes the original-colour logo and steel-blue lettering smaller,
+lower and more widely spaced. See the [design and acceptance](../architecture/boot-design.md#subtle-bottom-wordmark-refinement).
+Native installation and boot acceptance remain separate gates.
+
 ## Early graphics repair
 
 Status: **Implemented; native mkinitcpio installation, exact image checks, unchanged

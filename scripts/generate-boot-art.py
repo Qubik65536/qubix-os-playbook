@@ -42,9 +42,9 @@ def main():
     export(wallpaper, boot / "wallpaper.png")
 
     watermark = ROOT / "assets/plymouth/watermark.svg"
-    watermark.write_text('''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="240" height="72" viewBox="0 0 240 72">
-    <image xlink:href="../branding/logo.svg" x="0" y="0" width="72" height="72"/>
-    ''' + lettering("QUBIX OS", 78, 45, 25, "#f4f8fc", 1.5) + '</svg>\n')
+    watermark.write_text('''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="192" height="54" viewBox="0 0 192 54">
+    <image xlink:href="../branding/logo.svg" x="0" y="0" width="54" height="54"/>
+    ''' + lettering("QUBIX OS", 66, 34, 19, "#56728b", 1.1) + '</svg>\n')
     export(watermark, ROOT / "assets/plymouth/theme/watermark.png")
 
     # Guard the brand colours against filters or future composition changes.
@@ -52,12 +52,12 @@ def main():
         original = Path(directory) / "logo.png"
         reference = Path(directory) / "reference.svg"
         reference.write_text('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
-                             'width="240" height="72" viewBox="0 0 240 72"><image xlink:href="'
+                             'width="192" height="54" viewBox="0 0 192 54"><image xlink:href="'
                              + (ROOT / 'assets/branding/logo.svg').as_uri()
-                             + '" width="72" height="72"/></svg>')
+                             + '" width="54" height="54"/></svg>')
         export(reference, original)
         with Image.open(original) as canonical, Image.open(ROOT / "assets/plymouth/theme/watermark.png") as composed:
-            assert canonical.convert("RGBA").crop((0, 0, 72, 72)).tobytes() == composed.convert("RGBA").crop((0, 0, 72, 72)).tobytes(), \
+            assert canonical.convert("RGBA").crop((0, 0, 54, 54)).tobytes() == composed.convert("RGBA").crop((0, 0, 54, 54)).tobytes(), \
                 "Plymouth composition changed the original logo colours or pixels"
 
     background = ROOT / "assets/plymouth/background.svg"

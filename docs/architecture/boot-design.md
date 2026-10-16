@@ -40,6 +40,19 @@ separate visual acceptance. Confirm background rendering in native Pango/FreeTyp
 the rendered logo crop against the canonical logo, and verify the picture in actual boot archives.
 Kernel mappings, Limine appearance, first recovery bytes and native prompt behaviour stay unchanged.
 
+### Subtle bottom wordmark refinement
+
+Status: **Implemented; local asset validation Tested; native activation pending**. Reduce the logo from 72 to 54 px and lettering from 25 to 19 px,
+increase the layout gap from 6 to 12 px, and move native watermark vertical alignment
+from .93 to .96. Use the shared steel-blue #56728b accent for lettering only.
+Acceptance: regenerate the outlined asset deterministically, preserve the canonical logo
+pixels at its new size, validate manifest/configuration and inspect a composition preview.
+Two Inkscape exports reproduce identical committed assets; canonical logo pixels and static
+validation pass. The 1920x1080 composition is inspected. The existing generator fixture
+passes 521 tasks with ten expected refusals.
+Native rendering, installation/image verification and console appearance are separate gates;
+retain existing background, spinner, prompts and early-simpledrm selection.
+
 ## Typography and assets
 
 Pin [GitHub Next Monaspace](https://github.com/githubnext/monaspace) v1.400 and record upstream

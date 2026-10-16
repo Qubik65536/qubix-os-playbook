@@ -1,6 +1,8 @@
 # Project status
 
 Updated: 2026-10-15. Stage: **MVP candidate; acceptance In Progress**.
+Subtle Plymouth wordmark refinement **Implemented; local asset validation Tested**: smaller/lower original-colour logo and
+steel-blue lettering with a wider gap; native installation and visual acceptance pending.
 Startup fallback repair **Implemented and normal startup Tested**: the operator reported a blank screen followed by the
 three-square text fallback on the current revision. SSH through Tailscale confirms Theme=qubix;
 simpledrm is ready at 1.38 s, Plymouth starts at 1.57 s and amdgpu is ready at 7.95 s.

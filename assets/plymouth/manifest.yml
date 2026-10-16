@@ -38,7 +38,7 @@ files:
   - filename: qubix.plymouth
     source: assets/plymouth/theme/qubix.plymouth
     license: GPL-3.0-only
-    sha256: 0b0a1e5e8dec853e8b8d80eb64c96c26aea303e73ff9ee202bdb7028a8b9fc81
+    sha256: 3a8b4a0bc6db593be1037e2dd2a4a7112ae900eed75aee5d1f9871e86f0cf6b0
   - filename: throbber-0001.png
     source: assets/plymouth/theme/throbber-0001.png
     license: GPL-3.0-only
@@ -162,7 +162,7 @@ files:
   - filename: watermark.png
     source: assets/plymouth/theme/watermark.png
     license: Apache-2.0
-    sha256: a511d97630f18ee35f9a47e95c27bfa1ab7cfcfe1db009feaab681d7caf77a41
+    sha256: 5f70841fd8d01b4f11051dd1f85f597c0847f46b0230a60d2d4690a5a77b7a4f
   - filename: background.png
     source: assets/plymouth/theme/background.png
     license: Apache-2.0

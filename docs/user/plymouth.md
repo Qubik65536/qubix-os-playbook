@@ -21,6 +21,10 @@ clean e3bf16b with exact source/active-image checks and zero-change reapplicatio
 acceptance remains pending. Native background scaling is required; other aspect ratios may stretch
 the picture. See the [current results](../project/plymouth-test-plan.md).
 
+The subtle wordmark revision makes the original-colour logo and steel-blue lettering smaller,
+lower and more widely spaced. See the [design and acceptance](../architecture/boot-design.md#subtle-bottom-wordmark-refinement).
+Native installation and boot acceptance remain separate gates.
+
 ## Preview without activation
 
 ### Blank startup or three-square fallback

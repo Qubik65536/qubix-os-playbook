@@ -4,6 +4,9 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Made the Plymouth bottom wordmark smaller and lower, doubled the logo/text layout gap and
+  applied the shared steel-blue accent to lettering while preserving original logo colours.
+
 - Added an explicit native Plymouth early-simpledrm selection and DRM renderer archive checks for
   blank startup/text-fallback diagnosis. Clean 0324e27 activation, exact four-image/font/pin checks,
   preservation and unchanged reapplication pass; the operator confirms the repaired startup splash

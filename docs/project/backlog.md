@@ -122,3 +122,10 @@ Objective: make the candidate usable/reviewable. Scope: operator/developer guide
 Status: Desktop preparation/file lifecycle/nested rendering Tested; primary-session acceptance In Progress. See [results](desktop-test-results.md) and [authorized plan](live-test-plan.md).
 
 Objective: test the desktop while preserving the physical host. Scope: approved native package preparation and branding/Niri/shell only; preserve existing Noctalia/Alacritty and personal files. Acceptance: native Foot/Niri validation, observed companions, original hashes, zero managed changes on reapplication and restoration. Operator authorization included native Snapper/Limine package-hook effects. Remaining tests require operator-selected main-session evidence. Tests: preview, target verification and operator-selected session; no boot/splash activation. Docs: status, compatibility and acceptance evidence.
+
+## V01 — Subtle Plymouth wordmark (Feature)
+
+Status: Implemented; local asset validation Tested; native gates pending. Reduce and lower the logo/text group, widen its gap and use the theme's
+steel-blue text accent. See the authoritative [design and acceptance](../architecture/boot-design.md#subtle-bottom-wordmark-refinement).
+Complete deterministic asset validation, native preview, exact image installation/reapplication and
+console observation on the already authorized target; preserve original logo colours and prompt controls.

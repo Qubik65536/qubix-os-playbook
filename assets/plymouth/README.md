@@ -7,6 +7,10 @@ retained as fallback. The canonical cube retains its original colours; decorativ
 Boot, reboot and shutdown share this composition. Firmware-background rendering is disabled within
 the theme; firmware data, graphics hardware settings and kernel arguments are preserved.
 
+The subtle wordmark revision makes the original-colour logo and steel-blue lettering smaller,
+lower and more widely spaced. See the [design and acceptance](../../docs/architecture/boot-design.md#subtle-bottom-wordmark-refinement).
+Native installation and boot acceptance remain separate gates.
+
 The unmodified input PNGs and adapted definition originate from
 [CachyOS/cachyos-plymouth-theme](https://github.com/CachyOS/cachyos-plymouth-theme),
 revision `27c453a1d65597d9773af349836bd67665267e87`, under GPL-3.0-only.
