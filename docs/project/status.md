@@ -1,15 +1,20 @@
 # Project status
 
 Updated: 2026-10-16. Stage: **MVP candidate; acceptance In Progress**.
-Power confirmation **Implemented; no-effect controller behavior Tested**: the
+Power confirmation **Implemented; native validation/rendering, deployment and reload Tested**: the
 [Qubix power panel](../architecture/desktop-design.md#power-action-countdown) requires a three-second
 number-key hold with early-release cancellation, or a cancellable five-second click countdown.
 Controller Luau fixtures pass repeat/overlap/mixed-input/lifecycle/locking/stall/dispatch controls;
 desktop ownership/version fixtures pass 69 tasks in both normal/check mode, zero changes and seven expected refusals each.
-Static validation passes. File installation, native parser/plugin validation, rendering and live
-input are pending: the existing target rejects SSH authentication. No power action or boot check
-was run. Next: restore target access, run the isolated native desktop preview, then deploy/reload
-and verify cancellation with the operator.
+Clean d415856 native preview passes 63 tasks/eight temporary changes; deployment preview passes
+323 tasks/six proposed changes. Desktop-only installation passes 410 tasks/16 changes; installed
+verification passes 63 tasks/zero changes and identical reapplication passes 407 tasks/zero changes.
+Live reload returns ok, with the installed panel visible, unchanged Niri/Noctalia PIDs, GUI state,
+100% output scale, all 76 protected resources and all 90 earlier manifests/five original backups.
+No pending markers remain; the temporary sudo password file is removed. See the
+[deployment evidence](desktop-test-results.md#power-confirmation-deployment).
+No real power action or boot check ran. Next: operator checks of early-release and click/Escape
+cancellation; the Control Center retains its separate native tap countdown.
 
 Subtle Plymouth wordmark refinement **Implemented; local asset validation Tested**: smaller/lower original-colour logo and
 steel-blue lettering with a wider gap; native installation and visual acceptance pending.

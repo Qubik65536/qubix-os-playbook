@@ -165,3 +165,46 @@ scale helper. Native monitor files and personal configurations remain preserved.
 startup/scale and running shell layers, while physical interaction and newer-resource recovery remain
 operator/VM acceptance. The [separate splash results](plymouth-test-plan.md#recorded-results) document
 that boot-theme attempt's failed visual acceptance; it does not invalidate the desktop startup result.
+
+## Power confirmation deployment
+
+Date: 2026-10-16. Clean source d415856 supplies the
+[guarded power panel](../architecture/desktop-design.md#power-action-countdown). The operator requested
+SSH retry and deployment. After SSH authentication returned, a private controller-only sudo password
+file enabled the authorized operation; it was removed after final verification. Only branding and
+Niri were selected. Shell, login, bootloader and Plymouth components stayed disabled. No packages
+were installed, images regenerated, or reboot/power actions invoked.
+
+| Gate | Actual outcome |
+|---|---|
+| Native candidate parsing/rendering | 63 tasks, eight temporary test/evidence/cleanup changes, zero failures; both plugin manifests lint cleanly and Noctalia configuration has no schema warnings |
+| Deployment preview | 323 tasks, six proposed desktop changes, zero failures; post-preview audit matches the entire pre-preview snapshot |
+| File installation | 410 tasks, 16 changes, zero failures; six desktop resources updated/added with recovery receipts |
+| Installed verification | 63 tasks, zero changes/failures; exact resource bytes/modes and native parsers pass |
+| Same-source/configuration reapplication | 407 tasks, zero changes/failures |
+| Primary-session activation | config-reload returns ok; IPC opens/captures/closes the installed panel without activating any entry |
+
+The inspected nested screenshot shows all five options, countdown instructions, a progress track and
+Cancel. Lock actions are disabled in that test-only session. The inspected primary screenshot shows
+all five enabled, with legible instructions and no clipped controls. Native rendering is separate
+from the no-effect controller tests of holds, repeats, early release, overlapping keys, mouse timers,
+mixed input, closing/reopening, disabled locking and exactly-once dispatch. Physical input delivery
+and cancellation still require operator acceptance; no real lock/logout/suspend/reboot/shutdown
+action was used for verification. The Control Center's separate native menu retains tap-based countdowns.
+
+Niri PID 1698, Noctalia PID 1764, boot ID 05705ba7-c596-4c52-9e12-e08050d84367, GUI-state hash and
+output settings remain unchanged through reload and reapplication. eDP-1 remains 1920x1080 at scale
+1.0; bar/wallpaper remain visible with no dock. The final power panel is closed. The nested test
+preserves native configuration/compositor/environment and leaves zero test processes; its remote
+temporary directory and the separate primary screenshot directory are removed.
+
+All 76 protected native/personal resources, default Fish shell, retired-session backup, 90 earlier
+baseline manifests and five original backup files remain unchanged. Only the four expected applied
+receipts change; two new baseline manifests for the plugin files, plus their receipts, bring the total
+to 92 baseline manifests.
+The final audit matches the post-install snapshot exactly. Pending markers are absent; deployment
+state records clean d415856, components branding/niri and files-verified, retaining false graphical
+and boot acceptance flags. The source candidate's physical-input and recovery gates remain open.
+
+Evidence remains ignored under .cache/tests/power-*.log, .cache/native-desktop/qubix-test/,
+.cache/power-*.json and .cache/power-live.png. Local static validation passes after documenting results.

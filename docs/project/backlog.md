@@ -29,11 +29,11 @@ Objective: begin a usable Qubix desktop on an actual target. Scope: live report,
 ### F03a — Power confirmation (Feature)
 
 Status: Implemented; no-effect Luau behavior fixtures, static checks and the 69-task desktop
-ownership/version fixture (normal/check mode, zero changes, seven expected refusals each) Tested. Native parsing/plugin lint, rendering, file installation,
-reapplication and physical click/key cancellation remain pending target SSH authentication.
+ownership/version fixture (normal/check mode, zero changes, seven expected refusals each) Tested.
+Native parsing/plugin lint, rendering, installation, live reload and zero-change reapplication
+from clean d415856 are [Tested](desktop-test-results.md#power-confirmation-deployment).
 Scope and acceptance are in the [power confirmation contract](../architecture/desktop-design.md#power-action-countdown).
-Next: regain access, run the nested desktop preview without executing power actions, deploy/reload,
-verify installed resources/idempotency and have the operator test early-release/Escape cancellation.
+Next: operator checks of early-release/Escape and click cancellation, followed by newer-resource recovery acceptance.
 The Control Center's separate native menu retains tap-based countdown semantics.
 
 ## F04 — Shell/terminal defaults (Feature)

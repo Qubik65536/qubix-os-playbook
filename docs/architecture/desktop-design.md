@@ -67,7 +67,7 @@ Acceptance: warning-free native configuration validation, inspected before/after
 
 ### Power-action countdown
 
-Status: **Implemented; no-effect controller fixtures Tested; native validation, interaction and installation pending**. A local `qubix/power:menu` Noctalia panel supplies the original five
+Status: **Implemented; controller fixtures, native validation/rendering, installation, reload and zero-change reapplication Tested; physical input pending**. See the [deployment evidence](../project/desktop-test-results.md#power-confirmation-deployment). A local `qubix/power:menu` Noctalia panel supplies the original five
 actions: 1 Lock, 2 Log out, 3 Lock & Suspend, 4 Reboot and 5 Shut down. Hold a number for three
 seconds to execute; releasing early cancels. Repeated key-down events must never confirm early.
 Pressing another number cancels the hold and requires releasing the held keys before retrying.
