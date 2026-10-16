@@ -8,6 +8,9 @@
       - qubix_menu_config | default('') == '/boot/limine.conf'
     fail_msg: 'Confirm the measured /boot/limine.conf with qubix_menu_confirm=true; labels allow QubixOS/CachyOS only.'
 
+- name: Refuse native EFI configuration enrollment before changing any menu bytes
+  ansible.builtin.import_tasks: limine_native_policy.yml
+
 - name: Inspect the native menu and generator defaults without following redirects
   ansible.builtin.stat:
     path: '{{ qubix_root | default("") }}{{ item }}'

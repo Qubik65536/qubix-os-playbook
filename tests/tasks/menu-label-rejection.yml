@@ -8,6 +8,7 @@
   loop:
     - {path: boot/limine.conf, content: '{{ qubix_test_menu_case.menu | default(qubix_test_menu) }}'}
     - {path: etc/default/limine, content: '{{ qubix_test_menu_case.defaults | default(qubix_test_defaults) }}'}
+    - {path: etc/limine-entry-tool.conf, content: '{{ qubix_test_menu_case.policy | default("") }}'}
   loop_control:
     label: '{{ item.path }}'
 
@@ -25,4 +26,7 @@
     - name: Require the specific preflight refusal
       ansible.builtin.assert:
         that:
-          - "'Ambiguous menu, machine-ID binding or custom TARGET_OS_NAME' in ansible_failed_result.msg"
+          - >-
+            qubix_test_menu_case.diagnostic | default('Ambiguous menu, machine-ID binding or custom TARGET_OS_NAME')
+            in (ansible_failed_result.msg ~ ' ' ~
+            (ansible_failed_result.results | default([]) | map(attribute='msg') | join(' ')))

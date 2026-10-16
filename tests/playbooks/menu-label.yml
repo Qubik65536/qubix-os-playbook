@@ -135,6 +135,8 @@
             - menu: '{{ qubix_test_menu | replace("machine-id=0123456789abcdef0123456789abcdef", "machine-id=wrong") }}'
             - defaults: '{{ qubix_test_defaults ~ qubix_test_custom_target }}'
             - defaults: '{{ qubix_test_defaults ~ qubix_test_target ~ qubix_test_target }}'
+            - policy: ENABLE_ENROLL_LIMINE_CONFIG=yes
+              diagnostic: Native Limine config enrollment is enabled or ambiguous
           loop_control:
             loop_var: qubix_test_menu_case
       always:

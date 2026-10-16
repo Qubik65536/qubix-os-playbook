@@ -11,6 +11,8 @@ Changes are grouped by release. Bootstrap has no release tag.
   native updates trigger startup fallback and stale-provenance refusal. Add a bounded requested
   Limine OS-title/native-target change, recovery instructions, fixtures and eight native comparisons.
   Physical scans, authentication and future greeter/menu appearance remain separate acceptance gates.
+  Reuse the boot adapter's native enrollment-policy check for display-only menu changes, refusing
+  enrolled/ambiguous EFI configuration before writing labels or persistent targets.
 
 - Added Noctalia Greeter 1.6.x appearance preparation with the shared Qubix palette and cube wallpaper,
   preserved input/output/auth/session/sync settings and drift-safe file recovery. A separate native

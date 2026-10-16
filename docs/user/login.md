@@ -207,7 +207,8 @@ ANSIBLE_HOME="$PWD/.cache/ansible" .venv/bin/ansible-playbook playbooks/menu-lab
 ```
 
 Remove `--check` to apply the requested label. The task refuses ambiguous menus, wrong machine-ID
-bindings and custom generator targets; it never invokes a generator, image rebuild or reboot.
+bindings, custom generator targets and enabled/ambiguous EFI config enrollment before any writes;
+it never invokes a generator, image rebuild or reboot.
 Native kernel-entry names, IDs, paths, hashes, ordering, arguments and snapshot contents are identical.
 Before a generic boot restoration, run this same task with `-e qubix_menu_display_name=CachyOS`.
 This reverses the display title first so the normal preserved-entry guard still protects boot data;

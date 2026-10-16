@@ -41,6 +41,8 @@ does not change `/etc/os-release`, accounts, kernel arguments or boot entry IDs.
   The separate `menu-label.yml` task preserves the generic first baseline, changes only the
   machine-bound OS title and native `TARGET_OS_NAME`, and supports reversing the title before
   generic boot restoration. It does not broaden the normal restore guard to ignore other changes.
+  Reuse the full adapter's native enrollment-policy probe; enabled/ambiguous EFI config enrollment
+  must fail before even the persistent target setting is written.
 
 ## Acceptance
 

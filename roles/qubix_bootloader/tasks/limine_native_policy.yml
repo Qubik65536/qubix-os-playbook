@@ -1,0 +1,36 @@
+---
+- name: Inspect native entry-tool configuration locations
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}{{ item }}'
+    get_checksum: false
+  loop: [/etc/limine-entry-tool.conf, /etc/default/limine, /etc/limine-entry-tool.d]
+  register: qubix_bootloader_limine_native_settings
+
+- name: Inspect optional native entry-tool drop-ins
+  ansible.builtin.find:
+    paths: '{{ qubix_root | default("") }}/etc/limine-entry-tool.d'
+    patterns: '*.conf'
+    file_type: file
+  register: qubix_bootloader_limine_native_dropins
+  when: qubix_bootloader_limine_native_settings.results[2].stat.exists
+
+- name: Read native configuration without executing shell
+  ansible.builtin.slurp:
+    src: '{{ item }}'
+  loop: >-
+    {{ (qubix_bootloader_limine_native_settings.results[:2] | selectattr('stat.exists')
+    | map(attribute='stat.path') | list) +
+    (qubix_bootloader_limine_native_dropins.files | default([]) | map(attribute='path') | list) }}
+  register: qubix_bootloader_limine_native_bytes
+
+- name: Collect active native config enrollment declarations
+  ansible.builtin.set_fact:
+    qubix_bootloader_limine_enrollment_lines: >-
+      {{ qubix_bootloader_limine_native_bytes.results | map(attribute='content') | map('b64decode')
+      | map('regex_findall', '(?m)^[ \t]*ENABLE_ENROLL_LIMINE_CONFIG[^\n]*') | flatten }}
+
+- name: Refuse EFI config enrollment or nonliteral policy before any writes
+  ansible.builtin.assert:
+    that: [item is match(qubix_bootloader_limine_enrollment_no)]
+    fail_msg: 'Native Limine config enrollment is enabled or ambiguous; EFI enrollment changes are unsupported.'
+  loop: '{{ qubix_bootloader_limine_enrollment_lines }}'
