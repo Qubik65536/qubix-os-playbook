@@ -1,2 +1,3 @@
 ---
 qubix_niri_validate_binary: /usr/bin/niri
+qubix_niri_ui_expected_uid: 0

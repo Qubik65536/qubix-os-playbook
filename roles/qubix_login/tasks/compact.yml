@@ -1,0 +1,53 @@
+---
+- name: Validate the prepared compact presentation client
+  ansible.builtin.include_role:
+    name: qubix_niri
+    tasks_from: variant
+  vars:
+    qubix_niri_ui_component: greeter
+    qubix_niri_ui_native_version: '{{ qubix_login_version }}'
+
+- name: Require a known Noctalia launcher before selecting the compact client
+  ansible.builtin.assert:
+    that:
+      - >-
+        qubix_login_greetd_config.get('default_session', {}).get('command', '') in
+        ['/usr/bin/noctalia-greeter-session', '/usr/share/qubix/bin/qubix-greeter-session']
+    fail_msg: 'Compact mode only wraps an already-selected Noctalia session; select Noctalia separately first.'
+
+- name: Read the native launcher bytes for a minimal command replacement
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}/etc/greetd/config.toml'
+  register: qubix_login_launcher_bytes
+
+- name: Require a single canonical command line matching the parsed session
+  ansible.builtin.assert:
+    that:
+      - >-
+        qubix_login_launcher_bytes.content | b64decode |
+        regex_findall('(?m)^command[ \t]*=[ \t]*"(?:/usr/bin/noctalia-greeter-session|' ~
+        '/usr/share/qubix/bin/qubix-greeter-session)"[ \t]*$') | length == 1
+    fail_msg: 'Review noncanonical or duplicate greetd command declarations before compact activation.'
+
+- name: Compose only the selected Noctalia wrapper replacement
+  ansible.builtin.set_fact:
+    qubix_login_compact_launcher: >-
+      {{ qubix_login_launcher_bytes.content | b64decode |
+      regex_replace('(?m)^command[ \t]*=[ \t]*"/usr/bin/noctalia-greeter-session"[ \t]*$',
+      'command = "/usr/share/qubix/bin/qubix-greeter-session"') }}
+
+- name: Parse the compact launcher before writes
+  ansible.builtin.command:
+    argv: ['{{ qubix_login_python }}', -c, 'import sys,tomllib; tomllib.loads(sys.stdin.read())']
+    stdin: '{{ qubix_login_compact_launcher }}'
+  changed_when: false
+  check_mode: false
+
+- name: Install private client and wrapper before selecting them in the backed-up launcher
+  ansible.builtin.set_fact:
+    qubix_login_resources: >-
+      {{ [qubix_niri_ui_binary_resource, qubix_niri_ui_license_resource] + qubix_login_resources +
+      [{'path': '/usr/share/qubix/bin/qubix-greeter-session', 'component': 'login',
+      'content': lookup('template', 'compact-session.sh.j2'), 'mode': '0755', 'validate': '/usr/bin/sh -n %s'},
+      {'path': '/etc/greetd/config.toml', 'component': 'login', 'content': qubix_login_compact_launcher,
+      'mode': qubix_login_native_paths.results[6].stat.mode}] }}

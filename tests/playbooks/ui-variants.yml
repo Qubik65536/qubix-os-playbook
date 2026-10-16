@@ -1,0 +1,119 @@
+---
+- name: Test compact launcher preservation and prepared UI provenance in a disposable filesystem
+  hosts: localhost
+  gather_facts: true
+  gather_subset: ['!all', min]
+  vars:
+    qubix_niri_ui_expected_uid: '{{ ansible_facts.user_uid }}'
+    qubix_ui_native_content: native-client-fixture
+    qubix_ui_private_content: private-client-fixture
+    qubix_ui_launcher: |
+      [terminal]
+      vt = 1
+      [default_session]
+      command = "/usr/bin/noctalia-greeter-session"
+      user = "greeter"
+      [initial_session]
+      command = "/usr/bin/unchanged-session"
+      user = "unchanged-user"
+    qubix_ui_launcher_expected: |
+      [terminal]
+      vt = 1
+      [default_session]
+      command = "/usr/share/qubix/bin/qubix-greeter-session"
+      user = "greeter"
+      [initial_session]
+      command = "/usr/bin/unchanged-session"
+      user = "unchanged-user"
+  tasks:
+    - name: Read actual source contract used by production tasks
+      ansible.builtin.include_vars:
+        file: ../../assets/ui/manifest.yml
+        name: qubix_ui_test_sources
+
+    - name: Create a disposable fixture root even during check mode
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-ui-variant-
+      check_mode: false
+      register: qubix_ui_test_root
+
+    - name: Resolve synthetic paths and production plan inputs
+      ansible.builtin.set_fact:
+        qubix_root: '{{ qubix_ui_test_root.path }}'
+        qubix_ui_test_stage: >-
+          {{ qubix_ui_test_root.path }}/var/cache/qubix-ui/{{ qubix_ui_test_sources.greeter.patch_sha256 }}
+        qubix_login_version: 1.6.0
+        qubix_login_python: '{{ ansible_facts.python.executable }}'
+        qubix_login_greetd_config:
+          default_session: {command: /usr/bin/noctalia-greeter-session, user: greeter}
+        qubix_login_resources: []
+        qubix_login_native_paths:
+          results: [{}, {}, {}, {}, {}, {}, {stat: {mode: '0644'}}]
+        qubix_ui_test_provenance:
+          source: '{{ qubix_ui_test_sources.greeter }}'
+          native_sha256: '{{ qubix_ui_native_content | hash("sha256") }}'
+          binary_sha256: '{{ qubix_ui_private_content | hash("sha256") }}'
+
+    - name: Exercise production preflight without executing any client
+      block:
+        - name: Create synthetic native and staging directories
+          ansible.builtin.file:
+            path: '{{ item }}'
+            state: directory
+            mode: '0755'
+          check_mode: false
+          loop:
+            - '{{ qubix_root }}/usr/bin'
+            - '{{ qubix_root }}/etc/greetd'
+            - '{{ qubix_ui_test_stage }}'
+
+        - name: Seed synthetic clients launcher and source provenance
+          ansible.builtin.copy:
+            dest: '{{ item.path }}'
+            content: '{{ item.content }}'
+            mode: '{{ item.mode }}'
+          check_mode: false
+          loop:
+            - path: '{{ qubix_root }}/usr/bin/noctalia-greeter'
+              content: '{{ qubix_ui_native_content }}'
+              mode: '0755'
+            - path: '{{ qubix_ui_test_stage }}/noctalia-greeter'
+              content: '{{ qubix_ui_private_content }}'
+              mode: '0755'
+            - path: '{{ qubix_ui_test_stage }}/source.json'
+              content: '{{ qubix_ui_test_provenance | to_json }}'
+              mode: '0644'
+            - {path: '{{ qubix_root }}/etc/greetd/config.toml', content: '{{ qubix_ui_launcher }}', mode: '0644'}
+          loop_control:
+            label: '{{ item.path }}'
+
+        - name: Plan compact mode through actual production tasks
+          ansible.builtin.include_role:
+            name: qubix_login
+            tasks_from: compact
+
+        - name: Require exact launcher-only change and private-byte binding
+          ansible.builtin.assert:
+            that:
+              - qubix_login_compact_launcher == qubix_ui_launcher_expected
+              - qubix_niri_ui_binary_resource.sha256 == qubix_ui_private_content | hash('sha256')
+              - qubix_niri_ui_binary_resource.remote_source
+              - qubix_login_resources[-1].path == '/etc/greetd/config.toml'
+              - qubix_login_resources[-1].mode == '0644'
+
+        - name: Test changed source native binary and private artifact refusals
+          ansible.builtin.include_tasks: ../tasks/ui-variant-rejection.yml
+          loop:
+            - {native_sha256: changed-native-build}
+            - {binary_sha256: changed-private-build}
+            - {source: {version: unreviewed-source}}
+          loop_control:
+            loop_var: qubix_ui_test_corruption
+      always:
+        - name: Remove only the disposable fixture root
+          ansible.builtin.file:
+            path: '{{ qubix_ui_test_root.path }}'
+            state: absent
+          check_mode: false

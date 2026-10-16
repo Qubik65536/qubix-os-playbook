@@ -50,6 +50,22 @@ qubix_test_profiles:
   - name: invalid login backend
     input: {login: {backend: unsafe}}
     error: login.backend must be one of
+  - name: string fingerprint selection
+    input: {niri: {fingerprint_setup: 'true'}}
+    error: must be YAML booleans
+  - name: string compact selection
+    input: {login: {compact: 'false'}}
+    error: must be YAML booleans
+  - name: unsupported presentation selection
+    input: {niri: {presentation: other}}
+    error: niri.presentation must be one of
+  - name: compact Breeze refused
+    input: {login: {compact: true}}
+    error: compact requires Noctalia
+  - name: supported optional desktop interfaces
+    input: {niri: {fingerprint_setup: true, presentation: qubix}}
+  - name: supported compact Noctalia
+    input: {login: {enabled: true, backend: greetd, theme_source: noctalia, compact: true}}
   - name: invalid login theme
     input: {login: {theme_source: unknown}}
     error: login.theme_source must be one of

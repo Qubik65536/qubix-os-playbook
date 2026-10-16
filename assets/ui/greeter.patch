@@ -1,0 +1,66 @@
+--- a/src/ui/style.h
++++ b/src/ui/style.h
+@@ -11,10 +11,10 @@
+ 
+   // Spacing
+   static constexpr float spaceXsBase = 4.0f;
+-  static constexpr float spaceSmBase = 8.0f;
+-  static constexpr float spaceMdBase = 12.0f;
+-  static constexpr float spaceLgBase = 16.0f;
+-  static constexpr float spaceXlBase = 24.0f;
++  static constexpr float spaceSmBase = 6.0f;
++  static constexpr float spaceMdBase = 8.0f;
++  static constexpr float spaceLgBase = 12.0f;
++  static constexpr float spaceXlBase = 18.0f;
+   static constexpr float space2xlBase = 32.0f;
+   static constexpr float space3xlBase = 48.0f;
+ 
+@@ -27,20 +27,20 @@
+   [[nodiscard]] static float space3xl() noexcept;
+ 
+   // Sizes
+-  static constexpr float controlHeightBase = 36.0f;
+-  static constexpr float controlHeightSmBase = 30.0f;
+-  static constexpr float controlHeightLgBase = 44.0f;
++  static constexpr float controlHeightBase = 30.0f;
++  static constexpr float controlHeightSmBase = 26.0f;
++  static constexpr float controlHeightLgBase = 34.0f;
+ 
+   [[nodiscard]] static float controlHeight() noexcept;
+   [[nodiscard]] static float controlHeightSm() noexcept;
+   [[nodiscard]] static float controlHeightLg() noexcept;
+ 
+   // Font sizes
+-  static constexpr float fontSizeCaptionBase = 12.0f;
+-  static constexpr float fontSizeBodyBase = 14.0f;
+-  static constexpr float fontSizeTitleBase = 16.0f;
+-  static constexpr float fontSizeHeadingBase = 20.0f;
+-  static constexpr float fontSizeDisplayBase = 28.0f;
++  static constexpr float fontSizeCaptionBase = 11.0f;
++  static constexpr float fontSizeBodyBase = 13.0f;
++  static constexpr float fontSizeTitleBase = 14.0f;
++  static constexpr float fontSizeHeadingBase = 18.0f;
++  static constexpr float fontSizeDisplayBase = 24.0f;
+ 
+   [[nodiscard]] static float fontSizeCaption() noexcept;
+   [[nodiscard]] static float fontSizeBody() noexcept;
+--- a/src/greeter/greeter_surface.cpp
++++ b/src/greeter/greeter_surface.cpp
+@@ -49,7 +49,7 @@
+ 
+ namespace {
+   constexpr Logger kLog("greeter-surface");
+-  constexpr float kHeaderUserIconBase = 64.0f;
++  constexpr float kHeaderUserIconBase = 36.0f;
+   constexpr float kHeaderAvatarBorderScale = 2.0f;
+ 
+   Button::ButtonStateColors
+@@ -1081,7 +1081,7 @@
+     }
+   }
+ 
+-  const float panelWidth = std::clamp(sw * 0.32f, Style::scaled(440.0f), Style::scaled(540.0f));
++  const float panelWidth = std::clamp(sw * 0.24f, Style::scaled(340.0f), Style::scaled(380.0f));
+   const float rowHeight = Style::controlHeightLg();
+   const float rowGap = Style::spaceSm();
+   const float panelPadding = Style::spaceLg();

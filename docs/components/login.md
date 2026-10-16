@@ -15,7 +15,9 @@ Contract (documented before implementation):
   reject an active greetd, so preparation cannot silently reconfigure an existing login screen.
 - `activation: existing` (the default) accepts only an already-active greetd whose existing
   configuration launches `/usr/bin/noctalia-greeter-session`. It manages appearance alone.
-  Neither mode edits `/etc/greetd/config.toml`, PAM, services, accounts or native session files.
+  Standard appearance mode does not edit `/etc/greetd/config.toml`, PAM, services, accounts or native session files.
+  Explicit `compact: true` additionally selects the private UI client through the narrow,
+  backed-up wrapper change in the [refinement contract](../architecture/login-refinement.md).
 - Support is measured Noctalia Greeter 1.6.x, using the released declarative appearance interface.
   Require the installed wrapper/compositor, a real package-created state directory and Qubix
   branding/Niri resources. Reject unsupported combinations and redirects before resource writes.
@@ -31,11 +33,12 @@ Contract (documented before implementation):
   preserve pre-existing PAM files and do not template authentication policy in Qubix.
 - The shared first-baseline engine owns only the exact greeter configuration path under `/var/lib`;
   it backs up existing bytes and metadata, records original absence and supports drift-safe recovery.
-- Fingerprint setup is operator documentation: hardware detection, enrollment, verification,
-  service-specific PAM review, password fallback and restoration. No automatic PAM modification.
-- Noctalia's native distribution label comes from os-release and has no measured supported
-  override; retain CachyOS identity. Limine already uses `interface_branding: Qubix OS`; native
-  entry names/IDs, snapshots and kernel arguments remain preserved.
+- Fingerprint setup includes operator documentation and the optional GTK enrollment application;
+  service-specific PAM review, password fallback and restoration remain operator steps. No automatic PAM modification.
+- Native Noctalia has no caption override. The optional private presentation build changes only
+  launcher/Home captions; os-release and the System tab retain CachyOS identity. The separately
+  requested Limine OS-title change preserves IDs, snapshots and kernel arguments. Both are defined
+  in the [refinement contract](../architecture/login-refinement.md).
 
 Acceptance: focused normal/check-mode fixtures cover preparation, existing-manager gating,
 palette agreement, malformed/unsupported inputs, redirects, preservation, file installation,

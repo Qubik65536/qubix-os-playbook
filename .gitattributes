@@ -1,0 +1,3 @@
+# Unified-diff blank context lines require a literal space prefix.
+# Keep other whitespace checks enabled; source/configuration files are unaffected.
+assets/ui/*.patch whitespace=-blank-at-eol

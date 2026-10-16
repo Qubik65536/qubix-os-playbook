@@ -1,0 +1,23 @@
+---
+- name: Seed one corrupted synthetic provenance field
+  ansible.builtin.copy:
+    dest: '{{ qubix_ui_test_stage }}/source.json'
+    content: '{{ qubix_ui_test_provenance | combine(qubix_ui_test_corruption) | to_json }}'
+    mode: '0644'
+  check_mode: false
+
+- name: Require refusal before any component installation
+  block:
+    - name: Inspect corrupted provenance through production compact planning
+      ansible.builtin.include_role:
+        name: qubix_login
+        tasks_from: compact
+
+    - name: Fail if corrupted provenance is accepted
+      ansible.builtin.fail:
+        msg: Corrupted UI source or native build was accepted.
+  rescue:
+    - name: Require the exact provenance diagnostic
+      ansible.builtin.assert:
+        that:
+          - "'Prepared UI provenance differs' in ansible_failed_result.msg"

@@ -1,12 +1,15 @@
 ---
 qubix_profile_keys:
   branding: [enabled]
-  niri: [enabled, user_config]
+  niri: [enabled, user_config, fingerprint_setup, presentation]
   shell: [enabled, change_default_shell]
-  login: [enabled, backend, theme_source, activation]
+  login: [enabled, backend, theme_source, activation, compact]
   bootloader: [enabled, backend, config_path, confirm_active, limine_version]
   plymouth: [enabled, early_graphics, initramfs_backend, confirm_active, force_rebuild, images, presets]
 qubix_profile_choices:
+  - component: niri
+    key: presentation
+    values: [native, qubix]
   - component: niri
     key: user_config
     values: [preserve]

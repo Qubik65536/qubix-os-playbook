@@ -1,0 +1,187 @@
+---
+- name: Resolve immutable staged binary path
+  ansible.builtin.set_fact:
+    qubix_ui_stage: '/var/cache/qubix-ui/{{ qubix_ui_source.value.patch_sha256 }}'
+
+- name: Inspect generated cache ancestors before any privileged cache writes
+  ansible.builtin.stat:
+    path: '{{ item }}'
+    follow: false
+  loop: [/var/cache/qubix-ui, '{{ qubix_ui_stage }}']
+  register: qubix_ui_cache_dirs
+
+- name: Refuse redirected or user-writable generated cache directories
+  ansible.builtin.assert:
+    that:
+      - not item.stat.islnk | default(false)
+      - not item.stat.exists or (item.stat.isdir and item.stat.uid == 0 and item.stat.mode == '0755')
+  loop: '{{ qubix_ui_cache_dirs.results }}'
+
+- name: Inspect staged build without following redirects
+  ansible.builtin.stat:
+    path: '{{ qubix_ui_stage }}/{{ qubix_ui_source.value.binary }}'
+    follow: false
+  register: qubix_ui_built
+
+- name: Bind compilation to the exact installed native client
+  ansible.builtin.stat:
+    path: '/usr/bin/{{ qubix_ui_source.value.binary }}'
+    follow: false
+    checksum_algorithm: sha256
+  register: qubix_ui_native_before
+
+- name: Require a real installed native client before preparation
+  ansible.builtin.assert:
+    that:
+      - qubix_ui_native_before.stat.isreg | default(false)
+      - not qubix_ui_native_before.stat.islnk | default(false)
+
+- name: Build only absent variants in a disposable ordinary-user directory
+  when: not qubix_ui_built.stat.exists
+  block:
+    - name: Create private disposable source directory
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: qubix-ui-
+      register: qubix_ui_temp
+
+    - name: Download exact released source archive
+      ansible.builtin.get_url:
+        url: '{{ qubix_ui_source.value.archive }}'
+        dest: '{{ qubix_ui_temp.path }}/source.tar.gz'
+        checksum: 'sha256:{{ qubix_ui_source.value.sha256 }}'
+        mode: '0600'
+
+    - name: Extract pinned source in the disposable directory
+      ansible.builtin.unarchive:
+        src: '{{ qubix_ui_temp.path }}/source.tar.gz'
+        dest: '{{ qubix_ui_temp.path }}'
+        remote_src: true
+
+    - name: Copy the reviewed presentation-only patch
+      ansible.builtin.copy:
+        src: '../../assets/ui/{{ qubix_ui_source.key }}.patch'
+        dest: '{{ qubix_ui_temp.path }}/presentation.patch'
+        mode: '0600'
+
+    - name: Apply exact patch without accepting fuzzy source matches
+      ansible.builtin.command:
+        argv: [/usr/bin/patch, --batch, --fuzz=0, --strip=1, --input, '{{ qubix_ui_temp.path }}/presentation.patch']
+        chdir: '{{ qubix_ui_temp.path }}/{{ qubix_ui_source.value.directory }}'
+      changed_when: true
+
+    - name: Configure only native release-compatible resource paths
+      ansible.builtin.command:
+        argv: >-
+          {{ ['/usr/bin/meson', 'setup', 'build', '--prefix=/usr', '--buildtype=plain', '-Doptimization=2']
+          + (['-Dtests=disabled', '-Dnative_optimizations=false'] if qubix_ui_source.key == 'noctalia' else []) }}
+        chdir: '{{ qubix_ui_temp.path }}/{{ qubix_ui_source.value.directory }}'
+      changed_when: true
+
+    - name: Compile only the client with bounded parallelism and no privileged build steps
+      ansible.builtin.command:
+        argv: [/usr/bin/ninja, -C, build, -j, '2', '{{ qubix_ui_source.value.binary }}']
+        chdir: '{{ qubix_ui_temp.path }}/{{ qubix_ui_source.value.directory }}'
+      changed_when: true
+      async: 3600
+      poll: 0
+      register: qubix_ui_compile
+
+    - name: Wait for the bounded client build
+      ansible.builtin.async_status:
+        jid: '{{ qubix_ui_compile.ansible_job_id }}'
+      register: qubix_ui_compile_result
+      until: qubix_ui_compile_result.finished
+      retries: 180
+      delay: 20
+
+    - name: Create root-owned build cache without selecting the client
+      ansible.builtin.file:
+        path: '{{ qubix_ui_stage }}'
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+      become: true
+
+    - name: Stage compiled client as an inert root-owned artifact
+      ansible.builtin.copy:
+        src: '{{ qubix_ui_temp.path }}/{{ qubix_ui_source.value.directory }}/build/{{ qubix_ui_source.value.binary }}'
+        dest: '{{ qubix_ui_stage }}/{{ qubix_ui_source.value.binary }}'
+        remote_src: true
+        owner: root
+        group: root
+        mode: '0755'
+      become: true
+
+    - name: Measure the compiled artifact and current native client
+      ansible.builtin.stat:
+        path: '{{ item }}'
+        follow: false
+        checksum_algorithm: sha256
+      loop:
+        - '{{ qubix_ui_stage }}/{{ qubix_ui_source.value.binary }}'
+        - '/usr/bin/{{ qubix_ui_source.value.binary }}'
+      register: qubix_ui_compiled_checksums
+
+    - name: Refuse a native package change during compilation
+      ansible.builtin.assert:
+        that:
+          - qubix_ui_compiled_checksums.results[1].stat.checksum == qubix_ui_native_before.stat.checksum
+
+    - name: Retain exact source artifact and native-build provenance
+      ansible.builtin.copy:
+        dest: '{{ qubix_ui_stage }}/source.json'
+        content: >-
+          {{ dict(source=qubix_ui_source.value,
+          binary_sha256=qubix_ui_compiled_checksums.results[0].stat.checksum,
+          native_sha256=qubix_ui_native_before.stat.checksum) | to_nice_json }}
+        owner: root
+        group: root
+        mode: '0644'
+      become: true
+  always:
+    - name: Remove only the disposable source directory
+      ansible.builtin.file:
+        path: '{{ qubix_ui_temp.path }}'
+        state: absent
+      when: qubix_ui_temp.path is defined
+
+- name: Inspect prepared source provenance without following redirects
+  ansible.builtin.stat:
+    path: '{{ qubix_ui_stage }}/source.json'
+    follow: false
+  register: qubix_ui_provenance_stat
+
+- name: Require root-owned provenance for every reusable build
+  ansible.builtin.assert:
+    that:
+      - qubix_ui_provenance_stat.stat.isreg | default(false)
+      - not qubix_ui_provenance_stat.stat.islnk | default(false)
+      - qubix_ui_provenance_stat.stat.uid == 0
+      - qubix_ui_provenance_stat.stat.mode == '0644'
+    fail_msg: 'Missing/redirected source provenance; review and rebuild this generated cache before reuse.'
+
+- name: Read retained exact native-build binding
+  ansible.builtin.slurp:
+    src: '{{ qubix_ui_stage }}/source.json'
+  register: qubix_ui_provenance
+
+- name: Measure the reusable compiled artifact
+  ansible.builtin.stat:
+    path: '{{ qubix_ui_stage }}/{{ qubix_ui_source.value.binary }}'
+    follow: false
+    checksum_algorithm: sha256
+  register: qubix_ui_ready
+
+- name: Refuse reusing a prepared variant after a native package update
+  ansible.builtin.assert:
+    that:
+      - (qubix_ui_provenance.content | b64decode | from_json).source == qubix_ui_source.value
+      - (qubix_ui_provenance.content | b64decode | from_json).native_sha256 == qubix_ui_native_before.stat.checksum
+      - qubix_ui_ready.stat.isreg | default(false)
+      - not qubix_ui_ready.stat.islnk | default(false)
+      - qubix_ui_ready.stat.uid == 0
+      - qubix_ui_ready.stat.mode == '0755'
+      - (qubix_ui_provenance.content | b64decode | from_json).binary_sha256 == qubix_ui_ready.stat.checksum
+    fail_msg: 'Native client changed; review its source/security changes and rebuild the presentation cache.'

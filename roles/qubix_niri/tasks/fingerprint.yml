@@ -1,0 +1,19 @@
+---
+- name: Read installed fingerprint application dependencies without changing the host
+  ansible.builtin.command:
+    argv: [/usr/bin/pacman, -Qq, gjs, gtk4, fprintd]
+  changed_when: false
+  check_mode: false
+
+- name: Include additive fingerprint application files
+  ansible.builtin.set_fact:
+    qubix_niri_resources: >-
+      {{ qubix_niri_resources + [{'path': '/usr/share/qubix/fingerprint/' ~ item,
+      'component': 'niri', 'content': lookup('file', role_path ~ '/files/fingerprint/' ~ item, rstrip=false)}] }}
+  loop: [controller.js, fprintd.js, main.js, style.css, fingerprint.svg]
+
+- name: Include searchable fingerprint setup application
+  ansible.builtin.set_fact:
+    qubix_niri_resources: >-
+      {{ qubix_niri_resources + [{'path': '/usr/share/applications/qubix-fingerprint.desktop',
+      'component': 'niri', 'content': lookup('template', 'fingerprint.desktop.j2')}] }}

@@ -133,11 +133,16 @@
 - name: Require existing greetd to use the measured native session wrapper
   ansible.builtin.assert:
     that:
-      - qubix_login_greetd_config.get('default_session', {}).get('command', '') == '/usr/bin/noctalia-greeter-session'
+      - >-
+        qubix_login_greetd_config.get('default_session', {}).get('command', '') ==
+        '/usr/bin/noctalia-greeter-session' or
+        (qubix_profile_resolved.login.get('compact', false) and
+        qubix_login_greetd_config.get('default_session', {}).get('command', '') ==
+        '/usr/share/qubix/bin/qubix-greeter-session')
       - qubix_login_greetd_config.get('default_session', {}).get('user', '') | length > 0
     fail_msg: >-
-      Existing greetd must already launch /usr/bin/noctalia-greeter-session;
-      Qubix never replaces a greeter command.
+      Existing greetd must already launch /usr/bin/noctalia-greeter-session
+      or the explicitly selected Qubix compact wrapper; review custom launchers first.
   when: qubix_profile_resolved.login.activation == 'existing'
 
 - name: Require native state ownership to match the configured greeter account
@@ -217,3 +222,7 @@
           [default_session]
           command = "/usr/bin/noctalia-greeter-session"
           user = "greeter"
+
+- name: Prepare the explicitly selected compact client and launcher
+  ansible.builtin.include_tasks: compact.yml
+  when: qubix_profile_resolved.login.get('compact', false)

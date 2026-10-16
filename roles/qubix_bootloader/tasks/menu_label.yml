@@ -1,0 +1,100 @@
+---
+- name: Require explicit confirmation and the bounded CachyOS display-name request
+  ansible.builtin.assert:
+    that:
+      - qubix_menu_confirm | default(false) is boolean
+      - qubix_menu_confirm | default(false)
+      - qubix_menu_display_name | default('QubixOS') in ['QubixOS', 'CachyOS']
+      - qubix_menu_config | default('') == '/boot/limine.conf'
+    fail_msg: 'Confirm the measured /boot/limine.conf with qubix_menu_confirm=true; labels allow QubixOS/CachyOS only.'
+
+- name: Inspect the native menu and generator defaults without following redirects
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}{{ item }}'
+    follow: false
+  loop: [/boot/limine.conf, /etc/default/limine, /etc/machine-id]
+  register: qubix_bootloader_menu_paths
+
+- name: Refuse redirected or unsupported menu inputs
+  ansible.builtin.assert:
+    that:
+      - not item.stat.islnk | default(false)
+      - not item.stat.exists or item.stat.isreg | default(false)
+  loop: '{{ qubix_bootloader_menu_paths.results }}'
+
+- name: Require the existing native menu and machine identity
+  ansible.builtin.assert:
+    that:
+      - qubix_bootloader_menu_paths.results[0].stat.exists
+      - qubix_bootloader_menu_paths.results[2].stat.exists
+
+- name: Read bounded menu inputs without executing native shell configuration
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}{{ item.item }}'
+  loop: '{{ qubix_bootloader_menu_paths.results }}'
+  when: item.stat.exists
+  register: qubix_bootloader_menu_inputs
+  loop_control:
+    label: '{{ item.item }}'
+
+- name: Resolve native label inputs
+  ansible.builtin.set_fact:
+    qubix_bootloader_menu_text: '{{ qubix_bootloader_menu_inputs.results[0].content | b64decode }}'
+    qubix_bootloader_menu_defaults: >-
+      {{ qubix_bootloader_menu_inputs.results[1].content | default('') | b64decode }}
+    qubix_bootloader_menu_machine: '{{ qubix_bootloader_menu_inputs.results[2].content | b64decode | trim }}'
+    qubix_bootloader_menu_name: '{{ qubix_menu_display_name | default("QubixOS") }}'
+
+- name: Require one machine-bound native menu and a literal compatible generator target
+  ansible.builtin.assert:
+    that:
+      - qubix_bootloader_menu_machine is match('^[a-f0-9]{32}$')
+      - qubix_bootloader_menu_text | regex_findall('(?m)^/\+?(?:CachyOS|QubixOS)$') | length == 1
+      - >-
+        qubix_bootloader_menu_text is regex('(?m)^comment: machine-id=' ~
+        qubix_bootloader_menu_machine ~ '\n/\+?(?:CachyOS|QubixOS)$')
+      - qubix_bootloader_menu_defaults | regex_findall('(?m)^[ \t]*TARGET_OS_NAME[ \t]*=') | length <= 1
+      - >-
+        qubix_bootloader_menu_defaults | regex_findall('(?m)^[ \t]*TARGET_OS_NAME[ \t]*=') | length == 0 or
+        qubix_bootloader_menu_defaults is regex('(?m)^TARGET_OS_NAME="(?:CachyOS|QubixOS)"[ \t]*$')
+    fail_msg: 'Ambiguous menu, machine-ID binding or custom TARGET_OS_NAME; review native configuration first.'
+
+- name: Compose one title replacement and the native persistent target setting
+  vars:
+    qubix_bootloader_menu_target_line: |
+      TARGET_OS_NAME="{{ qubix_bootloader_menu_name }}"
+  ansible.builtin.set_fact:
+    qubix_bootloader_menu_candidate: >-
+      {{ qubix_bootloader_menu_text | regex_replace('(?m)^/\+(?:CachyOS|QubixOS)$',
+      '/+' ~ qubix_bootloader_menu_name) | regex_replace('(?m)^/(?:CachyOS|QubixOS)$',
+      '/' ~ qubix_bootloader_menu_name) }}
+    qubix_bootloader_menu_defaults_candidate: >-
+      {{ (qubix_bootloader_menu_defaults | regex_replace('(?m)^TARGET_OS_NAME="(?:CachyOS|QubixOS)"[ \t]*$',
+      'TARGET_OS_NAME="' ~ qubix_bootloader_menu_name ~ '"'))
+      if qubix_bootloader_menu_defaults is regex('(?m)^TARGET_OS_NAME=') else
+      qubix_bootloader_menu_defaults ~ (qubix_bootloader_menu_target_line[-1:] if qubix_bootloader_menu_defaults and
+      qubix_bootloader_menu_defaults[-1:] != qubix_bootloader_menu_target_line[-1:] else '') ~
+      qubix_bootloader_menu_target_line }}
+
+- name: Prove all menu bytes apart from the requested title are identical
+  ansible.builtin.assert:
+    that:
+      - >-
+        qubix_bootloader_menu_candidate | regex_replace('(?m)^/\+(?:CachyOS|QubixOS)$', '/+LABEL') |
+        regex_replace('(?m)^/(?:CachyOS|QubixOS)$', '/LABEL') ==
+        qubix_bootloader_menu_text | regex_replace('(?m)^/\+(?:CachyOS|QubixOS)$', '/+LABEL') |
+        regex_replace('(?m)^/(?:CachyOS|QubixOS)$', '/LABEL')
+    fail_msg: 'Unexpected difference outside the requested operating-system title.'
+
+- name: Define only the persistent target and existing menu without image or generator actions
+  ansible.builtin.set_fact:
+    qubix_bootloader_menu_resources:
+      - path: /etc/default/limine
+        component: bootloader
+        content: '{{ qubix_bootloader_menu_defaults_candidate }}'
+        mode: '{{ qubix_bootloader_menu_paths.results[1].stat.mode | default("0644") }}'
+        validate: '{{ qubix_bootloader_menu_bash }} -n %s'
+      - path: /boot/limine.conf
+        component: bootloader
+        content: '{{ qubix_bootloader_menu_candidate }}'
+        mode: '{{ qubix_bootloader_menu_paths.results[0].stat.mode }}'

@@ -127,12 +127,89 @@ greetd is actually running. Actual password/fingerprint login still requires con
 
 ## Names in Noctalia and Limine
 
-The Noctalia 5.3 Control Center's system label is read from `/etc/os-release` or
-`/usr/lib/os-release`. Its measured configuration has no supported distribution-label override.
-Qubix preserves both files and the native CachyOS identity; this task does not patch the installed
-shell or rename your account/hostname. See the upstream
+The stock Noctalia 5.3 launcher reads its distribution caption from `/etc/os-release` or
+`/usr/lib/os-release`; its Control Center Home version caption is hardcoded. The optional Qubix
+presentation build below changes just those two captions while preserving native system identity.
+The System tab continues to report CachyOS. See the upstream
 [detector](https://github.com/noctalia-dev/noctalia/blob/v5.3.0/src/system/distro_info.cpp).
 
 Limine already uses `interface_branding: Qubix OS` in its owned appearance block. Native CachyOS
-entry titles/IDs, snapshot sections and kernel arguments remain unchanged. The heading is separate
-from the native entries; this task does not regenerate or rename them.
+entry titles normally remain preserved. The explicit display-name task below changes the OS
+menu title separately from that heading; entry IDs, snapshots and boot payloads stay preserved.
+
+## Compact greeter and QubixOS captions
+
+The optional [presentation variants](../../assets/ui/README.md) are pinned UI-only builds of
+Noctalia 5.3.0 and Greeter 1.6.0. They are installed separately from native package executables.
+Use the ordinary controller/inventory setup and an ignored desktop-only configuration:
+
+```yaml
+qubix_discovery_privileged: true
+qubix:
+  niri:
+    fingerprint_setup: true
+    presentation: qubix
+  login:
+    enabled: true
+    backend: greetd
+    theme_source: noctalia
+    activation: existing
+    compact: true
+  bootloader: {enabled: false}
+  plymouth: {enabled: false}
+```
+
+Only use `existing` once greetd is running; use `prepare` with inactive greetd. Compact mode
+requires Noctalia's native wrapper already selected; it does not perform the manager cutover.
+
+```bash
+ANSIBLE_HOME="$PWD/.cache/ansible" .venv/bin/ansible-playbook playbooks/prepare-ui.yml \
+  -i inventory/target.local.ini -e @config/ui.local.yml --ask-become-pass
+ANSIBLE_HOME="$PWD/.cache/ansible" .venv/bin/ansible-playbook tests/integration/ui.yml \
+  -i inventory/target.local.ini -e @config/ui.local.yml --ask-become-pass
+```
+
+Preparation installs missing build/GJS prerequisites, verifies source/patch checksums and
+compiles two clients as the ordinary user. It stages generated artifacts and exact native-binary
+provenance; it does not install upstream hooks or change running services. The isolated preview
+uses synthetic identity/scans and disconnected authentication, not real biometric enrollment.
+Then run the normal `deploy --check --diff`, `deploy` and `verify --tags installed` with this file.
+
+The launcher caption becomes **QubixOS** and Control Center Home shows
+**QubixOS (Noctalia v5.3.0)**. Activate the new shell through the existing
+[Noctalia-only procedure](../architecture/desktop-design.md#power-action-countdown), preserving
+the session environment, Niri, applications and GUI state. `config-reload` alone cannot switch
+the running binary. The compact greeter is selected by a backed-up command-only replacement in
+`/etc/greetd/config.toml`; the wrapper uses the native compositor/session launcher. A running greetd
+retains its launcher until a later service start; no restart or reboot is performed by deployment.
+
+Both selecting wrappers fall back to the updated native client if its binary checksum changes,
+including updates within the same upstream version. Redeployment refuses stale provenance.
+Review the updated package/source before rebuilding its generated cache; keep the updated native
+client available meanwhile. PAM, Polkit, keyboard/display settings and passwords remain preserved.
+
+To leave caption customization, deploy `niri.presentation: native`. To leave compact mode, first
+restore the `default_session.command` to `/usr/bin/noctalia-greeter-session`, preserving the rest
+of greetd's configuration, then deploy `compact: false`. No running login service is restarted.
+Generic restoration retains the original first-baseline semantics described in the recovery guide.
+
+## Requested Limine OS menu title
+
+For the measured `/boot/limine.conf` on this target, the separate bounded task renames just
+`/+CachyOS` to `/+QubixOS` and sets native `TARGET_OS_NAME="QubixOS"` in `/etc/default/limine`.
+Both native entry and snapshot tools read that target; the machine-ID binding is retained.
+Preview before applying:
+
+```bash
+ANSIBLE_HOME="$PWD/.cache/ansible" .venv/bin/ansible-playbook playbooks/menu-label.yml \
+  -i inventory/target.local.ini -e '{"qubix_discovery_privileged":true,"qubix_menu_confirm":true,"qubix_menu_config":"/boot/limine.conf"}' \
+  --check --diff --ask-become-pass
+```
+
+Remove `--check` to apply the requested label. The task refuses ambiguous menus, wrong machine-ID
+bindings and custom generator targets; it never invokes a generator, image rebuild or reboot.
+Native kernel-entry names, IDs, paths, hashes, ordering, arguments and snapshot contents are identical.
+Before a generic boot restoration, run this same task with `-e qubix_menu_display_name=CachyOS`.
+This reverses the display title first so the normal preserved-entry guard still protects boot data;
+general restoration then returns original defaults. Native snapshot/kernel changes still require
+the existing reviewed recovery procedure rather than overwriting a stale config.

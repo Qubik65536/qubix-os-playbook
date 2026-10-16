@@ -29,5 +29,21 @@
     that: [qubix_profile_resolved.branding.enabled]
     fail_msg: 'Niri requires branding.enabled=true.'
 
+- name: Validate prepared Qubix presentation variant
+  ansible.builtin.include_tasks: variant.yml
+  vars:
+    qubix_niri_ui_component: noctalia
+    qubix_niri_ui_native_version: '{{ qubix_niri_noctalia_version }}'
+  when: (qubix_profile_resolved.niri | default({})).get('presentation', 'native') == 'qubix'
+
 - name: Render resources after prerequisite validation
   ansible.builtin.import_tasks: render.yml
+
+- name: Install the private shell before its launcher selects it
+  ansible.builtin.set_fact:
+    qubix_niri_resources: '{{ [qubix_niri_ui_binary_resource, qubix_niri_ui_license_resource] + qubix_niri_resources }}'
+  when: (qubix_profile_resolved.niri | default({})).get('presentation', 'native') == 'qubix'
+
+- name: Validate and prepare optional fingerprint setup
+  ansible.builtin.import_tasks: fingerprint.yml
+  when: (qubix_profile_resolved.niri | default({})).get('fingerprint_setup', false)

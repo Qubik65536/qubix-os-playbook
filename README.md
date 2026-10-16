@@ -16,7 +16,7 @@ recovery tests remain acceptance gates. See [actual evidence](docs/project/statu
 Get started:
 
 - [User getting-started guide](docs/user/getting-started.md): prepare the target, deploy and test the desktop, then opt into login/boot/splash tests.
-- [Noctalia Greeter](docs/user/login.md) and [fingerprints](docs/user/fingerprint.md): prepare a matching login theme and configure local enrollment and password fallback.
+- [Noctalia Greeter](docs/user/login.md) and [fingerprints](docs/user/fingerprint.md): compact login, QubixOS captions, graphical enrollment and password fallback.
 - [Human developer getting-started guide](docs/development/getting-started.md): set up tools, understand the code and run fixtures.
 - [SSH access and target information](docs/user/collecting-target-info.md): share connection details so the agent can inspect your test machine.
 - [Boot and poweroff splash guide](docs/user/plymouth.md): preview native-style spinner branding, review image mappings and plan activation/recovery.

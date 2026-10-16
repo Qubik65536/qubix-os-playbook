@@ -20,6 +20,30 @@ The address must be reachable from the controller running this repository. In th
 
 Use an existing local key or SSH agent; send only its local path or alias, never the private-key contents, passphrase or sudo password. The pinned Ansible controller supports password authentication with --ask-pass; enter passwords at the prompt rather than saving them in inventory. SSH keys remain convenient for repeated runs. No new key or personal SSH configuration is needed when working key access already exists.
 
+An optional block in `~/.ssh/config` makes repeated connections easier. Keep any existing
+OrbStack `Include` at the top. Replace the address/account below; include the IP in the `Host`
+patterns when Ansible's inventory connects directly to that IP:
+
+```sshconfig
+Host qubix YOUR_TARGET_IP
+    HostName YOUR_TARGET_IP
+    User YOUR_LINUX_USER
+    IdentityFile ~/.ssh/id_ed25519_qubix
+    ControlMaster auto
+    ControlPersist 8h
+    ControlPath ~/.ssh/qubix-%C
+    ServerAliveInterval 30
+    ServerAliveCountMax 3
+```
+
+If an inventory already pins a host key and a shared `ControlPath`, retain those exact settings
+in this block instead of the generic path. Set `chmod 600 ~/.ssh/config`, then `ssh -MNf qubix`
+to establish a reusable connection with your password. For persistent key access, generate a key
+with `ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_qubix` and append only its `.pub` contents to
+the target account's `~/.ssh/authorized_keys` through your authenticated connection. Keep that
+remote directory mode 0700 and file mode 0600. A multiplexed password login expires; it does not
+install a key by itself. Use your chosen alias in place of `qubix` in these commands.
+
 From this Mac, first confirm ordinary SSH login, completing host-key verification and any key-unlock prompt yourself:
 
 ```bash

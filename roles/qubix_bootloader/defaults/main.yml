@@ -1,2 +1,3 @@
 ---
 qubix_bootloader_findmnt_binary: /usr/bin/findmnt
+qubix_bootloader_menu_bash: /usr/bin/bash

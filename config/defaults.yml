@@ -5,6 +5,8 @@ branding:
 niri:
   enabled: false
   user_config: preserve
+  fingerprint_setup: false
+  presentation: native
 shell:
   enabled: false
   change_default_shell: false
@@ -13,6 +15,7 @@ login:
   backend: auto
   theme_source: breeze
   activation: existing
+  compact: false
 bootloader:
   enabled: false
   backend: auto

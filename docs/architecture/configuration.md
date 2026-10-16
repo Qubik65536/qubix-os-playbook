@@ -10,6 +10,8 @@ qubix:
   niri:
     enabled: true
     user_config: preserve
+    fingerprint_setup: false
+    presentation: native
   shell:
     enabled: true
     change_default_shell: false
@@ -18,6 +20,7 @@ qubix:
     backend: auto
     theme_source: breeze
     activation: existing
+    compact: false
   bootloader:
     enabled: false
     backend: auto
@@ -55,6 +58,15 @@ Noctalia Greeter uses explicit `backend: greetd`, `theme_source: noctalia` and
 existing requires only greetd active and the measured native wrapper already selected.
 Both preserve PAM, services and session startup. See the authoritative
 [login component contract](../components/login.md) and [operator guide](../user/login.md).
+
+`niri.fingerprint_setup: true` installs the optional GTK 4/GJS enrollment application;
+installed `gjs`, `gtk4` and `fprintd` are required before writes. `niri.presentation: qubix`
+selects a prepared private Noctalia 5.3.0 UI build for display captions. `native` keeps the
+distribution binary. `login.compact: true` requires Noctalia Greeter 1.6.0, a prepared private
+UI build and an already-selected Noctalia launcher, then backs up/replaces only that launcher
+command with a wrapper around the native compositor. All three options default off/native.
+See the [presentation/enrollment contract](login-refinement.md); preparation, file installation,
+session activation and actual authentication are separate gates.
 
 Boot activation requires `backend: grub|limine`, confirmed `config_path` and `confirm_active: true`. Limine additionally requires the observed booted major `limine_version` (8–12). Auto/unknown configurations fail before writes. Native configs and boot entries remain preserved except minimal supported appearance changes.
 

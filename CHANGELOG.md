@@ -4,6 +4,14 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Add an optional GTK 4/GJS fingerprint enrollment window with finger selection, measured progress,
+  retry guidance, cancellation, saved-finger protection and explicit verification. Add separately
+  installed, checksum-pinned UI-only Noctalia/Greeter builds for QubixOS captions and smaller,
+  minimal steel-blue login controls. Preserve native binaries, PAM, system identity and output settings;
+  native updates trigger startup fallback and stale-provenance refusal. Add a bounded requested
+  Limine OS-title/native-target change, recovery instructions, fixtures and eight native comparisons.
+  Physical scans, authentication and future greeter/menu appearance remain separate acceptance gates.
+
 - Added Noctalia Greeter 1.6.x appearance preparation with the shared Qubix palette and cube wallpaper,
   preserved input/output/auth/session/sync settings and drift-safe file recovery. A separate native
   package playbook installs prerequisites alongside SDDM. Added login/cutover and fingerprint guides;

@@ -1,0 +1,16 @@
+---
+# Source-only, UI-only variants; native package binaries and assets are preserved.
+noctalia:
+  version: 5.3.0
+  archive: https://github.com/noctalia-dev/noctalia/archive/refs/tags/v5.3.0.tar.gz
+  sha256: 7677b5d7da80cf89c7a8232de26d25380aa5fcaf34fb38abddd4fe7cb676161a
+  patch_sha256: 498cfa16a06c1447b0ec76fbc02a1fe1f0c9033de758cd7256d2d5971ad5c5d2
+  directory: noctalia-5.3.0
+  binary: noctalia
+greeter:
+  version: 1.6.0
+  archive: https://github.com/noctalia-dev/noctalia-greeter/archive/refs/tags/v1.6.0.tar.gz
+  sha256: f23ebf07cbe4508971c08b0b81d2b5bfc4ec1ec45605d8f8fb01b799743a70b6
+  patch_sha256: 548301ad06ea0fa0bf5074b1e86f2bdadbf32b2d824ca8f18da3e40120381e29
+  directory: noctalia-greeter-1.6.0
+  binary: noctalia-greeter

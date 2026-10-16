@@ -4,7 +4,16 @@
 # shellcheck disable=SC1090,SC2030,SC2031,SC2329
 set -euo pipefail
 repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
-profile="$repo_dir/roles/qubix_niri/templates/noctalia.sh.j2"
+fixture_dir="$(mktemp -d)"
+profile="$fixture_dir/noctalia"
+trap 'rm -rf -- "$fixture_dir"' EXIT
+python3 - "$repo_dir/roles/qubix_niri/templates/noctalia.sh.j2" "$profile" <<'PY'
+from pathlib import Path
+import sys
+from jinja2 import Template
+Path(sys.argv[2]).write_text(Template(Path(sys.argv[1]).read_text()).render(
+    qubix_profile_resolved={'niri': {'presentation': 'native'}}))
+PY
 if bash "$profile" --application; then
   printf '%s\n' 'Empty application invocation unexpectedly succeeded.' >&2
   exit 1
@@ -52,5 +61,37 @@ fi
   set -- --application app
   source "$profile"
 )
+
+cat > "$fixture_dir/checksum" <<'SH'
+#!/usr/bin/env bash
+read -r input
+[[ "$input" == 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff  /usr/bin/noctalia' ]] || exit 9
+exit "${QUBIX_TEST_HASH_RESULT:-0}"
+SH
+chmod 700 "$fixture_dir/checksum"
+python3 - "$repo_dir/roles/qubix_niri/templates/noctalia.sh.j2" "$profile" "$fixture_dir/checksum" <<'PY'
+from pathlib import Path
+import shlex
+import sys
+from jinja2 import Template
+rendered = Template(Path(sys.argv[1]).read_text()).render(
+    qubix_profile_resolved={'niri': {'presentation': 'qubix'}}, qubix_niri_ui_native_sha256='f' * 64)
+# Substitute only the external checksum transport; run the production selecting logic.
+Path(sys.argv[2]).write_text(rendered.replace('/usr/bin/sha256sum', shlex.quote(sys.argv[3])))
+PY
+for result in 0 1; do
+  (
+    export QUBIX_TEST_HASH_RESULT="$result"
+    exec() {
+      if [[ "$QUBIX_TEST_HASH_RESULT" == 0 ]]; then
+        [[ "$1" == /usr/share/qubix/bin/noctalia ]]
+      else
+        [[ "$1" == /usr/bin/noctalia ]]
+      fi
+      exit 0
+    }
+    source "$profile"
+  )
+done
 
 printf '%s\n' 'Noctalia profile and application environment preservation passed.'

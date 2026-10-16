@@ -71,9 +71,21 @@ on its next boot, with the current SDDM desktop still active. See [login test re
 Native package setup integrates a session module into fresh greetd PAM; no pre-existing PAM or
 fingerprint authentication is changed. Next: operator reboot and physical password login/Niri
 return, local fingerprint enrollment/fallback and recovery.
-Keep boot entry identities and native distribution labels preserved.
+Keep boot entry identities and native distribution identity preserved. The explicitly requested
+presentation captions and OS menu title are tracked separately below.
 
 Objective: brand supported active manager without changing authentication/session. Scope: detected manager's supported theme hooks only. Acceptance: login and Niri startup succeed, PAM unchanged, restoration tested. Depends on F03. Tests: VM login and revert. Docs: manager/version support and recovery.
+
+### F05a — Compact login, fingerprint enrollment and display names (Feature)
+
+Status: Implemented; controller/provenance fixtures and native simulated rendering Tested;
+installation/activation In Progress. The [contract](../architecture/login-refinement.md) owns
+responsibilities/acceptance; [comparison evidence](ui-test-results.md) records actual checks.
+Provide a GTK/fprintd enrollment application, smaller steel-blue greeter and explicit QubixOS
+launcher/Control Center/Limine OS captions. Preserve native packages, authentication, identity,
+boot IDs and payloads. Next: finish installed/reapplication/preservation checks and shell-only
+caption activation; operator enrollment/test, password fallback, future compact-greeter startup
+and renamed-menu console acceptance remain open.
 
 ## F06 — Revision state and recovery (Feature)
 

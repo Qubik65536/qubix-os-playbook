@@ -64,6 +64,26 @@ for mode in normal check; do
 done
 printf '%s\n' 'Noctalia Greeter preparation, preservation, refusal and recovery fixtures passed.'
 
+for mode in normal check; do
+  set --
+  if [[ "$mode" == check ]]; then set -- --check; fi
+  if ! ansible-playbook tests/playbooks/menu-label.yml "$@" >".cache/tests/menu-label-$mode.log" 2>&1; then
+    cat ".cache/tests/menu-label-$mode.log"
+    exit 1
+  fi
+done
+printf '%s\n' 'Display-only Limine label and native-default restoration fixtures passed.'
+
+for mode in normal check; do
+  set --
+  if [[ "$mode" == check ]]; then set -- --check; fi
+  if ! ansible-playbook tests/playbooks/ui-variants.yml "$@" >".cache/tests/ui-variants-$mode.log" 2>&1; then
+    cat ".cache/tests/ui-variants-$mode.log"
+    exit 1
+  fi
+done
+printf '%s\n' 'Compact launcher and source/native/private binary provenance fixtures passed.'
+
 if ! ansible-playbook tests/playbooks/bootloader.yml >.cache/tests/bootloader.log 2>&1; then
   cat .cache/tests/bootloader.log
   exit 1

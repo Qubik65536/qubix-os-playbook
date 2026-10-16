@@ -1,0 +1,24 @@
+window { background: #0a1016; color: #edf4fa; font-family: Inter, sans-serif; font-size: 13px; }
+headerbar { background: #0a1016; border: none; box-shadow: none; min-height: 34px; }
+headerbar button { padding: 2px; min-width: 24px; min-height: 24px; border: none; background: transparent; border-radius: 6px; }
+headerbar button:hover { background: #243746; }
+.brand { color: #8cb4d5; font-size: 12px; font-weight: 600; }
+.heading { font-size: 20px; font-weight: 600; letter-spacing: -0.4px; }
+.muted { color: #a8b9c7; }
+.small { font-size: 11px; }
+.section { font-weight: 600; font-size: 12px; margin-bottom: 3px; }
+.accent { color: #8cb4d5; }
+button { background: #15212b; color: #edf4fa; border: 1px solid #293c4b; border-radius: 8px;
+    padding: 8px 14px; box-shadow: none; font-weight: 500; min-height: 18px; }
+button:hover { background: #243746; }
+button:focus-visible { outline: 2px solid #8cb4d5; outline-offset: 2px; }
+button:disabled { opacity: 0.5; }
+.finger { padding: 6px 12px; font-size: 12px; }
+.finger.selected { border-color: #8cb4d5; background: #243746; }
+.primary { background: #56728b; color: #fff; border-color: #56728b; }
+.primary:hover { background: #6787a3; }
+.status-card { background: #111b24; border: 1px solid #293c4b; border-radius: 10px; padding: 16px; min-height: 72px; }
+.status-card.error { border-color: #e7a09e; }
+.status-card progressbar.horizontal trough { background: #243746; border: none; min-height: 4px; border-radius: 2px; }
+.status-card progressbar.horizontal progress { background: #8cb4d5; border: none; min-height: 4px; border-radius: 2px; }
+progressbar text { color: #a8b9c7; font-size: 11px; }

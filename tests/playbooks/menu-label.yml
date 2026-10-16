@@ -1,0 +1,145 @@
+---
+- name: Test display-only Limine naming in a disposable filesystem
+  hosts: localhost
+  gather_facts: true
+  gather_subset: ['!all', min]
+  vars:
+    qubix_menu_confirm: true
+    qubix_menu_config: /boot/limine.conf
+    qubix_bootloader_menu_bash: /bin/bash
+    qubix_files_owner: '{{ ansible_facts.user_id }}'
+    qubix_files_group: '{{ ansible_facts.user_gid | string }}'
+    qubix_test_menu: |
+      timeout: 5
+      default_entry: 2
+      comment: machine-id=0123456789abcdef0123456789abcdef
+      /+CachyOS
+        //linux-cachyos
+        protocol: linux
+        path: boot():/native/kernel#012345
+        module_path: boot():/qubix/active-image#543210
+        cmdline: quiet splash root=UUID=native-encrypted-root
+        //Snapshots
+        ///Original snapshot
+        path: boot():/native/history/kernel#abcdef
+    qubix_test_defaults: |
+      ESP_PATH="/boot"
+      KERNEL_CMDLINE[default]+="quiet splash root=UUID=native-encrypted-root"
+    qubix_test_target: |
+      TARGET_OS_NAME="QubixOS"
+    qubix_test_custom_target: |
+      TARGET_OS_NAME="Other OS"
+  tasks:
+    - name: Create disposable filesystem even during check-mode tests
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-menu-label-
+      check_mode: false
+      register: qubix_test_temp
+
+    - name: Restrict every path to the disposable fixture
+      ansible.builtin.set_fact:
+        qubix_root: '{{ qubix_test_temp.path }}'
+        qubix_files_root: '{{ qubix_test_temp.path }}'
+
+    - name: Exercise preparation installation and explicit label reversal
+      block:
+        - name: Create synthetic native directories
+          ansible.builtin.file:
+            path: '{{ qubix_root }}/{{ item }}'
+            state: directory
+            mode: '0755'
+          check_mode: false
+          loop: [boot, etc/default]
+
+        - name: Install synthetic native inputs without touching host boot data
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/{{ item.path }}'
+            content: '{{ item.content }}'
+            mode: '0644'
+          check_mode: false
+          loop:
+            - {path: boot/limine.conf, content: '{{ qubix_test_menu }}'}
+            - {path: etc/default/limine, content: '{{ qubix_test_defaults }}'}
+            - {path: etc/machine-id, content: '0123456789abcdef0123456789abcdef'}
+
+        - name: Plan actual production label change
+          ansible.builtin.include_role:
+            name: qubix_bootloader
+            tasks_from: menu_label
+
+        - name: Require an exact one-token menu difference and additive native setting
+          ansible.builtin.assert:
+            that:
+              - qubix_bootloader_menu_candidate == qubix_test_menu | replace('/+CachyOS', '/+QubixOS')
+              - qubix_bootloader_menu_defaults_candidate == qubix_test_defaults ~ qubix_test_target
+            fail_msg: '{{ qubix_bootloader_menu_defaults_candidate | to_json }}'
+
+        - name: Install through production backup and verification tasks
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_resources: '{{ qubix_bootloader_menu_resources }}'
+
+        - name: Test real idempotency reversal and original restoration
+          when: not ansible_check_mode
+          block:
+            - name: Plan the identical requested label again
+              ansible.builtin.include_role:
+                name: qubix_bootloader
+                tasks_from: menu_label
+
+            - name: Require unchanged desired bytes on reapplication
+              ansible.builtin.assert:
+                that:
+                  - qubix_bootloader_menu_candidate == qubix_test_menu | replace('/+CachyOS', '/+QubixOS')
+                  - qubix_bootloader_menu_defaults_candidate == qubix_test_defaults ~ qubix_test_target
+
+            - name: Select explicit native label reversal
+              ansible.builtin.set_fact:
+                qubix_menu_display_name: CachyOS
+
+            - name: Reverse only the label before general boot restoration
+              ansible.builtin.include_role:
+                name: qubix_bootloader
+                tasks_from: menu_label
+
+            - name: Apply the bounded label reversal
+              ansible.builtin.include_role:
+                name: qubix_files
+              vars:
+                qubix_files_resources: '{{ qubix_bootloader_menu_resources }}'
+
+            - name: Restore original menu and defaults through the generic guard
+              ansible.builtin.include_role:
+                name: qubix_files
+                tasks_from: restore
+
+            - name: Read restored original inputs
+              ansible.builtin.slurp:
+                src: '{{ qubix_root }}/{{ item }}'
+              loop: [boot/limine.conf, etc/default/limine]
+              register: qubix_test_restored
+
+            - name: Require exact original bytes after restoration
+              ansible.builtin.assert:
+                that:
+                  - qubix_test_restored.results[0].content | b64decode == qubix_test_menu
+                  - qubix_test_restored.results[1].content | b64decode == qubix_test_defaults
+
+        - name: Reject ambiguity wrong machine binding and unsupported generator targets before writes
+          ansible.builtin.include_tasks: ../tasks/menu-label-rejection.yml
+          loop:
+            - menu: '{{ qubix_test_menu ~ qubix_test_menu }}'
+            - menu: '{{ qubix_test_menu | replace("machine-id=0123456789abcdef0123456789abcdef", "machine-id=wrong") }}'
+            - defaults: '{{ qubix_test_defaults ~ qubix_test_custom_target }}'
+            - defaults: '{{ qubix_test_defaults ~ qubix_test_target ~ qubix_test_target }}'
+          loop_control:
+            loop_var: qubix_test_menu_case
+      always:
+        - name: Remove only the disposable filesystem
+          ansible.builtin.file:
+            path: '{{ qubix_test_temp.path }}'
+            state: absent
+          check_mode: false

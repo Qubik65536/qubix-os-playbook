@@ -1,0 +1,22 @@
+--- a/src/shell/launcher/launcher_panel.cpp
++++ b/src/shell/launcher/launcher_panel.cpp
+@@ -1825,7 +1825,7 @@
+                 .ellipsize = TextEllipsize::End,
+             }),
+             ui::label({
+-                .text = distroLabel(),
++                .text = "QubixOS",
+                 .fontSize = Style::fontSizeMini * scale,
+                 .color = colorSpecFromRole(ColorRole::OnSurfaceVariant),
+                 .maxLines = 1,
+--- a/src/shell/control_center/tabs/home_tab.cpp
++++ b/src/shell/control_center/tabs/home_tab.cpp
+@@ -119,7 +119,7 @@
+ 
+   std::string userHostLine() { return std::format("{}@{}", sessionUserName(), hostName()); }
+ 
+-  std::string noctaliaVersionLine() { return std::format("Noctalia {}", noctalia::build_info::displayVersion()); }
++  std::string noctaliaVersionLine() { return std::format("QubixOS (Noctalia {})", noctalia::build_info::displayVersion()); }
+ 
+   void applyHomeCardStyle(Flex& card, float scale, float fillOpacity) {
+     applySectionCardStyle(card, scale, fillOpacity);

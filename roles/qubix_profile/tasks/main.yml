@@ -72,6 +72,14 @@
       - not qubix_profile_resolved.shell.change_default_shell
     fail_msg: 'Automatic default-shell changes are unsupported; use false.'
 
+- name: Require typed optional presentation selections
+  ansible.builtin.assert:
+    that:
+      - qubix_profile_resolved.niri.fingerprint_setup is boolean
+      - qubix_profile_resolved.login.compact is boolean
+      - not qubix_profile_resolved.login.compact or qubix_profile_resolved.login.theme_source == 'noctalia'
+    fail_msg: 'Optional fingerprint/compact selections must be YAML booleans; compact requires Noctalia.'
+
 - name: Require compatible login appearance selections
   ansible.builtin.assert:
     that:

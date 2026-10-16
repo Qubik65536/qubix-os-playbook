@@ -52,6 +52,16 @@ screenshots, verifies personal-state and primary-process preservation and cleans
 It does not exercise the greeter's bundled compositor, VT/DRM, PAM, login or a fingerprint scan.
 See [login test results](../project/login-test-results.md).
 
+The optional `tests/integration/ui.yml` checks the production GJS adapter against a fake fprintd
+service on a private bus, including service loss, then captures GTK-reference/Qubix enrollment,
+previous/compact greeter and native/Qubix shell captions. Synthetic identity/scans, disconnected
+auth/system bus, private runtime/state and cleanup prevent real biometric actions. The
+`ui-variants.yml` fixture covers command-only selection and provenance refusals; `menu-label.yml`
+covers exact label preservation/reapplication/restoration and ambiguous target/machine bindings.
+Both run in normal and global check mode through `scripts/test.sh`. Node's 32 pure controller tests
+run through static validation; Node is a controller-only prerequisite. Native scan/login/boot
+acceptance remains separate. See [UI test results](../project/ui-test-results.md).
+
 Wrapper fixtures reject normal and compact deploy/restore tag options before Ansible invocation. Native private login/boot/splash checks require read-only privilege escalation; existing activation-file modes are retained.
 
 Run native grammar checks explicitly with `ansible-playbook tests/integration/niri.yml -i INVENTORY --ask-pass`; add `-e '{"qubix_discovery_privileged": true}' --ask-become-pass` if boot metadata is private. CI syntax/lint checks this playbook but never runs it against a host. It uses the production render task file, checks invalid controls, validates Niri plus installed Foot/Noctalia candidates and removes its private temporary files. Missing companions are skipped here, but deployment requires them. It does not prove companion startup or a graphical session.

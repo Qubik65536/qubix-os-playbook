@@ -1,0 +1,30 @@
+---
+- name: Change only the explicitly requested native Limine operating-system label
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  roles:
+    - qubix_profile
+    - qubix_discovery
+  tasks:
+    - name: Prepare the confirmed display-only menu change
+      ansible.builtin.include_role:
+        name: qubix_bootloader
+        tasks_from: menu_label
+        apply:
+          become: true
+
+    - name: Apply only menu labels and the native generator target setting
+      ansible.builtin.include_role:
+        name: qubix_files
+        apply:
+          become: true
+      vars:
+        qubix_files_resources: '{{ qubix_bootloader_menu_resources }}'
+
+    - name: Explain the separate reboot and restoration gates
+      ansible.builtin.debug:
+        msg: >-
+          Only display text and TARGET_OS_NAME are selected. No generator, image rebuild or reboot ran.
+          Before generic boot restoration, reapply this playbook with qubix_menu_display_name=CachyOS
+          so preserved entry-title checks remain effective.

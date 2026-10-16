@@ -1,0 +1,104 @@
+---
+- name: Load pinned presentation source contract
+  ansible.builtin.include_vars:
+    file: '{{ role_path }}/../../assets/ui/manifest.yml'
+    name: qubix_niri_ui_sources
+
+- name: Resolve selected presentation artifact
+  ansible.builtin.set_fact:
+    qubix_niri_ui_spec: '{{ qubix_niri_ui_sources[qubix_niri_ui_component] }}'
+
+- name: Inspect artifact ancestry and binary without following redirects
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}{{ item }}'
+    follow: false
+    checksum_algorithm: sha256
+  loop:
+    - /var/cache/qubix-ui
+    - '/var/cache/qubix-ui/{{ qubix_niri_ui_spec.patch_sha256 }}'
+    - '/var/cache/qubix-ui/{{ qubix_niri_ui_spec.patch_sha256 }}/{{ qubix_niri_ui_spec.binary }}'
+  register: qubix_niri_ui_artifact_paths
+
+- name: Require prepared root-owned artifacts before installation
+  ansible.builtin.assert:
+    that:
+      - item.stat.exists
+      - not item.stat.islnk | default(false)
+      - item.stat.uid == qubix_niri_ui_expected_uid
+      - item.stat.mode == '0755'
+    fail_msg: 'Run playbooks/prepare-ui.yml to prepare the exact root-owned presentation build first.'
+  loop: '{{ qubix_niri_ui_artifact_paths.results }}'
+  loop_control:
+    label: '{{ item.item }}'
+
+- name: Require matching native release before using its packaged assets
+  ansible.builtin.assert:
+    that:
+      - qubix_niri_ui_native_version == qubix_niri_ui_spec.version
+      - qubix_niri_ui_artifact_paths.results[-1].stat.isreg
+      - qubix_niri_ui_artifact_paths.results[0].stat.isdir
+      - qubix_niri_ui_artifact_paths.results[1].stat.isdir
+
+- name: Read the native client checksum for an upgrade-safe startup guard
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/usr/bin/{{ qubix_niri_ui_spec.binary }}'
+    follow: false
+    checksum_algorithm: sha256
+  register: qubix_niri_ui_native_binary
+
+- name: Require a real native executable before binding the private variant
+  ansible.builtin.assert:
+    that:
+      - qubix_niri_ui_native_binary.stat.isreg | default(false)
+      - not qubix_niri_ui_native_binary.stat.islnk | default(false)
+      - qubix_niri_ui_native_binary.stat.executable
+
+- name: Retain the exact native build identity for the selecting wrapper
+  ansible.builtin.set_fact:
+    qubix_niri_ui_native_sha256: '{{ qubix_niri_ui_native_binary.stat.checksum }}'
+
+- name: Inspect build provenance without following redirects
+  ansible.builtin.stat:
+    path: >-
+      {{ qubix_root | default('') }}/var/cache/qubix-ui/{{ qubix_niri_ui_spec.patch_sha256 }}/source.json
+    follow: false
+  register: qubix_niri_ui_provenance_stat
+
+- name: Require root-owned build provenance
+  ansible.builtin.assert:
+    that:
+      - qubix_niri_ui_provenance_stat.stat.isreg | default(false)
+      - not qubix_niri_ui_provenance_stat.stat.islnk | default(false)
+      - qubix_niri_ui_provenance_stat.stat.uid == qubix_niri_ui_expected_uid
+      - qubix_niri_ui_provenance_stat.stat.mode == '0644'
+
+- name: Read the prepared source and native-build binding
+  ansible.builtin.slurp:
+    src: '{{ qubix_niri_ui_provenance_stat.stat.path }}'
+  register: qubix_niri_ui_provenance_bytes
+
+- name: Require unchanged source native build and compiled artifact
+  vars:
+    qubix_niri_ui_provenance: '{{ qubix_niri_ui_provenance_bytes.content | b64decode | from_json }}'
+  ansible.builtin.assert:
+    that:
+      - qubix_niri_ui_provenance.source == qubix_niri_ui_spec
+      - qubix_niri_ui_provenance.native_sha256 == qubix_niri_ui_native_sha256
+      - qubix_niri_ui_provenance.binary_sha256 == qubix_niri_ui_artifact_paths.results[2].stat.checksum
+    fail_msg: 'Prepared UI provenance differs; review native changes and rebuild before deployment.'
+
+- name: Define additive binary with exact prepared checksum
+  ansible.builtin.set_fact:
+    qubix_niri_ui_binary_resource:
+      path: '/usr/share/qubix/bin/{{ qubix_niri_ui_spec.binary }}'
+      component: '{{ "niri" if qubix_niri_ui_component == "noctalia" else "login" }}'
+      source: >-
+        {{ qubix_root | default('') }}/var/cache/qubix-ui/{{
+        qubix_niri_ui_spec.patch_sha256 }}/{{ qubix_niri_ui_spec.binary }}
+      remote_source: true
+      sha256: '{{ qubix_niri_ui_artifact_paths.results[-1].stat.checksum }}'
+      mode: '0755'
+    qubix_niri_ui_license_resource:
+      path: '/usr/share/qubix/licenses/{{ qubix_niri_ui_spec.binary }}.txt'
+      component: '{{ "niri" if qubix_niri_ui_component == "noctalia" else "login" }}'
+      content: '{{ lookup("file", role_path ~ "/../../assets/ui/LICENSE", rstrip=false) }}'

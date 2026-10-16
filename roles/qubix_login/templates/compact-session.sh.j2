@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+# Use the native compositor/wrapper; change only the greeter UI client.
+set -eu
+qubix_native_sha256='{{ qubix_niri_ui_native_sha256 }}'
+if printf '%s  /usr/bin/noctalia-greeter\n' "$qubix_native_sha256" | /usr/bin/sha256sum --check --status; then
+  export NOCTALIA_GREETER_BIN=/usr/share/qubix/bin/noctalia-greeter
+else
+  echo 'Qubix compact UI needs a matching rebuild; using the updated native greeter.' >&2
+  unset NOCTALIA_GREETER_BIN
+fi
+export NOCTALIA_GREETER_ASSETS_DIR=/usr/share/noctalia-greeter/assets
+exec /usr/bin/noctalia-greeter-session "$@"

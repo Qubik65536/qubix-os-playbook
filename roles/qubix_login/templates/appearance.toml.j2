@@ -1,14 +1,18 @@
 # Qubix appearance; other greeter settings and sync.toml remain operator-owned.
 [appearance]
-{% for key, value in qubix_login_old_config.get('appearance', {}).items() if key not in ['scheme', 'theme_mode', 'corner_radius_scale', 'palette', 'wallpaper', 'wallpapers'] %}
+{% for key, value in qubix_login_old_config.get('appearance', {}).items() if key not in ['scheme', 'theme_mode', 'corner_radius_scale', 'palette', 'wallpaper', 'wallpapers'] and not (qubix_profile_resolved.login.get('compact', false) and key in ['hide_logo', 'scheme_selector_position', 'password_style']) %}
 {{ key | to_json }} = {{ value | to_json }}
 {% endfor %}
-{% if 'hide_logo' not in qubix_login_old_config.get('appearance', {}) %}
+{% if qubix_profile_resolved.login.get('compact', false) %}
+hide_logo = true
+scheme_selector_position = "hidden"
+password_style = "default"
+{% elif 'hide_logo' not in qubix_login_old_config.get('appearance', {}) %}
 "hide_logo" = true
 {% endif %}
 scheme = "Synced"
 theme_mode = "dark"
-corner_radius_scale = 1.35
+corner_radius_scale = {{ 1.0 if qubix_profile_resolved.login.get('compact', false) else 1.35 }}
 
 [appearance.palette]
 {% for key, value in qubix_login_palette.items() %}

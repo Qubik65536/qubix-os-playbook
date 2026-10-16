@@ -1,6 +1,16 @@
 # Project status
 
 Updated: 2026-10-16. Stage: **MVP candidate; acceptance In Progress**.
+Compact login, fingerprint setup and QubixOS captions **Implemented; controller/native simulated
+adapter/rendering Tested; deployment In Progress**. The [refinement evidence](ui-test-results.md)
+contains eight sanitized reference/custom captures. Private pinned UI clients preserve package
+binaries, system identity and authentication code; checksum-bound provenance prevents stale reuse
+after native updates. The graphical enrollment application uses ordinary GJS/GTK 4 and fprintd,
+with explicit start/test/cancel and no PAM/Polkit changes. Display-only Limine naming is separately
+bounded to the OS menu title and native generator target. Actual scans/login and renamed-menu
+boot appearance remain separate operator gates. The target has returned in greetd/Niri after the
+operator's intervening reboot; Qubix has not rebooted or restarted its manager in this task.
+
 Noctalia Greeter **Implemented; fixtures/native rendering/installation/reapplication Tested;
 operator-approved next-boot selection verified; physical login pending**. CachyOS
 Greeter 1.6.0-1 and greetd 0.10.3-2.1 install alongside active SDDM; the separate package playbook

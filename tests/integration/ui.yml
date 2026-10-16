@@ -1,0 +1,133 @@
+---
+- name: Compare compact login and fingerprint interfaces in an isolated native session
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  roles:
+    - qubix_profile
+    - qubix_discovery
+  tasks:
+    - name: Require an actual isolated preview of the selected optional interfaces
+      ansible.builtin.assert:
+        that:
+          - not ansible_check_mode
+          - qubix_profile_resolved.niri.fingerprint_setup
+          - qubix_ui_preview_fingerprint_only | default(false) or qubix_profile_resolved.niri.presentation == 'qubix'
+          - qubix_ui_preview_fingerprint_only | default(false) or qubix_profile_resolved.login.compact
+
+    - name: Prepare production resources without activating them
+      ansible.builtin.include_tasks: ../../playbooks/tasks/plan.yml
+
+    - name: Read pinned presentation paths for isolated rendering
+      ansible.builtin.include_vars:
+        file: ../../assets/ui/manifest.yml
+        name: qubix_ui_preview_sources
+
+    - name: Create a private temporary native-preview root
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: qubix-ui-preview.
+      register: qubix_ui_preview_root
+
+    - name: Exercise isolated preview with guaranteed cleanup
+      block:
+        - name: Create private candidate directories
+          ansible.builtin.file:
+            path: '{{ qubix_ui_preview_root.path }}/{{ item }}'
+            state: directory
+            mode: '0700'
+          loop: [config/noctalia/palettes, fingerprint]
+
+        - name: Write the exact fingerprint application to the private directory
+          ansible.builtin.copy:
+            src: '../../roles/qubix_niri/files/fingerprint/{{ item }}'
+            dest: '{{ qubix_ui_preview_root.path }}/fingerprint/{{ item }}'
+            mode: '0600'
+          loop: [controller.js, fprintd.js, main.js, style.css, fingerprint.svg]
+
+        - name: Copy production candidates and isolated test helper
+          ansible.builtin.copy:
+            dest: '{{ qubix_ui_preview_root.path }}/{{ item.name }}'
+            content: '{{ item.content }}'
+            mode: '0600'
+          loop:
+            - {name: candidate.toml, content: '{{ qubix_login_candidate | default("") }}'}
+            - {name: before.toml, content: '{{ qubix_login_old_bytes.content | default("") | b64decode }}'}
+            - name: selection.json
+              content: '{{ (["fingerprint"] if qubix_ui_preview_fingerprint_only | default(false)
+                else ["fingerprint", "greeter", "shell"]) | to_json }}'
+            - name: config/noctalia/config.toml
+              content: >-
+                {{ (qubix_niri_resources | selectattr('path', 'equalto', '/etc/qubix/noctalia/config.toml')
+                | first).content }}
+            - name: config/noctalia/palettes/Qubix.json
+              content: >-
+                {{ (qubix_niri_resources | selectattr('path', 'equalto', '/etc/qubix/noctalia/palettes/Qubix.json')
+                | first).content }}
+            - name: binaries.json
+              content: >-
+                {{ dict(noctalia='/var/cache/qubix-ui/' ~ qubix_ui_preview_sources.noctalia.patch_sha256 ~ '/noctalia',
+                greeter='/var/cache/qubix-ui/' ~ qubix_ui_preview_sources.greeter.patch_sha256 ~
+                '/noctalia-greeter') | to_json }}
+            - name: preview.py
+              content: '{{ lookup("file", playbook_dir ~ "/files/ui-preview.py") }}'
+            - name: adapter.js
+              content: '{{ lookup("file", playbook_dir ~ "/files/fprintd-adapter.js") }}'
+            - name: private-bus.conf
+              content: >-
+                <busconfig><type>session</type><listen>unix:tmpdir=/tmp</listen>
+                <policy context="default"><allow send_destination="*"/>
+                <allow receive_sender="*"/><allow own="*"/></policy></busconfig>
+          loop_control:
+            label: '{{ item.name }}'
+
+        - name: Test the production GJS adapter only on a private fake fprintd bus
+          ansible.builtin.command:
+            expand_argument_vars: false
+            argv:
+              - /usr/bin/dbus-run-session
+              - --config-file
+              - '{{ qubix_ui_preview_root.path }}/private-bus.conf'
+              - --
+              - /usr/bin/sh
+              - -c
+              - 'export DBUS_SYSTEM_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS"; exec /usr/bin/gjs -m "$1" "$2"'
+              - --
+              - '{{ qubix_ui_preview_root.path }}/adapter.js'
+              - '{{ qubix_ui_preview_root.path }}/fingerprint'
+          changed_when: false
+          environment:
+            GIO_USE_VFS: local
+          timeout: 60
+          register: qubix_ui_adapter_test
+
+        - name: Capture reference and refined native interfaces with no biometric actions
+          ansible.builtin.command:
+            argv: [/usr/bin/python3, '{{ qubix_ui_preview_root.path }}/preview.py', '{{ qubix_ui_preview_root.path }}']
+          changed_when: true # Opens and closes only a private nested preview window.
+          timeout: 240
+          register: qubix_ui_preview_result
+
+        - name: Report measured rendering and preservation results
+          ansible.builtin.debug:
+            msg: '{{ qubix_ui_preview_result.stdout | from_json }}'
+      always:
+        - name: Find sanitized evidence before removing the private session
+          ansible.builtin.find:
+            paths: '{{ qubix_ui_preview_root.path }}'
+            patterns: ['*.png', '*.log', '*result.json']
+          register: qubix_ui_preview_artifacts
+
+        - name: Fetch available screenshots and native diagnostics
+          ansible.builtin.fetch:
+            src: '{{ item.path }}'
+            dest: '{{ playbook_dir }}/../../.cache/native-ui/{{ inventory_hostname }}/'
+            flat: true
+          loop: '{{ qubix_ui_preview_artifacts.files }}'
+          loop_control:
+            label: '{{ item.path | basename }}'
+
+        - name: Remove only the private preview root
+          ansible.builtin.file:
+            path: '{{ qubix_ui_preview_root.path }}'
+            state: absent

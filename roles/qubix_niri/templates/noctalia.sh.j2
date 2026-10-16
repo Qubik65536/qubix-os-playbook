@@ -24,4 +24,12 @@ export NOCTALIA_CONFIG_HOME=/etc/qubix
 export NOCTALIA_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}/qubix"
 export NOCTALIA_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/qubix"
 export TERMINAL=/usr/bin/foot
-exec /usr/bin/noctalia "$@"
+qubix_shell_binary='{{ "/usr/share/qubix/bin/noctalia" if (qubix_profile_resolved.niri | default({})).get("presentation", "native") == "qubix" else "/usr/bin/noctalia" }}'
+if [[ "$qubix_shell_binary" == /usr/share/qubix/bin/noctalia ]]; then
+  qubix_native_sha256='{{ qubix_niri_ui_native_sha256 | default("") }}'
+  if ! printf '%s  /usr/bin/noctalia\n' "$qubix_native_sha256" | /usr/bin/sha256sum --check --status; then
+    printf '%s\n' 'QubixOS captions need a matching rebuild; using updated native Noctalia.' >&2
+    qubix_shell_binary=/usr/bin/noctalia
+  fi
+fi
+exec "$qubix_shell_binary" "$@"

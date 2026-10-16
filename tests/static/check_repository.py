@@ -102,6 +102,14 @@ def main():
     for mode in ('boot-up', 'shutdown', 'reboot'):
         assert not native[mode].getboolean('UseFirmwareBackground') and not native[mode].getboolean('UseEndAnimation')
     desktop = ROOT / 'roles/qubix_niri/templates'
+    ui_sources = load('assets/ui/manifest.yml')
+    for component, spec in ui_sources.items():
+        patch = (ROOT / 'assets/ui' / f'{component}.patch').read_bytes()
+        assert hashlib.sha256(patch).hexdigest() == spec['patch_sha256'], 'UI patch checksum mismatch'
+        paths = set(re.findall(r'^\+\+\+ b/(.+)$', patch.decode(), re.M))
+        expected_paths = ({'src/shell/launcher/launcher_panel.cpp', 'src/shell/control_center/tabs/home_tab.cpp'}
+                          if component == 'noctalia' else {'src/ui/style.h', 'src/greeter/greeter_surface.cpp'})
+        assert paths == expected_paths, 'UI patch touches an unreviewed source area'
     shell = tomllib.loads((desktop / 'noctalia.toml.j2').read_text())
     assert not shell['theme']['templates']['enable_builtin_templates']
     assert not shell['theme']['templates']['enable_community_templates']

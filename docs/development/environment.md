@@ -2,6 +2,9 @@
 
 Status: **Implemented controller setup**. Requires jq on PATH for output-default fixtures and Python 3.12+ for the pinned Ansible controller. Target Python support follows the pinned ansible-core requirements. No Python application is deployed.
 
+Fingerprint controller fixtures require Node.js 20+ on the controller (`node --test`). The
+target application uses GJS/GTK 4 and fprintd; Node is never installed on a target by Qubix.
+
 From the repository root, create local tooling using uv (if installed):
 
 ```bash

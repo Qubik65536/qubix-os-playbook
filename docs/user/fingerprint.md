@@ -1,6 +1,27 @@
 # Fingerprint setup on CachyOS
 
-Status: **Guide Implemented; enrollment and real authentication require the operator**.
+Status: **Application and guide Implemented; controller/native simulated tests Tested;
+physical enrollment and authentication require the operator**.
+
+## Graphical enrollment
+
+The optional **Fingerprint setup** application provides compact finger selection, saved-finger
+indicators, scan progress, retry guidance, cancellation and a separate **Test reader** action.
+Install native `gjs`, `gtk4` and `fprintd` first, then set `qubix.niri.fingerprint_setup: true`
+in your deployment configuration. Open **Fingerprint setup** through Super+Space in your active
+local desktop session. Opening the window only discovers the reader and lists saved fingers;
+**Start enrollment** begins the scan and may trigger the native authorization prompt.
+
+Choose an unused finger, follow the reader's prompts and test it after saving. Existing fingers
+offer testing instead of replacement. The application has no delete action and never changes PAM,
+Polkit or password policy. Closing or cancelling stops/releases the reader; a scan that completed
+just before cancellation can remain saved. Reader tests establish matching, separately from actual
+lockscreen/greeter login and password fallback. Continue with the service setup below.
+
+`gjs -m /usr/share/qubix/fingerprint/main.js --preview` renders clearly labelled simulated scans
+without connecting to the system bus. It cannot enroll or verify a real fingerprint. The
+[feature contract](../architecture/login-refinement.md) defines lifecycle and acceptance boundaries.
+
 The playbook preserves PAM and fingerprints. Run enrollment at the laptop in your own logged-in
 desktop or TTY, with a working password and a separate recovery shell available.
 
