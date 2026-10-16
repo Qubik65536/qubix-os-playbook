@@ -75,7 +75,7 @@ A button click starts a visible five-second countdown; clicking it again cancels
 another starts a fresh countdown. Mixing mouse and held-key input cancels the current action.
 Escape, Cancel, outside click, panel replacement/close and reopen clear all pending state.
 
-Native-style visual refinement: **Implemented; behavior fixtures and native comparison Tested; installation pending**. Match Noctalia 5.2's default session layout:
+Native-style visual refinement: **Implemented; behavior fixtures, native comparison, installation and zero-change reapplication Tested; physical input pending**. Match Noctalia 5.2's default session layout:
 one horizontal row of five 152-by-112 logical-pixel tiles, 12 px gaps, 28 px icons above centred
 labels and small number badges at the upper right. Use the existing palette, approximately 12 px
 tile radii and attached/auto placement. Remove the large heading and stacked full-width buttons.
@@ -86,6 +86,15 @@ native/guarded menu comparisons without clipping, and preservation of the parent
 Record installation/reload and physical input separately from the visual preview.
 The [native session implementation](https://github.com/noctalia-dev/noctalia/blob/v5.2.1/src/shell/session/session_panel.cpp)
 and its versioned header supply the layout reference. See the [comparison evidence](../project/desktop-test-results.md#native-style-power-menu).
+
+Activation constraint (Noctalia 5.2.1): `config-reload` can refresh Luau content while retaining
+registered panel dimensions/placement from the previous manifest. A correct isolated preview and
+installed files do not prove live geometry. This manifest upgrade requires a Noctalia-only restart
+through the Qubix launcher, retaining the existing session environment and the original caller's
+GSettings backend before the launcher reapplies its memory backend. Preserve Niri, application
+windows and GUI configuration; expect the shell PID to change. Do not toggle plugins through GUI
+settings merely to refresh geometry. Capture the live menu after activation; future session startup
+reads the new manifest normally. See the [actual activation evidence](../project/desktop-test-results.md#native-style-power-menu).
 
 Super+X, the bar power button and the pinned Power options entry open this panel. It uses the
 existing declarative UI runtime, captured press/release events and frame ticks (plugin API 26),

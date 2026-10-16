@@ -229,7 +229,34 @@ Both the revised panel and original native session panel were captured and inspe
 private session. Tile geometry, borders, glyphs and badges match closely; labels/footer are legible
 and controls are not clipped. The guarded panel retains five entries with lock actions disabled;
 the original hides disabled lock entries and therefore shows three in this test. Neither menu
-executes a power action. Installation/reload and physical input acceptance remain pending.
+executes a power action. Physical input acceptance remains pending.
+
+Clean f1a28b1 desktop-only deployment preview passes 323 tasks with two proposed changes. Its
+post-preview audit matches the pre-preview protected/recovery/state snapshot exactly. Installation
+passes 407 tasks/five changes; installed verification passes 63 tasks/zero changes; identical
+reapplication passes 407 tasks/zero changes. Only the power plugin presenter and manifest are updated,
+along with their two applied receipts and the normal deployment revision state.
+
+Live config-reload returns ok but preserves the old 500-by-500 floating panel registration: the
+new horizontal content is clipped. That first live capture fails visual acceptance. Noctalia's
+versioned [plugin manager](https://github.com/noctalia-dev/noctalia/blob/v5.2.1/src/scripting/plugin_manager.cpp)
+short-circuits registry refresh when plugin configuration is unchanged;
+updating a local-path source is also a no-op. Restarting only Noctalia through the Qubix launcher
+loads the 836-by-184 attached panel correctly. The original launcher caller's GSettings backend is
+restored before relaunch, so its memory backend is not mistaken for an application preference.
+The corrected live screenshot is inspected: all five tiles, number badges, centred icons and
+the compact hint/Cancel footer are visible without clipping. No plugin enable/disable GUI override
+is introduced, and no service unit or login/boot change is made.
+
+Noctalia changes from PID 1764 to 60872; Niri PID 1698, application window IDs/PIDs, boot ID,
+GUI-state hash and eDP-1's 1920x1080/100% settings remain unchanged. All 76 protected native/personal
+resources, 92 baseline manifests and five original backups remain unchanged; only the two intended
+receipts change, with no new recovery records. The final audit matches the post-install snapshot
+exactly. Pending markers are absent and state records clean f1a28b1/files-verified with graphical
+and boot flags still false. The temporary sudo password file and test-created remote screenshots
+are removed. A power panel open at final inspection is left untouched.
 
 Evidence is ignored under .cache/tests/power-native-style-*.log and
-.cache/native-desktop/qubix-test/power-menu.png plus power-menu-native.png.
+.cache/native-desktop/qubix-test/power-menu.png plus power-menu-native.png. Deployment evidence is
+under .cache/tests/power-native-style-*.log, .cache/tests/power-style-*.log and
+.cache/power-style-*.json; the accepted live screenshot is .cache/power-style-live-final.png.

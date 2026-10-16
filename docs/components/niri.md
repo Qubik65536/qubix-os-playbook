@@ -18,6 +18,10 @@ Each visible bar widget has its own compact rounded module; the dock reserves no
 
 Select **Qubix Niri** at login. From a free TTY after logout, niri --session --config /etc/niri/qubix/config.kdl is the alternate entrypoint. The explicit configuration does not inherit personal Niri settings. An existing session can reload its window/shortcut settings, but startup commands do not switch the running companion stack; logout and session selection activate Noctalia.
 
+Noctalia 5.2.1 can retain old plugin geometry after config-reload. Manifest size/placement upgrades
+use the [shell-only activation procedure and preservation constraints](../architecture/desktop-design.md#power-action-countdown);
+inspect the live panel rather than treating installed bytes or successful reload as visual acceptance.
+
 ## Verification, recovery and limits
 
 The native grammar workflow validates production candidates and rejects invalid controls in its private temporary directory. The nested workflow renders these definitions with temporary path substitutions, private D-Bus and test-only state overrides. It measures the main Niri process even when SDDM launches it directly rather than through niri.service, preserving its PID and session endpoints. It does not prove physical shortcuts, authentication, lock/unlock or portal behaviour.

@@ -1,11 +1,17 @@
 # Project status
 
 Updated: 2026-10-16. Stage: **MVP candidate; acceptance In Progress**.
-Native-style power-menu refinement **Implemented; controller behavior, desktop ownership and native
-comparison Tested; deployment pending**. Match the original horizontal icon tiles, number badges
+Native-style power-menu refinement **Implemented; controller behavior, native comparison,
+installation and zero-change reapplication Tested**. Match the original horizontal icon tiles, number badges
 and attached placement, retaining the confirmation behavior below. The native preview passes
 63 tasks/eight temporary changes, and the ownership fixture passes 69 tasks with zero changes and
-seven expected refusals. See the [comparison evidence](desktop-test-results.md#native-style-power-menu).
+seven expected refusals. Clean f1a28b1 preview proposes two changes; installation passes 407 tasks/five
+changes, installed verification 63 tasks/zero changes and reapplication 407 tasks/zero changes.
+Live inspection catches cached old geometry after config-reload; a Noctalia-only restart activates
+the correct row. Niri/application windows, GUI state, display settings, all 76 protected resources
+and all 92 recovery manifests/five original backups remain unchanged. Only two applied receipts
+change; no pending markers remain and the temporary sudo credential is removed.
+See the [comparison and activation evidence](desktop-test-results.md#native-style-power-menu).
 
 Power confirmation **Implemented; native validation/rendering, deployment and reload Tested**: the
 [Qubix power panel](../architecture/desktop-design.md#power-action-countdown) requires a three-second

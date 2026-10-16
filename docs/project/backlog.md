@@ -36,10 +36,11 @@ Scope and acceptance are in the [power confirmation contract](../architecture/de
 Next: operator checks of early-release/Escape and click cancellation, followed by newer-resource recovery acceptance.
 The Control Center's separate native menu retains tap-based countdown semantics.
 
-Native-style refinement: Implemented; behavior/ownership checks and final native comparison Tested;
-installation pending. Match the original horizontal icon tiles, badge
-styling and attached placement while preserving confirmation. Inspect both captured menus before
-activation, then verify installed bytes, reload and unchanged reapplication.
+Native-style refinement: Implemented; behavior/ownership checks, native comparison, installation
+and zero-change reapplication from clean f1a28b1 Tested. A Noctalia-only restart is required to refresh
+cached manifest geometry; the live row is inspected with Niri/apps and GUI state preserved.
+See the [activation evidence](desktop-test-results.md#native-style-power-menu). Next: physical
+early-release/click/Escape acceptance and newer-resource recovery; keep the current native tile layout.
 
 ## F04 — Shell/terminal defaults (Feature)
 
