@@ -78,13 +78,14 @@ Objective: brand supported active manager without changing authentication/sessio
 
 ### F05a — Compact login, fingerprint enrollment and display names (Feature)
 
-Status: Implemented; controller/provenance fixtures and native simulated rendering Tested;
-installation/activation In Progress. The [contract](../architecture/login-refinement.md) owns
+Status: Implemented; controller/provenance fixtures, native simulated rendering, installation,
+zero-change reapplication and desktop-caption activation Tested. The [contract](../architecture/login-refinement.md) owns
 responsibilities/acceptance; [comparison evidence](ui-test-results.md) records actual checks.
 Provide a GTK/fprintd enrollment application, smaller steel-blue greeter and explicit QubixOS
 launcher/Control Center/Limine OS captions. Preserve native packages, authentication, identity,
-boot IDs and payloads. Next: finish installed/reapplication/preservation checks and shell-only
-caption activation; operator enrollment/test, password fallback, future compact-greeter startup
+boot IDs and payloads. Clean `fc721e1` installation/verification/reapplication and live process
+activation pass. Native byte checks establish the bounded menu change from `14a0339`.
+Next: operator enrollment/test, password fallback, future compact-greeter startup
 and renamed-menu console acceptance remain open.
 
 ## F06 — Revision state and recovery (Feature)

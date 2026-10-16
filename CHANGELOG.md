@@ -13,6 +13,9 @@ Changes are grouped by release. Bootstrap has no release tag.
   Physical scans, authentication and future greeter/menu appearance remain separate acceptance gates.
   Reuse the boot adapter's native enrollment-policy check for display-only menu changes, refusing
   enrolled/ambiguous EFI configuration before writing labels or persistent targets.
+  Clean fc721e1 installation, installed verification, zero-change reapplication and a session-preserving
+  Noctalia-only restart pass. The title-only menu change is installed from 14a0339; physical compact
+  greeter/menu appearance and biometric login remain operator gates.
 
 - Added Noctalia Greeter 1.6.x appearance preparation with the shared Qubix palette and cube wallpaper,
   preserved input/output/auth/session/sync settings and drift-safe file recovery. A separate native

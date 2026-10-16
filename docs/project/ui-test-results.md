@@ -1,11 +1,12 @@
 # Compact UI and fingerprint setup evidence
 
-Status: **Implemented; controller, source build, native simulated adapter and UI rendering Tested;
-installation/activation In Progress**. Contract: [compact login and enrollment](../architecture/login-refinement.md).
+Status: **Implemented; controller, source build, native simulated adapter/UI, installation,
+zero-change reapplication and desktop-caption activation Tested; physical authentication/boot pending**.
+Contract: [compact login and enrollment](../architecture/login-refinement.md).
 
 ## Source and environment
 
-Qubix candidate based on `3ca8049`; this change contains the exact application, configuration,
+Qubix UI revision `fc721e1`, based on `3ca8049`; this change contains the exact application, configuration,
 source patches and comparison images. Native CachyOS Niri target, Noctalia package 5.3.0-1.1,
 Greeter 1.6.0-1, fprintd 1.94.5, GJS/GTK 4. Native source variants use released Noctalia
 `v5.3.0` and Greeter `v1.6.0`; exact archive and patch SHA256 are in the
@@ -58,8 +59,11 @@ login, fingerprint authentication or boot acceptance.
 | Control Center Home | [Native version line](../assets/ui/control-center-native.png) | [Private Qubix version line](../assets/ui/control-center-qubix.png): **QubixOS (Noctalia v5.3.0)**. The packaged native build's revision suffix differs from the released-source build; no system identity is rewritten. |
 
 Limine's OS-title change is a bounded text edit, separately from its existing graphical theme.
-The fixture passes 207 normal/85 global check-mode tasks, with 22/ten temporary changes and four
-expected refusals in each. It compares every byte outside that title, exercises persistent `TARGET_OS_NAME`,
+The initial fixture passes 207 normal/85 global check-mode tasks. The shared native-enrollment
+guard in `14a0339` passes 236/108 tasks, with 23/eleven temporary changes and five expected refusals
+in each. The unchanged full graphical adapter passes 726 tasks/45 temporary changes and eight
+refusals after extracting that shared guard. The menu fixture compares every byte outside the title,
+exercises persistent `TARGET_OS_NAME`,
 reapplication and exact original restoration. Console appearance of the renamed menu remains
 pending the operator's next boot; no synthetic screenshot is presented as a live boot capture.
 
@@ -77,3 +81,41 @@ acceptance remain operator gates.
 
 The no-write production deployment preview passes 612 tasks with fourteen proposed files and zero
 failures. No source/staged initramfs or bootloader resource is selected in this desktop/login run.
+
+## Installed and live results
+
+Clean `fc721e1` installation passes 779 tasks/44 changes, including fourteen resource changes and
+their backup/receipt/state work. Installed verification passes 131 tasks/zero changes. Identical-source
+reapplication from a clean detached `fc721e1` checkout passes 764 tasks/zero changes, including the
+deployment manifest; no image/font-cache rebuild is selected. The protected manifest remains
+`files-verified`, clean revision `fc721e1`, with aggregate session/boot flags false.
+
+A guarded Noctalia-only restart passes seven tasks, preserving Niri PID 1136, all application-window
+IDs/PIDs, the original GSettings caller backend and four personal setting hashes. The running shell
+changes from native PID 1200 to private-client PID 47126; `/proc/47126/exe` resolves to the installed
+Qubix client, its bar is visible and the session remains unlocked. No greetd/SDDM/Niri restart runs.
+Native private rendering establishes the displayed captions separately from these live process checks.
+
+The bounded menu task from `14a0339` passes 91 tasks/six changes, installing only the title and native
+target setting plus protected recovery records. Exact native inspection confirms that replacing
+`/+QubixOS` with `/+CachyOS` returns the pre-install config SHA256;
+removing the one added `TARGET_OS_NAME` line returns the original defaults SHA256. Kernel paths,
+pins, arguments, ordering, default and snapshot bytes are identical. No generator or reboot runs.
+Its native reapplication passes 89 tasks/zero changes.
+
+Installed Greeter TOML parses with sixteen exact desktop palette roles, compact decoration settings
+and the original cube wallpaper. Replacing just its wrapper command returns the original greetd
+configuration SHA256. Both native client checksums still match build provenance. greetd remains
+active, SDDM inactive and boot ID unchanged. The compact client awaits a future greetd start; a
+normal future reboot can establish its physical login and renamed-menu appearance. Real enrollment,
+reader matching, lockscreen/greeter authentication and password fallback still require the operator.
+
+The final preservation audit finds 81 of 85 protected resources unchanged. The four intentional
+differences are the greeter appearance, its launcher command, Limine OS title and native target
+setting; exact normalization checks above prove the two configuration edits' narrow scope.
+All earlier recovery originals/metadata remain intact: 190 of 193 earlier recovery files are
+unchanged and only three applied receipts refresh. There are now 221 recovery files. Boot ID,
+native default shell, retired-session backup, native executables, PAM, identity and personal
+settings remain preserved; pending markers are absent. The temporary exact-source checkout and
+activation helpers are removed. The operator's pre-existing sudo credential file remains private
+and is not removed or committed by this task.

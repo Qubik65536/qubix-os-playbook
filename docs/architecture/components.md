@@ -37,3 +37,9 @@ flowchart LR
 Bootloader and Plymouth are independent selections. Neither gates the first desktop milestone. Components report installation, syntax validation, session validation, and boot validation separately. A disabled component performs no writes. Unsupported enabled components fail before any component writes.
 
 Detailed contracts: [branding](../components/branding.md), [Niri](../components/niri.md), [bootloader](../components/bootloader.md), [Plymouth](../components/plymouth.md), [shell](../components/shell.md), [login](../components/login.md), and [remaining components](../components/remaining.md).
+
+Optional fingerprint enrollment and private UI clients belong to the existing Niri/login components;
+[their contract](login-refinement.md) defines exact dependencies and ownership. Separate explicit
+preparation playbooks install native prerequisites; general package/system automation remains Planned.
+Display-only Limine naming preserves boot payloads and uses the existing baseline engine plus the
+native enrollment-policy guard. It does not enable boot/image components during a UI deployment.

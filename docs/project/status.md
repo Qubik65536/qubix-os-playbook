@@ -2,7 +2,8 @@
 
 Updated: 2026-10-16. Stage: **MVP candidate; acceptance In Progress**.
 Compact login, fingerprint setup and QubixOS captions **Implemented; controller/native simulated
-adapter/rendering Tested; deployment In Progress**. The [refinement evidence](ui-test-results.md)
+adapter/rendering, installation, zero-change reapplication and desktop-caption activation Tested**.
+The [refinement evidence](ui-test-results.md)
 contains eight sanitized reference/custom captures. Private pinned UI clients preserve package
 binaries, system identity and authentication code; checksum-bound provenance prevents stale reuse
 after native updates. The graphical enrollment application uses ordinary GJS/GTK 4 and fprintd,
@@ -10,6 +11,15 @@ with explicit start/test/cancel and no PAM/Polkit changes. Display-only Limine n
 bounded to the OS menu title and native generator target. Actual scans/login and renamed-menu
 boot appearance remain separate operator gates. The target has returned in greetd/Niri after the
 operator's intervening reboot; Qubix has not rebooted or restarted its manager in this task.
+Clean `fc721e1` installation passes 779 tasks/44 changes, installed verification 131 tasks/zero changes
+and identical-source reapplication 764 tasks/zero changes. A shell-only restart activates private
+Noctalia PID 47126 while preserving Niri PID 1136, applications and GUI state. The `14a0339` menu
+task passes 91 tasks/six changes; exact native checks prove title-only and command-only differences,
+native binaries preserved and unchanged boot ID. Physical compact-greeter and menu appearance await
+a future operator reboot; enrollment and password fallback remain manual acceptance gates.
+Menu reapplication passes 89 tasks/zero changes. The final audit preserves 81 of 85 protected
+resources, with only the four documented UI/title changes; all earlier originals/metadata remain
+intact, three receipts refresh and 221 recovery files remain. Pending markers are absent.
 
 Noctalia Greeter **Implemented; fixtures/native rendering/installation/reapplication Tested;
 operator-approved next-boot selection verified; physical login pending**. CachyOS
@@ -140,7 +150,7 @@ pass 752/232 tasks. These fixture results remain separate from native reboot and
 | Branding | Native install, exact resources, original preservation, reapplication and earlier restoration Tested |
 | Niri/Noctalia | Native grammar, private rendering, primary startup/reload and 100% output scale Tested; physical interaction/recovery acceptance open |
 | Shell/terminal | Native temporary-home Bash/Starship checks pass; personal files and default Fish preserved |
-| Login | Noctalia Greeter theme/UI/install/reapplication Tested; next-boot greetd selected with consent, current SDDM active; physical authentication/restore pending |
+| Login | greetd now active after operator reboot; compact client installed/selected for a future service start; simulated enrollment/UI/install/reapplication Tested; physical authentication/restore pending |
 | GRUB | Preservation/dispatch/reapplication/recovery fixtures Tested; independent native boot/restore pending |
 | Limine | Refined graphical fixture passes 726 tasks/eight expected refusals; native normal-kernel reboot and protected entry/argument/snapshot bytes verified; earlier appearance confirmed, current contrast acceptance pending |
 | Plymouth | Early graphics repair deployed from 0324e27; exact four-image/font/DRM/pin checks, preservation and unchanged reapplication pass; operator confirms repaired startup and desktop return; poweroff/LTS/recovery remain open |

@@ -6,6 +6,7 @@ Status: **Candidate adapters Implemented; fixtures Tested; native desktop file l
 |---|---|---|
 | CachyOS Niri | Exact ID=cachyos, Linux/systemd/Pacman/Niri; measured Foot/jq and standalone Noctalia >=5.2.0 and <6.0.0 | Main-session keys/default shell/portals/Polkit/lock/unlock |
 | Login | Active SDDM/Breeze, or Noctalia Greeter 1.6.x with explicit greetd preparation/existing mode | Native client preview Tested; greetd authentication/DRM/sessions/restore gates separate |
+| Optional UI refinements | Private Noctalia 5.3.0/Greeter 1.6.0 with exact source/native/artifact provenance; GJS/GTK 4/fprintd for enrollment | Native simulated UI Tested; physical enrollment/login and compact-greeter boot pending |
 | GRUB | Confirmed /boot/grub[2]/grub.cfg sourcing custom.cfg; native checker/tools | Checker/menu/original-entry boot/restore |
 | Limine | Confirmed regular limine.conf under /boot or /efi, observed major 8–12 | Menu/original-entry boot/restore |
 | dracut | Plymouth/two-step plugin/lsinitrd, existing splash token, confirmed plain images/kernel mapping | Generation/archive/splash/unlock/restore |
@@ -15,7 +16,9 @@ Status: **Candidate adapters Implemented; fixtures Tested; native desktop file l
 UKIs/signing and complex/alternate mkinitcpio outputs are unsupported. Other login combinations
 preserve login and reject enabled appearance; the Qubix desktop can use a free TTY.
 The [Noctalia Greeter contract](../components/login.md) describes inactive preparation and
-already-active greetd appearance; neither switches display managers or modifies PAM.
+already-active greetd appearance; neither switches display managers or modifies PAM. Optional compact
+mode selects a private UI client through a backed-up wrapper command; see the
+[refinement contract](login-refinement.md).
 
 The Plymouth picture background requires native two-step support for background.png and
 ScaleBackgroundImage. Real-host preflight checks both capabilities in the installed plugin before
@@ -32,8 +35,9 @@ Probe failures stay errors, not absence. Record combinations here only after [VM
 
 Current login follow-up (2026-10-16): the target now has Noctalia 5.3.0-1.1, Noctalia Greeter
 1.6.0-1 and greetd 0.10.3-2.1. Native client rendering, file installation and zero-change
-reapplication pass. The operator selects greetd for the next boot while the current SDDM desktop
-stays active; physical password/fingerprint login and recovery remain pending. The earlier
+reapplication pass. The operator's subsequent reboot returns in greetd/Niri. The private compact
+client is selected for a future greetd start and QubixOS desktop captions are active; physical
+compact-client password/fingerprint login and recovery remain pending. The earlier
 5.2.1/login-disabled observation below is historical. See [login evidence](../project/login-test-results.md).
 
 A stock CachyOS target may mount /boot mode 0700. Ordinary discovery must fail permission errors instead of treating inaccessible configuration as absent. An explicit boolean operator variable, qubix_discovery_privileged (default false), permits only candidate-path metadata probes to use sudo. Enabled bootloader/Plymouth components also require this read access during discovery. This never authorizes loader installation, activation or image generation.

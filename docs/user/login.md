@@ -120,10 +120,11 @@ sudo install -o root -g root -m 0644 /var/lib/qubix/login-transition-b08727c/con
 sudo systemctl enable sddm.service
 ```
 
-These commands restore future startup selection; they do not stop an active desktop. The current
-selection is greetd enabled/SDDM disabled, with SDDM still active until the operator reboots.
-The ready local override is `config/login.local.yml`; change `activation` to `existing` after
-greetd is actually running. Actual password/fingerprint login still requires console acceptance.
+These commands restore future startup selection; they do not stop an active desktop. The initial
+selection was greetd enabled/SDDM disabled while SDDM stayed active. The operator subsequently
+rebooted; greetd is now active. Use `activation: existing` for that state. The later refinement
+override is `config/ui.local.yml`; the earlier `config/login.local.yml` records inactive preparation.
+Actual compact-greeter password/fingerprint login still requires console acceptance.
 
 ## Names in Noctalia and Limine
 

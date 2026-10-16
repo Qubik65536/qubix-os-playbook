@@ -1,6 +1,7 @@
 # Compact login and enrollment
 
-Status: **Implemented; controller and native isolated rendering Tested; deployment In Progress**.
+Status: **Implemented; controller, native isolated rendering, installation, zero-change reapplication
+and desktop-caption activation Tested; physical fingerprint/login/boot acceptance pending**.
 See [evidence and comparisons](../project/ui-test-results.md). Focused task: provide a compact fingerprint enrollment window,
 reduce the greeter's visual weight and show **QubixOS** in the launcher, Control Center
 and the selected Limine operating-system menu. This explicitly requested display naming
