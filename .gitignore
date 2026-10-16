@@ -5,4 +5,5 @@ __pycache__/
 *.retry
 .DS_Store
 config/local.yml
+config/*.local.yml
 inventory/*.local.ini

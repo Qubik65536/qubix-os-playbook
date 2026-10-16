@@ -30,6 +30,12 @@ Probe failures stay errors, not absence. Record combinations here only after [VM
 
 ## Protected discovery metadata
 
+Current login follow-up (2026-10-16): the target now has Noctalia 5.3.0-1.1, Noctalia Greeter
+1.6.0-1 and greetd 0.10.3-2.1. Native client rendering, file installation and zero-change
+reapplication pass. The operator selects greetd for the next boot while the current SDDM desktop
+stays active; physical password/fingerprint login and recovery remain pending. The earlier
+5.2.1/login-disabled observation below is historical. See [login evidence](../project/login-test-results.md).
+
 A stock CachyOS target may mount /boot mode 0700. Ordinary discovery must fail permission errors instead of treating inaccessible configuration as absent. An explicit boolean operator variable, qubix_discovery_privileged (default false), permits only candidate-path metadata probes to use sudo. Enabled bootloader/Plymouth components also require this read access during discovery. This never authorizes loader installation, activation or image generation.
 
 Use a typed extra variable with --ask-become-pass for privileged inspection. All other discovery probes remain ordinary user reads. Native acceptance requires zero reported changes and accurate candidate evidence on a real protected /boot target.

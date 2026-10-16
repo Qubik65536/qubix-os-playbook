@@ -83,6 +83,15 @@
             - {path: /etc/greetd/config.toml, content: '{{ qubix_test_greetd_input }}'}
           check_mode: false
 
+        - name: Seed no-effect native-unit evidence
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/usr/bin/systemctl'
+            content: |
+              #!/bin/sh
+              printf '%s\n' 'ExecStart={ argv[]=/usr/bin/greetd ; }' 'DropInPaths=' 'Environment='
+            mode: '0755'
+          check_mode: false
+
         - name: Prepare production appearance from inactive greetd
           ansible.builtin.include_role:
             name: qubix_login
@@ -197,6 +206,42 @@
         - name: Return to inactive preparation
           ansible.builtin.set_fact:
             qubix_discovery_report: {evidence: {display_manager: {active_units: [sddm]}}}
+
+        - name: Seed a legacy configuration with higher native precedence
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/etc/greetd/greetd.conf'
+            content: '{{ qubix_test_greetd_input }}'
+            mode: '0600'
+          check_mode: false
+
+        - name: Require configuration-source ambiguity refusal
+          ansible.builtin.include_tasks: ../tasks/greeter-rejection.yml
+          vars:
+            qubix_test_greeter_diagnostic: 'takes precedence'
+
+        - name: Remove only fixture legacy configuration
+          ansible.builtin.file:
+            path: '{{ qubix_root }}/etc/greetd/greetd.conf'
+            state: absent
+          check_mode: false
+
+        - name: Exercise unsupported native unit configuration sources
+          ansible.builtin.include_tasks: ../tasks/greeter-unit-rejection.yml
+          loop:
+            - {launcher: 'greetd --config /other.toml', dropins: '', environment: ''}
+            - {launcher: greetd, dropins: /custom.conf, environment: ''}
+            - {launcher: greetd, dropins: '', environment: 'NOCTALIA_GREETER_STATE_DIR=/other'}
+          loop_control:
+            loop_var: qubix_test_unit
+
+        - name: Restore no-effect native-unit evidence
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/usr/bin/systemctl'
+            content: |
+              #!/bin/sh
+              printf '%s\n' 'ExecStart={ argv[]=/usr/bin/greetd ; }' 'DropInPaths=' 'Environment='
+            mode: '0755'
+          check_mode: false
 
         - name: Exercise unsupported measured versions
           ansible.builtin.include_tasks: ../tasks/greeter-version-rejection.yml

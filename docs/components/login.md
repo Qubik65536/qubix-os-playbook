@@ -2,7 +2,8 @@
 
 ## Noctalia Greeter preparation and existing greetd
 
-Status: **Implemented; local fixtures and native client rendering Tested; native file/login gates pending**.
+Status: **Implemented; fixtures, native UI rendering, installation and reapplication Tested;
+operator-approved next-boot selection verified; actual login pending**.
 Focused task: install the CachyOS `noctalia-greeter` package alongside
 the current manager, supply the existing Qubix desktop palette/wallpaper, and document fingerprint
 enrollment and a separately reviewed manager cutover. The existing SDDM adapter remains supported.
@@ -18,12 +19,16 @@ Contract (documented before implementation):
 - Support is measured Noctalia Greeter 1.6.x, using the released declarative appearance interface.
   Require the installed wrapper/compositor, a real package-created state directory and Qubix
   branding/Niri resources. Reject unsupported combinations and redirects before resource writes.
+  The supported native greetd unit has no launcher flags, drop-ins or environment overrides;
+  `/etc/greetd/greetd.conf` must be absent because it takes precedence over `config.toml`.
 - Managed appearance uses all sixteen roles from the same Qubix palette as Noctalia, the existing
   cube wallpaper, dark mode and matching corner radii. Preserve mutable `sync.toml`, keyboard,
   monitor, user, authentication and session settings in an existing greeter configuration.
 - Package installation is an explicit, separate preparation playbook; bootstrap never installs
   packages or switches display managers. Native package hooks can refresh Snapper/Limine menus;
   record those effects separately from Qubix appearance writes.
+  CachyOS's Greeter package hook also integrates `pam_systemd` into newly installed greetd PAM;
+  preserve pre-existing PAM files and do not template authentication policy in Qubix.
 - The shared first-baseline engine owns only the exact greeter configuration path under `/var/lib`;
   it backs up existing bytes and metadata, records original absence and supports drift-safe recovery.
 - Fingerprint setup is operator documentation: hardware detection, enrollment, verification,

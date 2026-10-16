@@ -8,6 +8,10 @@ Changes are grouped by release. Bootstrap has no release tag.
   preserved input/output/auth/session/sync settings and drift-safe file recovery. A separate native
   package playbook installs prerequisites alongside SDDM. Added login/cutover and fingerprint guides;
   native distribution identity and boot entries remain preserved. Authentication acceptance is separate.
+  Clean b08727c installation, native preview, installed verification and zero-change reapplication pass.
+  With operator approval, greetd is selected for the next boot while the SDDM desktop stays active.
+  Guard legacy/overridden greetd configuration sources before appearance writes and retain exact
+  selection recovery. Existing PAM stays unchanged; native packages integrate their new greetd session.
 
 - Restore lower-left power-menu prompts and lower-right Cancel, and defer confirmed actions until
   the native close animation completes so Lock cannot leave the countdown visible at one second.

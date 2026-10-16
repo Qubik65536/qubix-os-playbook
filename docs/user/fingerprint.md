@@ -72,6 +72,10 @@ service such as `greetd-fingerprint`, review the auth-rule placement there, and 
 `[general].service` to that reviewed service. Leave the greeter-session PAM service and other
 applications' services untouched. Restore the original service selection to undo that experiment.
 
+The target's greetd 0.10.3 falls back to the general PAM service when the optional greeter-specific
+service file is absent. Keep its greeter account/session policy intact when selecting a dedicated
+service; see the [native service selection](https://github.com/kennylevinsen/greetd/blob/0.10.3/greetd/src/server.rs).
+
 In `/var/lib/noctalia-greeter/greeter.toml`, merge these values into the existing `[auth]` table
 after choosing the PAM policy:
 

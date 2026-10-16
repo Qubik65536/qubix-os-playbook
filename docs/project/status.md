@@ -1,14 +1,23 @@
 # Project status
 
 Updated: 2026-10-16. Stage: **MVP candidate; acceptance In Progress**.
-Noctalia Greeter preparation **Implemented; fixtures/native UI preview Tested; file/login gates pending**. CachyOS
+Noctalia Greeter **Implemented; fixtures/native rendering/installation/reapplication Tested;
+operator-approved next-boot selection verified; physical login pending**. CachyOS
 Greeter 1.6.0-1 and greetd 0.10.3-2.1 install alongside active SDDM; the separate package playbook
 passes 47 tasks/one package transaction. Native snapshot hooks update Limine; prior recovery bytes
 remain intact. The new appearance adapter shares the desktop palette/wallpaper, preserves native
 input/output/auth/session/sync configuration and never switches services. The
 [greeter guide](../user/login.md), [fingerprint guide](../user/fingerprint.md) and
 [test results](login-test-results.md) distinguish preview/file evidence from real login acceptance.
-Noctalia's system label remains native CachyOS; Limine already has the Qubix OS heading.
+Clean b08727c preview passes 411 tasks/two proposed files; installation 518 tasks/eight changes,
+installed verification 87 tasks/zero changes and reapplication 516 tasks/zero changes. Final
+configuration-source guards pass 512 normal/381 check-mode tasks with sixteen expected refusals;
+native installed verification passes 90 tasks/zero changes. All 76 protected paths and 189 earlier
+recovery files remain unchanged. With explicit operator approval, the next-boot selection changes
+to greetd while the current SDDM desktop/Niri PID 1082 remain active; no restart/reboot is performed.
+Original launcher bytes and enablement metadata are retained for recovery. Native package setup
+adds only a session module to newly installed greetd PAM; pre-existing PAM/authentication stays
+preserved. Noctalia's system label remains CachyOS; Limine retains the Qubix OS heading.
 
 Power footer/lock-close fix **Implemented; controller/native regression, installation, live footer and
 reapplication Tested**. Clean e80b697 restores corner prompts/Cancel and dispatches only after animated
@@ -121,7 +130,7 @@ pass 752/232 tasks. These fixture results remain separate from native reboot and
 | Branding | Native install, exact resources, original preservation, reapplication and earlier restoration Tested |
 | Niri/Noctalia | Native grammar, private rendering, primary startup/reload and 100% output scale Tested; physical interaction/recovery acceptance open |
 | Shell/terminal | Native temporary-home Bash/Starship checks pass; personal files and default Fish preserved |
-| Login | SDDM clone/activity/ambiguity fixtures Tested; physical target branding disabled; authentication/restore pending |
+| Login | Noctalia Greeter theme/UI/install/reapplication Tested; next-boot greetd selected with consent, current SDDM active; physical authentication/restore pending |
 | GRUB | Preservation/dispatch/reapplication/recovery fixtures Tested; independent native boot/restore pending |
 | Limine | Refined graphical fixture passes 726 tasks/eight expected refusals; native normal-kernel reboot and protected entry/argument/snapshot bytes verified; earlier appearance confirmed, current contrast acceptance pending |
 | Plymouth | Early graphics repair deployed from 0324e27; exact four-image/font/DRM/pin checks, preservation and unchanged reapplication pass; operator confirms repaired startup and desktop return; poweroff/LTS/recovery remain open |

@@ -1,6 +1,7 @@
 # Noctalia Greeter on CachyOS
 
-Status: **Implemented; package installation and native UI preview Tested; login acceptance pending**.
+Status: **Implemented; installation, native UI preview and unchanged reapplication Tested;
+selected for the target's next boot with operator approval; actual login acceptance pending**.
 The [login contract](../components/login.md)
 defines support and ownership. The greeter uses greetd; it is a different login manager from SDDM.
 Preparation keeps SDDM active. Bootstrap never switches display managers.
@@ -18,9 +19,11 @@ Remove `--check` to install. The separate preparation playbook installs missing 
 `noctalia-greeter` packages with native Pacman and initializes absent state using the package's
 tmpfiles rule. It does not refresh repositories or upgrade the whole system; use the normal
 CachyOS upgrade procedure first if your system/repositories are stale. Native package hooks may
-refresh Snapper snapshots and Limine's snapshot menu. The playbook never runs the upstream
-setup script, which may adjust PAM, or starts/enables a service. Package-provided PAM files are
-installed with greetd; existing authentication files remain preserved.
+refresh Snapper snapshots and Limine's snapshot menu. The preparation task does not directly run
+the upstream setup script or start/enable a service. CachyOS's greeter **package post-install hook**
+does run that script: on this fresh installation it appends `session required pam_systemd.so`
+to the newly installed greetd PAM file. Its authentication rules and all pre-existing PAM files
+remain unchanged; this is native package session integration, not fingerprint configuration.
 
 Use a separate ignored configuration file based on the desktop profile. Keep bootloader and
 Plymouth disabled for this login-only change:
@@ -51,6 +54,8 @@ The owned file is `/var/lib/noctalia-greeter/greeter.toml`. Its directory remain
 native greeter account; the administrator configuration is installed root-owned/readable at 0644.
 The first original bytes/metadata are retained by the shared recovery engine. Noncanonical
 appearance tables, redirected paths and unreviewed versions are refused before writes.
+The adapter also requires the native greetd unit without launcher flags, drop-ins or environment
+overrides and refuses a legacy `greetd.conf` that would shadow the inspected `config.toml`.
 GUI Sync writes lower-priority `sync.toml`; Qubix's declared palette/wallpaper continue to win.
 
 ## Preview and review
@@ -104,6 +109,21 @@ backup and return the original SDDM enablement/alias. Start the original manager
 current graphical work has been closed; do not run both managers. The generic `bootstrap.sh restore`
 restores **all recorded Qubix resources**, including this appearance, but it does not undo packages,
 native package hooks, manual PAM edits or manual manager selection. See [restoration](restoration.md).
+
+The configured target's approved transition retains the original greetd file and metadata under
+`/var/lib/qubix/login-transition-b08727c/`. To return its **next-boot** selection to the recorded
+SDDM setup from a recovery shell:
+
+```bash
+sudo systemctl disable greetd.service
+sudo install -o root -g root -m 0644 /var/lib/qubix/login-transition-b08727c/config.toml /etc/greetd/config.toml
+sudo systemctl enable sddm.service
+```
+
+These commands restore future startup selection; they do not stop an active desktop. The current
+selection is greetd enabled/SDDM disabled, with SDDM still active until the operator reboots.
+The ready local override is `config/login.local.yml`; change `activation` to `existing` after
+greetd is actually running. Actual password/fingerprint login still requires console acceptance.
 
 ## Names in Noctalia and Limine
 

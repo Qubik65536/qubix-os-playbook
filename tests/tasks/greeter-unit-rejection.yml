@@ -1,0 +1,15 @@
+---
+- name: Seed no-effect custom-unit evidence
+  ansible.builtin.copy:
+    dest: '{{ qubix_root }}/usr/bin/systemctl'
+    content: |
+      #!/bin/sh
+      printf '%s\n' 'ExecStart={ argv[]={{ qubix_test_unit.launcher }} ; }' \
+        'DropInPaths={{ qubix_test_unit.dropins }}' 'Environment={{ qubix_test_unit.environment }}'
+    mode: '0755'
+  check_mode: false
+
+- name: Require unit configuration-source refusal
+  ansible.builtin.include_tasks: greeter-rejection.yml
+  vars:
+    qubix_test_greeter_diagnostic: 'native greetd unit'

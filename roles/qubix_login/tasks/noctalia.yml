@@ -27,6 +27,7 @@
     - /var/lib/noctalia-greeter
     - /etc/greetd/config.toml
     - /var/lib/noctalia-greeter/greeter.toml
+    - /etc/greetd/greetd.conf
   register: qubix_login_native_paths
 
 - name: Require real package-installed greeter prerequisites
@@ -58,6 +59,33 @@
   loop: '{{ qubix_login_native_paths.results[6:] }}'
   loop_control:
     label: '{{ item.item }}'
+
+- name: Refuse legacy configuration precedence before preparing appearance
+  ansible.builtin.assert:
+    that:
+      - not qubix_login_native_paths.results[8].stat.exists
+    fail_msg: 'Legacy /etc/greetd/greetd.conf takes precedence; resolve the native greetd configuration source first.'
+
+- name: Read the native greetd unit configuration source without starting it
+  ansible.builtin.command:
+    argv:
+      - '{{ qubix_root | default("") }}/usr/bin/systemctl'
+      - show
+      - greetd.service
+      - --property=ExecStart,DropInPaths,Environment
+  register: qubix_login_unit_source
+  changed_when: false
+  check_mode: false
+
+- name: Require the supported native greetd unit and default configuration path
+  ansible.builtin.assert:
+    that:
+      - qubix_login_unit_source.stdout is regex('argv\[\]=(greetd|/usr/bin/greetd) ;')
+      - "'DropInPaths=' in qubix_login_unit_source.stdout_lines"
+      - "'Environment=' in qubix_login_unit_source.stdout_lines"
+    fail_msg: >-
+      Qubix supports the native greetd unit without launcher flags, drop-ins or environment overrides;
+      review custom configuration sources before appearance writes.
 
 - name: Measure installed Noctalia Greeter release
   ansible.builtin.command:
@@ -128,7 +156,7 @@
   ansible.builtin.slurp:
     src: '{{ qubix_root | default("") }}/var/lib/noctalia-greeter/greeter.toml'
   register: qubix_login_old_bytes
-  when: qubix_login_native_paths.results[-1].stat.exists
+  when: qubix_login_native_paths.results[7].stat.exists
 
 - name: Retain all sections outside the three managed appearance tables
   ansible.builtin.set_fact:
