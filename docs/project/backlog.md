@@ -26,6 +26,16 @@ Status: Noctalia redesign Implemented; native grammar, version fixtures, nested 
 
 Objective: begin a usable Qubix desktop on an actual target. Scope: live report, supported KDL candidate, theme include, detected companion commands and preservation policy. Acceptance: `niri validate`, user/system originals preserved, actual wallpaper/launcher/bar/notifications/terminal work in VM, second run unchanged. Depends on F02, F06 backup preparation for default activation, and live VM evidence. Tests: parser + preservation + VM graphical session. Docs: Niri, compatibility, user deployment and recovery.
 
+### F03a — Power confirmation (Feature)
+
+Status: Implemented; no-effect Luau behavior fixtures, static checks and the 69-task desktop
+ownership/version fixture (normal/check mode, zero changes, seven expected refusals each) Tested. Native parsing/plugin lint, rendering, file installation,
+reapplication and physical click/key cancellation remain pending target SSH authentication.
+Scope and acceptance are in the [power confirmation contract](../architecture/desktop-design.md#power-action-countdown).
+Next: regain access, run the nested desktop preview without executing power actions, deploy/reload,
+verify installed resources/idempotency and have the operator test early-release/Escape cancellation.
+The Control Center's separate native menu retains tap-based countdown semantics.
+
 ## F04 — Shell/terminal defaults (Feature)
 
 Status: Implemented; shell precedence fixtures and temporary-home native Bash/Starship initialization Tested; normal account startup gate open.

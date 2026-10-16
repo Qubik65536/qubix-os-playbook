@@ -1,6 +1,16 @@
 # Project status
 
-Updated: 2026-10-15. Stage: **MVP candidate; acceptance In Progress**.
+Updated: 2026-10-16. Stage: **MVP candidate; acceptance In Progress**.
+Power confirmation **Implemented; no-effect controller behavior Tested**: the
+[Qubix power panel](../architecture/desktop-design.md#power-action-countdown) requires a three-second
+number-key hold with early-release cancellation, or a cancellable five-second click countdown.
+Controller Luau fixtures pass repeat/overlap/mixed-input/lifecycle/locking/stall/dispatch controls;
+desktop ownership/version fixtures pass 69 tasks in both normal/check mode, zero changes and seven expected refusals each.
+Static validation passes. File installation, native parser/plugin validation, rendering and live
+input are pending: the existing target rejects SSH authentication. No power action or boot check
+was run. Next: restore target access, run the isolated native desktop preview, then deploy/reload
+and verify cancellation with the operator.
+
 Subtle Plymouth wordmark refinement **Implemented; local asset validation Tested**: smaller/lower original-colour logo and
 steel-blue lettering with a wider gap; native installation and visual acceptance pending.
 Startup fallback repair **Implemented and normal startup Tested**: the operator reported a blank screen followed by the

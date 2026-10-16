@@ -21,6 +21,13 @@ ansible-playbook tests/playbooks/branding.yml --check
 
 The output-default shell fixture uses real jq with a fake Niri transport to cover startup, new outputs, reconnects, disabled screens, preserved manual scale, explicit once activation and invalid input. No real display is changed by that fixture.
 
+The power-panel fixture runs the actual Luau entry in a no-effect host with mocked input, frame,
+UI and dispatch APIs. Run `.venv/bin/python tests/static/check_power.py` using the
+[controller-only Luau prerequisite](environment.md); it also runs in `scripts/test.sh` and CI.
+It verifies early release for every key, complete holds, repeats, overlapping keys, click countdowns,
+mixed input, close/reopen, disabled locking, stalled frames and exactly-once native IPC dispatch.
+No real session/power command executes. These fixtures do not prove native event delivery or rendering.
+
 The suite exercises 25 profile, 11 host, seven exact-identity cases and evidence normalization, with zero changes. Expected failures are rescued only when the matching diagnostic appears. macOS `./bootstrap.sh verify` rejects the real controller as unsupported with zero changes. In a restricted sandbox Ansible local RPC may require execution approval; fixtures do not deploy to the host.
 
 Basic Markdown checks validate local links, fences, final newlines and whitespace. Consistency checks require schema, profile and authoritative documented defaults to agree and boot/splash to remain opt-in. No privileged deployment belongs in CI.
@@ -44,6 +51,10 @@ Run native grammar checks explicitly with `ansible-playbook tests/integration/ni
 The optional tests/integration/desktop.yml workflow tests rendered production candidates inside an existing main Niri compositor, supporting direct SDDM and user-service launches. It requires measured Noctalia/Foot/jq, Python, dbus-run-session, notify-send and dbus-send; standard-library Python helpers are test-only. It copies candidates with temporary path substitutions, opens a nested window on a private D-Bus session without --session/global environment import, and keeps HOME/config/state/data/cache temporary. Test-only overrides disable Polkit, clipboard collection, locking and network requests. It checks Noctalia wallpaper/bar layers and dock absence, two distinctly titled Foot windows and focus/title screenshots in a test-owned preview window expanded to the available width, 100% private output scale, IPC focus navigation, width/height changes and automatic height reset using the candidate's actual resize actions, the notification bus owner's process identity, notification rendering, launcher and notification centre IPC, the Power options desktop-entry command opening the session menu, global reboot search and /session results without executing any power action, and the local shortcut panel's manifest, open/search/close behaviour and screenshots. Desktop-file validation runs when the native validator is installed; its availability is recorded. Screenshots/logs stay in ignored .cache/native-desktop/.
 
 Acceptance requires successful native rendering, unchanged original compositor PID/session endpoints and cleanup of test processes/files. The workflow must fail when the main compositor/socket is unavailable; it never starts or replaces the main session. Native Niri/Noctalia/dconf and Qubix-only GUI settings hashes must remain unchanged. Cleanup targets only the temporary compositor process group and its distinct socket. The test does not prove physical key events, login, portals, Polkit, lock/unlock or reboot behaviour. Run it explicitly when evaluating a candidate; a visible temporary window is expected. Installed-resource verification remains a separate bootstrap.sh verify --tags installed command. Syntax checks alone do not establish these results.
+
+The power-menu entry now opens `qubix/power:menu`; native lint checks both local plugin manifests.
+The preview opens and captures that panel without activating a power action. Native Control Center
+countdowns and physical hold/release cancellation require separate operator checks before acceptance.
 
 ## Native splash preview
 

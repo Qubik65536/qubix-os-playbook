@@ -1,0 +1,18 @@
+id = "qubix/power"
+name = "Qubix Power options"
+version = "1.0.0"
+plugin_api = 26
+author = "Qubix"
+license = "Apache-2.0"
+description = "Hold a number to confirm, or click for a cancellable countdown."
+icon = "shutdown"
+
+[[panel]]
+id = "menu"
+entry = "panel.luau"
+width = 500
+height = 500
+placement = "floating"
+position = "center"
+keyboard_focus = "exclusive"
+capture_keys = ["1", "2", "3", "4", "5"]

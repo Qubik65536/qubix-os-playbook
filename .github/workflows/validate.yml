@@ -25,6 +25,12 @@ jobs:
           .venv/bin/python -m pip install -r requirements-dev.txt
       - name: Install JSON fixture prerequisite
         run: sudo apt-get update && sudo apt-get install --yes jq
+      - name: Install pinned controller-only Luau fixture interpreter
+        run: |
+          mkdir -p .cache/luau
+          curl -fsSL https://github.com/luau-lang/luau/releases/download/0.742/luau-ubuntu.zip -o .cache/luau.zip
+          echo '152058b98c60ff1f5b5ec9bca0b8eb37793cae161dd3a05608cc3d8738ba1a4d  .cache/luau.zip' | sha256sum -c -
+          unzip -q .cache/luau.zip -d .cache/luau
       - name: Run YAML, Ansible, shell, Markdown and consistency checks
         run: ./scripts/validate.sh
       - name: Run non-destructive contract fixtures

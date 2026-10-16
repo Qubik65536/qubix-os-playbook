@@ -51,7 +51,7 @@ Acceptance: warning-free native TOML/KDL validation, valid plugin manifest/entry
 
 Status: **Resize bindings and launcher/bar/dock changes Implemented; native preview, deployment, primary reload and zero-change reapplication Tested**. Super+Ctrl+Left/Right (or H/L) adjust column width in 5% steps, Super+Ctrl+Up/Down (or K/J) adjust window height in the same steps, and Super+Ctrl+R resets automatic height. Tiled windows share column width; height controls are most apparent when windows are stacked. Keep labelled bindings in the canonical KDL so regeneration includes these controls.
 
-The profile supplies a pinned **Power options** launcher entry that opens Noctalia's existing session panel. Its native Session provider is enabled in global launcher search for lock/logout/sleep/reboot/shutdown terms; retain `/session` for the full action list. Super+Space keeps opening the launcher, Super+X keeps opening the session panel, and the Control Center's native power entry remains available. The entry uses native session actions/backends without custom privileged commands. Selecting a direct action result executes it through Noctalia; the Power options entry opens the menu.
+The profile supplies a pinned **Power options** launcher entry. The [guarded power panel](#power-action-countdown) now handles that entry, Super+X and the bar power button. The native Session provider remains enabled in global launcher search for lock/logout/sleep/reboot/shutdown terms; retain `/session` for its full action list. Selecting a direct action result executes it through Noctalia; the Power options entry opens the guarded menu. The Control Center's native power entry remains available.
 
 The compact modules, restrained borders and spacing observed in the [Ryoku showroom](https://ryoku.dev/showroom), especially the pink-room reference, inform the separate floating components and existing #56728b palette. The visibility correction below defines the current geometry. This is visual inspiration; no Ryoku source, artwork or runtime is imported. The Noctalia dock and its reserved bottom area are disabled; launcher, overview and window switcher provide application access.
 
@@ -64,6 +64,39 @@ Status: **Implemented; native preview, live reload, installed verification and z
 The earlier correction used a 40 px bar with 36 px modules, 12 px module radii, 10 px separation/edge inset and 16 px end insets. Outline opacity rises from 30% to 80% with opaque module fills. Only the launcher widget's scale is set to 2.0, yielding a 32 px image box and twice the previous visible artwork dimensions; its horizontal capsule padding is reduced so its button stays compact. Original artwork, palette, individual module boundaries, actions, dock absence and user preferences remain preserved. Before/after native preview screenshots were inspected; the larger cube and stronger outlines are visible, parser checks pass and the parent configuration/compositor remain unchanged.
 
 Acceptance: warning-free native configuration validation, inspected before/after preview screenshots showing a clearly larger cube and distinct module outlines, preserved parent session/configuration, live profile reload and zero-change reapplication. File presence and layer names alone do not establish visual improvement.
+
+### Power-action countdown
+
+Status: **Implemented; no-effect controller fixtures Tested; native validation, interaction and installation pending**. A local `qubix/power:menu` Noctalia panel supplies the original five
+actions: 1 Lock, 2 Log out, 3 Lock & Suspend, 4 Reboot and 5 Shut down. Hold a number for three
+seconds to execute; releasing early cancels. Repeated key-down events must never confirm early.
+Pressing another number cancels the hold and requires releasing the held keys before retrying.
+A button click starts a visible five-second countdown; clicking it again cancels, and selecting
+another starts a fresh countdown. Mixing mouse and held-key input cancels the current action.
+Escape, Cancel, outside click, panel replacement/close and reopen clear all pending state.
+
+Super+X, the bar power button and the pinned Power options entry open this panel. It uses the
+existing declarative UI runtime, captured press/release events and frame ticks (plugin API 26),
+without a service or new target package. Countdown ticks are bounded so a stalled renderer cannot
+skip the hold interval. Only after confirmation does it call the existing Noctalia session IPC
+with fixed argument arrays; it never runs a privileged command itself. Lock and Lock & Suspend
+are disabled when Noctalia locking is disabled. Native power backend overrides remain effective.
+This fixed Qubix menu does not adopt native per-row action customizations; those remain preserved
+in the separate native menu. No personal configuration is rewritten.
+
+The Control Center's internal power entry still opens Noctalia's native menu. Supply five-second
+native countdown defaults for its five entries, but its keys use native tap-to-arm/second-tap-to-confirm
+behavior. Direct launcher action results, IPC and the dedicated lock shortcut keep native execution
+paths. State this distinction in the operator guide. Native contracts:
+[countdowns](https://github.com/noctalia-dev/noctalia/blob/v5.2.1/docs/user/configuration/shell.mdx#session-panel),
+[key capture](https://github.com/noctalia-dev/noctalia/blob/v5.2.1/docs/user/plugins/development/declarative-ui.mdx#handling-keys-directly).
+
+Acceptance: no-effect script fixtures cover early release, full hold, repeat, overlapping keys,
+mouse countdown/cancellation, mixed input, close/reopen, disabled locking, stalled ticks and exactly
+one native IPC invocation; parsed configuration checks original native actions/shortcuts/countdowns,
+plugin paths and Qubix entrypoints. Desktop ownership/version fixtures and static checks pass.
+Native plugin lint, warning-free TOML validation, rendering, physical input and installation/reload
+are separate gates. Never run a real power action during verification.
 
 ## Shortcut contract
 

@@ -108,22 +108,36 @@ def main():
     assert not shell['dock']['enabled'] and not shell['dock']['reserve_space']
     launcher = shell['shell']['launcher']
     assert launcher['providers']['session']['global']
+    actions = shell['shell']['session']['actions']
+    assert [entry['action'] for entry in actions] == ['lock', 'logout', 'lock_and_suspend', 'reboot', 'shutdown']
+    assert [entry['shortcut'] for entry in actions] == list('12345'), 'Keep the original power-menu number keys'
+    assert all(entry['countdown_seconds'] == 5 for entry in actions), 'Every power-menu action needs a countdown'
+    assert all(entry.get('enabled', True) and 'command' not in entry for entry in actions), 'Keep native power handlers'
     power_entry = configparser.ConfigParser(interpolation=None)
     power_entry.read(desktop / 'power.desktop.j2')
     power = power_entry['Desktop Entry']
     assert Path('qubix-power.desktop').stem in launcher['pinned'], 'Power menu must be available without typing'
     assert power['Type'] == 'Application' and power['Terminal'] == 'false'
-    assert shlex.split(power['Exec']) == [power['TryExec'], 'msg', 'panel-toggle', 'session'], 'Power entry must only open the menu'
+    assert shlex.split(power['Exec']) == [power['TryExec'], 'msg', 'panel-toggle', 'qubix/power:menu'], 'Power entry must only open the guarded menu'
     plugin_dir = ROOT / 'roles/qubix_niri/files/shortcuts'
     plugin = tomllib.loads((plugin_dir / 'plugin.toml').read_text())
     panel = plugin['panel'][0]
     assert (plugin_dir / panel['entry']).is_file(), 'Shortcut panel entry is missing'
-    assert shell['plugins']['enabled'] == [plugin['id']]
+    assert shell['plugins']['enabled'] == [plugin['id'], 'qubix/power']
     assert shell['plugins']['auto_update'] == 'none'
     assert all(source['kind'] == 'path' for source in shell['plugins']['source'])
     panel_id = plugin['id'] + ':' + panel['id']
     assert panel_id in (desktop / 'config.kdl.j2').read_text()
     assert panel_id in shell['widget']['shortcuts']['actions']['left']
+    power_plugin_dir = ROOT / 'roles/qubix_niri/files/power'
+    power_plugin = tomllib.loads((power_plugin_dir / 'plugin.toml').read_text())
+    power_panel = power_plugin['panel'][0]
+    assert power_plugin['plugin_api'] == 26
+    assert (power_plugin_dir / power_panel['entry']).is_file()
+    assert power_panel['capture_keys'] == list('12345') and power_panel['keyboard_focus'] == 'exclusive'
+    power_panel_id = power_plugin['id'] + ':' + power_panel['id']
+    assert power_panel_id in (desktop / 'config.kdl.j2').read_text()
+    assert power_panel_id in shell['widget']['session']['actions']['left']
     palette = json.loads((desktop / 'palette.json.j2').read_text())['dark']
     roles = {'mPrimary', 'mOnPrimary', 'mSecondary', 'mOnSecondary', 'mTertiary', 'mOnTertiary',
              'mError', 'mOnError', 'mSurface', 'mOnSurface', 'mSurfaceVariant', 'mOnSurfaceVariant',

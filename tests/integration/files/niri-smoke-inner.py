@@ -141,13 +141,13 @@ try:
     desktop = configparser.ConfigParser(interpolation=None)
     desktop.read(power_entry)
     power_args = shlex.split(desktop['Desktop Entry']['Exec'])
-    assert power_args == [str(root / 'qubix-noctalia'), 'msg', 'panel-toggle', 'session'], power_args
+    assert power_args == [str(root / 'qubix-noctalia'), 'msg', 'panel-toggle', 'qubix/power:menu'], power_args
     command(power_args) # Open the configured menu; never execute a power action.
-    wait_for(lambda: json.loads(shell('status')).get('activePanelId') == 'session', 'Power options menu')
+    wait_for(lambda: json.loads(shell('status')).get('activePanelId') == 'qubix/power:menu', 'Power options menu')
     time.sleep(0.4)
     result['power_menu_status'] = json.loads(shell('status'))
     command(['/usr/bin/niri', 'msg', 'action', 'screenshot-screen', '--path', str(root / 'power-menu.png'), '--show-pointer', 'false'])
-    shell('panel-close', 'session')
+    shell('panel-close', 'qubix/power:menu')
     shell('panel-open', 'launcher', 'reboot')
     wait_for(lambda: json.loads(shell('status')).get('activePanelId') == 'launcher', 'Launcher power search')
     time.sleep(0.4)

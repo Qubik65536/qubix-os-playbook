@@ -34,6 +34,32 @@ pinned = ["qubix-power"]
 prefix = "session"
 global = true
 
+# The Control Center retains the native menu; give that fallback a countdown too.
+[[shell.session.actions]]
+action = "lock"
+shortcut = "1"
+countdown_seconds = 5
+
+[[shell.session.actions]]
+action = "logout"
+shortcut = "2"
+countdown_seconds = 5
+
+[[shell.session.actions]]
+action = "lock_and_suspend"
+shortcut = "3"
+countdown_seconds = 5
+
+[[shell.session.actions]]
+action = "reboot"
+shortcut = "4"
+countdown_seconds = 5
+
+[[shell.session.actions]]
+action = "shutdown"
+shortcut = "5"
+countdown_seconds = 5
+
 [bar.default]
 position = "top"
 thickness = 32
@@ -127,6 +153,14 @@ tooltip = "Keyboard shortcuts (Super+Shift+/)"
 [widget.shortcuts.actions]
 left = "panel-toggle qubix/shortcuts:cheatsheet"
 
+[widget.session]
+type = "custom_button"
+glyph = "shutdown"
+tooltip = "Power options (Super+X)"
+
+[widget.session.actions]
+left = "panel-toggle qubix/power:menu"
+
 [dock]
 enabled = false
 reserve_space = false
@@ -145,7 +179,7 @@ enable_daemon = true
 border_color = "primary"
 
 [plugins]
-enabled = ["qubix/shortcuts"]
+enabled = ["qubix/shortcuts", "qubix/power"]
 auto_update = "none"
 
 [[plugins.source]]

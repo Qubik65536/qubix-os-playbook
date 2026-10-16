@@ -4,6 +4,10 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Added a guarded Qubix Power options panel: hold keys 1–5 for three seconds (release cancels),
+  or click for a cancellable five-second countdown. Controller behavior/ownership checks pass;
+  native validation, deployment and live interaction remain pending target SSH access.
+
 - Made the Plymouth bottom wordmark smaller and lower, doubled the logo/text layout gap and
   applied the shared steel-blue accent to lettering while preserving original logo colours.
 

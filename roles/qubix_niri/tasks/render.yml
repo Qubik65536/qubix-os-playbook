@@ -23,6 +23,13 @@
       'component': 'niri', 'content': lookup('file', role_path ~ '/files/shortcuts/' ~ item, rstrip=false)}] }}
   loop: [plugin.toml, panel.luau]
 
+- name: Include the local guarded power panel before enabling the plugin
+  ansible.builtin.set_fact:
+    qubix_niri_resources: >-
+      {{ qubix_niri_resources + [{'path': '/usr/share/qubix/noctalia/plugins/power/' ~ item,
+      'component': 'niri', 'content': lookup('file', role_path ~ '/files/power/' ~ item, rstrip=false)}] }}
+  loop: [plugin.toml, panel.luau]
+
 - name: Render explicit desktop definitions
   ansible.builtin.set_fact:
     qubix_niri_resources: >-

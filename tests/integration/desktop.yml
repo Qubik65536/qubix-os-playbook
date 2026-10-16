@@ -34,7 +34,7 @@
             path: '{{ qubix_smoke_directory.path }}/{{ item }}'
             state: directory
             mode: '0700'
-          loop: [config/noctalia/palettes, assets, plugins/shortcuts, home/.local/share/applications]
+          loop: [config/noctalia/palettes, assets, plugins/shortcuts, plugins/power, home/.local/share/applications]
 
         - name: Define exact candidate paths within the owned test directory
           ansible.builtin.set_fact:
@@ -49,6 +49,8 @@
               /usr/share/qubix/noctalia/plugins/shortcuts/plugin.toml: plugins/shortcuts/plugin.toml
               /usr/share/qubix/noctalia/plugins/shortcuts/panel.luau: plugins/shortcuts/panel.luau
               /usr/share/qubix/noctalia/plugins/shortcuts/bindings.json: plugins/shortcuts/bindings.json
+              /usr/share/qubix/noctalia/plugins/power/plugin.toml: plugins/power/plugin.toml
+              /usr/share/qubix/noctalia/plugins/power/panel.luau: plugins/power/panel.luau
 
         - name: Copy production wallpaper to a private candidate path
           ansible.builtin.copy:
@@ -73,10 +75,11 @@
           loop_control:
             label: '{{ item.path }}'
 
-        - name: Check the candidate plugin manifest and declared entry files
+        - name: Check the candidate plugin manifests and declared entry files
           ansible.builtin.command:
-            argv: [/usr/bin/noctalia, plugins, lint, '{{ qubix_smoke_directory.path }}/plugins/shortcuts']
+            argv: [/usr/bin/noctalia, plugins, lint, '{{ qubix_smoke_directory.path }}/plugins/{{ item }}']
           changed_when: false
+          loop: [shortcuts, power]
 
         - name: Transfer native-only test helpers
           ansible.builtin.copy:

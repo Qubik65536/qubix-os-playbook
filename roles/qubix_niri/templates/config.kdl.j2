@@ -34,7 +34,7 @@ binds {
     Mod+Ctrl+J hotkey-overlay-title="Windows / Resize window taller" { set-window-height "+5%"; }
     Mod+Ctrl+R hotkey-overlay-title="Windows / Reset window height" { reset-window-height; }
     Mod+Shift+E hotkey-overlay-title="Session / Exit session" { quit; }
-    Mod+X hotkey-overlay-title="Session / Session menu" { spawn "/usr/share/qubix/bin/qubix-noctalia" "msg" "panel-toggle" "session"; }
+    Mod+X hotkey-overlay-title="Session / Power options" { spawn "/usr/share/qubix/bin/qubix-noctalia" "msg" "panel-toggle" "qubix/power:menu"; }
     Mod+Alt+L hotkey-overlay-title="Session / Lock screen" { spawn "/usr/share/qubix/bin/qubix-noctalia" "msg" "session" "lock"; }
     Mod+H hotkey-overlay-title="Navigation / Focus left" { focus-column-left; }
     Mod+L hotkey-overlay-title="Navigation / Focus right" { focus-column-right; }

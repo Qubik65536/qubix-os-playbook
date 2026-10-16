@@ -21,7 +21,7 @@
     - name: Require validated resources and preserved native ownership
       ansible.builtin.assert:
         that:
-          - qubix_niri_resources | length == 13
+          - qubix_niri_resources | length == 15
           - "'/etc/niri/config.kdl' not in (qubix_niri_resources | map(attribute='path') | list)"
           - qubix_niri_resources[-2].validate == '/usr/bin/niri validate --config %s'
           - "'--config /etc/niri/qubix/config.kdl' in qubix_niri_resources[-1].content"
