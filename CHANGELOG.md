@@ -6,6 +6,7 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 - Corrected power-tile content centring and native panel height, removed the extra footer,
   and restored Noctalia’s destructive Shut Down palette in both guarded and native menus.
+  Clean 78cc3e1 installation, live five-button comparison and zero-change reapplication pass.
 
 - Restyled the guarded power menu to follow Noctalia's original horizontal icon tiles, number
   badges and bar-attached placement, retaining key holds and cancellable click countdowns.

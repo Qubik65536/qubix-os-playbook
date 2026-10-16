@@ -1,9 +1,13 @@
 # Project status
 
 Updated: 2026-10-16. Stage: **MVP candidate; acceptance In Progress**.
-Power-layout correction **Implemented; controller and native comparison Tested**: centred icon/label
-groups, native 140 px panel height and destructive Shut Down styling restored. Static checks, the
-69-task ownership fixture and native preview pass; deployment pending.
+Power-layout correction **Implemented; native/live comparison, deployment and reapplication Tested**:
+centred content, native 140 px panel height, badge placement and destructive Shut Down styling restored.
+Clean 78cc3e1 preview passes 323 tasks/three proposed changes; installation 407 tasks/seven changes,
+installed verification 63 tasks/zero changes and reapplication 407 tasks/zero changes. Live guarded/native
+five-button captures are inspected after shell-only activation. A timed-out startup is recovered by
+detached launch; Niri, GUI settings, outputs, protected files and original recovery records remain
+unchanged. Temporary sudo credentials are removed. Physical input acceptance remains pending.
 
 Native-style power-menu refinement **Implemented; controller behavior, native comparison,
 installation and zero-change reapplication Tested**. Match the original horizontal icon tiles, number badges

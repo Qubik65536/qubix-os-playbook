@@ -75,7 +75,7 @@ A button click starts a visible five-second countdown; clicking it again cancels
 another starts a fresh countdown. Mixing mouse and held-key input cancels the current action.
 Escape, outside click, panel replacement/close and reopen clear all pending state.
 
-Native-layout correction: **Implemented; controller fixtures and native comparison Tested; deployment pending**. Match Noctalia 5.2's five 152-by-112 logical-pixel
+Native-layout correction: **Implemented; controller fixtures, native/live comparison, installation and zero-change reapplication Tested; physical input pending**. Match Noctalia 5.2's five 152-by-112 logical-pixel
 tiles, 12 px gaps, 28 px icons, 8 px icon/label gap and centred content in an 836-by-140 panel.
 Use symmetric upper/lower badge/progress slots so neither shifts the content centre. The declarative
 API lacks native overlay badges; retain the upper-right badge with that bounded approximation.
@@ -95,7 +95,8 @@ through the Qubix launcher, retaining the existing session environment and the o
 GSettings backend before the launcher reapplies its memory backend. Preserve Niri, application
 windows and GUI configuration; expect the shell PID to change. Do not toggle plugins through GUI
 settings merely to refresh geometry. Capture the live menu after activation; future session startup
-reads the new manifest normally. See the [actual activation evidence](../project/desktop-test-results.md#native-style-power-menu).
+reads the new manifest normally. Launch the shell as a detached process and poll IPC readiness;
+a short blocking startup timeout can terminate it before readiness. See the [actual activation evidence](../project/desktop-test-results.md#native-style-power-menu).
 
 Super+X, the bar power button and the pinned Power options entry open this panel. It uses the
 existing declarative UI runtime, captured press/release events and frame ticks (plugin API 26),

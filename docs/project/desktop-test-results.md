@@ -275,4 +275,20 @@ temporary changes: centred icons/labels, matching tile/panel height, upper-right
 Shut Down are inspected in guarded/native captures. Locking remains disabled in the isolated preview,
 so native hides its two lock actions while the guard retains them disabled. No action is activated;
 plugin/parser logs are warning-free and the parent environment/configuration/compositor and cleanup
-checks pass. Installation and live comparison are pending.
+checks pass.
+
+Clean 78cc3e1 deployment preview passes 323 tasks/three proposed changes. The full protected/recovery/
+deployment snapshot is unchanged afterward. Installation passes 407 tasks/seven changes (three
+resources, their applied receipts and the revision record); installed verification passes 63 tasks/
+zero changes. A shell-only restart's blocking `--daemon` launch times out and leaves Noctalia stopped;
+a detached launcher invocation restores it, with IPC readiness and window preservation checked.
+The final shell PID is 85275; Niri remains 1698. Live guarded/native captures both contain all five
+buttons and confirm matching geometry, centred content and destructive Shut Down emphasis. Neither
+capture activates an action; both menus are closed afterward and test-created captures are removed
+from the target. GUI configuration, output settings and the boot ID match the pre-install snapshot.
+
+Identical-source reapplication passes 407 tasks/zero changes. The final complete audit equals the
+post-install audit: all 76 protected paths, 92 original recovery manifests and five original backups
+are preserved, only the three expected applied receipts change, clean file-verification state is
+recorded and pending markers are absent. The temporary sudo credential is removed. No real power
+action or boot check ran; physical hold/release and click/Escape acceptance remain open.

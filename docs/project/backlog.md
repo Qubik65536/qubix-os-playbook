@@ -37,7 +37,9 @@ Next: operator checks of early-release/Escape and click cancellation, followed b
 The Control Center's separate native menu retains tap-based countdown semantics.
 
 Native-layout correction: Implemented; content centring, footer removal and destructive Shut Down
-styling pass controller/native comparison checks. Installation and live comparison pending.
+styling pass controller/native/live comparison checks. Clean 78cc3e1 installation, installed verification
+and zero-change reapplication Tested; preservation and credential cleanup pass. Next: physical
+hold/release and click/Escape acceptance, then newer-resource recovery.
 
 Native-style refinement: Implemented; behavior/ownership checks, native comparison, installation
 and zero-change reapplication from clean f1a28b1 Tested. A Noctalia-only restart is required to refresh
