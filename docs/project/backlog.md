@@ -66,6 +66,13 @@ Objective: safe Limine branding; mandatory MVP. Scope: installed-version-support
 
 ## F09 — Plymouth with two generators (Feature)
 
+Startup fallback repair Implemented; native acceptance In Progress: the operator now reports blank startup followed by the
+three-square text fallback, superseding prior appearance acceptance for the current revision.
+The measured early simpledrm/native GPU gap motivates an explicit early graphics opt-in and
+required DRM archive checks. See the [repair acceptance criteria](../components/plymouth.md#early-graphics-repair).
+Focused fixtures pass 521 tasks with ten expected refusals; schema, global check-mode and Limine
+lifecycle checks pass. Complete native deployment/image/preservation checks and console startup acceptance.
+
 Current visual correction is deployed from clean e3bf16b: preserve original logo colours and add a native scaled
 desktop-cube background. Scope: artwork/definition, plugin capability preflight and archive inclusion;
 keep mappings/recovery ownership fixed. Acceptance: canonical logo crop matches pixel-for-pixel,

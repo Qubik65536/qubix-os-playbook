@@ -37,6 +37,7 @@
           branding:
             enabled: true
           plymouth:
+            early_graphics: simpledrm
             initramfs_backend: dracut
             confirm_active: true
             force_rebuild: false
@@ -56,6 +57,7 @@
       loop:
         - /usr/lib/modules/6.0-fixture
         - /usr/lib/plymouth
+        - /usr/lib/plymouth/renderers
         - /boot
         - /etc/plymouth
         - /etc/mkinitcpio.d
@@ -68,6 +70,8 @@
       loop:
         - path: /usr/lib/plymouth/two-step.so
           content: fixture-plugin
+        - path: /usr/lib/plymouth/renderers/drm.so
+          content: fixture-renderer
         - path: /boot/vmlinuz-test
           content: preserved-kernel
         - path: /boot/initramfs-test.img
@@ -119,6 +123,7 @@
             printf '%s\n' usr/share/plymouth/themes/qubix/qubix.plymouth \
               usr/share/plymouth/themes/qubix/watermark.png \
               usr/lib/plymouth/two-step.so usr/bin/plymouthd \
+              usr/lib/plymouth/renderers/drm.so \
               usr/lib/plymouth/label-freetype.so usr/share/fonts/Plymouth.ttf
             printf '%s\n' usr/share/plymouth/themes/qubix/background.png
             printf '%s\n' usr/share/plymouth/themes/qubix/bullet.png
@@ -159,6 +164,7 @@
               - not qubix_test_preview.results[1].stat.exists
               - not qubix_test_preview.results[2].stat.exists
               - not qubix_test_preview.results[3].stat.exists
+              - "'UseSimpledrm=1' in qubix_plymouth_selection"
       always:
         - name: Remove only the synthetic initramfs fixture root
           ansible.builtin.file:

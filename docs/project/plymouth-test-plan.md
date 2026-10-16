@@ -4,6 +4,20 @@ Status: **Corrective deployment, exact active-image checks and completed zero-ch
 
 ## Inspected mapping
 
+### Startup fallback repair
+
+The operator now reports blank startup followed by the three-square text fallback, superseding
+earlier startup acceptance for the current original-colour revision. Tailscale SSH reaches the
+same host with its previously pinned key. Read-only journal evidence shows simpledrm at 1.38 s,
+Plymouth at 1.57 s and amdgpu ready at 7.95 s; the configured theme remains qubix.
+The [early graphics contract](../components/plymouth.md#early-graphics-repair) defines an explicit
+native `UseSimpledrm=1` opt-in, preserving timing, modules, arguments and original artwork.
+Local fixtures are Tested; native deployment and startup console acceptance remain pending.
+Reinspect both confirmed mappings, free space and exact active images, retain first recovery
+bytes, preview without writes, deploy/reapply and verify preservation before a console boot check.
+
+### Existing native mapping
+
 Read-only inspection on 2026-10-15 finds Plymouth 26.134.222-4, mkinitcpio 42.2, the native cachyos theme, an existing splash argument and native Plymouth poweroff/reboot units. The first attempt proposed no bootloader change; the corrective deployment below also manages Limine appearance and explicit module aliases. Recheck installed kernels, presets and hashes immediately before activation; package updates can invalidate this mapping.
 
 | Preset | Installed kernel/module directory | Existing kernel file | Existing image |

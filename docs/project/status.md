@@ -1,6 +1,16 @@
 # Project status
 
 Updated: 2026-10-15. Stage: **MVP candidate; acceptance In Progress**.
+Startup fallback repair **Implemented; target acceptance In Progress**: the operator reports a blank screen followed by the
+three-square text fallback on the current revision. SSH through Tailscale confirms Theme=qubix;
+simpledrm is ready at 1.38 s, Plymouth starts at 1.57 s and amdgpu is ready at 7.95 s.
+Prior archive/service health does not establish current graphical startup acceptance. The focused
+[early graphics repair](../components/plymouth.md#early-graphics-repair) retains separate source,
+installation and console gates.
+The generator fixture passes 521 tasks/ten expected refusals, schema/discovery 492 tasks/zero
+changes, global check-mode control 51 tasks and Limine lifecycle/recovery 771 tasks. Native
+activation and startup console observation remain pending.
+
 The physical CachyOS Niri desktop is deployed and returns after reboot at 100% scale with the slim
 information bar. The native-style Plymouth and active Limine image adapter are deployed from clean e3bf16b.
 Exact active-image/font checks, installed verification and zero-change reapplication pass. A normal-kernel

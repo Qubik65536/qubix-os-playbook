@@ -8,6 +8,30 @@ and completed zero-change reapplication pass through the e3bf16b original-colour
 The first scripted attempt failed visual acceptance; see [recorded results](../project/plymouth-test-plan.md).
 Dracut, encrypted-root input and recovery retain independent acceptance gates.
 
+## Early graphics repair
+
+Status: **Implemented; local fixtures Tested; target activation and console acceptance pending**.
+The operator reports a blank startup followed by the three-square text
+fallback. On the confirmed ThinkPad, simpledrm is available at 1.38 s, Plymouth starts at 1.57 s,
+and amdgpu finishes initialization at 7.95 s. Theme selection alone does not enable early simpledrm.
+The explicit `plymouth.early_graphics: simpledrm` opt-in (default `preserve`) selects the
+existing firmware framebuffer through native `[Daemon] UseSimpledrm=1`. This is a supported
+Plymouth setting, not a kernel/module/boot-argument change. Do not force-open unsuitable modes.
+Require native daemon support and a DRM renderer before writes; reject ambiguous daemon settings.
+Preserve ShowDelay, DeviceTimeout and unrelated sections. Include the changed selection in the
+existing rebuild fingerprint and backups; verify a DRM renderer in generated and active archives.
+
+The focused generator fixture passes 521 tasks with ten expected refusals (including ambiguous
+settings, missing host/archive renderers, hooks, font resources and stale-kernel restoration).
+Schema/discovery fixtures pass 492 tasks with zero changes; global check mode passes 51 tasks
+without image generation or backup/state writes. Limine lifecycle/recovery passes 771 tasks.
+
+Acceptance: typed configuration and malformed-selection refusals pass; fixtures prove preserved
+settings, renderer rejection, conditional regeneration and unchanged reapplication. The target
+must pass no-write preview, exact generated/active-image checks, and unchanged recovery baselines
+before a console startup observation. X11 preview and successful systemd units cannot establish
+this DRM startup result. Native activation and console acceptance remain separate gates.
+
 ## Active Limine image repair
 
 Status: **Implemented; two-image lifecycle/refusal/recovery fixtures and target no-write preview Tested**. CachyOS Limine entries load extensionless cached initramfs files and verify BLAKE2b digests, rather than loading the generator's /boot/initramfs-*.img outputs. Before writes, bind each source image explicitly with optional limine_image and limine_kernel_image fields. Both must identify existing regular files on the confirmed /boot ESP, the cached kernel must equal the declared source kernel, and exactly one primary module/kernel pair must match in the selected Limine configuration. Require a confirmed Limine backend/configuration; reject missing/ambiguous bindings and unsupported enrollment instead of reporting activation success.

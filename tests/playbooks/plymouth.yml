@@ -44,7 +44,12 @@
             path: '{{ qubix_root }}{{ item }}'
             state: directory
             mode: '0755'
-          loop: [/usr/lib/modules/6.0-fixture, /usr/lib/plymouth, /boot, /etc/plymouth, /etc/mkinitcpio.d]
+          loop:
+            - /usr/lib/modules/6.0-fixture
+            - /usr/lib/plymouth/renderers
+            - /boot
+            - /etc/plymouth
+            - /etc/mkinitcpio.d
 
         - name: Seed original configuration and plain images
           ansible.builtin.copy:
@@ -53,6 +58,7 @@
             mode: '0644'
           loop:
             - {path: /usr/lib/plymouth/two-step.so, content: fixture-plugin}
+            - {path: /usr/lib/plymouth/renderers/drm.so, content: fixture-renderer}
             - {path: /boot/vmlinuz-test, content: preserved-kernel}
             - {path: /boot/initramfs-test.img, content: original-primary}
             - {path: /boot/initramfs-test-fallback.img, content: original-fallback}
@@ -106,6 +112,7 @@
                 printf '%s\n' usr/share/plymouth/themes/qubix/qubix.plymouth \
                   usr/share/plymouth/themes/qubix/watermark.png \
                   usr/lib/plymouth/two-step.so usr/bin/plymouthd \
+                  usr/lib/plymouth/renderers/drm.so \
                   usr/lib/plymouth/label-freetype.so usr/share/fonts/Plymouth.ttf
                 printf '%s\n' usr/share/plymouth/themes/qubix/background.png
                 printf '%s\n' usr/share/plymouth/themes/qubix/bullet.png
@@ -130,6 +137,28 @@
               - qubix_plymouth_resources[-1].path == '/etc/dracut.conf.d/90-qubix-plymouth.conf'
               - "'ShowDelay=3' in qubix_plymouth_selection"
               - qubix_plymouth_selection.splitlines()[1] == 'Theme=qubix'
+              - "'UseSimpledrm=' not in qubix_plymouth_selection"
+
+        - name: Opt in to existing early graphics without changing kernel settings
+          ansible.builtin.set_fact:
+            qubix_profile_resolved: >-
+              {{ qubix_profile_resolved | combine({'plymouth': {'early_graphics': 'simpledrm'}}, recursive=true) }}
+            qubix_test_preserved_selection: '{{ qubix_plymouth_selection }}'
+            qubix_test_previous_fingerprint: '{{ qubix_plymouth_fingerprint }}'
+
+        - name: Plan the early graphics repair
+          ansible.builtin.include_role:
+            name: qubix_plymouth
+
+        - name: Require native numeric configuration and unrelated settings preservation
+          ansible.builtin.assert:
+            that:
+              - "'UseSimpledrm=1' in qubix_plymouth_selection"
+              - qubix_plymouth_fingerprint != qubix_test_previous_fingerprint
+              - "qubix_plymouth_selection | replace('UseSimpledrm=1' ~ '\n', '') == qubix_test_preserved_selection"
+
+        - name: Exercise early graphics selection preservation and refusals
+          ansible.builtin.include_tasks: ../tasks/plymouth-early-graphics.yml
 
         - name: Simulate declared dracut generation with real backups and receipts
           ansible.builtin.include_role:
@@ -214,6 +243,43 @@
         - name: Require exact preset dispatch
           ansible.builtin.assert:
             that: ["'--nopost -p test' in qubix_test_calls.content | b64decode"]
+
+        - name: Retain the complete archive inspector for a renderer-only failure
+          ansible.builtin.slurp:
+            src: '{{ qubix_root }}/inspect-fake'
+          register: qubix_test_complete_inspector
+
+        - name: Simulate a complete theme with only the DRM renderer missing
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/inspect-fake'
+            content: >-
+              {{ qubix_test_complete_inspector.content | b64decode
+              | replace('usr/lib/plymouth/renderers/drm.so', '') }}
+            mode: '0755'
+
+        - name: Reset missing archive renderer outcome
+          ansible.builtin.set_fact:
+            qubix_test_renderer_rejected: false
+
+        - name: Reject boot archives without a graphical renderer
+          block:
+            - name: Inspect images with complete assets but no native DRM renderer
+              ansible.builtin.include_role:
+                name: qubix_plymouth
+                tasks_from: verify_archive
+              vars:
+                qubix_plymouth_archive_images: '{{ qubix_profile_resolved.plymouth.images }}'
+          rescue:
+            - name: Require the missing-resource error
+              ansible.builtin.assert:
+                that: ["'lacks required Plymouth resources' in (ansible_failed_result | to_json)"]
+            - name: Record archive renderer refusal
+              ansible.builtin.set_fact:
+                qubix_test_renderer_rejected: true
+
+        - name: Require the missing-renderer archive refusal
+          ansible.builtin.assert:
+            that: [qubix_test_renderer_rejected]
 
         - name: Simulate theme files present but missing native font resources
           ansible.builtin.copy:

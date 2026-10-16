@@ -1,0 +1,77 @@
+---
+- name: Retain the planned selection for independent controls
+  ansible.builtin.set_fact:
+    qubix_test_early_selection: '{{ qubix_plymouth_selection }}'
+
+- name: Require repeated early graphics planning to be unchanged
+  ansible.builtin.include_role:
+    name: qubix_plymouth
+    tasks_from: early_graphics
+
+- name: Confirm idempotent numeric selection
+  ansible.builtin.assert:
+    that: [qubix_plymouth_selection == qubix_test_early_selection]
+
+- name: Exercise duplicate and misplaced settings
+  ansible.builtin.include_tasks: plymouth-early-graphics-rejection.yml
+  loop:
+    - "[Daemon]\nTheme=qubix\nUseSimpledrm=0\nUseSimpledrm=1\n"
+    - "[Daemon]\nTheme=qubix\n[Other]\nUseSimpledrm=1\n"
+    - "[Daemon]\nTheme=qubix\n[Daemon]\nUseSimpledrm=1\n"
+  loop_control:
+    loop_var: qubix_test_early_invalid
+
+- name: Seed an existing disabled setting and an unrelated section
+  ansible.builtin.set_fact:
+    qubix_plymouth_selection: "[Daemon]\nTheme=qubix\nUseSimpledrm=0\nShowDelay=3\nDeviceTimeout=8\n[Other]\nKeep=yes\n"
+
+- name: Update only the existing early graphics setting
+  ansible.builtin.include_role:
+    name: qubix_plymouth
+    tasks_from: early_graphics
+
+- name: Require exact preservation outside the selected key
+  ansible.builtin.assert:
+    that:
+      - >-
+        qubix_plymouth_selection ==
+        "[Daemon]\nTheme=qubix\nUseSimpledrm=1\nShowDelay=3\nDeviceTimeout=8\n[Other]\nKeep=yes\n"
+
+- name: Restore the planned selection after independent controls
+  ansible.builtin.set_fact:
+    qubix_plymouth_selection: '{{ qubix_test_early_selection }}'
+
+- name: Remove only the disposable native renderer for a missing-prerequisite control
+  ansible.builtin.file:
+    path: '{{ qubix_root }}/usr/lib/plymouth/renderers/drm.so'
+    state: absent
+
+- name: Reset the missing-renderer outcome
+  ansible.builtin.set_fact:
+    qubix_test_early_rejected: false
+
+- name: Require missing renderer refusal and restore the fixture
+  block:
+    - name: Attempt early graphics planning without a DRM renderer
+      ansible.builtin.include_role:
+        name: qubix_plymouth
+        tasks_from: early_graphics
+  rescue:
+    - name: Require a renderer-specific refusal
+      ansible.builtin.assert:
+        that: ["'requires the native Plymouth DRM renderer' in ansible_failed_result.msg"]
+    - name: Record missing-renderer refusal
+      ansible.builtin.set_fact:
+        qubix_test_early_rejected: true
+  always:
+    - name: Restore only the disposable native renderer
+      ansible.builtin.copy:
+        dest: '{{ qubix_root }}/usr/lib/plymouth/renderers/drm.so'
+        content: fixture-renderer
+        mode: '0644'
+
+- name: Require refusal before changing selection
+  ansible.builtin.assert:
+    that:
+      - qubix_test_early_rejected
+      - qubix_plymouth_selection == qubix_test_early_selection

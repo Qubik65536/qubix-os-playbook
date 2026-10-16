@@ -17,6 +17,9 @@
     that:
       - "'usr/share/plymouth/themes/qubix/qubix.plymouth' in item.stdout"
       - "'two-step.so' in item.stdout"
+      - >-
+        qubix_profile_resolved.plymouth.early_graphics | default('preserve') != 'simpledrm' or
+        'usr/lib/plymouth/renderers/drm.so' in item.stdout
       - "'plymouthd' in item.stdout"
       - item.stdout is regex('label(?:-freetype)?\.so')
       - item.stdout is regex('usr/share/fonts/[^\s]+\.(?:ttf|otf|ttc)')

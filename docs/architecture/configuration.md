@@ -28,6 +28,7 @@ qubix:
     initramfs_backend: auto
     confirm_active: false
     force_rebuild: false
+    early_graphics: preserve
     images: []
     presets: []
 ```
@@ -51,5 +52,9 @@ Login currently supports already-active SDDM with `theme_source: breeze` and val
 Boot activation requires `backend: grub|limine`, confirmed `config_path` and `confirm_active: true`. Limine additionally requires the observed booted major `limine_version` (8–12). Auto/unknown configurations fail before writes. Native configs and boot entries remain preserved except minimal supported appearance changes.
 
 Plymouth needs a confirmed generator, explicit images (path, kernel version and kernel_image), and mkinitcpio preset names. All selected preset outputs must be mapped. force_rebuild is an explicit repair override, normally false. Plain initramfs images are supported; UKI signing and encrypted/hardware/kernel arguments remain outside ownership.
+
+`plymouth.early_graphics` accepts `preserve` (default) or `simpledrm`. The latter explicitly selects
+the existing firmware framebuffer through native Plymouth configuration on a supported daemon;
+it does not alter kernel arguments or GPU modules. See the [early graphics contract](../components/plymouth.md#early-graphics-repair).
 
 Active-image binding: each image may additionally declare both limine_image and limine_kernel_image for the existing native cache pair. These require the confirmed Limine config/backend and exact file/reference/kernel validation. Verified generated images are staged at content-addressed Qubix paths before updating only the bound module aliases/checksums; native cache/snapshot images remain preserved. See the [component contract](../components/plymouth.md#active-limine-image-repair). Without a valid active-image binding, cached Limine startup branding must fail explicitly.

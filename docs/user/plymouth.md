@@ -21,6 +21,20 @@ the picture. See the [current results](../project/plymouth-test-plan.md).
 
 ## Preview without activation
 
+### Blank startup or three-square fallback
+
+The three-square display is Plymouth's text fallback. Theme files and successful service units do
+not establish a working graphics renderer. Inspect `journalctl -b -o short-monotonic` for when
+simpledrm and the native GPU become ready. On the reviewed ThinkPad, the early firmware framebuffer
+is ready several seconds before amdgpu. Set `qubix.plymouth.early_graphics: simpledrm` in the existing
+confirmed configuration to add native `[Daemon] UseSimpledrm=1`, then review and deploy normally.
+The default `preserve` leaves this setting alone. Supported daemon/DRM renderer checks run before
+writes; the changed selection triggers the existing backed-up image rebuild and Limine staging.
+ShowDelay, DeviceTimeout, GPU modules and boot arguments remain preserved. This repair requires
+its own startup console observation; the private X11 preview cannot prove DRM startup.
+
+### Isolated theme preview
+
 On a target with a running Niri session, Plymouth/two-step/X11 plugins, bubblewrap, Xwayland, ImageMagick and Python already installed:
 
 ```bash

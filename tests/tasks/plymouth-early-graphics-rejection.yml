@@ -1,0 +1,25 @@
+---
+- name: Reset the early graphics refusal control
+  ansible.builtin.set_fact:
+    qubix_plymouth_selection: '{{ qubix_test_early_invalid }}'
+    qubix_test_early_rejected: false
+
+- name: Reject ambiguous early graphics configuration
+  block:
+    - name: Attempt planning against invalid settings
+      ansible.builtin.include_role:
+        name: qubix_plymouth
+        tasks_from: early_graphics
+  rescue:
+    - name: Require a configuration-specific refusal
+      ansible.builtin.assert:
+        that: ["'Early graphics requires one Daemon section' in ansible_failed_result.msg"]
+    - name: Record the expected early graphics refusal
+      ansible.builtin.set_fact:
+        qubix_test_early_rejected: true
+
+- name: Require refusal without changing the selection
+  ansible.builtin.assert:
+    that:
+      - qubix_test_early_rejected
+      - qubix_plymouth_selection == qubix_test_early_invalid

@@ -169,6 +169,10 @@
       '[Daemon]' ~ qubix_plymouth_newline ~ 'Theme=qubix'))
       if qubix_plymouth_conf is regex('(?m)^\[Daemon\]') else qubix_plymouth_daemon ~ qubix_plymouth_conf) }}
 
+- name: Plan explicitly requested early graphics without changing kernel settings
+  ansible.builtin.include_tasks: early_graphics.yml
+  when: qubix_profile_resolved.plymouth.early_graphics | default('preserve') == 'simpledrm'
+
 - name: Load attributed native theme definition
   ansible.builtin.include_vars:
     file: '{{ role_path }}/../../assets/plymouth/manifest.yml'

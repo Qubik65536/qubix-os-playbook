@@ -56,6 +56,11 @@ qubix_test_profiles:
   - name: invalid initramfs backend
     input: {plymouth: {initramfs_backend: auto-guess}}
     error: plymouth.initramfs_backend must be one of
+  - name: early graphics opt-in
+    input: {plymouth: {early_graphics: simpledrm}}
+  - name: invalid early graphics
+    input: {plymouth: {early_graphics: true}}
+    error: plymouth.early_graphics must be one of
   - name: personal adoption rejected
     input: {niri: {user_config: replace}}
     error: niri.user_config must be one of

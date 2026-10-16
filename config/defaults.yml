@@ -20,6 +20,7 @@ bootloader:
   limine_version: 0
 plymouth:
   enabled: false
+  early_graphics: preserve
   initramfs_backend: auto
   confirm_active: false
   force_rebuild: false

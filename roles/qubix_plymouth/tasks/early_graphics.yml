@@ -1,0 +1,51 @@
+---
+- name: Inspect the native DRM renderer before enabling early graphics
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/usr/lib/plymouth/renderers/drm.so'
+    follow: false
+  register: qubix_plymouth_drm
+
+- name: Require native DRM rendering before any deployment writes
+  ansible.builtin.assert:
+    that: [qubix_plymouth_drm.stat.isreg | default(false)]
+    fail_msg: 'Early simpledrm graphics requires the native Plymouth DRM renderer.'
+
+- name: Inspect native daemon support without executing or starting Plymouth
+  ansible.builtin.command:
+    argv: [/usr/bin/grep, -a, -F, -q, UseSimpledrm, /usr/bin/plymouthd]
+  register: qubix_plymouth_simpledrm_support
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  when: qubix_root | default('') == ''
+
+- name: Require native early graphics configuration support
+  ansible.builtin.assert:
+    that: [qubix_plymouth_simpledrm_support.rc == 0]
+    fail_msg: 'The installed Plymouth daemon does not support UseSimpledrm.'
+  when: qubix_root | default('') == ''
+
+- name: Locate the single daemon section without interpreting other settings
+  ansible.builtin.set_fact:
+    qubix_plymouth_daemon_sections: >-
+      {{ qubix_plymouth_selection | regex_findall('(?ms)^\[Daemon\][ \t]*\r?\n.*?(?=^\[|\Z)') }}
+    qubix_plymouth_simpledrm_keys: >-
+      {{ qubix_plymouth_selection | regex_findall('(?m)^[ \t]*UseSimpledrm[ \t]*=') }}
+
+- name: Reject ambiguous early graphics selection before writes
+  ansible.builtin.assert:
+    that:
+      - qubix_plymouth_daemon_sections | length == 1
+      - qubix_plymouth_simpledrm_keys | length <= 1
+      - >-
+        qubix_plymouth_simpledrm_keys | length ==
+        (qubix_plymouth_daemon_sections[0] | regex_findall('(?m)^[ \t]*UseSimpledrm[ \t]*=') | length)
+    fail_msg: 'Early graphics requires one Daemon section and no duplicate or misplaced UseSimpledrm setting.'
+
+- name: Select the existing early framebuffer using the native integer setting
+  ansible.builtin.set_fact:
+    qubix_plymouth_selection: >-
+      {{ (qubix_plymouth_selection | regex_replace('(?m)^[ \t]*UseSimpledrm[ \t]*=.*$', 'UseSimpledrm=1'))
+      if qubix_plymouth_simpledrm_keys | length else
+      (qubix_plymouth_selection | regex_replace('(?m)^\[Daemon\][ \t]*\r?$',
+      '[Daemon]' ~ qubix_plymouth_newline ~ 'UseSimpledrm=1')) }}
