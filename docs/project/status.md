@@ -1,10 +1,14 @@
 # Project status
 
 Updated: 2026-10-16. Stage: **MVP candidate; acceptance In Progress**.
-Power footer/lock-close fix **Implemented; controller and native regression Tested**: corner
-guidance/Cancel and completed-close dispatch. Native no-effect recorder confirms a closed panel before
-dispatch (66 tasks/11 temporary changes). Static/ownership checks pass; deployment pending.
-Screenshot comparisons now accompany visual customization docs.
+Power footer/lock-close fix **Implemented; controller/native regression, installation, live footer and
+reapplication Tested**. Clean e80b697 restores corner prompts/Cancel and dispatches only after animated
+closure. Native no-effect recorder confirms the panel is closed before dispatch (66 tasks/11 temporary
+changes). Preview passes 323 tasks/two proposed changes; installation 407 tasks/five changes, installed
+verification 63 tasks/zero changes and reapplication 407 tasks/zero changes. A detached Noctalia-only
+restart and live screenshot confirm activation, preserving Niri, application windows, GUI settings,
+outputs, 76 protected paths and original recovery records. The credential is removed. Native/before/
+preview/countdown/live screenshots are committed; physical lock/unlock acceptance remains pending.
 
 Power-layout correction **Implemented; native/live comparison, deployment and reapplication Tested**:
 centred content, native 140 px panel height, badge placement and destructive Shut Down styling restored.

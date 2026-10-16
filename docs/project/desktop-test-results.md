@@ -295,7 +295,7 @@ action or boot check ran; physical hold/release and click/Escape acceptance rema
 
 ### Power footer and completed-close dispatch
 
-Status: **In Progress**. Restore the lower-left idle/countdown/cancellation prompts and lower-right
+Status: **Implemented; controller/native regression, deployment, live footer and reapplication Tested; physical lock/unlock pending**. Restore the lower-left idle/countdown/cancellation prompts and lower-right
 Cancel button beneath the native tile row. Fix the reported Lock countdown remaining at “1” by
 dispatching only from the host's completed-close callback, after its close animation. Controller
 coverage must model deferred close and duplicate close notifications. A disposable native candidate
@@ -333,4 +333,23 @@ The final-source native regression passes 66 tasks/11 temporary changes, includi
 observing panelOpen=false and no active panel at dispatch. Cancellation, parser/plugin validation,
 parent environment/compositor/configuration preservation and cleanup pass. Controller regression
 also covers late Cancel, repeated close callbacks and locking disabled during close. Static validation
-and the 69-task ownership fixture pass (zero changes, seven expected refusals). Deployment is pending.
+and the 69-task ownership fixture pass (zero changes, seven expected refusals).
+
+Clean e80b697 preview passes 323 tasks/two proposed changes; the complete protected/recovery/deployment
+snapshot is unchanged afterward. Installation passes 407 tasks/five changes (the two plugin files,
+their applied receipts and source revision). Installed verification passes 63 tasks/zero changes.
+A detached Noctalia-only restart succeeds: shell PID 110013 replaces 85275; Niri remains 1698,
+application-window identities are preserved and the original caller GSettings backend is restored.
+The live 1920×1080/100% capture below confirms all five tiles, shutdown emphasis, lower-left prompt
+and lower-right Cancel. GUI preferences, outputs and boot ID match the pre-install snapshot. No live
+power action is invoked; the menu is closed afterward and its test capture/directory removed from
+the target. The native no-effect dispatch oracle verifies closure ordering; real lock/unlock is a
+separate operator acceptance check.
+
+![Activated guarded footer from e80b697](../assets/power-menu/guarded-footer-live.png)
+
+Identical-source reapplication passes 407 tasks/zero changes. The final audit equals the post-install
+snapshot: all 76 protected paths, 92 original recovery manifests and five original backups remain
+unchanged, only the two expected applied receipts differ from before installation, clean file-
+verification state is recorded and no pending markers remain. The temporary sudo credential is
+removed. No boot check ran. Next: physical lock/unlock and hold/release/click/Escape/Cancel acceptance.

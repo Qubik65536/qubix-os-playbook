@@ -37,8 +37,9 @@ Next: operator checks of early-release/Escape and click cancellation, followed b
 The Control Center's separate native menu retains tap-based countdown semantics.
 
 Footer/lock-close correction: Implemented; deferred-close/native no-effect regressions pass.
-Reference/footer/countdown screenshots accompany the docs. Finish deployment and live activation
-checks. Physical lock/unlock and cancellation acceptance follow.
+Reference/footer/countdown/live screenshots accompany the docs. Clean e80b697 installation, installed
+verification, live footer and zero-change reapplication Tested, with preserved settings/recovery
+records. Next: physical lock/unlock and cancellation acceptance.
 
 Native-layout correction: Implemented; content centring, footer removal and destructive Shut Down
 styling pass controller/native/live comparison checks. Clean 78cc3e1 installation, installed verification

@@ -75,7 +75,7 @@ A button click starts a visible five-second countdown; clicking it again cancels
 another starts a fresh countdown. Mixing mouse and held-key input cancels the current action.
 Escape, Cancel, outside click, panel replacement/close and reopen clear all pending state.
 
-Footer/lock-close correction: **Implemented; controller and native no-effect regression Tested; deployment pending**. Retain the native tile row and destructive Shut Down
+Footer/lock-close correction: **Implemented; controller/native no-effect regression, installation, live footer and zero-change reapplication Tested; physical lock/unlock pending**. Retain the native tile row and destructive Shut Down
 styling, adding a lower-left prompt and lower-right Cancel button beneath it (836-by-184 panel).
 Prompts describe idle, hold/release, click/repeat-click and cancellation states. After confirmation,
 latch the action and request closure; dispatch exactly once from the host's completed-close callback,
