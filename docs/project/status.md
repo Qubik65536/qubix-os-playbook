@@ -9,7 +9,15 @@ Prior archive/service health does not establish current graphical startup accept
 installation and console gates.
 The generator fixture passes 521 tasks/ten expected refusals, schema/discovery 492 tasks/zero
 changes, global check-mode control 51 tasks and Limine lifecycle/recovery 771 tasks. Native
-activation and startup console observation remain pending.
+activation from clean 0324e27, production installed verification and exact four-image/font/DRM/pin
+checks now pass. Reapplication passes 1607 tasks with zero managed changes; its two changes save
+local evidence and stop the temporary inhibitor. Both image generators and font-cache refresh
+are skipped. All 86 earlier manifests/five original backup files, 21 native boot files, 45
+protected configuration/font files and 11 earlier owned boot files remain unchanged; only two
+new stages and their absence records are added. Pending markers are absent. The same boot ID,
+Niri PID 15607 and Noctalia PID 15697 remain, with eDP-1 at 1920x1080/100% scale. SSH/SDDM are active,
+the inhibitor is inactive and native authentication failure records are empty. This repair has
+not been rebooted; startup console acceptance remains open.
 
 The physical CachyOS Niri desktop is deployed and returns after reboot at 100% scale with the slim
 information bar. The native-style Plymouth and active Limine image adapter are deployed from clean e3bf16b.
@@ -60,7 +68,7 @@ pass 752/232 tasks. These fixture results remain separate from native reboot and
 | Login | SDDM clone/activity/ambiguity fixtures Tested; physical target branding disabled; authentication/restore pending |
 | GRUB | Preservation/dispatch/reapplication/recovery fixtures Tested; independent native boot/restore pending |
 | Limine | Refined graphical fixture passes 726 tasks/eight expected refusals; native normal-kernel reboot and protected entry/argument/snapshot bytes verified; earlier appearance confirmed, current contrast acceptance pending |
-| Plymouth | Refined native preview passes 50 tasks, all modes and Pango/FreeType prompts; exact four-image/font/pin checks and normal-kernel reboot pass; earlier appearance confirmed, current contrast acceptance and poweroff/LTS/recovery remain open |
+| Plymouth | Early graphics repair deployed from 0324e27; exact four-image/font/DRM/pin checks, preservation and unchanged reapplication pass; current startup console acceptance and poweroff/LTS/recovery remain open |
 | Image/cache adapters | Two-image nested-entry lifecycle passes 767 tasks with two expected stale-pin refusals; binding/enrollment/FAT fixtures pass 368 tasks with five refusals and check mode 220 tasks with four refusals |
 | Recovery/state | Generic and loader regression suite passes 966 tasks with seven expected refusals; native classic desktop recovery Tested; newer desktop/boot recovery pending |
 

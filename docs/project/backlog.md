@@ -71,7 +71,13 @@ three-square text fallback, superseding prior appearance acceptance for the curr
 The measured early simpledrm/native GPU gap motivates an explicit early graphics opt-in and
 required DRM archive checks. See the [repair acceptance criteria](../components/plymouth.md#early-graphics-repair).
 Focused fixtures pass 521 tasks with ten expected refusals; schema, global check-mode and Limine
-lifecycle checks pass. Complete native deployment/image/preservation checks and console startup acceptance.
+lifecycle checks pass. Native results follow; startup console acceptance remains open.
+
+Native deployment from clean 0324e27, installed verification, exact four-image/font/DRM/pin checks
+and unchanged reapplication now pass. All earlier recovery bytes and native boot files remain
+intact; the same desktop session remains active and the temporary inhibitor is removed. Next:
+obtain startup console acceptance after a normal reboot. Do not count service or archive success
+as a graphical startup result.
 
 Current visual correction is deployed from clean e3bf16b: preserve original logo colours and add a native scaled
 desktop-cube background. Scope: artwork/definition, plugin capability preflight and archive inclusion;

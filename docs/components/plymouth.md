@@ -10,7 +10,8 @@ Dracut, encrypted-root input and recovery retain independent acceptance gates.
 
 ## Early graphics repair
 
-Status: **Implemented; local fixtures Tested; target activation and console acceptance pending**.
+Status: **Implemented; native mkinitcpio installation, exact image checks and unchanged
+reapplication Tested; startup console acceptance pending**.
 The operator reports a blank startup followed by the three-square text
 fallback. On the confirmed ThinkPad, simpledrm is available at 1.38 s, Plymouth starts at 1.57 s,
 and amdgpu finishes initialization at 7.95 s. Theme selection alone does not enable early simpledrm.
@@ -25,6 +26,14 @@ The focused generator fixture passes 521 tasks with ten expected refusals (inclu
 settings, missing host/archive renderers, hooks, font resources and stale-kernel restoration).
 Schema/discovery fixtures pass 492 tasks with zero changes; global check mode passes 51 tasks
 without image generation or backup/state writes. Limine lifecycle/recovery passes 771 tasks.
+
+Clean 0324e27 is installed on the authorized ThinkPad. All four generated/active archives contain
+the exact selected configuration, theme assets, three font copies and DRM renderer; both native
+pins match. All 86 prior manifests and five original backup files, 21 native boot files and 45
+protected configuration/font files remain unchanged. Reapplication passes 1607 tasks with no
+managed resource changes; its two changes save controller evidence and stop the temporary inhibitor.
+Both generators and font-cache refresh are skipped. The running desktop is unchanged; no reboot
+has been performed for this repair. See the [native evidence](../project/plymouth-test-plan.md#startup-fallback-repair).
 
 Acceptance: typed configuration and malformed-selection refusals pass; fixtures prove preserved
 settings, renderer rejection, conditional regeneration and unchanged reapplication. The target

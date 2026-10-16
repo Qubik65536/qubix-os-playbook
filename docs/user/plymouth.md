@@ -1,6 +1,8 @@
 # Boot, reboot and poweroff splash
 
-Status: native-style theme Implemented; native preview, mkinitcpio generation, corrected deployment and exact active-image verification Tested; the operator confirms normal-kernel startup/reboot appearance. Independent poweroff/LTS/recovery checks remain open. The first physical
+Status: native-style theme and early graphics repair Implemented; native preview, mkinitcpio generation,
+installation, exact active-image verification and unchanged reapplication Tested. Current startup
+console acceptance is pending after the reported text fallback. Independent poweroff/LTS/recovery checks remain open. The first physical
 activation used verified generator outputs but missed Limine's active cached images; startup still
 showed CachyOS, and the operator rejected the earlier scripted shutdown layout. See
 [current evidence](../project/plymouth-test-plan.md). Plymouth supplies the splash after the bootloader
@@ -32,6 +34,9 @@ The default `preserve` leaves this setting alone. Supported daemon/DRM renderer 
 writes; the changed selection triggers the existing backed-up image rebuild and Limine staging.
 ShowDelay, DeviceTimeout, GPU modules and boot arguments remain preserved. This repair requires
 its own startup console observation; the private X11 preview cannot prove DRM startup.
+The reviewed ThinkPad now has this setting from clean 0324e27 in both generator outputs and both
+active images. Exact image/pin checks and unchanged reapplication pass. Reboot normally and observe
+startup before counting this repair as visually accepted.
 
 ### Isolated theme preview
 

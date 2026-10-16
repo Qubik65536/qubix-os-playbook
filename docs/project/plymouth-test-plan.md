@@ -12,9 +12,34 @@ same host with its previously pinned key. Read-only journal evidence shows simpl
 Plymouth at 1.57 s and amdgpu ready at 7.95 s; the configured theme remains qubix.
 The [early graphics contract](../components/plymouth.md#early-graphics-repair) defines an explicit
 native `UseSimpledrm=1` opt-in, preserving timing, modules, arguments and original artwork.
-Local fixtures are Tested; native deployment and startup console acceptance remain pending.
+Local fixtures and native installation/archive/reapplication checks are Tested; startup console
+acceptance remains pending.
 Reinspect both confirmed mappings, free space and exact active images, retain first recovery
 bytes, preview without writes, deploy/reapply and verify preservation before a console boot check.
+
+Clean 0324e27 activation is complete. The no-write preview passes 1198 tasks/one proposed change.
+Exact extraction of both generator outputs and both Limine-referenced stages verifies the selected
+`UseSimpledrm=1` configuration, every installed theme asset, all three exact subset copies and the
+DRM renderer. Both BLAKE2b pins match. All 86 earlier manifests and five original backup files,
+21 native boot files, 45 protected configuration/font files and 11 earlier owned boot files retain
+their bytes and recorded metadata. Only two new content-addressed stages and original-absence
+records are added; there are now 88 private manifests. Limine bytes outside the two exact owned
+module references/pins are unchanged, as are kernels and arguments.
+
+Installation and production installed verification pass. An interrupted attempt stops before
+image generation at a sudo prompt; the native fingerprint-first authentication stack is preserved,
+and the controller timeout is raised to 120 seconds after the native lockout expires. A later
+connection loss interrupts reapplication after successful activation/verification; neither
+interrupted attempt counts as completed reapplication. The independent resumed reapplication
+uses native SSH password handling and three connection retries, passes 1607 tasks with zero
+managed changes, and skips both generators and font-cache refresh. Its two reported changes save
+the controller audit and stop the temporary inhibitor. Its entire audited state equals the
+post-installation state, with no pending markers.
+
+Post-run checks retain boot ID 2305848b-690c-49bc-bee1-a5ba893c38a5, Niri PID 15607 and Noctalia
+PID 15697, active SSH/SDDM and eDP-1 at 1920x1080/100% scale. The inhibitor is inactive and native
+authentication failure records are empty. No reboot is performed for this repair. Next acceptance
+gate: observe normal startup at the console; retain separate LTS, poweroff, encryption and recovery gates.
 
 ### Existing native mapping
 

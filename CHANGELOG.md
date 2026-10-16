@@ -5,7 +5,8 @@ Changes are grouped by release. Bootstrap has no release tag.
 ## Unreleased
 
 - Added an explicit native Plymouth early-simpledrm selection and DRM renderer archive checks for
-  blank startup/text-fallback diagnosis; native activation and console acceptance remain pending.
+  blank startup/text-fallback diagnosis. Clean 0324e27 activation, exact four-image/font/pin checks,
+  preservation and unchanged reapplication pass; startup console acceptance remains pending.
 
 - Restored Plymouth's original logo colours and added a native scaled desktop-cube background with a pixel-preservation guard. Native all-mode/prompt previews, exact source/active-image checks, zero-change reapplication and normal-kernel boot health pass after clean e3bf16b deployment; renewed console acceptance is pending.
 
