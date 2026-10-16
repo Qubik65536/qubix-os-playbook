@@ -260,3 +260,19 @@ Evidence is ignored under .cache/tests/power-native-style-*.log and
 .cache/native-desktop/qubix-test/power-menu.png plus power-menu-native.png. Deployment evidence is
 under .cache/tests/power-native-style-*.log, .cache/tests/power-style-*.log and
 .cache/power-style-*.json; the accepted live screenshot is .cache/power-style-live-final.png.
+
+### Power tile geometry and destructive styling
+
+The earlier native-style comparison missed two differences: normal-flow badge/progress slots
+shifted the content down, and explicit native action tables omitted shutdown's default destructive
+variant. The correction centres the content using symmetric slots, matches the native 140 px panel
+height, removes the footer and uses error/on_error styling for Shut Down. Badge size/inset follow
+the native reference; declarative layout still approximates its overlay with balanced slots.
+
+Controller hold/click/cancellation fixtures and static validation pass. The ownership fixture passes
+69 tasks, zero changes and seven expected refusals. Native isolated comparison passes 63 tasks/eight
+temporary changes: centred icons/labels, matching tile/panel height, upper-right badges and highlighted
+Shut Down are inspected in guarded/native captures. Locking remains disabled in the isolated preview,
+so native hides its two lock actions while the guard retains them disabled. No action is activated;
+plugin/parser logs are warning-free and the parent environment/configuration/compositor and cleanup
+checks pass. Installation and live comparison are pending.

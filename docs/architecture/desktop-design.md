@@ -73,19 +73,20 @@ seconds to execute; releasing early cancels. Repeated key-down events must never
 Pressing another number cancels the hold and requires releasing the held keys before retrying.
 A button click starts a visible five-second countdown; clicking it again cancels, and selecting
 another starts a fresh countdown. Mixing mouse and held-key input cancels the current action.
-Escape, Cancel, outside click, panel replacement/close and reopen clear all pending state.
+Escape, outside click, panel replacement/close and reopen clear all pending state.
 
-Native-style visual refinement: **Implemented; behavior fixtures, native comparison, installation and zero-change reapplication Tested; physical input pending**. Match Noctalia 5.2's default session layout:
-one horizontal row of five 152-by-112 logical-pixel tiles, 12 px gaps, 28 px icons above centred
-labels and small number badges at the upper right. Use the existing palette, approximately 12 px
-tile radii and attached/auto placement. Remove the large heading and stacked full-width buttons.
-Keep a compact hint/Cancel footer for confirmation guidance; render seconds and a progress track
-inside the selected tile. Preserve three-second holds, five-second click timers and all cancellation
-rules. Acceptance: existing behavior fixtures pass, warning-free native plugin rendering, inspected
-native/guarded menu comparisons without clipping, and preservation of the parent session/settings.
-Record installation/reload and physical input separately from the visual preview.
-The [native session implementation](https://github.com/noctalia-dev/noctalia/blob/v5.2.1/src/shell/session/session_panel.cpp)
-and its versioned header supply the layout reference. See the [comparison evidence](../project/desktop-test-results.md#native-style-power-menu).
+Native-layout correction: **Implemented; controller fixtures and native comparison Tested; deployment pending**. Match Noctalia 5.2's five 152-by-112 logical-pixel
+tiles, 12 px gaps, 28 px icons, 8 px icon/label gap and centred content in an 836-by-140 panel.
+Use symmetric upper/lower badge/progress slots so neither shifts the content centre. The declarative
+API lacks native overlay badges; retain the upper-right badge with that bounded approximation.
+Remove the extra footer; expose guidance through tooltips and countdown labels, with Escape/outside
+click and repeat-click cancellation. Shut Down uses the native error/on_error palette at rest and
+during confirmation; the native session action explicitly retains its destructive variant.
+Acceptance: inspect guarded/native captures for centred content, equal panel height and highlighted
+Shut Down; pass existing cancellation fixtures and warning-free native rendering. Record installation,
+live activation and physical input separately. The [native session implementation](https://github.com/noctalia-dev/noctalia/blob/v5.2.1/src/shell/session/session_panel.cpp)
+and [button palette](https://github.com/noctalia-dev/noctalia/blob/v5.2.1/src/ui/controls/button.cpp)
+are the versioned reference. See the [comparison evidence](../project/desktop-test-results.md#native-style-power-menu).
 
 Activation constraint (Noctalia 5.2.1): `config-reload` can refresh Luau content while retaining
 registered panel dimensions/placement from the previous manifest. A correct isolated preview and

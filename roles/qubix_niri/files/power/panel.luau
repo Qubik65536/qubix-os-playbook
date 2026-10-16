@@ -28,44 +28,38 @@ local function draw()
     for index, entry in ipairs(actions) do
         local active = pending and pending.index == index
         local enabled = available(index)
-        local fill = active and "primary" or (hovered == index and enabled and "primary/0.2" or "surface_variant")
-        local foreground = active and "on_primary" or "on_surface"
+        local destructive = entry.action == "shutdown"
+        local highlight = active or (hovered == index and enabled)
+        local fill = destructive and "error" or (active and "primary" or (highlight and "hover" or "surface_variant"))
+        local foreground = destructive and "on_error" or (active and "on_primary" or (highlight and "on_hover" or "on_surface"))
         local seconds = active and math.ceil((pending.duration - pending.elapsed) / 1000) or nil
         local icon = active
             and ui.label({text = tostring(seconds), fontSize = 28, fontWeight = "bold", color = foreground})
             or ui.glyph({name = entry.glyph, size = 28, color = foreground})
         table.insert(tiles, ui.column({key = tostring(index), width = 152, height = 112,
-            paddingH = 4, paddingV = 4, gap = 0, align = "center", justify = "center",
+            paddingH = 4, paddingV = 0, gap = 0, align = "center", justify = "center",
             fill = fill, radius = 12, border = "outline", borderWidth = 1,
             opacity = enabled and 1 or 0.4,
             onClick = enabled and function() clickAction(index) end or nil,
-            onHover = "onTileHover"}, {
-                ui.row({justify = "end", width = 144, height = 20}, {
-                    ui.column({paddingH = 6, paddingV = 3, radius = 3, fill = "on_surface_variant"}, {
-                        ui.label({text = tostring(index), fontSize = 10, color = "surface"}),
+            onHover = "onTileHover", tooltip = message}, {
+                ui.row({justify = "end", align = "end", width = 144, height = 24}, {
+                    ui.column({width = 20, height = 20, align = "center", justify = "center", radius = 3, fill = foreground .. "/0.85"}, {
+                        ui.label({text = tostring(index), fontSize = 10, color = fill}),
                     }),
                 }),
-                ui.column({gap = 6, align = "center", justify = "center", flexGrow = 1}, {
+                ui.column({gap = 8, height = 64, align = "center", justify = "center"}, {
                     icon,
                     ui.label({text = entry.label, fontSize = 15, color = foreground, textAlign = "center"}),
                 }),
-                ui.progress({progress = active and pending.elapsed / pending.duration or 0,
-                    width = 128, height = 3, fill = foreground, track = "outline/0.15",
-                    opacity = active and 1 or 0}),
+                ui.column({height = 24, align = "center", justify = "center"}, {
+                    ui.progress({progress = active and pending.elapsed / pending.duration or 0,
+                        width = 128, height = 3, fill = foreground, track = "outline/0.15",
+                        opacity = active and 1 or 0}),
+                }),
             }))
     end
-    local status = message
-    if pending then
-        status = actions[pending.index].label .. " in "
-            .. tostring(math.ceil((pending.duration - pending.elapsed) / 1000)) .. "s"
-            .. (pending.kind == "hold" and " · Release to cancel" or " · Click again to cancel")
-    end
-    panel.render(ui.column({gap = 12}, {
+    panel.render(ui.column({}, {
         ui.row({gap = 12, align = "stretch"}, tiles),
-        ui.row({gap = 8, align = "center"}, {
-            ui.label({text = status, fontSize = 11, color = "on_surface_variant", flexGrow = 1}),
-            ui.button({text = "Cancel", glyph = "x", variant = "ghost", controlSize = "sm", onClick = "closePanel"}),
-        }),
     }))
 end
 

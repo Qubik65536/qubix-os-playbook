@@ -111,6 +111,7 @@ def main():
     actions = shell['shell']['session']['actions']
     assert [entry['action'] for entry in actions] == ['lock', 'logout', 'lock_and_suspend', 'reboot', 'shutdown']
     assert [entry['shortcut'] for entry in actions] == list('12345'), 'Keep the original power-menu number keys'
+    assert actions[-1]['variant'] == 'destructive', 'Retain native shutdown emphasis'
     assert all(entry['countdown_seconds'] == 5 for entry in actions), 'Every power-menu action needs a countdown'
     assert all(entry.get('enabled', True) and 'command' not in entry for entry in actions), 'Keep native power handlers'
     power_entry = configparser.ConfigParser(interpolation=None)

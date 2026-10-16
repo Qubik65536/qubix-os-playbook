@@ -1,6 +1,10 @@
 # Project status
 
 Updated: 2026-10-16. Stage: **MVP candidate; acceptance In Progress**.
+Power-layout correction **Implemented; controller and native comparison Tested**: centred icon/label
+groups, native 140 px panel height and destructive Shut Down styling restored. Static checks, the
+69-task ownership fixture and native preview pass; deployment pending.
+
 Native-style power-menu refinement **Implemented; controller behavior, native comparison,
 installation and zero-change reapplication Tested**. Match the original horizontal icon tiles, number badges
 and attached placement, retaining the confirmation behavior below. The native preview passes
