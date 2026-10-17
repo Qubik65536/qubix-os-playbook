@@ -5,6 +5,9 @@ Status: **Implemented and fixture-tested schema**. `qubix` is the operator input
 ```yaml
 qubix:
   profile: cachyos-niri
+  fonts:
+    enabled: true
+    krypton_ui: true
   branding:
     enabled: true
   niri:
@@ -77,3 +80,9 @@ the existing firmware framebuffer through native Plymouth configuration on a sup
 it does not alter kernel arguments or GPU modules. See the [early graphics contract](../components/plymouth.md#early-graphics-repair).
 
 Active-image binding: each image may additionally declare both limine_image and limine_kernel_image for the existing native cache pair. These require the confirmed Limine config/backend and exact file/reference/kernel validation. Verified generated images are staged at content-addressed Qubix paths before updating only the bound module aliases/checksums; native cache/snapshot images remain preserved. See the [component contract](../components/plymouth.md#active-limine-image-repair). Without a valid active-image binding, cached Limine startup branding must fail explicitly.
+
+`fonts.enabled` installs the pinned official Monaspace NF desktop families.
+`fonts.krypton_ui` selects Krypton UI defaults independently and requires fonts enabled.
+Both default true in this profile. Set only `krypton_ui: false` to keep the fonts and
+remove the alias preference on reapplication. See the authoritative [font contract](../components/fonts.md)
+for preparation, preserved application/user choices, cache handling and activation limits.

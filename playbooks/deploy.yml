@@ -30,6 +30,14 @@
           vars:
             qubix_files_resources: '{{ qubix_deployment_resources }}'
 
+        - name: Refresh and validate selected system fonts
+          ansible.builtin.include_role:
+            name: qubix_fonts
+            tasks_from: refresh
+            apply:
+              become: true
+          when: qubix_profile_resolved.fonts.enabled
+
         - name: Regenerate and inspect only confirmed Plymouth images
           ansible.builtin.include_role:
             name: qubix_plymouth

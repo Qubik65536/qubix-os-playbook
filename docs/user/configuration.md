@@ -18,3 +18,18 @@ Branding is enabled by the profile. The override above disables branding; defaul
 For optional Noctalia Greeter use the [login guide](login.md); it separates package preparation,
 appearance deployment and an operator-reviewed manager transition. Fingerprint enrollment and
 password fallback are described in the [fingerprint guide](fingerprint.md); PAM is preserved.
+
+The profile installs official GitHub Monaspace NF and selects Krypton UI defaults.
+To install all five families while keeping generic UI defaults:
+
+```yaml
+qubix:
+  fonts:
+    enabled: true
+    krypton_ui: false
+```
+
+Set both values false to omit fonts on a new installation. Disabling a component
+leaves already-installed resources untouched; to switch back after deployment,
+keep `enabled: true`, set `krypton_ui: false` and deploy again. Personal/application
+font overrides retain precedence. See [fonts](../components/fonts.md) for scope and recovery.

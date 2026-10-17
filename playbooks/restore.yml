@@ -13,6 +13,34 @@
         apply:
           become: true
 
+    - name: Inspect optional font cache receipt after resource restoration
+      ansible.builtin.stat:
+        path: /var/lib/qubix/fonts-inputs.sha256
+        follow: false
+      become: true
+      register: qubix_restore_fonts
+
+    - name: Refresh system font cache after restoring original font resources
+      ansible.builtin.command:
+        argv: [/usr/bin/fc-cache, --system-only]
+      become: true
+      changed_when: true
+      when: qubix_restore_fonts.stat.exists and not ansible_check_mode
+
+    - name: Compile restored system GTK defaults
+      ansible.builtin.command:
+        argv: [/usr/bin/glib-compile-schemas, --strict, /usr/share/glib-2.0/schemas]
+      become: true
+      changed_when: true
+      when: qubix_restore_fonts.stat.exists and not ansible_check_mode
+
+    - name: Clear restored font cache receipt
+      ansible.builtin.file:
+        path: /var/lib/qubix/fonts-inputs.sha256
+        state: absent
+      become: true
+      when: qubix_restore_fonts.stat.exists and not ansible_check_mode
+
     - name: Clear image input markers after successful baseline restoration
       ansible.builtin.file:
         path: '/var/lib/qubix/{{ item }}'

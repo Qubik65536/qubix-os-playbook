@@ -2,12 +2,18 @@
 - name: Initialize selected resource definitions
   ansible.builtin.set_fact:
     qubix_deployment_resources: []
+    qubix_fonts_resources: []
     qubix_branding_resources: []
     qubix_niri_resources: []
     qubix_shell_resources: []
     qubix_login_resources: []
     qubix_bootloader_resources: []
     qubix_plymouth_resources: []
+
+- name: Validate and prepare official Monaspace NF fonts
+  ansible.builtin.include_role:
+    name: qubix_fonts
+  when: qubix_profile_resolved.fonts.enabled
 
 - name: Prepare enabled branding
   ansible.builtin.include_role:
@@ -49,7 +55,7 @@
 - name: Resolve ordered deployment resources after all capability checks
   ansible.builtin.set_fact:
     qubix_deployment_resources: >-
-      {{ qubix_branding_resources + qubix_niri_resources + qubix_shell_resources +
+      {{ qubix_fonts_resources + qubix_branding_resources + qubix_niri_resources + qubix_shell_resources +
       qubix_login_resources +
       ((qubix_bootloader_resources | rejectattr('path', 'equalto', '/boot/limine.conf') | list +
       [qubix_plymouth_limine_config_resource]) if qubix_profile_resolved.plymouth.enabled and

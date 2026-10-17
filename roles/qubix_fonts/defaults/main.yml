@@ -1,0 +1,3 @@
+---
+qubix_fonts_source_root: '{{ (role_path ~ "/../../.cache/fonts/monaspace-v1.400") | realpath }}'
+qubix_fonts_manifest_file: '{{ role_path }}/../../assets/fonts/monaspace-nf.yml'

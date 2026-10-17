@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+<fontconfig>
+  <!-- Qubix defaults; explicit application families and user overrides retain precedence. -->
+{% if qubix_profile_resolved.fonts.krypton_ui %}
+{% for family in ['sans-serif', 'sans', 'system-ui', 'monospace'] %}
+  <alias binding="same">
+    <family>{{ family }}</family>
+    <prefer><family>Monaspace Krypton NF</family></prefer>
+  </alias>
+{% endfor %}
+{% endif %}
+</fontconfig>

@@ -5,6 +5,7 @@ Status: **Candidate components Implemented; packages/system automation Planned; 
 | Component | Responsibility | Ownership | Required dependencies |
 |---|---|---|---|
 | Discovery | Read identity, binaries, package and service evidence | Preserved | Host Python |
+| Fonts | Official Monaspace NF installation and optional Krypton UI defaults | Managed fonts; Default aliases | Prepared pinned source; Fontconfig |
 | Branding | Qubix-named assets under `/usr/share/qubix/` | Managed | Supported platform |
 | Niri | Separate explicit system session defaults; future personal adoption | Default; existing files Preserved | Installed Niri; syntax validation |
 | Appearance | Wallpaper and companion settings | Default | Branding; measured companions |
@@ -36,7 +37,7 @@ flowchart LR
 
 Bootloader and Plymouth are independent selections. Neither gates the first desktop milestone. Components report installation, syntax validation, session validation, and boot validation separately. A disabled component performs no writes. Unsupported enabled components fail before any component writes.
 
-Detailed contracts: [branding](../components/branding.md), [Niri](../components/niri.md), [bootloader](../components/bootloader.md), [Plymouth](../components/plymouth.md), [shell](../components/shell.md), [login](../components/login.md), and [remaining components](../components/remaining.md).
+Detailed contracts: [fonts](../components/fonts.md), [branding](../components/branding.md), [Niri](../components/niri.md), [bootloader](../components/bootloader.md), [Plymouth](../components/plymouth.md), [shell](../components/shell.md), [login](../components/login.md), and [remaining components](../components/remaining.md).
 
 Optional fingerprint enrollment and private UI clients belong to the existing Niri/login components;
 [their contract](login-refinement.md) defines exact dependencies and ownership. Separate explicit

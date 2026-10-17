@@ -56,6 +56,13 @@
   loop_control:
     label: '{{ item.key }}'
 
+- name: Require a typed font switch and installed-font selection
+  ansible.builtin.assert:
+    that:
+      - qubix_profile_resolved.fonts.krypton_ui is boolean
+      - not qubix_profile_resolved.fonts.krypton_ui or qubix_profile_resolved.fonts.enabled
+    fail_msg: 'fonts.krypton_ui must be a YAML boolean and requires fonts.enabled=true.'
+
 - name: Validate enum options
   ansible.builtin.assert:
     that:

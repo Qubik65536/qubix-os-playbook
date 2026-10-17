@@ -1,0 +1,232 @@
+---
+- name: Test official fonts and reversible UI selection in a disposable root
+  hosts: localhost
+  gather_facts: true
+  gather_subset: ['!all', min]
+  vars:
+    qubix_profile_resolved:
+      fonts: {enabled: true, krypton_ui: true}
+    qubix_files_owner: '{{ ansible_facts.user_id }}'
+    qubix_files_group: '{{ ansible_facts.user_gid | string }}'
+  tasks:
+    - name: Create only the disposable test root even in global check mode
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-fonts-
+      check_mode: false
+      register: qubix_test_fonts_root
+
+    - name: Exercise font planning installation and restoration with cleanup
+      block:
+        - name: Bound all target resources to the test root
+          ansible.builtin.set_fact:
+            qubix_root: '{{ qubix_test_fonts_root.path }}'
+
+        - name: Create fake prerequisite tool directory
+          ansible.builtin.file:
+            path: '{{ qubix_root }}/usr/bin'
+            state: directory
+            mode: '0755'
+          check_mode: false
+
+        - name: Supply no-effect executable prerequisites
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/usr/bin/{{ item }}'
+            content: '#!/bin/sh
+exit 0
+'
+            mode: '0755'
+          loop: [fc-cache, fc-match, fc-validate, glib-compile-schemas, gsettings]
+          check_mode: false
+
+        - name: Create a synthetic native schema directory
+          ansible.builtin.file:
+            path: '{{ qubix_root }}/usr/share/glib-2.0/schemas'
+            state: directory
+            mode: '0755'
+          check_mode: false
+
+        - name: Supply the no-effect native schema prerequisite
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/usr/share/glib-2.0/schemas/org.gnome.desktop.interface.gschema.xml'
+            content: '<schemalist/>'
+            mode: '0644'
+          check_mode: false
+
+        - name: Create an isolated synthetic font source directory
+          ansible.builtin.file:
+            path: '{{ qubix_root }}/source'
+            state: directory
+            mode: '0755'
+          check_mode: false
+
+        - name: Write synthetic font bytes for ownership testing without a network download
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/source/MonaspaceKryptonNF-Regular.otf'
+            content: 'synthetic font fixture; native parser validation runs separately'
+            mode: '0644'
+          check_mode: false
+
+        - name: Write a bounded source manifest for the synthetic lifecycle fixture
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/manifest.yml'
+            content: >-
+              {{ {'license_sha256': lookup('file', playbook_dir ~ '/../../assets/fonts/Monaspace-NF-LICENSE.txt',
+              rstrip=false) | hash('sha256'), 'files': [{'filename': 'MonaspaceKryptonNF-Regular.otf',
+              'source': 'MonaspaceKryptonNF-Regular.otf',
+              'sha256': 'synthetic font fixture; native parser validation runs separately' | hash('sha256')}]}
+              | to_nice_yaml }}
+            mode: '0644'
+          check_mode: false
+
+        - name: Use only the bounded synthetic source manifest
+          ansible.builtin.set_fact:
+            qubix_fonts_source_root: '{{ qubix_root }}/source'
+            qubix_fonts_manifest_file: '{{ qubix_root }}/manifest.yml'
+
+        - name: Plan the bounded font inventory
+          ansible.builtin.include_role:
+            name: qubix_fonts
+
+        - name: Render the actual shell configuration with Krypton selected
+          ansible.builtin.include_role:
+            name: qubix_niri
+            tasks_from: render
+
+        - name: Require the shell to use Krypton when selected
+          ansible.builtin.assert:
+            that:
+              - >-
+                'font_family = "Monaspace Krypton NF"' in
+                (qubix_niri_resources | selectattr('path', 'equalto', '/etc/qubix/noctalia/config.toml')
+                | first).content
+
+        - name: Require source coverage and enabled font preference
+          ansible.builtin.assert:
+            that:
+              - qubix_fonts_resources | length == 4
+              - "'Monaspace Krypton NF' in qubix_fonts_resources[-1].content"
+              - qubix_fonts_resources[-1].path == '/etc/fonts/conf.d/60-qubix-krypton.conf'
+
+        - name: Select one real font and preference to exercise shared file lifecycle
+          ansible.builtin.set_fact:
+            qubix_test_font_resources: >-
+              {{ qubix_fonts_resources | selectattr('path', 'search',
+              '(MonaspaceKryptonNF-Regular.otf|LICENSE.txt|60-qubix-krypton.conf|90-qubix-krypton.gschema.override)$')
+              | list }}
+
+        - name: Install bounded font resources or preview them without writing
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_resources: '{{ qubix_test_font_resources }}'
+
+        - name: Inspect the proposed font location
+          ansible.builtin.stat:
+            path: '{{ qubix_root }}/usr/share/fonts/qubix-monaspace-nf/MonaspaceKryptonNF-Regular.otf'
+          register: qubix_test_font_installed
+
+        - name: Require global preview to leave fonts absent
+          ansible.builtin.assert:
+            that: [not qubix_test_font_installed.stat.exists]
+          when: ansible_check_mode
+
+        - name: Verify exact installed files without mutation
+          ansible.builtin.include_role:
+            name: qubix_files
+            tasks_from: verify
+          vars:
+            qubix_files_resources: '{{ qubix_test_font_resources }}'
+          when: not ansible_check_mode
+
+        - name: Reapply verified resources with existing immutable baselines
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_resources: '{{ qubix_test_font_resources }}'
+          when: not ansible_check_mode
+
+        - name: Require unchanged reapplication of the final resource
+          ansible.builtin.assert:
+            that: [not qubix_files_write.changed]
+          when: not ansible_check_mode
+
+        - name: Turn off the UI preference while keeping fonts selected
+          ansible.builtin.set_fact:
+            qubix_profile_resolved:
+              fonts: {enabled: true, krypton_ui: false}
+
+        - name: Plan the same font inventory without the alias preference
+          ansible.builtin.include_role:
+            name: qubix_fonts
+
+        - name: Render the actual shell configuration with generic typography
+          ansible.builtin.include_role:
+            name: qubix_niri
+            tasks_from: render
+
+        - name: Require the shell switch-off to restore generic defaults
+          ansible.builtin.assert:
+            that:
+              - >-
+                'font_family = "sans-serif"' in
+                (qubix_niri_resources | selectattr('path', 'equalto', '/etc/qubix/noctalia/config.toml')
+                | first).content
+
+        - name: Require switch-off to retain fonts and remove every preference alias
+          ansible.builtin.assert:
+            that:
+              - qubix_fonts_resources | length == 4
+              - "'<alias ' not in qubix_fonts_resources[-1].content"
+              - "'Monaspace Krypton NF' not in qubix_fonts_resources[-1].content"
+
+        - name: Apply disabled preference through the same backed-up resource
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_resources: '{{ qubix_fonts_resources[-2:] }}'
+          when: not ansible_check_mode
+
+        - name: Restore first absence baselines
+          ansible.builtin.include_role:
+            name: qubix_files
+            tasks_from: restore
+          when: not ansible_check_mode
+
+        - name: Require original font absence after restoration
+          ansible.builtin.stat:
+            path: '{{ qubix_root }}/usr/share/fonts/qubix-monaspace-nf/MonaspaceKryptonNF-Regular.otf'
+          register: qubix_test_font_restored
+
+        - name: Reject a damaged prepared font source before installation
+          block:
+            - name: Damage only the disposable synthetic source
+              ansible.builtin.copy:
+                dest: '{{ qubix_root }}/source/MonaspaceKryptonNF-Regular.otf'
+                content: broken
+                mode: '0644'
+              check_mode: false
+
+            - name: Require preflight to reject the changed source
+              ansible.builtin.include_role:
+                name: qubix_fonts
+
+            - name: Refuse silent acceptance of damaged source
+              ansible.builtin.fail:
+                msg: 'Damaged font source was accepted.'
+          rescue:
+            - name: Require the intended source-checksum refusal
+              ansible.builtin.assert:
+                that:
+                  - "'Missing or damaged Monaspace NF source' in ansible_failed_result.msg"
+
+        - name: Require no installed fixture font to remain
+          ansible.builtin.assert:
+            that: [not qubix_test_font_restored.stat.exists]
+      always:
+        - name: Remove only the disposable font fixture
+          ansible.builtin.file:
+            path: '{{ qubix_test_fonts_root.path }}'
+            state: absent
+          check_mode: false

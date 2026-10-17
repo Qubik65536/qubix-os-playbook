@@ -1,6 +1,12 @@
 # Project status
 
 Updated: 2026-10-16. Stage: **MVP candidate; acceptance In Progress**.
+Monaspace NF / configurable Krypton UI **Implemented; source/fixture/native preview Tested;
+installation In Progress**. All 210 official faces are pinned separately from the boot subset.
+Fontconfig aliases, GTK system schema defaults and Qubix Noctalia share the boolean switch;
+personal font settings retain precedence. The [font evidence](font-test-results.md) contains
+native reference/Krypton comparisons and separates installation, parser, session and boot gates.
+
 Compact login, fingerprint setup and QubixOS captions **Implemented; controller/native simulated
 adapter/rendering, installation, zero-change reapplication and desktop-caption activation Tested**.
 The [refinement evidence](ui-test-results.md)

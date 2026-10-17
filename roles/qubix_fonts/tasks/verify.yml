@@ -1,0 +1,65 @@
+---
+- name: Validate installed Monaspace NF font tables with native Fontconfig
+  ansible.builtin.command:
+    argv: >-
+      {{ ['/usr/bin/fc-validate'] + qubix_fonts_manifest.files | map(attribute='filename')
+      | map('regex_replace', '^', '/usr/share/fonts/qubix-monaspace-nf/') | list }}
+  changed_when: false
+  check_mode: false
+
+- name: Resolve the installed Krypton family without accepting silent fallback
+  ansible.builtin.command:
+    argv: [/usr/bin/fc-match, --format, '%{family[0]}\n%{file}\n', 'Monaspace Krypton NF:style=Regular']
+  changed_when: false
+  check_mode: false
+  register: qubix_fonts_match
+
+- name: Require exact installed Krypton NF resolution
+  ansible.builtin.assert:
+    that:
+      - qubix_fonts_match.stdout_lines[0] == 'Monaspace Krypton NF'
+      - qubix_fonts_match.stdout_lines[1] == '/usr/share/fonts/qubix-monaspace-nf/MonaspaceKryptonNF-Regular.otf'
+    fail_msg: 'Fontconfig did not resolve the installed Monaspace Krypton NF Regular font.'
+
+- name: Validate native GTK schema defaults without recompiling installed files
+  ansible.builtin.command:
+    argv: [/usr/bin/glib-compile-schemas, --strict, --dry-run, /usr/share/glib-2.0/schemas]
+  changed_when: false
+  check_mode: false
+
+- name: Read system GTK defaults without personal dconf values
+  ansible.builtin.command:
+    argv: [/usr/bin/gsettings, get, org.gnome.desktop.interface, '{{ item }}']
+  environment:
+    GSETTINGS_BACKEND: memory
+  loop: [font-name, monospace-font-name]
+  changed_when: false
+  check_mode: false
+  register: qubix_fonts_gtk_defaults
+  when: qubix_profile_resolved.fonts.krypton_ui
+
+- name: Require compiled Krypton GTK defaults when selected
+  ansible.builtin.assert:
+    that: [item.stdout == "'Monaspace Krypton NF 11'"]
+  loop: '{{ qubix_fonts_gtk_defaults.results }}'
+  loop_control:
+    label: '{{ item.item }}'
+  when: qubix_profile_resolved.fonts.krypton_ui
+
+# Fontconfig pattern syntax requires escaping hyphens in family names.
+- name: Resolve selected system UI and monospace aliases
+  ansible.builtin.command:
+    argv: [/usr/bin/fc-match, --format, '%{family[0]}', '{{ item }}']
+  loop: ['sans\-serif', sans, 'system\-ui', monospace]
+  changed_when: false
+  check_mode: false
+  register: qubix_fonts_aliases
+  when: qubix_profile_resolved.fonts.krypton_ui
+
+- name: Require effective Krypton system alias defaults
+  ansible.builtin.assert:
+    that: [item.stdout == 'Monaspace Krypton NF']
+  loop: '{{ qubix_fonts_aliases.results }}'
+  loop_control:
+    label: '{{ item.item }}'
+  when: qubix_profile_resolved.fonts.krypton_ui

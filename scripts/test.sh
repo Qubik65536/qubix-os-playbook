@@ -15,6 +15,16 @@ bash tests/shell/output-defaults.sh
 for mode in normal check; do
   set --
   if [[ "$mode" == check ]]; then set -- --check; fi
+  if ! ansible-playbook tests/playbooks/fonts.yml "$@" >".cache/tests/fonts-$mode.log" 2>&1; then
+    cat ".cache/tests/fonts-$mode.log"
+    exit 1
+  fi
+done
+printf '%s\n' 'Font source, selection and recovery fixtures passed.'
+
+for mode in normal check; do
+  set --
+  if [[ "$mode" == check ]]; then set -- --check; fi
   if ! ansible-playbook tests/playbooks/framework.yml "$@" >".cache/tests/framework-$mode.log" 2>&1; then
     cat ".cache/tests/framework-$mode.log"
     exit 1

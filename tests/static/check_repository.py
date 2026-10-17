@@ -72,6 +72,12 @@ def main():
     for asset in fonts['files']:
         data = (ROOT / 'assets/fonts' / asset['filename']).read_bytes()
         assert hashlib.sha256(data).hexdigest() == asset['sha256'] and len(data) == asset['bytes']
+    nf = load('assets/fonts/monaspace-nf.yml')
+    assert nf['revision'] == 'f31794b6e9e65698a062262e2f826f679dcb7070'
+    assert len(nf['files']) == 210 and len({item['filename'] for item in nf['files']}) == 210
+    assert {item['filename'].split('NF-')[0] for item in nf['files']} == {
+        'MonaspaceArgon', 'MonaspaceKrypton', 'MonaspaceNeon', 'MonaspaceRadon', 'MonaspaceXenon'}
+    assert hashlib.sha256((ROOT / 'assets/fonts/Monaspace-NF-LICENSE.txt').read_bytes()).hexdigest() == nf['license_sha256']
     bitmap = (ROOT / 'assets/fonts/QubixBootMono-8x20.bin').read_bytes()
     assert len(bitmap) == 5120
     assert all(any(bitmap[i * 20:(i + 1) * 20]) for i in set(range(256)) - {0, 32, 255})

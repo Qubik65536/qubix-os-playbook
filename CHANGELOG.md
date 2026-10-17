@@ -4,6 +4,12 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Add pinned official GitHub Monaspace NF installation (all 210 faces) with independently
+  configurable Krypton UI defaults for Fontconfig, GTK schema defaults and Qubix Noctalia.
+  Preserve saved user preferences, application font choices and boot typography. Add offline
+  deployment preparation, strict source checks, cache/recovery handling, disposable normal/check
+  fixtures and native reference/Krypton comparison screenshots. Installation acceptance is In Progress.
+
 - Add a user/developer feature overview with implementation links and explicit distinctions
   between implemented behavior, test evidence and pending physical acceptance.
 

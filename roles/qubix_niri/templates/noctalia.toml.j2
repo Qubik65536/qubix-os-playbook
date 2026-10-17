@@ -11,6 +11,7 @@ builtin_ids = []
 community_ids = []
 
 [shell]
+font_family = "{{ 'Monaspace Krypton NF' if (qubix_profile_resolved.fonts | default({})).get('krypton_ui', false) else 'sans-serif' }}"
 corner_radius_scale = 1.35
 setup_wizard_enabled = false
 polkit_agent = true

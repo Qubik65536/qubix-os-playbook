@@ -70,6 +70,12 @@ if len(sys.argv) > 2:
             process.wait(timeout=5)
     selection = json.loads((root / 'selection.json').read_text())
     assert selection and set(selection) <= {'fingerprint', 'greeter', 'shell'}
+    font_comparison = (root / 'font-comparison.json').is_file()
+    if font_comparison:
+        assert selection == ['shell']
+        env['FONTCONFIG_FILE'] = str(root / 'fonts.conf')
+        matched = run(['/usr/bin/fc-match', '--format', '%{family[0]}', 'Monaspace Krypton NF'], env=env)
+        assert matched == 'Monaspace Krypton NF', matched
     for kind in selection:
         for variant in ('reference', 'qubix'):
             name = kind + '-' + variant
@@ -86,7 +92,12 @@ if len(sys.argv) > 2:
                 args = ['/usr/bin/noctalia-greeter' if variant == 'reference' else binaries['greeter'],
                         '--user', 'preview']
             else:
-                args = ['/usr/bin/noctalia' if variant == 'reference' else binaries['noctalia']]
+                if font_comparison:
+                    (root / 'config/noctalia/config.toml').write_bytes((root / (variant + '.toml')).read_bytes())
+                    # Use the same shell binary and palette; only the font family differs.
+                    args = [binaries['noctalia']]
+                else:
+                    args = ['/usr/bin/noctalia' if variant == 'reference' else binaries['noctalia']]
             with (root / (name + '.log')).open('w') as log:
                 process = subprocess.Popen(sandbox + args, env=case_env, stdout=log, stderr=log)
                 try:
@@ -122,8 +133,10 @@ if len(sys.argv) > 2:
         comparisons += ['launcher', 'control-center']
     for kind in comparisons:
         assert shots[kind + '-reference'] != shots[kind + '-qubix'], 'Identical comparison: ' + kind
+    details = {'font_preview': 'native Fontconfig/Pango', 'family_verified': matched} if font_comparison else {
+        'fingerprint_preview': 'simulated, no system bus'}
     (root / 'inner-result.json').write_text(json.dumps({'rendered': True, 'screenshots': shots,
-        'biometric_operations': 0, 'fingerprint_preview': 'simulated, no system bus'}))
+        'biometric_operations': 0, **details}))
     sys.exit(0)
 
 session = dict(line.split('=', 1) for line in run(

@@ -1,5 +1,8 @@
 ---
 profile: cachyos-niri
+fonts:
+  enabled: false
+  krypton_ui: false
 branding:
   enabled: false
 niri:

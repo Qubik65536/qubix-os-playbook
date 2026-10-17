@@ -47,6 +47,16 @@ qubix_test_profiles:
   - name: default shell change
     input: {shell: {change_default_shell: true}}
     error: Automatic default-shell changes
+  - name: fonts installed without Krypton UI
+    input: {fonts: {enabled: true, krypton_ui: false}}
+  - name: fonts disabled explicitly
+    input: {fonts: {enabled: false, krypton_ui: false}}
+  - name: string Krypton option
+    input: {fonts: {krypton_ui: 'false'}}
+    error: fonts.krypton_ui must be a YAML boolean
+  - name: Krypton without fonts
+    input: {fonts: {enabled: false}}
+    error: requires fonts.enabled=true
   - name: invalid login backend
     input: {login: {backend: unsafe}}
     error: login.backend must be one of

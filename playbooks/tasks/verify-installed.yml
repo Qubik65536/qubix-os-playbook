@@ -13,6 +13,14 @@
   vars:
     qubix_files_resources: '{{ qubix_deployment_resources }}'
 
+- name: Validate selected installed fonts with native Fontconfig
+  ansible.builtin.include_role:
+    name: qubix_fonts
+    tasks_from: verify
+    apply:
+      become: true
+  when: qubix_profile_resolved.fonts.enabled
+
 - name: Validate installed Niri configuration with the target parser
   ansible.builtin.command:
     argv: [/usr/bin/niri, validate, --config, /etc/niri/qubix/config.kdl]

@@ -29,3 +29,13 @@ renames primary font records, preserves OFL metadata and emits deterministic bin
 contact sheet and review changed hashes before committing. Normal deployment needs none of these
 tools or a network download. Integration into the boot roles follows the
 [documented design](../../docs/architecture/boot-design.md).
+
+## Complete desktop Monaspace NF
+
+[monaspace-nf.yml](monaspace-nf.yml) pins the official v1.400 NerdFonts archive and
+all 210 unmodified OpenType faces across five families, weights, italics and widths.
+[Monaspace-NF-LICENSE.txt](Monaspace-NF-LICENSE.txt) is the upstream OFL from the same
+revision. These full fonts are separate from the renamed boot subset above.
+Run `.venv/bin/ansible-playbook playbooks/prepare-fonts.yml` to populate the ignored
+controller cache. The [font component](../../docs/components/fonts.md) defines exact
+installation, configurable Krypton selection and recovery; normal deployment is offline.

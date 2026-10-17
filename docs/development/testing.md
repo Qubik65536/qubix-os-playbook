@@ -111,3 +111,13 @@ Stale originals/receipts and new directives outside Qubix ownership must fail. R
 `ansible-playbook tests/playbooks/limine-font-preview.yml --check` for the independent global
 check-mode no-metadata-write control; invoking a normal playbook task with check_mode alone does
 not change Ansible's global ansible_check_mode flag used by orchestration guards.
+
+The `fonts.yml` normal/check-mode fixture uses a synthetic font payload and no-effect
+Fontconfig prerequisites in a disposable root. It tests source-checksum refusal, both
+UI selections, backed-up installation, unchanged reapplication, exact file verification
+and absence restoration without network access. It does not validate font tables.
+`tests/integration/fonts.yml` supplies real official Krypton faces to a private native
+Fontconfig/Pango tree and compares the same Noctalia binary/configuration with generic
+and Krypton text. It validates both TOML candidates, captures launcher/Control Center,
+preserves personal settings/main Niri and removes preview processes. Full installed-font
+validation/resolution, system aliases and live shell activation are separate checks.

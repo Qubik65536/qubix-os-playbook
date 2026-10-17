@@ -52,6 +52,14 @@ cached manifest geometry; the live row is inspected with Niri/apps and GUI state
 See the [activation evidence](desktop-test-results.md#native-style-power-menu). Next: physical
 early-release/click/Escape acceptance and newer-resource recovery; keep the current native tile layout.
 
+## F03b — Monaspace NF and configurable Krypton UI (Feature)
+
+Status: Implemented; source/fixtures/native comparison Tested; installation In Progress.
+Install pinned official GitHub Monaspace NF fonts and independently select Krypton UI defaults. Scope, ownership and acceptance are authoritative in the
+[font contract](../components/fonts.md). Source preparation and disposable fixtures are independent of target activation.
+Next: complete installation, exact native resolution, live shell and zero-change reapplication
+gates in the [test evidence](font-test-results.md).
+
 ## F04 — Shell/terminal defaults (Feature)
 
 Status: Implemented; shell precedence fixtures and temporary-home native Bash/Starship initialization Tested; normal account startup gate open.

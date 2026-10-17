@@ -1,6 +1,9 @@
 ---
 # Components are enabled only after a working implementation is validated.
 profile: cachyos-niri
+fonts:
+  enabled: true
+  krypton_ui: true
 branding:
   enabled: true
 niri:

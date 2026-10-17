@@ -1,0 +1,637 @@
+---
+version: '1.400'
+revision: f31794b6e9e65698a062262e2f826f679dcb7070
+url: https://github.com/githubnext/monaspace/releases/download/v1.400/monaspace-nerdfonts-v1.400.zip
+archive_sha256: 9b7f9505d977601d8819dfdb57fa4b49bdab61132b6d1131c2e8d092066edc5a
+license_sha256: 0e84e5f7dd6f05e74a00f2fb828ca43e489d954f5509ff0fa439ea18c0d35fe9
+files:
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-Bold.otf
+    filename: MonaspaceArgonNF-Bold.otf
+    sha256: 7af807c13b0b538023c15eedb0b5fc97c3fb75ede61d413f96d036310ada5f34
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-BoldItalic.otf
+    filename: MonaspaceArgonNF-BoldItalic.otf
+    sha256: a201d576b6c31fbb6a633abb2e8172dd3f59b79cbb9fea9759e7008d54215322
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-ExtraBold.otf
+    filename: MonaspaceArgonNF-ExtraBold.otf
+    sha256: 3579d2b094cee0f18c5da8ff27719d2f66759421b30c3982ad5c66648ea1b336
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-ExtraBoldItalic.otf
+    filename: MonaspaceArgonNF-ExtraBoldItalic.otf
+    sha256: 39373d07c4d4036e4c931f3eb866cd50d142d32fbf9cfe7e3168f07d804f25f8
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-ExtraLight.otf
+    filename: MonaspaceArgonNF-ExtraLight.otf
+    sha256: bfa1bc4e35d9c2de7a779a84ee96ef75a2b1456985567e009d763b8448ecce48
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-ExtraLightItalic.otf
+    filename: MonaspaceArgonNF-ExtraLightItalic.otf
+    sha256: bd10b2418d6967c6b857504ff1c046a7c56fd991f0500f665777e32c55488767
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-Italic.otf
+    filename: MonaspaceArgonNF-Italic.otf
+    sha256: 26ada82fc44da9919092de251b1e12f1b10b698972d34ad47587aa07d2407890
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-Light.otf
+    filename: MonaspaceArgonNF-Light.otf
+    sha256: e61b2e07badf408da2bf4dd80a8b84b358760af6fe8d7b78a806c1916792a605
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-LightItalic.otf
+    filename: MonaspaceArgonNF-LightItalic.otf
+    sha256: 3a9d968ab83eb996898008a3c44f5ff5b224b560dcde83aeaf43abe7f8b89a09
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-Medium.otf
+    filename: MonaspaceArgonNF-Medium.otf
+    sha256: 43dadda2b6c38d1e4d3389dec9c8d72cbf2072abb1c54fc1510f2d3298d68eb9
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-MediumItalic.otf
+    filename: MonaspaceArgonNF-MediumItalic.otf
+    sha256: 77fafd1d7969f097fd0b19c248329429eb96a8f61c88bcbe681f83abb7b38779
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-Regular.otf
+    filename: MonaspaceArgonNF-Regular.otf
+    sha256: e6760854cd934d76d29d18bf0ebcce1a44b167cb738f0aa347bb1d1f4906818a
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-SemiBold.otf
+    filename: MonaspaceArgonNF-SemiBold.otf
+    sha256: c86d8bc31674bb5406ab37bc7c6448346d51f715eec25ee40c6d31620a6201a6
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-SemiBoldItalic.otf
+    filename: MonaspaceArgonNF-SemiBoldItalic.otf
+    sha256: 26fa99b85cbc22a3d46f9b84711f6443de0cd7c59db5741ff2a171e6c04e97df
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-SemiWideBold.otf
+    filename: MonaspaceArgonNF-SemiWideBold.otf
+    sha256: c86b84cc71b3af4d9dd8b735e3109cd4f9bb7fdfcde04368a338d729e6e7793e
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-SemiWideBoldItalic.otf
+    filename: MonaspaceArgonNF-SemiWideBoldItalic.otf
+    sha256: 10a7c72be84c132aa58da9067008ae9adc8bbe7acc26c2ce1fb7b04689ca3135
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-SemiWideExtraBold.otf
+    filename: MonaspaceArgonNF-SemiWideExtraBold.otf
+    sha256: 9b76baacbca5ce8c7717b8da5a22a4a691cc282bef3d211af88ca5c4fde6bfe5
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-SemiWideExtraBoldItalic.otf
+    filename: MonaspaceArgonNF-SemiWideExtraBoldItalic.otf
+    sha256: bdd92513e582215ff5c6a2c771c64f1428ba45eef484eca8d864e78da4354952
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-SemiWideExtraLight.otf
+    filename: MonaspaceArgonNF-SemiWideExtraLight.otf
+    sha256: 1430630e550a2f94e3a3779ed665b02bb323d51cb0fe3880f0133c5a354aaa80
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-SemiWideExtraLightItalic.otf
+    filename: MonaspaceArgonNF-SemiWideExtraLightItalic.otf
+    sha256: e29f2b7c3554207390c6ae739ec82dbf2c90638395c56daa5bd8292fc38f927d
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-SemiWideItalic.otf
+    filename: MonaspaceArgonNF-SemiWideItalic.otf
+    sha256: 58d8af67a4313dea25903f6cdd48f533b88bae3e78b5309279aaa80f834f0d65
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-SemiWideLight.otf
+    filename: MonaspaceArgonNF-SemiWideLight.otf
+    sha256: 6f03e5c4ada22aff829b244231e817627decc2120efaab89f5328bb01ab92648
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-SemiWideLightItalic.otf
+    filename: MonaspaceArgonNF-SemiWideLightItalic.otf
+    sha256: 3e420824b22a91b7d0bc7fea77f7c28d00dd30100820ec693cf8fcf233b518f9
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-SemiWideMedium.otf
+    filename: MonaspaceArgonNF-SemiWideMedium.otf
+    sha256: ce7d0d4e6b1e0b83e97797318f0101a0c1faabb0f3ffd1ca0e8278082b4163a5
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-SemiWideMediumItalic.otf
+    filename: MonaspaceArgonNF-SemiWideMediumItalic.otf
+    sha256: ccc0066169b9b45b363bd1221420ab9d0b42f22a2749ded4d51e98dfa5e9ec39
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-SemiWideRegular.otf
+    filename: MonaspaceArgonNF-SemiWideRegular.otf
+    sha256: 64893659e970e3e746a533376ac1210a1087d9b3e17e72df10c4c3f130ebb4a5
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-SemiWideSemiBold.otf
+    filename: MonaspaceArgonNF-SemiWideSemiBold.otf
+    sha256: e3af35be92c4b062f3cffba5e042286241aa404281a0e06967fd7fddb5962fb8
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-SemiWideSemiBoldItalic.otf
+    filename: MonaspaceArgonNF-SemiWideSemiBoldItalic.otf
+    sha256: 50c7dc253c2f56aa3385a35f2f3e2a7d05830dbad39547e71370f7b795e3bdad
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-WideBold.otf
+    filename: MonaspaceArgonNF-WideBold.otf
+    sha256: 9c1d757eee88d02f9b3491530e1a23b7a3cc3eed12b0473ea2f36e04adada73c
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-WideBoldItalic.otf
+    filename: MonaspaceArgonNF-WideBoldItalic.otf
+    sha256: bdeb9192477ae8f7ea5940fa0ffd6c64c6b2ec24b3a8a8ddf9ce845e261d6d38
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-WideExtraBold.otf
+    filename: MonaspaceArgonNF-WideExtraBold.otf
+    sha256: 4eb3e5913576c6aafd44e5e649f92b388e9d2ccb947931eb0869b3c116e7e366
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-WideExtraBoldItalic.otf
+    filename: MonaspaceArgonNF-WideExtraBoldItalic.otf
+    sha256: 3927d24c307a8276eb923f2a53061a9f168dd558fea3b4b0fc9910de9492955c
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-WideExtraLight.otf
+    filename: MonaspaceArgonNF-WideExtraLight.otf
+    sha256: 5f9b49a7865bfb8dc2346bb7bcbe390ec49713746f308dd45f90529145883e53
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-WideExtraLightItalic.otf
+    filename: MonaspaceArgonNF-WideExtraLightItalic.otf
+    sha256: 81372f487c638dea91e5b45b986dade2310bfbcb81e098982dcdf8e9a9c95be4
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-WideItalic.otf
+    filename: MonaspaceArgonNF-WideItalic.otf
+    sha256: 6f26ca2474a790ce12aa3160d9c3b27342bbcc56c97f220bd6e95943c66831fb
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-WideLight.otf
+    filename: MonaspaceArgonNF-WideLight.otf
+    sha256: 548bd2fbbc54d5972fe94ccc278c5999a64128c2cd458905246765c317f91117
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-WideLightItalic.otf
+    filename: MonaspaceArgonNF-WideLightItalic.otf
+    sha256: 7dd94556241a2ecef5890ecbfa1ffad3e027f70f4b590c5c39ab20a7fb413e95
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-WideMedium.otf
+    filename: MonaspaceArgonNF-WideMedium.otf
+    sha256: b0b7c62135ec29a83c01cbef82c9d2c568386edb99c214cf452e39b03ce42f53
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-WideMediumItalic.otf
+    filename: MonaspaceArgonNF-WideMediumItalic.otf
+    sha256: 9b364dfbfebc802bff56bdb78457abdfcdd2dc9807718c677b4680ad29b893b3
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-WideRegular.otf
+    filename: MonaspaceArgonNF-WideRegular.otf
+    sha256: 3a6a174979427b92e943cdf63870fa4e1dda0df86483f485d38d4cf145ee0e73
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-WideSemiBold.otf
+    filename: MonaspaceArgonNF-WideSemiBold.otf
+    sha256: 34d5ff1381bd12f7aa6a67488243ab10749eee4c208f68c60b43449492e8c874
+  - source: NerdFonts/Monaspace Argon/MonaspaceArgonNF-WideSemiBoldItalic.otf
+    filename: MonaspaceArgonNF-WideSemiBoldItalic.otf
+    sha256: d58af864d073a96bb4f516ae0907667c7a0791e8761e7ee041aad9c698ccd1e6
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-Bold.otf
+    filename: MonaspaceKryptonNF-Bold.otf
+    sha256: e8de58222bb3ff085a84e067211089cc172120cafdfa3ffa727cf6413d29b88a
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-BoldItalic.otf
+    filename: MonaspaceKryptonNF-BoldItalic.otf
+    sha256: e5f7b8782552d1cf0f199fd257052471948fd4910e755b43314423925cea6f50
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-ExtraBold.otf
+    filename: MonaspaceKryptonNF-ExtraBold.otf
+    sha256: 22e591cc333f72cbaf35516aafe879066bd29ae0404a929746eecedb6c8ccd93
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-ExtraBoldItalic.otf
+    filename: MonaspaceKryptonNF-ExtraBoldItalic.otf
+    sha256: d2642a8645477fd2475bcadf85f26f668ec08c9c3da1614cd7a684ca61797ac5
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-ExtraLight.otf
+    filename: MonaspaceKryptonNF-ExtraLight.otf
+    sha256: 0af1bcc91c1b56efaf7cb8b9d617f61ea6fa117a87339d5e24e7864d1e6197ab
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-ExtraLightItalic.otf
+    filename: MonaspaceKryptonNF-ExtraLightItalic.otf
+    sha256: 9c1470d6723c88da70278593d304e96b8cc5c20b816b8ed4be30b211f109423c
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-Italic.otf
+    filename: MonaspaceKryptonNF-Italic.otf
+    sha256: 83e7ba948e0061482b38bfe1048fdf5fcc84c9a9fd03128c0840359a1c592c94
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-Light.otf
+    filename: MonaspaceKryptonNF-Light.otf
+    sha256: a1aaf1ae50cac933796dc5aeef7b39142ba8d5aae402965ed309de2675b0e3fc
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-LightItalic.otf
+    filename: MonaspaceKryptonNF-LightItalic.otf
+    sha256: e585cd1c96d0dc737566808b3e5950b4eb033aa6b21767a3dd5cbbda773e8af7
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-Medium.otf
+    filename: MonaspaceKryptonNF-Medium.otf
+    sha256: 84c157b92e748e38941bde632cbe6f61fffd52342fa09ed82058467a075247d5
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-MediumItalic.otf
+    filename: MonaspaceKryptonNF-MediumItalic.otf
+    sha256: 765c5ed2713c62fffa5091191e86cf44748a2024a48afd4bbaced99e54fab0c2
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-Regular.otf
+    filename: MonaspaceKryptonNF-Regular.otf
+    sha256: e4f4ce9b02139544d20c46eaa0ae7df9cce7bfcdcdeb75bb70575236ccc86954
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-SemiBold.otf
+    filename: MonaspaceKryptonNF-SemiBold.otf
+    sha256: e50e707fb3be0bd66ae519987ba525bd87258d597158f8b4d9ad902941d97dc0
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-SemiBoldItalic.otf
+    filename: MonaspaceKryptonNF-SemiBoldItalic.otf
+    sha256: f40a8660430f4cc3b246471810b02addaa9d5dd0bba4e071be98e06ff3e06271
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-SemiWideBold.otf
+    filename: MonaspaceKryptonNF-SemiWideBold.otf
+    sha256: 94ea067cd72bf869ab8ce82e36cfc41e07651407f5dee0840406567bc71bb4af
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-SemiWideBoldItalic.otf
+    filename: MonaspaceKryptonNF-SemiWideBoldItalic.otf
+    sha256: f2b2aa5ff3c1710d16ce86e2b7c45b2a7adc9586b08b4293234f358bb79b15ba
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-SemiWideExtraBold.otf
+    filename: MonaspaceKryptonNF-SemiWideExtraBold.otf
+    sha256: dba4ebf00b3f05b5b54235e640d42736b94b8c1df72f3fab4f79a4cc9f53505b
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-SemiWideExtraBoldItalic.otf
+    filename: MonaspaceKryptonNF-SemiWideExtraBoldItalic.otf
+    sha256: de9ef102e2343aeeb080893e63812ddca14c41a210ea4e686596ff165e9b1d7b
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-SemiWideExtraLight.otf
+    filename: MonaspaceKryptonNF-SemiWideExtraLight.otf
+    sha256: ddab0f1169f2105b58d3ec7a272118cfef4ad23a16fd8966c306d0dded3f45fb
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-SemiWideExtraLightItalic.otf
+    filename: MonaspaceKryptonNF-SemiWideExtraLightItalic.otf
+    sha256: cf2069d3cc23114ea5376ca7b790182ef7c44a7577ace7ef64d5e3852d806164
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-SemiWideItalic.otf
+    filename: MonaspaceKryptonNF-SemiWideItalic.otf
+    sha256: 3bf3b2fe8809ca378f0a067895331f79d5bc33cbefbd23401e3187acaa56a8e8
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-SemiWideLight.otf
+    filename: MonaspaceKryptonNF-SemiWideLight.otf
+    sha256: 0096c40d3a278533a55d0fb1b12bc87f2954faa0f348d009d26a4a65ff373d37
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-SemiWideLightItalic.otf
+    filename: MonaspaceKryptonNF-SemiWideLightItalic.otf
+    sha256: 85509f169952b5d7c6119714bd0d085733c9efb0205f46b697def3474f32c5cf
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-SemiWideMedium.otf
+    filename: MonaspaceKryptonNF-SemiWideMedium.otf
+    sha256: 59646140e6c814682a9173e789117464538f5c5bcc5c541fe59af3046554fa42
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-SemiWideMediumItalic.otf
+    filename: MonaspaceKryptonNF-SemiWideMediumItalic.otf
+    sha256: 38ec243818a9b1bbd0ba0794c49444304595917b322cf7fb03b12460f1fef193
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-SemiWideRegular.otf
+    filename: MonaspaceKryptonNF-SemiWideRegular.otf
+    sha256: cedbb4361ce81ed6f5fa33c14228a843755ad84e87f5bba92c5554c778e07055
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-SemiWideSemiBold.otf
+    filename: MonaspaceKryptonNF-SemiWideSemiBold.otf
+    sha256: 69e32eb5c989be6d0e53c04d977569b7350cbcb5b3ef3a60a8cc61bce25f405d
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-SemiWideSemiBoldItalic.otf
+    filename: MonaspaceKryptonNF-SemiWideSemiBoldItalic.otf
+    sha256: 8b8b046330ce9f84ca87884e70d49faac6a265e4e7eae679c7ddb6268484ea2f
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-WideBold.otf
+    filename: MonaspaceKryptonNF-WideBold.otf
+    sha256: 8b7ab624a567941cbe83344634ad0ede6edb2531884a969b5b9410bf503ba245
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-WideBoldItalic.otf
+    filename: MonaspaceKryptonNF-WideBoldItalic.otf
+    sha256: 645bc9901f4a1e976bc4f2c948055e96ef7994d18145758372ae3e600b098eac
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-WideExtraBold.otf
+    filename: MonaspaceKryptonNF-WideExtraBold.otf
+    sha256: 4859a96c42ecb28dff5e3ae63446c03a50f34e40b4f926304d79999113c28613
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-WideExtraBoldItalic.otf
+    filename: MonaspaceKryptonNF-WideExtraBoldItalic.otf
+    sha256: 8c50a1765d3d2cf56f9c1eed2c2a82a569e04df3c71e267ddcec0f8563519489
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-WideExtraLight.otf
+    filename: MonaspaceKryptonNF-WideExtraLight.otf
+    sha256: bd69705f333f1b92a6c9cd2d1e868ec7a74c9ba595a8bcbf034cc8c6b3ce1bea
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-WideExtraLightItalic.otf
+    filename: MonaspaceKryptonNF-WideExtraLightItalic.otf
+    sha256: e5e850e4a40920b6c1312e32a00545a2311e054686d0cddc5610158a470b2275
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-WideItalic.otf
+    filename: MonaspaceKryptonNF-WideItalic.otf
+    sha256: 862cc6970f88696c72a451baa84dcd579d1a1166239fa96c33e36680ed060b00
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-WideLight.otf
+    filename: MonaspaceKryptonNF-WideLight.otf
+    sha256: 2e8ea92fc3b78bb4776fe75b2a7065603e8e77948879af13f288af6a3c46eeb2
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-WideLightItalic.otf
+    filename: MonaspaceKryptonNF-WideLightItalic.otf
+    sha256: 4079ad1b5a67ede3f9704755487bfb81ee6ff2da0f35b285878bd3edb22bd372
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-WideMedium.otf
+    filename: MonaspaceKryptonNF-WideMedium.otf
+    sha256: 98e470749f4342bf0c522e1799999ff6f28f0f7dd94ee43925df5a9d6324fd78
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-WideMediumItalic.otf
+    filename: MonaspaceKryptonNF-WideMediumItalic.otf
+    sha256: 2a83c6657a605cfaf1907ee40fca60e288066c0b77c506af18e89732ec4dca29
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-WideRegular.otf
+    filename: MonaspaceKryptonNF-WideRegular.otf
+    sha256: dddd98907b12f03202e31f9289c972bbc687c755659396d12486725ff1bb3aed
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-WideSemiBold.otf
+    filename: MonaspaceKryptonNF-WideSemiBold.otf
+    sha256: f4ef4a9ebe98c20787f735daf5b1e06cb05bf9a49f2b2235dece2207f04f77dd
+  - source: NerdFonts/Monaspace Krypton/MonaspaceKryptonNF-WideSemiBoldItalic.otf
+    filename: MonaspaceKryptonNF-WideSemiBoldItalic.otf
+    sha256: 6a89b92f0a2520cbe1d35026c3617c8f3ac9e0f645207f813159f1e603963f10
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-Bold.otf
+    filename: MonaspaceNeonNF-Bold.otf
+    sha256: 3661738d18771be5656964c4e7a098d55c9944ca2e76d3a415f15cbfc105bdbd
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-BoldItalic.otf
+    filename: MonaspaceNeonNF-BoldItalic.otf
+    sha256: 4d74316b35906af8936e889398111167f667456bbc62f5370faf28b4b7abfc00
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-ExtraBold.otf
+    filename: MonaspaceNeonNF-ExtraBold.otf
+    sha256: 74f46de1e24da584d5fe855c8ff54086c263d4843c512a11435d0ce9545927cd
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-ExtraBoldItalic.otf
+    filename: MonaspaceNeonNF-ExtraBoldItalic.otf
+    sha256: 64645ae1779cffd1a42bc11cb8bc7e8cf912892aa6789baeccc426905b020a46
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-ExtraLight.otf
+    filename: MonaspaceNeonNF-ExtraLight.otf
+    sha256: 4bd3eba286d1670a0ae0ec270a45caf39a8a552e9082ae88bb16ab00aa3ebb18
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-ExtraLightItalic.otf
+    filename: MonaspaceNeonNF-ExtraLightItalic.otf
+    sha256: 86b74d75c6eb7bc602945b7be8298aa6dbe9ce0733660de1457f913ea44e07f8
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-Italic.otf
+    filename: MonaspaceNeonNF-Italic.otf
+    sha256: 9fbb4160c1462f13596fddb2fea7e0ed9000017229cad7c54072c0244202dbae
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-Light.otf
+    filename: MonaspaceNeonNF-Light.otf
+    sha256: 841336380450c63fed55e6dc2081f4cc53403c2f743abceb240c65919613f0bb
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-LightItalic.otf
+    filename: MonaspaceNeonNF-LightItalic.otf
+    sha256: f9e7f8e890b1bb0c01a49288814ea20ce9b5955d4985d82783e6bf423f8d87cb
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-Medium.otf
+    filename: MonaspaceNeonNF-Medium.otf
+    sha256: c9f163b0c4f69a9edfb661825af7c894e3b0416b43ac9fad41d43288f54174c8
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-MediumItalic.otf
+    filename: MonaspaceNeonNF-MediumItalic.otf
+    sha256: faeabe59fa30a6ad81b211e9abe521490b182f4485aec7a64b4c0caeb8445130
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-Regular.otf
+    filename: MonaspaceNeonNF-Regular.otf
+    sha256: 1a9a8ba1c70fb5951168fcfe25a8f9acc92ca558ba0b6bc2e919d388740b32fb
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-SemiBold.otf
+    filename: MonaspaceNeonNF-SemiBold.otf
+    sha256: 98f8f5a121256a46ccd487c0675d3c69b89a3c7568231e87641073d8ab23e1bd
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-SemiBoldItalic.otf
+    filename: MonaspaceNeonNF-SemiBoldItalic.otf
+    sha256: 1593a637a5a914bda0cfefa50a208448f12f9c367b6a746ead0289559ff7652b
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-SemiWideBold.otf
+    filename: MonaspaceNeonNF-SemiWideBold.otf
+    sha256: 2c866e9a1b93768fb0f098dc8961fd9c4fac6b370910f0ec8c35884d8524744a
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-SemiWideBoldItalic.otf
+    filename: MonaspaceNeonNF-SemiWideBoldItalic.otf
+    sha256: 05aa5150b654ad7844d7c5956a30ad09e7aa8794c65aebc7de6f504ebe6861a2
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-SemiWideExtraBold.otf
+    filename: MonaspaceNeonNF-SemiWideExtraBold.otf
+    sha256: 7b78b136a5b3eaa56f62db6fb72c214710f9cd848b8045e6f575097a4d1b744f
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-SemiWideExtraBoldItalic.otf
+    filename: MonaspaceNeonNF-SemiWideExtraBoldItalic.otf
+    sha256: e031f9ea05d2667ea0d02b1a96abb201e94d840ce2c791ac7716880d441c937b
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-SemiWideExtraLight.otf
+    filename: MonaspaceNeonNF-SemiWideExtraLight.otf
+    sha256: 314c1057b03c8fbab7d37c1481bbea3f888944895555397b133f288910279884
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-SemiWideExtraLightItalic.otf
+    filename: MonaspaceNeonNF-SemiWideExtraLightItalic.otf
+    sha256: 905cb2e39301cbf0354bf4f997e4200b66f57387c63f75b73e1223966f4ee7d5
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-SemiWideItalic.otf
+    filename: MonaspaceNeonNF-SemiWideItalic.otf
+    sha256: 10059a86b4b11e0b2354564beaaeb54aeb3d8cac744641cb63816dd440c25dbe
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-SemiWideLight.otf
+    filename: MonaspaceNeonNF-SemiWideLight.otf
+    sha256: 97b1345eea1b1cc2b0b44028e0155714c16e6a3542bb471e578c4bea311a755a
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-SemiWideLightItalic.otf
+    filename: MonaspaceNeonNF-SemiWideLightItalic.otf
+    sha256: dec31b210941dbabc827debf72ee9f7b0155ad7bbf86778a0f3c245c3229d428
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-SemiWideMedium.otf
+    filename: MonaspaceNeonNF-SemiWideMedium.otf
+    sha256: f9467cf911a2a90a629e0066f5f4d70b1d59a76b8646996ae319eb7ede373c14
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-SemiWideMediumItalic.otf
+    filename: MonaspaceNeonNF-SemiWideMediumItalic.otf
+    sha256: 76449f43d04bfb0d21b0f773b74975aadde3c8abd39d8a2598c6a9960a5db012
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-SemiWideRegular.otf
+    filename: MonaspaceNeonNF-SemiWideRegular.otf
+    sha256: 90b55311544b1f38a4f91deaeeb1cbc97b2d1619a4f1cdcfa24de3571d65f770
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-SemiWideSemiBold.otf
+    filename: MonaspaceNeonNF-SemiWideSemiBold.otf
+    sha256: d5b7a588cf2376608c56b13ec49bf81afbfdc82650bf0cadb5a20438325c9afa
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-SemiWideSemiBoldItalic.otf
+    filename: MonaspaceNeonNF-SemiWideSemiBoldItalic.otf
+    sha256: aaaa7bc9878c626b0566332ca7632deb8b6216a8869c59f1e1021a742b04d552
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-WideBold.otf
+    filename: MonaspaceNeonNF-WideBold.otf
+    sha256: 430309c076b3d984c485f297b16d7041dae117bb132a762c63ea3525149803fd
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-WideBoldItalic.otf
+    filename: MonaspaceNeonNF-WideBoldItalic.otf
+    sha256: 466e8b40cb75739404064c0e7d230c0ac1e8c731b5e08773cf59f790c4481095
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-WideExtraBold.otf
+    filename: MonaspaceNeonNF-WideExtraBold.otf
+    sha256: 211af4c4e708321560c50820335060ded9482ef5dfb140d4e07ecf1c901c0a1b
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-WideExtraBoldItalic.otf
+    filename: MonaspaceNeonNF-WideExtraBoldItalic.otf
+    sha256: 452fe557d1e14082677c9d914cfa0635fb8145d47bac908786d5709b1f4a477b
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-WideExtraLight.otf
+    filename: MonaspaceNeonNF-WideExtraLight.otf
+    sha256: 3e72400250d4ac80086f23e650844daadf80a3cec95ab3dc2e3497c46bb89b75
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-WideExtraLightItalic.otf
+    filename: MonaspaceNeonNF-WideExtraLightItalic.otf
+    sha256: 8d94a012ad32f309da8061b9fd23022560938eadcacb39073839a18824913fda
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-WideItalic.otf
+    filename: MonaspaceNeonNF-WideItalic.otf
+    sha256: 81d5e5ebb46754b41e3829b88d3dacfa8729d3fd08a2a05ac24dd7a5d42c0571
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-WideLight.otf
+    filename: MonaspaceNeonNF-WideLight.otf
+    sha256: 7ac45b98f0db6f9314a55231e6a178e3f7efd5da60e6d22b38b5d38731cf5ce7
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-WideLightItalic.otf
+    filename: MonaspaceNeonNF-WideLightItalic.otf
+    sha256: f3913f2851ba8aaad024d7f482fc731162dd157941e9edbab1c09ab43d31c934
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-WideMedium.otf
+    filename: MonaspaceNeonNF-WideMedium.otf
+    sha256: d1eb8aabf7e200874750f421fafbc36ef8ccbaf4c9055fdead11ab5dc9c60414
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-WideMediumItalic.otf
+    filename: MonaspaceNeonNF-WideMediumItalic.otf
+    sha256: e1f508b3cf6004db840f9e9b6373b60093b25dfcd04e94a75bf6fd12f4813397
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-WideRegular.otf
+    filename: MonaspaceNeonNF-WideRegular.otf
+    sha256: 1d1755c4949196e8c67dfc11956f8111f53789364e1c99a426b2360bb4a59cd4
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-WideSemiBold.otf
+    filename: MonaspaceNeonNF-WideSemiBold.otf
+    sha256: dee3b557a3c153776280be90c3d4e1cb8f7c527649b8d5c58892cdd119e46b60
+  - source: NerdFonts/Monaspace Neon/MonaspaceNeonNF-WideSemiBoldItalic.otf
+    filename: MonaspaceNeonNF-WideSemiBoldItalic.otf
+    sha256: c9b7fcdc8174b0696d055caa89f7ec369ec273ac239d20caba659b62b2b7ad35
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-Bold.otf
+    filename: MonaspaceRadonNF-Bold.otf
+    sha256: 81e3e1e8815073a0c979ce1ba327f91b74606d81478fe271d160fcad22fd60eb
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-BoldItalic.otf
+    filename: MonaspaceRadonNF-BoldItalic.otf
+    sha256: 4bf3ceb61db7efa6f57bc2b958b2e5a8045222296ec31d8ac108749f558e6567
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-ExtraBold.otf
+    filename: MonaspaceRadonNF-ExtraBold.otf
+    sha256: 9cedff69786e1b56e218c6e2ad816042b97cbe8372f7c42725191f4e1bc87f61
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-ExtraBoldItalic.otf
+    filename: MonaspaceRadonNF-ExtraBoldItalic.otf
+    sha256: f8f6d1135aa154a098150752eb70cf02a09379d569b1145dbfdcc2fda68771f1
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-ExtraLight.otf
+    filename: MonaspaceRadonNF-ExtraLight.otf
+    sha256: 8e8f02c44da556617f0624b7f12436becec2dda085fbb0bfb96d26139306b607
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-ExtraLightItalic.otf
+    filename: MonaspaceRadonNF-ExtraLightItalic.otf
+    sha256: 41888eaab0224dc1e40c2cbbec44d6a7dd03865add5c3dabdd4dba4259289d6f
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-Italic.otf
+    filename: MonaspaceRadonNF-Italic.otf
+    sha256: 5d11c442e25c782b00f9e5211ef07f2d1cf7defb970973c3d248488d42c96fb6
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-Light.otf
+    filename: MonaspaceRadonNF-Light.otf
+    sha256: 4a4bef0539af5f71bc7357d8da1e94caa60bf05ae92c104e9809088d283b6586
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-LightItalic.otf
+    filename: MonaspaceRadonNF-LightItalic.otf
+    sha256: 49f40bb6ec0a59659eef18338ce0c94ca5d701e54d3e690ac3becb6839e9ac86
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-Medium.otf
+    filename: MonaspaceRadonNF-Medium.otf
+    sha256: bbffc782d9ef31c01ac16186f7b975640175913b5f3a51fcc15e1fa60f857bc4
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-MediumItalic.otf
+    filename: MonaspaceRadonNF-MediumItalic.otf
+    sha256: 95d78fd18fd36621785d55ec1d002d174cccb64396c18c233b65d5aab05e96a3
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-Regular.otf
+    filename: MonaspaceRadonNF-Regular.otf
+    sha256: 7e8bed594c1708f8f45f312339dc182deec7461c47b8fff79f410646baa9a3d2
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-SemiBold.otf
+    filename: MonaspaceRadonNF-SemiBold.otf
+    sha256: 803db4392377b6b20cad8c4d0a14bde9889cdeadda3acd73159478e4e87ffcc9
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-SemiBoldItalic.otf
+    filename: MonaspaceRadonNF-SemiBoldItalic.otf
+    sha256: 20f0870a1f44f570d083b43edb32fc5b35bd2c6adf9a2fe143cc13b92cbac583
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-SemiWideBold.otf
+    filename: MonaspaceRadonNF-SemiWideBold.otf
+    sha256: 48b60cc156d34789b2dbb5512fd8bfb7dc258bfe03839c237688fc72c531cdda
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-SemiWideBoldItalic.otf
+    filename: MonaspaceRadonNF-SemiWideBoldItalic.otf
+    sha256: e7d3c561102f3eaeeacfa1e60b9994ab3f30d93dc7bb464c00b5dc1c17c7ecf2
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-SemiWideExtraBold.otf
+    filename: MonaspaceRadonNF-SemiWideExtraBold.otf
+    sha256: 300c9b6a0506392433db75e6e4afb091ed0b8144ed1d9841952b4a8f7242a591
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-SemiWideExtraBoldItalic.otf
+    filename: MonaspaceRadonNF-SemiWideExtraBoldItalic.otf
+    sha256: 33bed10da9377ec91d95962d783aa72b154e6bd4f2cdf7a231053266333d92f5
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-SemiWideExtraLight.otf
+    filename: MonaspaceRadonNF-SemiWideExtraLight.otf
+    sha256: 7ba334ef305840b96e045208c71188f3494307fea9f7d478e976e9291ad7bc21
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-SemiWideExtraLightItalic.otf
+    filename: MonaspaceRadonNF-SemiWideExtraLightItalic.otf
+    sha256: e7645558647ed40699ce8a905d00ef0179fa5dd8ee18cf980140b839919f91a9
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-SemiWideItalic.otf
+    filename: MonaspaceRadonNF-SemiWideItalic.otf
+    sha256: 7d78659864ee1093a9cfa383153c8d56e606d496dfd3b29bc9d24d5703268394
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-SemiWideLight.otf
+    filename: MonaspaceRadonNF-SemiWideLight.otf
+    sha256: 083d3203c0a4f982f06c663417be8b9d51c7b02b2d3f4fb1ad4e40273c643490
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-SemiWideLightItalic.otf
+    filename: MonaspaceRadonNF-SemiWideLightItalic.otf
+    sha256: 1567682ffecc118a4e5f40606716aa9700cac34eca74702e70e9818f367041c2
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-SemiWideMedium.otf
+    filename: MonaspaceRadonNF-SemiWideMedium.otf
+    sha256: d6b6cca9b98bcee4407e7b96975973a4a3da9d64caa93f6e201c0b8173e78ec9
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-SemiWideMediumItalic.otf
+    filename: MonaspaceRadonNF-SemiWideMediumItalic.otf
+    sha256: 5ccc66a969750975972ee64dfc848af39afff54b62a7e04c6951d8ba1904845f
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-SemiWideRegular.otf
+    filename: MonaspaceRadonNF-SemiWideRegular.otf
+    sha256: 72663a69172c28a44c081a75c77e8e6858d1956ba7ccfe343c579198bd60ebc4
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-SemiWideSemiBold.otf
+    filename: MonaspaceRadonNF-SemiWideSemiBold.otf
+    sha256: 98948c26a6b393cdbd84d1f46be840b5fd820ec58686367b3bc1565aecbb3cb2
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-SemiWideSemiBoldItalic.otf
+    filename: MonaspaceRadonNF-SemiWideSemiBoldItalic.otf
+    sha256: 97d9f227ba13a14bd520fb1f0d8de4a31d9a7597e39d8b95c56751c6e869c15c
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-WideBold.otf
+    filename: MonaspaceRadonNF-WideBold.otf
+    sha256: 72a35c793e1394f5ca09eed6f49272933fb6a78757262b8644a61c4ccb75f6ce
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-WideBoldItalic.otf
+    filename: MonaspaceRadonNF-WideBoldItalic.otf
+    sha256: fd1bcf9eec1ac453b6f6952add6c74e2b3026d411aede8a191f769a3ac779590
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-WideExtraBold.otf
+    filename: MonaspaceRadonNF-WideExtraBold.otf
+    sha256: b71b0394e7097ffb8e33f20d3fa78416fae37aa1c448b4394e977126fb0d21fa
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-WideExtraBoldItalic.otf
+    filename: MonaspaceRadonNF-WideExtraBoldItalic.otf
+    sha256: bd06afeefd0e4382e28a9aa76acfdd8918d100b60a75a9f225ca855b44bb90c5
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-WideExtraLight.otf
+    filename: MonaspaceRadonNF-WideExtraLight.otf
+    sha256: ff30607eee5ac0572ff778c28622b620554a35aaf7be2bf3477a437107494361
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-WideExtraLightItalic.otf
+    filename: MonaspaceRadonNF-WideExtraLightItalic.otf
+    sha256: 7ed7b8ab2ed257945160af3e7a4e596e247a32034768bb6a3bfcf218360b5bb2
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-WideItalic.otf
+    filename: MonaspaceRadonNF-WideItalic.otf
+    sha256: 663a568642a1f95f085357a928c325ccf6a034f5d21f87c33c1385e2957536ea
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-WideLight.otf
+    filename: MonaspaceRadonNF-WideLight.otf
+    sha256: a3a3ca5735ddd1bcd105c1d7035fd7687efdd377ea11829a75c721ce1f592ba5
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-WideLightItalic.otf
+    filename: MonaspaceRadonNF-WideLightItalic.otf
+    sha256: 0cdea2d2a633660a58d7a406d383d2cedce23643f334d1189d8fa89febdb0fb0
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-WideMedium.otf
+    filename: MonaspaceRadonNF-WideMedium.otf
+    sha256: 141e2a0b1f1bf98ee7caf531a0e1d1e37804f2792c9313d9d70f0e7e3c389090
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-WideMediumItalic.otf
+    filename: MonaspaceRadonNF-WideMediumItalic.otf
+    sha256: 6ff8ef7f0d4882c68b62a23ee8cfefb4a9c6a621cd58ea8f08a75638000cc07d
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-WideRegular.otf
+    filename: MonaspaceRadonNF-WideRegular.otf
+    sha256: e2635669e1d00a609a6a408cce09a83d31f6ce47cdf41edd5908cf9339a2a28c
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-WideSemiBold.otf
+    filename: MonaspaceRadonNF-WideSemiBold.otf
+    sha256: 5e5f111c035da4b10c7f02b524db419bf0dc1e1f0f5c5b0972c92cb8f30cdaab
+  - source: NerdFonts/Monaspace Radon/MonaspaceRadonNF-WideSemiBoldItalic.otf
+    filename: MonaspaceRadonNF-WideSemiBoldItalic.otf
+    sha256: 50db3aab9e9464ea82668bd48531f1e4cc81e3c44deade3f68fa4b92cd4c50a4
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-Bold.otf
+    filename: MonaspaceXenonNF-Bold.otf
+    sha256: 0e995f84c9eae7d242e51c45d7cd45ca9a101ee3da8f9cd0e71855d088f12ea7
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-BoldItalic.otf
+    filename: MonaspaceXenonNF-BoldItalic.otf
+    sha256: 063eda3b5ae098204dd85bbd97e85e219b09270551466b2e9938da7158c49ece
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-ExtraBold.otf
+    filename: MonaspaceXenonNF-ExtraBold.otf
+    sha256: fd8d9d9fbcd9894c7740542c2d941f14f80a1988c3cdcd4249257f123299f404
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-ExtraBoldItalic.otf
+    filename: MonaspaceXenonNF-ExtraBoldItalic.otf
+    sha256: 5b5086d89453ebb649aac2e676d0659ec9167a7180fa3fabf70bebf54e457575
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-ExtraLight.otf
+    filename: MonaspaceXenonNF-ExtraLight.otf
+    sha256: 3cf9b59633748d05b63c4b68af993ecb65c003ecfbd50605ecd3740768923f51
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-ExtraLightItalic.otf
+    filename: MonaspaceXenonNF-ExtraLightItalic.otf
+    sha256: 9d429f7a4c9938ffbe6eb1860293904cf78dbe9c5284280705be3d22d35e4372
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-Italic.otf
+    filename: MonaspaceXenonNF-Italic.otf
+    sha256: 7fad763274a063be25247daa6c23e48d89016decba20f037ac7819043c500f1a
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-Light.otf
+    filename: MonaspaceXenonNF-Light.otf
+    sha256: abf682d3cd0b09d9aea560ce5ec3d43fc0709c18f34e53788778ca744302e64f
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-LightItalic.otf
+    filename: MonaspaceXenonNF-LightItalic.otf
+    sha256: 6c95573a15b4c0d241eac9f9908a6f21918bdd8c3a485de366dc3f18545173a6
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-Medium.otf
+    filename: MonaspaceXenonNF-Medium.otf
+    sha256: c929d97d6be4061b9d5ea889c08107ea479b5952f27f68f1d0441ff164ec4541
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-MediumItalic.otf
+    filename: MonaspaceXenonNF-MediumItalic.otf
+    sha256: 0962ce1a1a4098c73282b3d4d16086c698c5ffd594c5947be5c44dc0274b6138
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-Regular.otf
+    filename: MonaspaceXenonNF-Regular.otf
+    sha256: 10b1f7d62b408e701e615f160dd6bf2ba894ee4fd04c55c390ea302b9862cb6c
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-SemiBold.otf
+    filename: MonaspaceXenonNF-SemiBold.otf
+    sha256: 5aa981385677212041fd7eb19c7e2a13c6ec30c14c7990130f2ea3b5ec58c448
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-SemiBoldItalic.otf
+    filename: MonaspaceXenonNF-SemiBoldItalic.otf
+    sha256: 8e41c6cca3a86c7c7a85c32a675e07aa07cb30084d444e496e71c2755d4897f4
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-SemiWideBold.otf
+    filename: MonaspaceXenonNF-SemiWideBold.otf
+    sha256: 7d17a34567d8a8068f8e05198ad16f50243ee1ff1a402b39681e3dd980cc0c81
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-SemiWideBoldItalic.otf
+    filename: MonaspaceXenonNF-SemiWideBoldItalic.otf
+    sha256: c626f48b6d8b4f0e734bcc371bd795e549bc08efd20a6cdf4808525d7ce702d3
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-SemiWideExtraBold.otf
+    filename: MonaspaceXenonNF-SemiWideExtraBold.otf
+    sha256: d89b15bdd3fe5d0c9a755bd505d71f976ca3a9595027120fc50b82aa1ea302b8
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-SemiWideExtraBoldItalic.otf
+    filename: MonaspaceXenonNF-SemiWideExtraBoldItalic.otf
+    sha256: 9c33cece83042d888d2c539040754dca0b1ae2a5585ca3504432ec48717fb77e
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-SemiWideExtraLight.otf
+    filename: MonaspaceXenonNF-SemiWideExtraLight.otf
+    sha256: 2d7df8e7100887ffaebc9ad7253be0e8a732e7c97ba0191ad4b537dad293f3c3
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-SemiWideExtraLightItalic.otf
+    filename: MonaspaceXenonNF-SemiWideExtraLightItalic.otf
+    sha256: 6efe37215d706ae0b3d9136f5d948a09f8decc9c113b0abe98e6e70f7f0554f5
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-SemiWideItalic.otf
+    filename: MonaspaceXenonNF-SemiWideItalic.otf
+    sha256: cdd2ca646ae52c079b4ba81d114aba8561bf452badda51a620fd63afe8b742df
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-SemiWideLight.otf
+    filename: MonaspaceXenonNF-SemiWideLight.otf
+    sha256: daf0ba123fe7ab6be650a9ae4bbd45576321c3f7afd4fec930043bef7b1d3281
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-SemiWideLightItalic.otf
+    filename: MonaspaceXenonNF-SemiWideLightItalic.otf
+    sha256: 3cd83f51ee52e154e5d48a45abcc8be90fcdc4416017bd2f9c67683176d821ad
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-SemiWideMedium.otf
+    filename: MonaspaceXenonNF-SemiWideMedium.otf
+    sha256: 426c1d57d28673409a492c8cc6209e69776548c620daa1d26712c91d3b6cf6d4
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-SemiWideMediumItalic.otf
+    filename: MonaspaceXenonNF-SemiWideMediumItalic.otf
+    sha256: 0bcca6240a7051f343fd0b68a521c9e4897ddc1f838d40bb420c935cd391128f
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-SemiWideRegular.otf
+    filename: MonaspaceXenonNF-SemiWideRegular.otf
+    sha256: 7f44c900785b850b14d627a25b7aeef61c1241e8e943bc4377fb82375fadd8c9
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-SemiWideSemiBold.otf
+    filename: MonaspaceXenonNF-SemiWideSemiBold.otf
+    sha256: 3f24972035302eb355ab1d33c99a3b3cf13238cd5e8d16f4fb3ac0b63f69976b
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-SemiWideSemiBoldItalic.otf
+    filename: MonaspaceXenonNF-SemiWideSemiBoldItalic.otf
+    sha256: d5f92a9add7ce945f4b16a047de5897f478fe5a82916f3301623d61a2bc633ca
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-WideBold.otf
+    filename: MonaspaceXenonNF-WideBold.otf
+    sha256: c35f0212f520ea5e5c171ff65dc72dc76f89c2e87b899d2c5c88e96c9aba6e89
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-WideBoldItalic.otf
+    filename: MonaspaceXenonNF-WideBoldItalic.otf
+    sha256: 2309bb7674b163bbee3d9b06afdb205087e226f75c1ae734c18d5a8e9c05c2e8
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-WideExtraBold.otf
+    filename: MonaspaceXenonNF-WideExtraBold.otf
+    sha256: 06483defd834ac5243774eb435d6a3ad800b4a58f60cf015c3c31999d018f8ea
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-WideExtraBoldItalic.otf
+    filename: MonaspaceXenonNF-WideExtraBoldItalic.otf
+    sha256: 5b066a19b3616210f42c8209463cccb42715b36dd84ffe9bf785039ce8cc5e72
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-WideExtraLight.otf
+    filename: MonaspaceXenonNF-WideExtraLight.otf
+    sha256: 61b11192f551d2aafccf068c751b3be195b8d3ea9b90379cec2dd351ec9257c5
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-WideExtraLightItalic.otf
+    filename: MonaspaceXenonNF-WideExtraLightItalic.otf
+    sha256: e01f8b36079d5a5329ca6d3810be54be8d3e4b17b092fbb72ae928d41c0f49b0
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-WideItalic.otf
+    filename: MonaspaceXenonNF-WideItalic.otf
+    sha256: c1f9802685c174a546d947bb7c210c61a64024d40253059089245d308f3bacf7
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-WideLight.otf
+    filename: MonaspaceXenonNF-WideLight.otf
+    sha256: 4c631d3a1b1372a650f3e5ffcc0458f5c0324c77dd9bbff0eba316383493df3b
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-WideLightItalic.otf
+    filename: MonaspaceXenonNF-WideLightItalic.otf
+    sha256: c792340ec87894cb750a737baf0be4f3733d16af3ee67571dcbf900f722b2580
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-WideMedium.otf
+    filename: MonaspaceXenonNF-WideMedium.otf
+    sha256: 92a021183f48c70394cb1442de4c2ff950e45aa7c6e231876436dc0206099a0c
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-WideMediumItalic.otf
+    filename: MonaspaceXenonNF-WideMediumItalic.otf
+    sha256: a8b64146444153eef6d714414e46cc4cef035486b1e95b79891171ba7749251d
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-WideRegular.otf
+    filename: MonaspaceXenonNF-WideRegular.otf
+    sha256: bc7171236d1a6dae31c60ec2038c24495cc835501e34beeec27d7ee10a769677
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-WideSemiBold.otf
+    filename: MonaspaceXenonNF-WideSemiBold.otf
+    sha256: 5df3e6593f4ca392a168734db72ba29e5bfdd53bdc838eeda545bad788173cdc
+  - source: NerdFonts/Monaspace Xenon/MonaspaceXenonNF-WideSemiBoldItalic.otf
+    filename: MonaspaceXenonNF-WideSemiBoldItalic.otf
+    sha256: c066c096f00898681f6ad0c4121a8096e2b19437a148beec19fe45aea72fde5a

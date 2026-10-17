@@ -1,0 +1,29 @@
+---
+- name: Prepare checksum-pinned official Monaspace NF fonts on the controller
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+  vars_files:
+    - ../assets/fonts/monaspace-nf.yml
+  tasks:
+    - name: Create the ignored controller font cache
+      ansible.builtin.file:
+        path: '{{ playbook_dir }}/../.cache/fonts/monaspace-v1.400'
+        state: directory
+        mode: '0755'
+
+    - name: Download the official release with its pinned SHA256
+      ansible.builtin.get_url:
+        url: '{{ url }}'
+        dest: '{{ playbook_dir }}/../.cache/fonts/monaspace-nerdfonts-v1.400.zip'
+        checksum: 'sha256:{{ archive_sha256 }}'
+        mode: '0644'
+
+    - name: Extract official desktop fonts into the controller cache
+      ansible.builtin.unarchive:
+        src: '{{ playbook_dir }}/../.cache/fonts/monaspace-nerdfonts-v1.400.zip'
+        dest: '{{ playbook_dir }}/../.cache/fonts/monaspace-v1.400'
+        remote_src: true
+        mode: '0755'
+      when: not ansible_check_mode

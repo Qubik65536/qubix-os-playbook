@@ -1,5 +1,6 @@
 ---
 qubix_profile_keys:
+  fonts: [enabled, krypton_ui]
   branding: [enabled]
   niri: [enabled, user_config, fingerprint_setup, presentation]
   shell: [enabled, change_default_shell]
@@ -31,4 +32,4 @@ qubix_profile_choices:
   - component: plymouth
     key: initramfs_backend
     values: [auto, dracut, mkinitcpio]
-qubix_profile_implemented: [branding, niri, shell, login, bootloader, plymouth]
+qubix_profile_implemented: [fonts, branding, niri, shell, login, bootloader, plymouth]

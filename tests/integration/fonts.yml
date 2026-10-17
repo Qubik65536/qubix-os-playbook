@@ -1,0 +1,175 @@
+---
+- name: Compare native generic and Krypton UI in a private Niri session
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  roles:
+    - qubix_profile
+    - qubix_discovery
+  tasks:
+    - name: Require real preview with Krypton selected
+      ansible.builtin.assert:
+        that:
+          - not ansible_check_mode
+          - qubix_profile_resolved.fonts.enabled
+          - qubix_profile_resolved.fonts.krypton_ui
+
+    - name: Render actual desktop definitions without installation
+      ansible.builtin.include_role:
+        name: qubix_niri
+        tasks_from: render
+
+    - name: Render the production GTK default override
+      ansible.builtin.set_fact:
+        qubix_font_preview_gtk_override: >-
+          {{ lookup('template', '../../roles/qubix_fonts/templates/krypton.gschema.override.j2') }}
+
+    - name: Load the pinned source inventory
+      ansible.builtin.include_vars:
+        file: ../../assets/fonts/monaspace-nf.yml
+        name: qubix_font_preview_manifest
+
+    - name: Create private native preview root
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: qubix-ui-preview.
+      register: qubix_font_preview
+
+    - name: Render font comparison with guaranteed cleanup
+      block:
+        - name: Create isolated configuration and font directories
+          ansible.builtin.file:
+            path: '{{ qubix_font_preview.path }}/{{ item }}'
+            state: directory
+            mode: '0700'
+          loop: [config/noctalia/palettes, fonts]
+
+        - name: Copy native GTK schemas into the private parser test directory
+          ansible.builtin.copy:
+            src: /usr/share/glib-2.0/schemas/
+            dest: '{{ qubix_font_preview.path }}/schemas/'
+            remote_src: true
+            mode: preserve
+
+        - name: Add the exact candidate system GTK defaults to the private schema tree
+          ansible.builtin.copy:
+            dest: '{{ qubix_font_preview.path }}/schemas/90-qubix-krypton.gschema.override'
+            content: '{{ qubix_font_preview_gtk_override }}'
+            mode: '0600'
+
+        - name: Strictly compile candidate defaults only in the private schema tree
+          ansible.builtin.command:
+            argv: [/usr/bin/glib-compile-schemas, --strict, '{{ qubix_font_preview.path }}/schemas']
+          changed_when: true
+
+        - name: Verify candidate GTK UI defaults with a transient settings backend
+          ansible.builtin.command:
+            argv: [/usr/bin/gsettings, get, org.gnome.desktop.interface, '{{ item }}']
+          environment:
+            GSETTINGS_SCHEMA_DIR: '{{ qubix_font_preview.path }}/schemas'
+            GSETTINGS_BACKEND: memory
+          loop: [font-name, monospace-font-name]
+          changed_when: false
+          register: qubix_font_preview_gtk
+          failed_when: qubix_font_preview_gtk.stdout != "'Monaspace Krypton NF 11'"
+
+        - name: Copy all normal-width Krypton weights for isolated resolution
+          ansible.builtin.copy:
+            src: '{{ playbook_dir }}/../../.cache/fonts/monaspace-v1.400/{{ item.source }}'
+            dest: '{{ qubix_font_preview.path }}/fonts/{{ item.filename }}'
+            mode: '0600'
+          loop: >-
+            {{ qubix_font_preview_manifest.files | selectattr('filename', 'match', '^MonaspaceKryptonNF-')
+            | rejectattr('filename', 'search', 'Wide') | list }}
+          loop_control:
+            label: '{{ item.filename }}'
+
+        - name: Supply identical configurations differing only in font family
+          ansible.builtin.copy:
+            dest: '{{ qubix_font_preview.path }}/{{ item.name }}'
+            content: '{{ item.content }}'
+            mode: '0600'
+          vars:
+            qubix_font_preview_config: >-
+              {{ (qubix_niri_resources | selectattr('path', 'equalto', '/etc/qubix/noctalia/config.toml')
+              | first).content }}
+          loop:
+            - name: reference.toml
+              content: '{{ qubix_font_preview_config | replace("Monaspace Krypton NF", "Noto Sans") }}'
+            - {name: qubix.toml, content: '{{ qubix_font_preview_config }}'}
+            - {name: selection.json, content: '["shell"]'}
+            - {name: font-comparison.json, content: '{}'}
+            - name: binaries.json
+              content: >-
+                {{ {'noctalia': '/usr/share/qubix/bin/noctalia' if qubix_profile_resolved.niri.presentation == 'qubix'
+                else '/usr/bin/noctalia'} | to_json }}
+            - name: config/noctalia/palettes/Qubix.json
+              content: '{{ lookup("file", "../../roles/qubix_niri/templates/palette.json.j2") }}'
+            - name: preview.py
+              content: '{{ lookup("file", "files/ui-preview.py") }}'
+            - name: krypton.conf
+              content: '{{ lookup("template", "../../roles/qubix_fonts/templates/krypton.conf.j2") }}'
+            - name: defaults.conf
+              content: >-
+                <?xml version="1.0"?><!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd"><fontconfig>
+                <include>{{ qubix_font_preview.path }}/fonts.conf</include>
+                <include>{{ qubix_font_preview.path }}/krypton.conf</include></fontconfig>
+            - name: fonts.conf
+              content: >-
+                <?xml version="1.0"?><!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd"><fontconfig>
+                <include>/etc/fonts/fonts.conf</include><dir>{{ qubix_font_preview.path }}/fonts</dir>
+                <cachedir>{{ qubix_font_preview.path }}/font-cache</cachedir></fontconfig>
+          loop_control:
+            label: '{{ item.name }}'
+
+        - name: Resolve every production Fontconfig alias in the private font tree
+          ansible.builtin.command:
+            argv: [/usr/bin/fc-match, --format, '%{family[0]}', '{{ item }}']
+          environment:
+            FONTCONFIG_FILE: '{{ qubix_font_preview.path }}/defaults.conf'
+            XDG_CACHE_HOME: '{{ qubix_font_preview.path }}/cache'
+          loop: ['sans\-serif', sans, 'system\-ui', monospace]
+          changed_when: false
+          register: qubix_font_preview_alias
+          failed_when: qubix_font_preview_alias.stdout != 'Monaspace Krypton NF'
+
+        - name: Validate both configurations with the real Noctalia parser
+          ansible.builtin.command:
+            argv: [/usr/bin/noctalia, config, validate, '{{ qubix_font_preview.path }}/{{ item }}.toml']
+          loop: [reference, qubix]
+          changed_when: false
+          register: qubix_font_preview_parser
+          failed_when: >-
+            qubix_font_preview_parser.rc != 0 or
+            qubix_font_preview_parser.stdout is search('(?m)^(WARN|ERROR)')
+
+        - name: Capture real native text with isolated fonts and no main-session activation
+          ansible.builtin.command:
+            argv: [/usr/bin/python3, '{{ qubix_font_preview.path }}/preview.py', '{{ qubix_font_preview.path }}']
+          changed_when: true # Opens and closes only the private nested preview.
+          timeout: 240
+          register: qubix_font_preview_result
+
+        - name: Report rendering and preservation evidence
+          ansible.builtin.debug:
+            msg: '{{ qubix_font_preview_result.stdout | from_json }}'
+      always:
+        - name: Find native comparison evidence before removing the preview
+          ansible.builtin.find:
+            paths: '{{ qubix_font_preview.path }}'
+            patterns: ['*.png', '*.log', '*result.json']
+          register: qubix_font_preview_evidence
+
+        - name: Retain screenshots and diagnostics on the controller
+          ansible.builtin.fetch:
+            src: '{{ item.path }}'
+            dest: '{{ playbook_dir }}/../../.cache/native-fonts/{{ inventory_hostname }}/'
+            flat: true
+          loop: '{{ qubix_font_preview_evidence.files }}'
+          loop_control:
+            label: '{{ item.path | basename }}'
+
+        - name: Remove only the private font preview root
+          ansible.builtin.file:
+            path: '{{ qubix_font_preview.path }}'
+            state: absent

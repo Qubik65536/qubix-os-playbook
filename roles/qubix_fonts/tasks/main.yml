@@ -1,0 +1,106 @@
+---
+- name: Load pinned official Monaspace NF file inventory
+  ansible.builtin.include_vars:
+    file: '{{ qubix_fonts_manifest_file }}'
+    name: qubix_fonts_manifest
+
+- name: Validate the redistributable font license before target writes
+  ansible.builtin.stat:
+    path: '{{ role_path }}/../../assets/fonts/Monaspace-NF-LICENSE.txt'
+    checksum_algorithm: sha256
+    get_mime: false
+  delegate_to: localhost
+  become: false
+  register: qubix_fonts_license
+
+- name: Require the exact upstream license bytes
+  ansible.builtin.assert:
+    that: [qubix_fonts_license.stat.checksum == qubix_fonts_manifest.license_sha256]
+
+- name: Inspect prepared controller fonts before any target writes
+  ansible.builtin.find:
+    paths: '{{ qubix_fonts_source_root }}'
+    recurse: true
+    patterns: '*.otf'
+    get_checksum: true
+    checksum_algorithm: sha256
+  delegate_to: localhost
+  become: false
+  register: qubix_fonts_sources
+
+- name: Require the complete pinned font preparation
+  ansible.builtin.assert:
+    that:
+      - qubix_fonts_sources.matched == qubix_fonts_manifest.files | length
+      - >-
+        qubix_fonts_sources.files | map(attribute='checksum') | sort ==
+        qubix_fonts_manifest.files | map(attribute='sha256') | sort
+    fail_msg: 'Missing or damaged Monaspace NF source; run playbooks/prepare-fonts.yml on the controller first.'
+
+- name: Index prepared source checksums by exact path
+  ansible.builtin.set_fact:
+    qubix_fonts_source_checksums: >-
+      {{ dict(qubix_fonts_sources.files | map(attribute='path') |
+      zip(qubix_fonts_sources.files | map(attribute='checksum'))) }}
+
+- name: Reject renamed or mismatched source files before any target writes
+  ansible.builtin.assert:
+    that:
+      - qubix_fonts_source_checksums.get(qubix_fonts_source_root ~ '/' ~ item.source, '') == item.sha256
+    fail_msg: 'Changed Monaspace NF source path/checksum; run playbooks/prepare-fonts.yml again.'
+  loop: '{{ qubix_fonts_manifest.files }}'
+  loop_control:
+    label: '{{ item.filename }}'
+
+- name: Require native Fontconfig tools before target writes
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/usr/bin/{{ item }}'
+    follow: false
+  loop: [fc-cache, fc-match, fc-validate, glib-compile-schemas, gsettings]
+  register: qubix_fonts_tools
+
+- name: Reject missing native font prerequisites
+  ansible.builtin.assert:
+    that:
+      - item.stat.isreg | default(false)
+      - item.stat.executable | default(false)
+    fail_msg: 'Monaspace NF requires installed Fontconfig tools before deployment.'
+  loop: '{{ qubix_fonts_tools.results }}'
+  loop_control:
+    label: '{{ item.item }}'
+
+- name: Require native GTK interface schemas before proposing system defaults
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/usr/share/glib-2.0/schemas/org.gnome.desktop.interface.gschema.xml'
+    follow: false
+  register: qubix_fonts_gtk_schema
+
+- name: Reject unsupported GTK schema installation before target writes
+  ansible.builtin.assert:
+    that: [qubix_fonts_gtk_schema.stat.isreg | default(false)]
+    fail_msg: 'Monaspace UI defaults require the native org.gnome.desktop.interface schema.'
+
+- name: Initialize font resource definitions
+  ansible.builtin.set_fact:
+    qubix_fonts_resources: []
+
+- name: Define exact font files for protected installation and recovery
+  ansible.builtin.set_fact:
+    qubix_fonts_resources: >-
+      {{ qubix_fonts_resources | default([]) + [{'path': '/usr/share/fonts/qubix-monaspace-nf/' ~ item.filename,
+      'source': qubix_fonts_source_root ~ '/' ~ item.source, 'sha256': item.sha256, 'component': 'fonts'}] }}
+  loop: '{{ qubix_fonts_manifest.files }}'
+  loop_control:
+    label: '{{ item.filename }}'
+
+- name: Include the upstream license and reversible system font preference
+  ansible.builtin.set_fact:
+    qubix_fonts_resources: >-
+      {{ qubix_fonts_resources + [
+      {'path': '/usr/share/fonts/qubix-monaspace-nf/LICENSE.txt', 'component': 'fonts',
+       'source': role_path ~ '/../../assets/fonts/Monaspace-NF-LICENSE.txt',
+       'sha256': qubix_fonts_manifest.license_sha256},
+      {'path': '/usr/share/glib-2.0/schemas/90-qubix-krypton.gschema.override', 'component': 'fonts',
+       'content': lookup('template', 'krypton.gschema.override.j2')},
+      {'path': '/etc/fonts/conf.d/60-qubix-krypton.conf', 'component': 'fonts',
+       'content': lookup('template', 'krypton.conf.j2')}] }}

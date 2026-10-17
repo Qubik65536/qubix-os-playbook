@@ -1,0 +1,41 @@
+---
+- name: Resolve exact font and toolkit cache inputs
+  ansible.builtin.set_fact:
+    qubix_fonts_cache_input: >-
+      {{ (qubix_fonts_manifest.files | to_json ~ lookup('template', 'krypton.gschema.override.j2')) | hash('sha256') }}
+
+- name: Inspect completed font-cache input receipt
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}/var/lib/qubix/fonts-inputs.sha256'
+  register: qubix_fonts_cache_receipt
+  failed_when: false
+
+- name: Refresh native system font cache after changed inputs or interrupted installation
+  ansible.builtin.command:
+    argv: [/usr/bin/fc-cache, --system-only, /usr/share/fonts/qubix-monaspace-nf]
+  changed_when: true
+  when:
+    - not ansible_check_mode
+    - >-
+      qubix_fonts_cache_receipt.content | default('') | b64decode | trim !=
+      qubix_fonts_cache_input
+
+- name: Compile strict system GTK defaults after changed inputs
+  ansible.builtin.command:
+    argv: [/usr/bin/glib-compile-schemas, --strict, /usr/share/glib-2.0/schemas]
+  changed_when: true
+  when:
+    - not ansible_check_mode
+    - qubix_fonts_cache_receipt.content | default('') | b64decode | trim != qubix_fonts_cache_input
+
+- name: Record successful font-cache input verification
+  ansible.builtin.copy:
+    dest: '{{ qubix_root | default("") }}/var/lib/qubix/fonts-inputs.sha256'
+    content: '{{ qubix_fonts_cache_input }}
+'
+    mode: '0600'
+  when: not ansible_check_mode
+
+- name: Verify installed font parsers and actual family selection
+  ansible.builtin.import_tasks: verify.yml
+  when: not ansible_check_mode
