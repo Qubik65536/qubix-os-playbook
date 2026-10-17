@@ -1,11 +1,17 @@
 # Project status
 
 Updated: 2026-10-16. Stage: **MVP candidate; acceptance In Progress**.
-Monaspace NF / configurable Krypton UI **Implemented; source/fixture/native preview Tested;
-installation In Progress**. All 210 official faces are pinned separately from the boot subset.
+Monaspace NF / configurable Krypton UI **Implemented; controller/native rendering, installation,
+active shell, installed verification and zero-change reapplication Tested**. All 210 official faces are pinned separately from the boot subset.
 Fontconfig aliases, GTK system schema defaults and Qubix Noctalia share the boolean switch;
 personal font settings retain precedence. The [font evidence](font-test-results.md) contains
 native reference/Krypton comparisons and separates installation, parser, session and boot gates.
+Clean d38d479 applies all 210 faces and the independent Fontconfig/GTK/Noctalia defaults;
+production installed verification passes 107 tasks/zero changes and reapplication 4,238/zero changes.
+A guarded shell-only restart activates Krypton, preserving Niri PID 1126, applications and personal
+settings; actual GTK UI/monospace defaults resolve to Krypton NF 11. All 85 protected resources,
+earlier originals and boot ID remain intact; only the intended Noctalia receipt refreshes,
+426 font recovery files are added and pending markers are absent.
 
 Compact login, fingerprint setup and QubixOS captions **Implemented; controller/native simulated
 adapter/rendering, installation, zero-change reapplication and desktop-caption activation Tested**.
@@ -153,6 +159,7 @@ pass 752/232 tasks. These fixture results remain separate from native reboot and
 | Architecture, ADRs and conventions | Implemented before source; local links and schema/default agreement pass |
 | Tooling/CI | Static checks and fixtures Tested locally; Actions configured, not executed remotely |
 | Profile/discovery | Unsupported/schema/identity fixtures and native read-only discovery Tested |
+| Fonts | All 210 official NF faces, native validation/aliases/GTK, active shell and zero-change reapplication Tested; saved preferences and boot typography preserved |
 | Branding | Native install, exact resources, original preservation, reapplication and earlier restoration Tested |
 | Niri/Noctalia | Native grammar, private rendering, primary startup/reload and 100% output scale Tested; physical interaction/recovery acceptance open |
 | Shell/terminal | Native temporary-home Bash/Starship checks pass; personal files and default Fish preserved |

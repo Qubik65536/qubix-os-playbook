@@ -1,6 +1,6 @@
 # Monaspace NF fonts
 
-Status: **Implemented; fixtures/native rendering Tested; installation acceptance In Progress**. This contract defines installation separately from UI selection.
+Status: **Implemented; fixtures, native rendering/installation, active shell and zero-change reapplication Tested**. This contract defines installation separately from UI selection.
 
 ## Scope and interface
 

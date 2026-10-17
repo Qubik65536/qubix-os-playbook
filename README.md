@@ -2,7 +2,7 @@
 
 An Ansible framework for deploying Qubix branding and desktop defaults onto existing Linux installations. The first target is **CachyOS with Niri**. Qubix reproduces its managed configuration, not the complete operating system.
 
-**Status: MVP candidate ready for testing.** Branding, Qubix Niri/Noctalia, shell defaults,
+**Status: MVP candidate ready for testing.** Monaspace NF/Krypton defaults, branding, Qubix Niri/Noctalia, shell defaults,
 SDDM branding, Noctalia Greeter appearance preparation, both GRUB and Limine, and Plymouth with dracut/mkinitcpio are implemented.
 The CachyOS desktop starts at 100% scale; the corrected Limine/native-style Plymouth deployment
 and exact boot-image checks pass on the authorized target. Identical-source reapplication passes
@@ -26,12 +26,13 @@ After controller setup, a remote inventory with a `qubix_targets` group and the 
 
 ```bash
 ./bootstrap.sh verify -i inventory/target.local.ini -e @config/local.yml --ask-become-pass
+.venv/bin/ansible-playbook playbooks/prepare-fonts.yml
 ./bootstrap.sh deploy -i inventory/target.local.ini -e @config/local.yml --check --diff --ask-become-pass
 ./bootstrap.sh deploy -i inventory/target.local.ini -e @config/local.yml --ask-become-pass
 ./bootstrap.sh verify -i inventory/target.local.ini -e @config/local.yml --tags installed --ask-become-pass
 ```
 
-Add --ask-pass with password SSH. The guide includes explicit read privilege for private /boot metadata. The default profile deploys the desktop only. Choose **Qubix Niri** at login or start it from a free TTY. Native Niri, personal dotfiles, distribution identity, boot entries and kernel arguments remain preserved. Login/boot/splash are opt-in; explicit boot paths/version/image mappings are required. Candidate commits are local and have not been pushed.
+Add --ask-pass with password SSH. The guide includes explicit read privilege for private /boot metadata. The default profile installs fonts and desktop defaults. Set `qubix.fonts.krypton_ui: false` to keep the fonts without switching UI defaults. Choose **Qubix Niri** at login or start it from a free TTY. Native Niri, personal dotfiles, distribution identity, boot entries and kernel arguments remain preserved. Login/boot/splash are opt-in; explicit boot paths/version/image mappings are required. Candidate commits are local and have not been pushed.
 
 ## Regenerate the shortcut cheatsheet
 

@@ -8,7 +8,10 @@ Changes are grouped by release. Bootstrap has no release tag.
   configurable Krypton UI defaults for Fontconfig, GTK schema defaults and Qubix Noctalia.
   Preserve saved user preferences, application font choices and boot typography. Add offline
   deployment preparation, strict source checks, cache/recovery handling, disposable normal/check
-  fixtures and native reference/Krypton comparison screenshots. Installation acceptance is In Progress.
+  fixtures and native reference/Krypton comparison screenshots. Clean d38d479 installation,
+  107-task installed verification, live shell activation and 4,238-task zero-change reapplication pass.
+  User settings, application windows, all 85 protected resources, earlier originals and boot identity
+  remain preserved; no boot/image operation runs.
 
 - Add a user/developer feature overview with implementation links and explicit distinctions
   between implemented behavior, test evidence and pending physical acceptance.

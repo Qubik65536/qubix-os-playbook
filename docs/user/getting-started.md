@@ -21,7 +21,7 @@ On the VM, keep its existing Niri installation and display manager.
 Preview the selected desktop transaction before installation, especially on a physical machine:
 
 ```bash
-pacman -Sp --needed --print-format '%n %v' noctalia foot jq starship
+pacman -Sp --needed --print-format '%n %v' noctalia foot jq starship fontconfig gsettings-desktop-schemas
 ```
 
 Native CachyOS Snapper/Limine package hooks can create snapshots and refresh menu entries. Those effects occurred in the [recorded native desktop test](../project/desktop-test-results.md); they are package preparation effects, independently of Qubix boot branding. Review the actual transaction and keep normal hooks enabled.
@@ -29,7 +29,7 @@ Native CachyOS Snapper/Limine package hooks can create snapshots and refresh men
 Install the selected desktop companions and SSH prerequisites yourself:
 
 ```bash
-sudo pacman -S --needed python openssh noctalia foot jq starship
+sudo pacman -S --needed python openssh noctalia foot jq starship fontconfig gsettings-desktop-schemas
 noctalia --version
 sudo systemctl enable --now sshd
 ip -brief address
@@ -67,13 +67,16 @@ If help is needed, use [collecting target information](collecting-target-info.md
 
 ## 3. Preview and deploy the desktop
 
-The `cachyos-niri` profile enables branding, Niri and shell defaults. Login, bootloader and Plymouth are disabled. You may save explicit overrides in ignored `config/local.yml`:
+The `cachyos-niri` profile enables Monaspace NF/Krypton defaults, branding, Niri and shell defaults. Login, bootloader and Plymouth are disabled. You may save explicit overrides in ignored `config/local.yml`:
 
 ```yaml
 # Explicit metadata read privilege for stock CachyOS private /boot.
 qubix_discovery_privileged: true
 qubix:
   profile: cachyos-niri
+  fonts:
+    enabled: true
+    krypton_ui: true
   branding:
     enabled: true
   niri:
@@ -95,11 +98,14 @@ The discovery flag is an operational override, default false; it permits metadat
 Run from the controller:
 
 ```bash
+.venv/bin/ansible-playbook playbooks/prepare-fonts.yml
 export ANSIBLE_PIPELINING=true
 ./bootstrap.sh deploy -i inventory/target.local.ini -e @config/local.yml --check --diff --ask-pass --ask-become-pass
 ./bootstrap.sh deploy -i inventory/target.local.ini -e @config/local.yml --ask-pass --ask-become-pass
 ./bootstrap.sh verify -i inventory/target.local.ini -e @config/local.yml --tags installed --ask-pass --ask-become-pass
 ```
+
+The font preparation command downloads the pinned official archive only to the controller. It requires about 315 MiB for the archive and 476 MiB extracted. Set `fonts.krypton_ui: false` to keep the fonts with generic UI defaults; see the [font contract](../components/fonts.md).
 
 Missing prerequisites stop deployment before component writes. The native Niri, Foot and Noctalia parsers validate candidate files before activation. Standalone Noctalia >=5.2.0 and <6.0.0 is required; legacy Quickshell/v4 does not satisfy this profile. A parser failure may leave earlier inert files installed; backups support recovery. Check mode performs no backup/state writes and cannot validate files it has not installed.
 

@@ -54,11 +54,13 @@ early-release/click/Escape acceptance and newer-resource recovery; keep the curr
 
 ## F03b — Monaspace NF and configurable Krypton UI (Feature)
 
-Status: Implemented; source/fixtures/native comparison Tested; installation In Progress.
+Status: Implemented; fixtures, native comparison/installation, active shell and zero-change reapplication Tested.
 Install pinned official GitHub Monaspace NF fonts and independently select Krypton UI defaults. Scope, ownership and acceptance are authoritative in the
 [font contract](../components/fonts.md). Source preparation and disposable fixtures are independent of target activation.
-Next: complete installation, exact native resolution, live shell and zero-change reapplication
-gates in the [test evidence](font-test-results.md).
+The [test evidence](font-test-results.md) records clean d38d479, exact installed/native defaults,
+preserved user/boot/recovery resources and zero-change reapplication. Next: optional native
+font/default restoration in a disposable VM and safe reduction of large-asset serial-controller
+overhead; preserve the shared first-baseline and receipt contracts.
 
 ## F04 — Shell/terminal defaults (Feature)
 
