@@ -8,8 +8,11 @@ This overview is for users deciding what to enable and developers finding the co
 It lists implemented behavior, briefly explains its implementation and links to the
 authoritative contracts. Implemented means the code exists; physical login and boot
 acceptance are reported separately below.
-Evidence is current as of **2026-10-16**; see [project status](project/status.md)
-for exact revisions and test results. Optional features require explicit configuration.
+Evidence is current as of **2026-10-17**; see [project status](project/status.md)
+for exact revisions and test results. The shipped profile enables implemented desktop,
+compact Noctalia login, fingerprint setup, captions and KWallet; review the
+[effective defaults and preparation requirements](architecture/configuration.md).
+Boot/splash retain explicit selection; fresh-machine setup is not automatic.
 
 ## Desktop and everyday use
 
@@ -21,7 +24,7 @@ for exact revisions and test results. Optional features require explicit configu
 | Shortcuts and searchable help | Window/workspace navigation, application launchers and resizing, plus **Super+Shift+/** for the shortcut panel. Deployment extracts labelled bindings from the actual Niri configuration into the local Noctalia plugin. | [Bindings](../roles/qubix_niri/templates/config.kdl.j2), [shortcut plugin](../roles/qubix_niri/files/shortcuts), [desktop design](architecture/desktop-design.md) |
 | Guarded power menu | **Super+X** opens five native-style action tiles. Hold a number key for three seconds or click for a cancellable five-second countdown. A local Noctalia plugin handles cancellation and dispatches only after the panel closes. | [Power plugin](../roles/qubix_niri/files/power), [behavior contract](architecture/desktop-design.md#power-action-countdown) |
 | Shell and terminal defaults | Foot styling and optional Starship prompt defaults. System fragments respect existing user settings; Bash can initialize Starship, and Zsh adoption is manual. The account's default shell stays unchanged. | [Shell role](../roles/qubix_shell/tasks/main.yml), [shell contract](components/shell.md) |
-| QubixOS desktop captions | Optional launcher footer **QubixOS** and Control Center heading **QubixOS (Noctalia v5.3.0)**. A pinned private Noctalia build changes two captions; native package binaries and CachyOS system identity remain intact. Native updates trigger fallback until the private build is refreshed. | [UI patches and provenance](../assets/ui/README.md), [variant selection](../roles/qubix_niri/tasks/variant.yml), [configuration guide](user/login.md) |
+| QubixOS desktop captions | Default launcher footer **QubixOS** and Control Center heading **QubixOS (Noctalia v5.3.0)**. A pinned private Noctalia build changes two captions; native package binaries and CachyOS system identity remain intact. Native updates trigger fallback until the private build is refreshed. | [UI patches and provenance](../assets/ui/README.md), [variant selection](../roles/qubix_niri/tasks/variant.yml), [configuration guide](user/login.md) |
 
 Desktop installation, parser/rendering checks and zero-change reapplication are tested.
 Focused live checks also cover the power panel and QubixOS captions. Complete
@@ -32,10 +35,11 @@ primary-session and physical lock/unlock acceptance remain separate; see
 
 | Feature | What you get and how it works | Code and details |
 |---|---|---|
-| Noctalia Greeter theme | Matching palette and wallpaper, with an optional compact card, smaller controls and reduced decoration. Appearance templates preserve native input, output, session and authentication settings; compact mode uses a pinned private Greeter build. Separate preparation installs prerequisites. Ordinary deployment does not switch display-manager services. | [Login role](../roles/qubix_login/tasks/main.yml), [compact adapter](../roles/qubix_login/tasks/compact.yml), [login guide](user/login.md) |
+| Noctalia Greeter theme | Matching palette and wallpaper, with the default compact card, smaller controls and reduced decoration. Appearance templates preserve native input, output, session and authentication settings; compact mode uses a pinned private Greeter build. Separate preparation installs prerequisites. Ordinary deployment does not switch display-manager services. | [Login role](../roles/qubix_login/tasks/main.yml), [compact adapter](../roles/qubix_login/tasks/compact.yml), [login guide](user/login.md) |
 | Existing SDDM/Breeze branding | An alternative adapter for supported installed SDDM/Breeze. It copies the installed theme with authentication QML unchanged and applies appearance settings through a backed-up selection drop-in. | [SDDM adapter](../roles/qubix_login/tasks/sddm.yml), [login contract](components/login.md) |
 | Graphical fingerprint enrollment | Open **Fingerprint setup** from **Super+Space**. Select a finger, explicitly start enrollment, follow measured progress/retry guidance, cancel or test the reader. A GTK 4/GJS application talks to fprintd over D-Bus; fprintd owns biometric data and authorization. Existing enrollments are protected. | [Application](../roles/qubix_niri/files/fingerprint), [installation](../roles/qubix_niri/tasks/fingerprint.yml), [fingerprint guide](user/fingerprint.md) |
-| Fingerprint login instructions | A manual guide covers reader support, enrollment, native authentication configuration and password fallback. The playbook does not modify PAM or automatically enable biometric login. | [Fingerprint guide](user/fingerprint.md), [refinement contract](architecture/login-refinement.md) |
+| KWallet secret storage | Default Secret Service and KDE Wallet API integration with bounded greetd PAM hooks and Niri startup. Existing secrets require reviewed migration; GNOME Keyring remains installed if required by package dependencies. | [Keyring role](../roles/qubix_keyring/tasks/main.yml), [guide](user/keyring.md), [native evidence](project/keyring-test-results.md) |
+| Fingerprint login instructions | A manual guide covers reader support, enrollment, native authentication configuration and password fallback. The fingerprint feature does not modify PAM or automatically enable biometric login; the separate KWallet feature has a bounded PAM exception. | [Fingerprint guide](user/fingerprint.md), [refinement contract](architecture/login-refinement.md) |
 
 Noctalia Greeter installation/reapplication and native rendering are tested. The
 fingerprint controller has 32 automated cases plus native GJS tests against a simulated

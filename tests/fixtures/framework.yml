@@ -12,6 +12,8 @@ qubix_test_profiles:
         enabled: false
       login:
         backend: sddm
+        theme_source: breeze
+        compact: false
   - name: branding can be disabled
     input: {branding: {enabled: false}}
   - name: unknown profile
@@ -70,8 +72,13 @@ qubix_test_profiles:
     input: {niri: {presentation: other}}
     error: niri.presentation must be one of
   - name: compact Breeze refused
-    input: {login: {compact: true}}
+    input: {login: {backend: sddm, theme_source: breeze, compact: true}}
     error: compact requires Noctalia
+  - name: explicit opt-out of promoted features
+    input:
+      niri: {fingerprint_setup: false, presentation: native}
+      login: {enabled: false, compact: false}
+      keyring: {enabled: false}
   - name: supported optional desktop interfaces
     input: {niri: {fingerprint_setup: true, presentation: qubix}}
   - name: supported compact Noctalia
@@ -83,13 +90,13 @@ qubix_test_profiles:
     input: {login: {activation: true}}
     error: login.activation must be one of
   - name: refuse Breeze preparation
-    input: {login: {enabled: true, activation: prepare}}
+    input: {login: {enabled: true, backend: sddm, theme_source: breeze, compact: false, activation: prepare}}
     error: Login requires Breeze/existing SDDM
   - name: refuse implicit Noctalia backend
-    input: {login: {enabled: true, theme_source: noctalia}}
+    input: {login: {enabled: true, backend: auto, theme_source: noctalia}}
     error: Login requires Breeze/existing SDDM
   - name: refuse greetd with Breeze
-    input: {login: {enabled: true, backend: greetd}}
+    input: {login: {enabled: true, backend: greetd, theme_source: breeze, compact: false}}
     error: Login requires Breeze/existing SDDM
   - name: supported inactive Noctalia preparation
     input: {login: {enabled: true, backend: greetd, theme_source: noctalia, activation: prepare}}

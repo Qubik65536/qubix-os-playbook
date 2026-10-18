@@ -1,8 +1,20 @@
 # Project status
 
 Updated: 2026-10-17. Stage: **MVP candidate; acceptance In Progress**.
+Default-profile preparation **Implemented; controller resolution/schema/static checks Tested**: fingerprint setup, Qubix captions, compact
+existing Noctalia/greetd login and KWallet now ship enabled alongside fonts/branding/desktop/shell.
+The [configuration reference](../architecture/configuration.md) explains every effective value,
+default-on development policy and boot/personal-preservation exceptions. Full-profile deployment
+requires separate package/build preparation and reviewed manager/secret transitions; automatic
+fresh-machine onboarding remains Planned. Normal/check-mode fixtures each pass 860 tasks/zero
+changes (45 profile, 11 discovery and seven identity cases; 38 expected refusals). KWallet
+regression passes 132 tasks/five disposable fixture changes and nine expected refusals.
+`./scripts/validate.sh` passes, with an existing Limine Jinja-spacing warning. All 28 effective
+inputs are checked against the exhaustive reference and default-on component policy.
+This change does not add native session/boot evidence.
+
 KWallet integration **Implemented; native isolated PAM unlock, live three-entry migration,
-Secret Service/KDE API roundtrips, installation, verification, reapplication and recovery Tested**. The opt-in keyring component preserves
+Secret Service/KDE API roundtrips, installation, verification, reapplication and recovery Tested**. The configurable keyring component preserves
 unrelated authentication and encrypted originals; GNOME Keyring stays installed because
 CachyOS's desktop package requires it. See [keyring evidence](keyring-test-results.md).
 Production installed verification passes 67 tasks/zero changes and identical reapplication

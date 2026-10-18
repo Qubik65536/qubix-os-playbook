@@ -13,19 +13,19 @@ qubix:
   niri:
     enabled: true
     user_config: preserve
-    fingerprint_setup: false
-    presentation: native
+    fingerprint_setup: true
+    presentation: qubix
   shell:
     enabled: true
     change_default_shell: false
   login:
-    enabled: false
-    backend: auto
-    theme_source: breeze
+    enabled: true
+    backend: greetd
+    theme_source: noctalia
     activation: existing
-    compact: false
+    compact: true
   keyring:
-    enabled: false
+    enabled: true
   bootloader:
     enabled: false
     backend: auto
@@ -42,9 +42,93 @@ qubix:
     presets: []
 ```
 
-The current profile enables branding, an additional Qubix Niri session and shell defaults. Its [desktop design](desktop-design.md) uses measured standalone Noctalia with separate Qubix defaults and GUI state; desktop shell selection is fixed for this initial profile. All candidate components have implementations; unsupported selections still fail explicitly. Bootloader and Plymouth remain opt-in until VM testing. No fallback from a mistyped profile or backend.
+Resolution order is `config/defaults.yml` (complete schema fallbacks), then
+`config/profiles/cachyos-niri.yml` (the shipped feature selections), then the operator
+`qubix` mapping (recursive overrides). The YAML above is the effective configuration
+with no overrides; the false values in the fallback file alone are not the shipped behavior.
+
+The current profile enables fonts/Krypton, branding, Qubix Niri, fingerprint setup,
+Qubix captions, shell defaults, compact Noctalia/greetd appearance and KWallet integration. Its [desktop design](desktop-design.md) uses measured standalone Noctalia with separate Qubix defaults and GUI state; desktop shell selection is fixed for this initial profile. All candidate components have implementations; unsupported selections still fail explicitly. Bootloader and Plymouth retain explicit target confirmation and authorization. No fallback from a mistyped profile or backend.
 
 Booleans must be YAML booleans, not strings. Each nested mapping allows only documented keys. `user_config` initially accepts only `preserve`; an adoption interface requires its own consent and recovery design. `change_default_shell` must be false during bootstrap. Login backend allows `auto`, `sddm`, `greetd`, `gdm`, `lightdm`; bootloader allows `auto`, `grub`, `limine`; initramfs allows `auto`, `dracut`, `mkinitcpio`. Allowing a value in the schema does not implement an adapter.
+
+## Every effective default
+
+| Input under `qubix` | Default | Effect |
+|---|---|---|
+| `profile` | `cachyos-niri` | Only supported deployment profile; other distributions/desktops fail validation. |
+| `fonts.enabled` | `true` | Install all 210 pinned official Monaspace NF faces after controller preparation. |
+| `fonts.krypton_ui` | `true` | Prefer Krypton for generic UI/monospace defaults and Qubix shell text; saved choices win. |
+| `branding.enabled` | `true` | Install shared original-colour Qubix artwork and attribution. |
+| `niri.enabled` | `true` | Install the separate Qubix Niri/Noctalia session and its managed defaults. |
+| `niri.user_config` | `preserve` | Keep native/personal Niri files; no automatic dotfile adoption. |
+| `niri.fingerprint_setup` | `true` | Install the enrollment application; never enroll a finger or enable fingerprint PAM automatically. |
+| `niri.presentation` | `qubix` | Select prepared, version-pinned Qubix caption builds; retain native system identity. |
+| `shell.enabled` | `true` | Install additive shell/terminal defaults while preserving personal configuration. |
+| `shell.change_default_shell` | `false` | Keep the account shell; automatic switching is unsupported. |
+| `login.enabled` | `true` | Install appearance on the supported existing manager after all prerequisites pass. |
+| `login.backend` | `greetd` | Require existing greetd; never replace another manager automatically. |
+| `login.theme_source` | `noctalia` | Use the native Noctalia Greeter appearance interface and shared palette/wallpaper. |
+| `login.activation` | `existing` | Require the active supported launcher; inactive preparation is a separate explicit selection. |
+| `login.compact` | `true` | Select the prepared compact private greeter client through its backed-up wrapper. |
+| `keyring.enabled` | `true` | Select KWallet, replace only measured greetd keyring hooks and suppress GNOME Keyring startup. |
+| `bootloader.enabled` | `false` | Wait for confirmed target boot configuration and authorization. |
+| `bootloader.backend` | `auto` | Unresolved placeholder; activation needs explicit `grub` or `limine`. |
+| `bootloader.config_path` | `''` | No guessed active configuration path. |
+| `bootloader.confirm_active` | `false` | No default confirmation of the loader running in firmware. |
+| `bootloader.limine_version` | `0` | Unknown major; Limine activation requires the observed supported major. |
+| `plymouth.enabled` | `false` | Wait for confirmed image/generator mappings and authorization. |
+| `plymouth.initramfs_backend` | `auto` | Unresolved placeholder; activation needs explicit `dracut` or `mkinitcpio`. |
+| `plymouth.confirm_active` | `false` | No default confirmation of active initramfs selection. |
+| `plymouth.force_rebuild` | `false` | Rebuild only when required; no forced repeat generation. |
+| `plymouth.early_graphics` | `preserve` | Keep existing early graphics; no default framebuffer/hardware selection. |
+| `plymouth.images` | `[]` | No image/kernel/active-cache mappings are assumed. |
+| `plymouth.presets` | `[]` | No mkinitcpio presets selected; dracut does not use this list. |
+
+`qubix_discovery_privileged` is an operational input outside `qubix`, default false.
+True authorizes read-only privileged metadata probes; it does not enable a component or
+confirm any boot selection. Credentials, inventory and personal machine mappings never ship.
+
+## Default feature policy and final-deployment preparation
+
+Status: Implemented; controller resolution, opt-out and schema/static fixtures Tested.
+
+Focused task: promote implemented desktop/login/storage capabilities into the shipped
+CachyOS Niri profile and explain every effective input. Acceptance: profile resolution
+and explicit opt-outs pass fixtures; the complete reference matches the resolved profile;
+unsupported combinations still fail before writes; preparation and exceptions are documented.
+This prepares defaults for final deployment; it does not establish new physical login or boot evidence.
+
+New implemented features must be enabled by default in the supported profile unless the
+user directs otherwise. Add their prerequisites and acceptance tests when introducing them.
+An absent prerequisite causes an actionable preflight failure, rather than silently dropping
+an enabled feature. Record exceptions here with their specific reason. Planned/unsupported
+implementations cannot be enabled to claim readiness. A default selection does not install
+packages, build presentation binaries, migrate personal secrets, select a manager or reboot.
+
+The shipped target is a prepared CachyOS Niri system with the measured Noctalia/greetd
+launcher already selected. Before ordinary deployment, prepare the pinned fonts, native UI
+packages/private builds and KWallet packages, review existing secret migration, and establish
+the supported greetd configuration through the separately authorized manager procedure.
+An SDDM or unprepared machine must use explicit overrides or complete that preparation;
+the profile never infers permission to switch its manager. Fresh-machine setup is not
+automated by `deploy`; preparation playbooks are separate commands and manager/secret
+transitions retain their operator steps. See [preparation](../user/getting-started.md).
+
+Exceptions to default enablement:
+
+- `bootloader.enabled` and `plymouth.enabled` remain false: deployment needs a confirmed
+  active loader, generator, paths, versions and exact image/kernel mappings, plus the existing
+  disposable-VM authorization policy. GRUB, Limine, dracut and mkinitcpio remain mandatory MVP work.
+- Boot/splash `confirm_active` remains false; `backend: auto`, empty paths/images/presets and
+  `limine_version: 0` are unresolved placeholders, never authorization or guessed hardware values.
+- `plymouth.early_graphics: preserve` retains existing hardware behavior. Selecting `simpledrm`
+  requires the measured supported environment and explicit boot configuration.
+- `plymouth.force_rebuild: false` avoids rebuilding unchanged images; true is a deliberate repair override.
+- `niri.user_config: preserve` and `shell.change_default_shell: false` protect personal setup.
+  Automatic adoption/default-shell replacement is unsupported.
+- `login.activation: existing` requires the selected active manager. Preparation and manager cutover
+  are explicit operations; enabling login appearance never switches services.
 
 ## Ownership
 
@@ -69,7 +153,7 @@ installed `gjs`, `gtk4` and `fprintd` are required before writes. `niri.presenta
 selects a prepared private Noctalia 5.3.0 UI build for display captions. `native` keeps the
 distribution binary. `login.compact: true` requires Noctalia Greeter 1.6.0, a prepared private
 UI build and an already-selected Noctalia launcher, then backs up/replaces only that launcher
-command with a wrapper around the native compositor. All three options default off/native.
+command with a wrapper around the native compositor. All three options are enabled by the shipped profile; explicitly select false/native to opt out.
 See the [presentation/enrollment contract](login-refinement.md); preparation, file installation,
 session activation and actual authentication are separate gates.
 
@@ -89,7 +173,7 @@ Both default true in this profile. Set only `krypton_ui: false` to keep the font
 remove the alias preference on reapplication. See the authoritative [font contract](../components/fonts.md)
 for preparation, preserved application/user choices, cache handling and activation limits.
 
-`keyring.enabled: true` explicitly opts into KWallet on an existing greetd system.
+`keyring.enabled: true` selects KWallet on an existing greetd system and is the shipped profile default.
 This is the narrow exception to preserved PAM: only measured optional keyring hooks in
 `/etc/pam.d/greetd` are replaced, after native package preparation and operator secret migration.
 All other authentication and personal stores stay preserved. Disabled does not undo an earlier

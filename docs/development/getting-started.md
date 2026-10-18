@@ -40,6 +40,12 @@ Component roles normally prepare a list of named resources rather than writing d
 
 Native system/user configuration remains Preserved unless a documented narrow change is necessary. The separate Qubix Niri session is deliberate: explicit session selection grants consent without overwriting dotfiles. Enabled unsupported combinations fail before component writes.
 
+New implemented features ship enabled in the supported profile unless directed otherwise.
+Update preparation, effective-default fixtures and the exhaustive configuration reference;
+document safety exceptions in the [configuration contract](../architecture/configuration.md).
+The internal fallback file alone does not define shipped behavior. Profile selection does
+not automate package preparation, manager switching or personal secret migration.
+
 ## Make a focused change
 
 1. State the problem, scope and observable acceptance criteria. Update substantial design/interface documentation first.

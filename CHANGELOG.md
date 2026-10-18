@@ -4,6 +4,13 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Enable fingerprint setup, Qubix captions, compact existing Noctalia/greetd login and
+  KWallet in the shipped CachyOS Niri profile. Explain every effective default, resolution
+  order, explicit opt-outs and separate fresh-machine preparation. Require future implemented
+  features to ship enabled unless directed otherwise, with documented boot/hardware/personal
+  preservation exceptions. Deployment still requires prepared packages/builds, an existing
+  supported manager and reviewed secrets; no automatic fresh-machine setup is claimed.
+
 - Add opt-in KWallet Secret Service selection and greetd password-unlock integration,
   native package preparation, backed-up provider/PAM resources and restoration fixtures.
   Preserve personal encrypted stores and unrelated authentication; keep GNOME Keyring

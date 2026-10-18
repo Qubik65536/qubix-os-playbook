@@ -198,3 +198,19 @@ Opt in through `keyring.enabled`, prepare native packages separately and preserv
 encrypted stores. Retain GNOME Keyring while required by the CachyOS desktop package;
 no forced package removals. Next: operator password logout/login acceptance; retain both encrypted stores for recovery. See
 [test evidence](keyring-test-results.md) and the [guide](../user/keyring.md).
+
+## F10 — Final-deployment defaults and fresh-machine preparation (Feature)
+
+Status: Implemented; controller fixtures/static validation Tested. Promote implemented desktop/login/storage features into the supported
+profile, document every effective default and require new implemented features to default on
+unless directed otherwise. Acceptance is in the [configuration contract](../architecture/configuration.md).
+Keep explicit boot/machine confirmations and personal preservation. Validate resolved defaults,
+recursive opt-outs and unsupported-combination failures before writes. Normal/check-mode
+framework runs each pass 860 tasks/zero changes; all 28 default inputs are explained and checked.
+
+## F11 — Automatic fresh-machine onboarding (Feature)
+
+Status: Planned. Automatic fresh-machine onboarding requires a separate implementation: current package/build preparation playbooks
+are separate commands; manager selection and migration of existing secrets require operator
+steps. A future workflow needs its own documented privileged preparation/activation contract;
+profile defaults alone must never claim automatic installation or manager cutover.

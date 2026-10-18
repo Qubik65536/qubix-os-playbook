@@ -33,6 +33,17 @@
       - qubix_profile_resolved.profile == 'cachyos-niri'
       - qubix_profile_resolved.branding.enabled == qubix_test_case.input.get('branding', {}).get('enabled', true)
       - qubix_profile_resolved.niri.user_config == 'preserve'
+      - >-
+        qubix_profile_resolved.niri.fingerprint_setup ==
+        qubix_test_case.input.get('niri', {}).get('fingerprint_setup', true)
+      - qubix_profile_resolved.niri.presentation == qubix_test_case.input.get('niri', {}).get('presentation', 'qubix')
+      - qubix_profile_resolved.login.enabled == qubix_test_case.input.get('login', {}).get('enabled', true)
+      - qubix_profile_resolved.login.backend == qubix_test_case.input.get('login', {}).get('backend', 'greetd')
+      - >-
+        qubix_profile_resolved.login.theme_source ==
+        qubix_test_case.input.get('login', {}).get('theme_source', 'noctalia')
+      - qubix_profile_resolved.login.compact == qubix_test_case.input.get('login', {}).get('compact', true)
+      - qubix_profile_resolved.keyring.enabled == qubix_test_case.input.get('keyring', {}).get('enabled', true)
       - not qubix_profile_resolved.shell.change_default_shell
       - qubix_profile_resolved.bootloader.enabled == qubix_test_case.input.get('bootloader', {}).get('enabled', false)
       - qubix_profile_resolved.plymouth.enabled == qubix_test_case.input.get('plymouth', {}).get('enabled', false)

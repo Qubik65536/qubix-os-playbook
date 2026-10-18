@@ -16,7 +16,7 @@ recovery tests remain acceptance gates. See [actual evidence](docs/project/statu
 Get started:
 
 - [Implemented features](docs/features.md): a plain-language inventory with implementation links and testing limits.
-- [User getting-started guide](docs/user/getting-started.md): prepare the target, deploy and test the desktop, then opt into login/boot/splash tests.
+- [User getting-started guide](docs/user/getting-started.md): prepare the target, deploy and test the desktop, review full-profile preparation or explicitly trial desktop-only settings, then opt into boot/splash tests.
 - [Noctalia Greeter](docs/user/login.md) and [fingerprints](docs/user/fingerprint.md): compact login, QubixOS captions, graphical enrollment and password fallback.
 - [Human developer getting-started guide](docs/development/getting-started.md): set up tools, understand the code and run fixtures.
 - [SSH access and target information](docs/user/collecting-target-info.md): share connection details so the agent can inspect your test machine.
@@ -32,7 +32,7 @@ After controller setup, a remote inventory with a `qubix_targets` group and the 
 ./bootstrap.sh verify -i inventory/target.local.ini -e @config/local.yml --tags installed --ask-become-pass
 ```
 
-Add --ask-pass with password SSH. The guide includes explicit read privilege for private /boot metadata. The default profile installs fonts and desktop defaults. Set `qubix.fonts.krypton_ui: false` to keep the fonts without switching UI defaults. Choose **Qubix Niri** at login or start it from a free TTY. Native Niri, personal dotfiles, distribution identity, boot entries and kernel arguments remain preserved. Login/boot/splash are opt-in; explicit boot paths/version/image mappings are required. Candidate commits are local and have not been pushed.
+Add --ask-pass with password SSH. The guide includes explicit read privilege for private /boot metadata. The default profile selects fonts, the complete Qubix desktop, compact Noctalia/greetd login and KWallet. Full-profile deployment requires the separate package/build preparation, an already-selected greetd launcher and reviewed secret migration; fresh-machine setup is not automatic. The guide provides explicit desktop-only trial overrides. Set `qubix.fonts.krypton_ui: false` to keep the fonts without switching UI defaults. Choose **Qubix Niri** at login or start it from a free TTY. Native Niri, personal dotfiles, distribution identity, boot entries and kernel arguments remain preserved. Boot/splash remain opt-in; explicit boot paths/version/image mappings are required. See the [complete defaults and feature policy](docs/architecture/configuration.md). Candidate commits are local and have not been pushed.
 
 ## Regenerate the shortcut cheatsheet
 

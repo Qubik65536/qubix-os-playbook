@@ -32,11 +32,14 @@ Plymouth disabled for this login-only change:
 qubix_discovery_privileged: true
 qubix:
   profile: cachyos-niri
+  niri: {fingerprint_setup: false, presentation: native}
+  keyring: {enabled: false}
   login:
     enabled: true
     backend: greetd
     theme_source: noctalia
     activation: prepare
+    compact: false
   bootloader:
     enabled: false
   plymouth:
@@ -45,7 +48,9 @@ qubix:
 
 Run the usual `bootstrap.sh deploy --check --diff`, `deploy` and `verify --tags installed` with
 that file, your inventory and sudo authentication. The existing branding/Niri/shell selections
-remain enabled by the profile. Only select `activation: prepare` while greetd is inactive.
+remain enabled by the profile. This staged example explicitly opts out of private UI,
+enrollment and KWallet until their separate prerequisites and active greetd are ready.
+Only select `activation: prepare` while greetd is inactive.
 The theme uses the shared Qubix steel-blue palette and cube wallpaper, dark panels and matching
 corner radii. It preserves input, display, user, session, auth and mutable `sync.toml` settings.
 The initial unused Noctalia wordmark is hidden; the original-colour cube is in the wallpaper.

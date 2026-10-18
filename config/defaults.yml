@@ -1,4 +1,5 @@
 ---
+# Schema fallbacks; the selected profile supplies the effective defaults shipped to targets.
 profile: cachyos-niri
 fonts:
   enabled: false

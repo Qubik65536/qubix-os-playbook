@@ -2,6 +2,7 @@
 
 Build Qubix OS Playbook: Ansible customization of existing Linux systems, initially **CachyOS Niri**. Read this file, relevant architecture/component documents, and `docs/project/status.md` before work. Define a focused task and its acceptance criteria. Fedora/KDE are post-MVP; both GRUB and Limine plus Plymouth/dracut/mkinitcpio are mandatory MVP work.
 
+- Enable implemented features by default in the supported deployment profile unless the user directs otherwise. Document every exception and its reason in `docs/architecture/configuration.md`; retain explicit machine-specific boot confirmations, personal-configuration preservation and prerequisite validation. Update effective-default fixtures, preparation instructions and the defaults reference with each feature.
 - Document substantial feature responsibilities, interfaces, constraints, and acceptance criteria before implementation. Keep behaviour and documentation in the same logical change afterward.
 - Use ordinary Ansible roles, task files, variables, and Jinja2. Use FQCN modules, named tasks, explicit file modes, idempotent operations, and narrowly justified command probes. Read-only probes use `changed_when: false` and run safely in check mode. Prefer built-ins; no separate Python runtime application or adapter framework.
 - Validate configuration strictly and fail unsupported enabled components before writes. Do not guess ambiguous boot or initramfs selections. Check mode is an approximation, not a transaction planner.

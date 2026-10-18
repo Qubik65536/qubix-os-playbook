@@ -1,6 +1,6 @@
 # KWallet on Qubix Niri
 
-Select KWallet with `qubix.keyring.enabled: true` (default false). It provides the
+The shipped CachyOS Niri profile selects KWallet with `qubix.keyring.enabled: true`. It provides the
 Secret Service for libsecret applications and the KDE Wallet API for KDE software.
 Only existing greetd on CachyOS Niri is supported. Login appearance can stay disabled.
 See the [component contract](../components/keyring.md) and [test evidence](../project/keyring-test-results.md).

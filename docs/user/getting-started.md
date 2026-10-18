@@ -67,7 +67,27 @@ If help is needed, use [collecting target information](collecting-target-info.md
 
 ## 3. Preview and deploy the desktop
 
-The `cachyos-niri` profile enables Monaspace NF/Krypton defaults, branding, Niri and shell defaults. Login, bootloader and Plymouth are disabled. You may save explicit overrides in ignored `config/local.yml`:
+The shipped `cachyos-niri` profile now selects the complete implemented desktop set:
+Monaspace NF/Krypton, branding, Niri, fingerprint setup, Qubix captions, shell defaults,
+compact Noctalia/greetd appearance and KWallet. Bootloader and Plymouth remain disabled.
+The [complete defaults reference](../architecture/configuration.md) explains every value.
+
+**Fresh-machine setup is not automatic.** `deploy` validates prerequisites and installs
+configuration; it does not invoke package/build preparation, switch the login manager or
+migrate personal secrets. Enabling a default causes an unprepared machine to fail preflight.
+Before using the full defaults:
+
+| Preparation | Existing workflow |
+|---|---|
+| Native desktop companions and SSH | Manual target setup in section 1 above. |
+| Pinned font cache | `playbooks/prepare-fonts.yml` on the controller. |
+| Noctalia Greeter packages | `playbooks/prepare-login.yml` while greetd is inactive; see [login](login.md). |
+| Active greetd/native wrapper | Separately authorized operator cutover in the login guide; never automatic during deployment. |
+| Private caption/compact builds and enrollment prerequisites | `playbooks/prepare-ui.yml`, followed by the native isolated UI checks in the login guide. |
+| KWallet packages and existing secrets | `playbooks/prepare-keyring.yml`, then reviewed migration where needed; see [keyrings](keyring.md). |
+
+For a staged desktop-only trial before manager/UI preparation, save these **explicit opt-outs**
+in ignored `config/local.yml`; this example deliberately differs from the shipped defaults:
 
 ```yaml
 # Explicit metadata read privilege for stock CachyOS private /boot.
@@ -82,10 +102,15 @@ qubix:
   niri:
     enabled: true
     user_config: preserve
+    fingerprint_setup: false
+    presentation: native
   shell:
     enabled: true
     change_default_shell: false
   login:
+    enabled: false
+    compact: false
+  keyring:
     enabled: false
   bootloader:
     enabled: false
@@ -173,7 +198,10 @@ Run deployment again with the same revision and configuration. Expect zero manag
 
 ## 5. Optional login branding
 
-This candidate supports an **already-active SDDM** with an installed compatible Breeze theme. It does not replace managers. Leave login disabled on greetd/GDM/LightDM targets.
+The default profile selects compact Noctalia on already-active greetd; complete the
+[login preparation guide](login.md) before full deployment. The alternative SDDM adapter
+requires an already-active SDDM with a compatible Breeze theme. Select all overrides below
+for SDDM; KWallet integration currently requires greetd and must be disabled for this trial.
 
 Change only the login section of your existing configuration:
 
@@ -182,6 +210,9 @@ Change only the login section of your existing configuration:
     enabled: true
     backend: sddm
     theme_source: breeze
+    compact: false
+  keyring:
+    enabled: false
 ```
 
 Repeat preview, deploy and installed verification, including `--ask-become-pass` for private login settings. On the VM, if available, preview with `sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/qubix` (some installations name it `sddm-greeter`). Preview requires a graphical display and does not prove authentication.
@@ -223,7 +254,7 @@ Preview/deploy with `--ask-become-pass`, then installed verification with `--tag
 
 ## 7. Optional Plymouth and initramfs
 
-For the optional Noctalia Greeter instead of SDDM appearance, follow the separate
+For the default Noctalia Greeter instead of an explicit SDDM override, follow the separate
 [login preparation guide](login.md). It preserves the current manager until a reviewed cutover.
 The [fingerprint guide](fingerprint.md) covers local enrollment, desktop unlock and optional
 greetd authentication without automatic PAM changes.

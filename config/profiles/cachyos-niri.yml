@@ -1,5 +1,6 @@
 ---
-# Components are enabled only after a working implementation is validated.
+# Implemented features ship enabled; documented safety exceptions retain explicit selection.
+# Prepare packages, pinned UI builds, existing greetd and secret migration before deployment.
 profile: cachyos-niri
 fonts:
   enabled: true
@@ -8,5 +9,15 @@ branding:
   enabled: true
 niri:
   enabled: true
+  fingerprint_setup: true
+  presentation: qubix
 shell:
+  enabled: true
+login:
+  enabled: true
+  backend: greetd
+  theme_source: noctalia
+  activation: existing
+  compact: true
+keyring:
   enabled: true

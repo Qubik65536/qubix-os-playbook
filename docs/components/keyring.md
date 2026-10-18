@@ -8,7 +8,7 @@ replacing GNOME Keyring as the Secret Service provider without deleting stored s
 `qubix.keyring.enabled: true` explicitly authorizes optional KWallet hooks in the
 existing greetd PAM file. All other authentication rules remain byte-preserved;
 unsupported managers, redirected files, unknown keyring hooks and missing native
-prerequisites fail before deployment writes. Disabled (the default) preserves PAM.
+prerequisites fail before deployment writes. The shipped profile enables this integration; explicitly disabling it preserves PAM.
 Use the separate package preparation playbook before deployment; bootstrap never installs
 packages. Require the measured split KWallet implementation (`ksecretd`, `kwalletd6`,
 `pam_kwallet5.so`, `pam_kwallet_init`). Password login unlocks a password-matched,

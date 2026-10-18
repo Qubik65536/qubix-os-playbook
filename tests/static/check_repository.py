@@ -51,6 +51,16 @@ def main():
     example = re.search(r"```yaml\n(.*?)```", documentation, re.S)
     assert example, "Missing authoritative configuration example"
     assert yaml.safe_load(example[1])["qubix"] == expected, "Documented defaults differ from the profile"
+    documented_inputs = set(re.findall(r"^\| `([^`]+)` \|", documentation, re.M))
+    effective_inputs = {"profile"} | {
+        f"{component}.{key}" for component, keys in schema.items() for key in keys
+    }
+    assert documented_inputs == effective_inputs, "Every effective default needs an explanation"
+    # New implemented components ship enabled; only documented machine-bound boot work is opt-in.
+    for component in schema:
+        assert expected[component]["enabled"] is (component not in {"bootloader", "plymouth"}), (
+            f"{component}: default-on feature policy or documented boot exception violated"
+        )
     manifest = load("assets/branding/manifest.yml")
     assert manifest["license"] == "Apache-2.0"
     assert len(manifest["revision"]) == 40
