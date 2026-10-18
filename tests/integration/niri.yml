@@ -54,7 +54,6 @@
         - name: Validate available native companion grammars
           ansible.builtin.include_tasks: ../tasks/native-companion.yml
           loop:
-            - {name: wezterm, path: /etc/qubix/wezterm/wezterm.lua}
             - {name: noctalia, path: /etc/qubix/noctalia/config.toml}
           loop_control:
             loop_var: qubix_native_companion

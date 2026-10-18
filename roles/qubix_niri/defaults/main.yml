@@ -1,3 +1,4 @@
 ---
 qubix_niri_validate_binary: /usr/bin/niri
 qubix_niri_ui_expected_uid: 0
+qubix_niri_wezterm_validate_binary: /usr/share/qubix/bin/qubix-validate-wezterm

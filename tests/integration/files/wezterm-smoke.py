@@ -21,12 +21,16 @@ for line in subprocess.check_output(['systemctl', '--user', 'show-environment'],
 root = Path(tempfile.mkdtemp(prefix='qubix-terminal-acceptance-'))
 for name in ('home', 'config', 'cache', 'state', 'data'):
     (root / name).mkdir(mode=0o700)
-private_env = dict(session_env, HOME=str(root / 'home'), XDG_CONFIG_HOME=str(root / 'config'),
+private_env = dict(session_env, HOME=str(root / 'home'), XDG_CONFIG_HOME=str(root / 'home/.config'),
                    XDG_CACHE_HOME=str(root / 'cache'), XDG_STATE_HOME=str(root / 'state'), XDG_DATA_HOME=str(root / 'data'))
 protected = [Path.home() / name for name in ('.config/wezterm/wezterm.lua', '.wezterm.lua', '.config/dconf/user')]
 before_hashes = {str(path): hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None for path in protected}
 boot_id = Path('/proc/sys/kernel/random/boot_id').read_text().strip()
 private_env.pop('WEZTERM_CONFIG_FILE', None)
+private_config = root / 'home/.config/wezterm'
+private_config.mkdir(parents=True)
+shutil.copytree(Path.home() / '.config/wezterm/colors', private_config / 'colors')
+shutil.copy2(Path.home() / '.config/wezterm/wezterm.lua', private_config / 'wezterm.lua')
 windows = json.loads(run(['niri', 'msg', '--json', 'windows']))
 before = {(window['id'], window.get('pid')) for window in windows}
 focused = next((window['id'] for window in windows if window.get('is_focused')), None)

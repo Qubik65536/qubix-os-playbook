@@ -1,0 +1,27 @@
+---
+- name: Read installed home terminal file metadata
+  ansible.builtin.stat:
+    path: '{{ qubix_niri_wezterm_user_directory }}/{{ item }}'
+    checksum_algorithm: sha256
+    follow: false
+    get_mime: false
+  loop: [colors/KAMSuperuser.toml, colors/oxocarbon-dark.toml, wezterm.lua]
+  register: qubix_niri_wezterm_user_installed
+
+- name: Require exact home configuration bytes ownership and modes
+  ansible.builtin.assert:
+    that:
+      - item.stat.isreg | default(false)
+      - item.stat.uid == ansible_facts.user_uid | int
+      - item.stat.mode == '0644'
+      - >-
+        item.stat.checksum == lookup('file', role_path ~ '/files/wezterm/' ~ item.item, rstrip=false) | hash('sha256')
+  loop: '{{ qubix_niri_wezterm_user_installed.results }}'
+  loop_control:
+    label: '{{ item.item }}'
+
+- name: Validate installed Lua and font loading without fallback diagnostics
+  ansible.builtin.command:
+    argv: ['{{ qubix_niri_wezterm_validate_binary }}', '{{ qubix_niri_wezterm_user_directory }}/wezterm.lua']
+  changed_when: false
+  check_mode: false

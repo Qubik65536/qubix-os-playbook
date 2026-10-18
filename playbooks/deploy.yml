@@ -30,6 +30,12 @@
           vars:
             qubix_files_resources: '{{ qubix_deployment_resources }}'
 
+        - name: Install the explicitly managed account terminal configuration with backups
+          ansible.builtin.include_role:
+            name: qubix_niri
+            tasks_from: wezterm-user
+          when: qubix_profile_resolved.niri.enabled
+
         - name: Refresh and validate selected system fonts
           ansible.builtin.include_role:
             name: qubix_fonts

@@ -68,11 +68,6 @@
       source: validate.sh
       mode: '0755'
       validate: /usr/bin/bash -n %s
-    - {path: /etc/qubix/wezterm/colors/KAMSuperuser.toml, source: colors/KAMSuperuser.toml}
-    - {path: /etc/qubix/wezterm/colors/oxocarbon-dark.toml, source: colors/oxocarbon-dark.toml}
-    - path: /etc/qubix/wezterm/wezterm.lua
-      source: wezterm.lua
-      validate: /usr/share/qubix/bin/qubix-validate-wezterm %s
 
 - name: Render terminal launch integration after its configuration
   ansible.builtin.set_fact:

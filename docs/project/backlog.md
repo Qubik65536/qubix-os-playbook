@@ -240,3 +240,12 @@ and reapplication Tested on the authorized SSH instance. See [comparison/evidenc
 and the [component contract](../components/wezterm.md). Remaining manual gates: physical
 shortcuts and launcher selection, both Alt keys, transparency over the chosen background,
 and fallback glyph coverage. Do not treat this as new login/boot acceptance.
+
+## F — WezTerm home configuration and actual scene transparency (Feature/Testing)
+
+Status: Implemented and Tested. One canonical Lua, backed-up home deployment, scoped
+compositor fill correction, contrasting composed scenes/pixel controls, exact account
+ownership/bytes, native parser controls, reapplication and app/session/boot preservation
+pass. See [native evidence](wezterm-home-test-results.md).
+See the [contract](../components/wezterm.md). Account-file recovery uses timestamped
+copy backups; integration into generic system restoration is Planned separately.

@@ -14,7 +14,7 @@ config.font = wezterm.font_with_fallback({
 	"IBM Plex Sans TC",
 	"IBM Plex Sans JP",
 })
-config.color_scheme_dirs = { "/etc/qubix/wezterm/colors" }
+config.color_scheme_dirs = { wezterm.home_dir .. "/.config/wezterm/colors" }
 config.color_scheme = "Oxocarbon Dark"
 config.use_fancy_tab_bar = false
 config.window_decorations = "RESIZE"

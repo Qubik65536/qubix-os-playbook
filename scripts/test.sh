@@ -27,6 +27,11 @@ if ! ansible-playbook tests/playbooks/wezterm-files.yml >.cache/tests/wezterm-fi
   exit 1
 fi
 printf '%s\n' 'WezTerm local desktop boundary, installation, idempotency and restore passed.'
+if ! ansible-playbook tests/playbooks/wezterm-home.yml >.cache/tests/wezterm-home.log 2>&1; then
+  cat .cache/tests/wezterm-home.log
+  exit 1
+fi
+printf '%s\n' 'WezTerm account configuration backup and idempotency fixture passed.'
 
 for mode in normal check; do
   set --

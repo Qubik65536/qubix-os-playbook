@@ -6,6 +6,9 @@ correction `2d012cf`, tested on 2026-10-17. The source directory is preserved by
 with [provenance digests](../../assets/wezterm/provenance.json); runtime adaptation is
 specified by the [component contract](../components/wezterm.md).
 
+The later [home configuration and composed transparency correction](wezterm-home-test-results.md)
+supersedes this system-path layout and surface-only transparency evidence.
+
 The operator explicitly requested this deployment to the existing SSH instance.
 Environment: CachyOS x86-64, WezTerm `20260716-195552-76b606ec`, Qubix Niri PID 1145,
 1920×1080 output at 100% scale, and the existing private Noctalia client. Package,

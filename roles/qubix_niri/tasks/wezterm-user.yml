@@ -1,0 +1,25 @@
+---
+- name: Create only absent home configuration directories
+  ansible.builtin.file:
+    path: '{{ item.item }}'
+    state: directory
+    mode: '0755'
+  loop: '{{ qubix_niri_wezterm_user_paths.results[:4] }}'
+  loop_control:
+    label: '{{ item.item }}'
+  when: not item.stat.exists
+
+- name: Install canonical terminal files with backups of changed originals
+  ansible.builtin.copy:
+    src: '{{ role_path }}/files/wezterm/{{ item }}'
+    dest: '{{ qubix_niri_wezterm_user_directory }}/{{ item }}'
+    mode: '0644'
+    backup: true
+    validate: '{{ qubix_niri_wezterm_validate_binary ~ " %s" if item == "wezterm.lua" else omit }}'
+  register: qubix_niri_wezterm_user_copy
+  loop: [colors/KAMSuperuser.toml, colors/oxocarbon-dark.toml, wezterm.lua]
+  when: not ansible_check_mode or qubix_niri_wezterm_user_paths.results[3].stat.exists
+
+- name: Verify the installed home configuration
+  ansible.builtin.import_tasks: wezterm-user-verify.yml
+  when: not ansible_check_mode

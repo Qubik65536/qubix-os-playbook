@@ -4,6 +4,13 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Consolidate WezTerm to one canonical Lua and deploy it with both palettes into the
+  measured account's `~/.config/wezterm`, backing up changed originals. Use native
+  config discovery. Scope Niri's disabled border-background fill to WezTerm so its
+  background opacity reveals the scene instead of a solid focus-ring backdrop. Native
+  home loading, backup/refusal fixtures, unchanged reapplication and contrasted nested
+  scene/pixel controls pass on the authorized SSH instance.
+
 - Import the supplied WezTerm Lua and both colour schemes with source digests.
   Enable Oxocarbon Dark, Krypton/IBM Plex fallback fonts, 75% opacity and compact
   decorations through a personal-config-aware launcher and same-ID desktop override.

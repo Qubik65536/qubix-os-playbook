@@ -1,0 +1,41 @@
+---
+- name: Require the measured ordinary account for home terminal configuration
+  ansible.builtin.assert:
+    that:
+      - ansible_facts.user_uid | int > 0
+      - ansible_facts.user_dir is match('^/')
+      - "'..' not in ansible_facts.user_dir.split('/')"
+    fail_msg: 'WezTerm home deployment requires the measured non-root connection account.'
+
+- name: Resolve the explicitly requested home configuration directory
+  ansible.builtin.set_fact:
+    qubix_niri_wezterm_user_directory: '{{ ansible_facts.user_dir }}/.config/wezterm'
+
+- name: Inspect home configuration ancestry and files without following redirects
+  ansible.builtin.stat:
+    path: '{{ item }}'
+    follow: false
+    get_checksum: false
+    get_mime: false
+  loop:
+    - '{{ ansible_facts.user_dir }}'
+    - '{{ ansible_facts.user_dir }}/.config'
+    - '{{ qubix_niri_wezterm_user_directory }}'
+    - '{{ qubix_niri_wezterm_user_directory }}/colors'
+    - '{{ qubix_niri_wezterm_user_directory }}/colors/KAMSuperuser.toml'
+    - '{{ qubix_niri_wezterm_user_directory }}/colors/oxocarbon-dark.toml'
+    - '{{ qubix_niri_wezterm_user_directory }}/wezterm.lua'
+  register: qubix_niri_wezterm_user_paths
+
+- name: Refuse redirected or unsupported home configuration objects before writes
+  ansible.builtin.assert:
+    that:
+      - not item.stat.islnk | default(false)
+      - >-
+        not item.stat.exists or
+        (item.stat.isdir | default(false) if item_index < 4 else item.stat.isreg | default(false))
+    fail_msg: 'Preserving redirected or unsupported WezTerm configuration path {{ item.item }}.'
+  loop: '{{ qubix_niri_wezterm_user_paths.results }}'
+  loop_control:
+    index_var: item_index
+    label: '{{ item.item }}'

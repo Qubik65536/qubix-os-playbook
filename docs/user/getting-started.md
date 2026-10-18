@@ -73,8 +73,8 @@ review; Qubix preserves dotfiles. Paru and WezTerm are already on the system PAT
 After deployment, select/reload Qubix Niri for Super+T and Super+Return to launch
 the managed WezTerm launcher; log out/in to refresh the launcher terminal environment.
 Deployment also installs the [supplied WezTerm appearance](../components/wezterm.md):
-Oxocarbon Dark, Krypton/IBM Plex fallback fonts and 75% opacity. Existing personal or
-explicit WezTerm configuration takes precedence; no dotfiles are overwritten.
+Oxocarbon Dark, Krypton/IBM Plex fallback fonts and 75% opacity. The three files in the connection account’s `~/.config/wezterm` are managed, with
+timestamped backups before replacement. Other dotfiles are preserved.
 
 ## 2. Inspect without deploying
 

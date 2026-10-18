@@ -185,7 +185,10 @@ def main():
     wezterm_source = ROOT / 'assets/wezterm/source'
     provenance = load('assets/wezterm/provenance.json')
     for name, digest in provenance['sha256'].items():
-        assert hashlib.sha256((wezterm_source / name).read_bytes()).hexdigest() == digest
+        if name != 'wezterm.lua':
+            assert hashlib.sha256((wezterm_source / name).read_bytes()).hexdigest() == digest
+    canonical = ROOT / 'roles/qubix_niri/files/wezterm/wezterm.lua'
+    assert list((ROOT / 'assets').rglob('wezterm.lua')) + list((ROOT / 'roles').rglob('wezterm.lua')) == [canonical]
     for name in ('KAMSuperuser.toml', 'oxocarbon-dark.toml'):
         original = (wezterm_source / 'colors' / name).read_text()
         shipped = (ROOT / 'roles/qubix_niri/files/wezterm/colors' / name).read_text()
@@ -195,6 +198,7 @@ def main():
     assert 'config.window_background_opacity = 0.75' in wezterm
     assert 'config.send_composed_key_when_left_alt_is_pressed = true' not in wezterm
     assert 'apple%-darwin' in wezterm
+    assert 'wezterm.home_dir .. "/.config/wezterm/colors"' in wezterm
     print(f"Repository consistency passed ({len(documents)} Markdown files, profile/default/schema agreement).")
 
 

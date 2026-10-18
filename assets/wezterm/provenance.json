@@ -5,5 +5,7 @@
     "wezterm.lua": "826e0769e88672de5a4d6a0e88e484c246bd55e400c8a2c6fd903c68fbf18349",
     "colors/oxocarbon-dark.toml": "900a4686fc3dd848d6af4a6b793a02a5a34aee2a2500749ee784361fc2b396bc",
     "colors/KAMSuperuser.toml": "97dc196cefaf299879fc20a72738e541946cdbea2e1c63aef349bc0ecc2929a6"
-  }
+  },
+  "original_lua_git_revision": "e9323c1",
+  "canonical_lua": "roles/qubix_niri/files/wezterm/wezterm.lua"
 }

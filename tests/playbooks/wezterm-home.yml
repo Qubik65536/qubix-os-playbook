@@ -1,0 +1,91 @@
+---
+- name: Test requested home configuration backups and idempotency in a disposable account root
+  hosts: localhost
+  gather_facts: true
+  gather_subset: ['!all', min]
+  tasks:
+    - name: Create a disposable account directory
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-wezterm-home-
+      register: qubix_test_wezterm_home
+    - name: Exercise user-owned configuration with guaranteed fixture cleanup
+      block:
+        - name: Point only measured fixture facts at the disposable home
+          ansible.builtin.set_fact:
+            ansible_facts: '{{ ansible_facts | combine({"user_dir": qubix_test_wezterm_home.path}) }}'
+        - name: Seed original personal terminal directory
+          ansible.builtin.file:
+            path: '{{ qubix_test_wezterm_home.path }}/.config/wezterm'
+            state: directory
+            mode: '0700'
+        - name: Seed original configuration for backup acceptance
+          ansible.builtin.copy:
+            dest: '{{ qubix_test_wezterm_home.path }}/.config/wezterm/wezterm.lua'
+            content: 'original personal configuration'
+            mode: '0600'
+        - name: Validate the actual account-path preflight
+          ansible.builtin.include_role:
+            name: qubix_niri
+            tasks_from: wezterm-user-plan
+        - name: Install real source files using a fixture-only no-effect validator
+          ansible.builtin.include_role:
+            name: qubix_niri
+            tasks_from: wezterm-user
+          vars:
+            qubix_niri_wezterm_validate_binary: /usr/bin/true
+        - name: Read the automatic original-file backup
+          ansible.builtin.slurp:
+            src: '{{ qubix_niri_wezterm_user_copy.results[-1].backup_file }}'
+          register: qubix_test_wezterm_original
+        - name: Require original configuration bytes preserved
+          ansible.builtin.assert:
+            that: [qubix_test_wezterm_original.content | b64decode == 'original personal configuration']
+        - name: Refresh preflight metadata before reapplication
+          ansible.builtin.include_role:
+            name: qubix_niri
+            tasks_from: wezterm-user-plan
+        - name: Reapply the same account files
+          ansible.builtin.include_role:
+            name: qubix_niri
+            tasks_from: wezterm-user
+          vars:
+            qubix_niri_wezterm_validate_binary: /usr/bin/true
+        - name: Require all account-file copies unchanged
+          ansible.builtin.assert:
+            that: [qubix_niri_wezterm_user_copy.results | selectattr('changed') | list | length == 0]
+        - name: Remove only the fixture Lua to exercise a redirected personal path
+          ansible.builtin.file:
+            path: '{{ qubix_test_wezterm_home.path }}/.config/wezterm/wezterm.lua'
+            state: absent
+        - name: Seed a dangling redirected configuration
+          ansible.builtin.file:
+            src: '{{ qubix_test_wezterm_home.path }}/absent.lua'
+            dest: '{{ qubix_test_wezterm_home.path }}/.config/wezterm/wezterm.lua'
+            state: link
+            force: true
+        - name: Initialize redirect refusal evidence
+          ansible.builtin.set_fact:
+            qubix_test_wezterm_home_refused: false
+        - name: Exercise the actual redirected-home preflight
+          block:
+            - name: Require preflight refusal of the dangling personal-config link
+              ansible.builtin.include_role:
+                name: qubix_niri
+                tasks_from: wezterm-user-plan
+          rescue:
+            - name: Require the preserved-path diagnostic
+              ansible.builtin.assert:
+                that: "'Preserving redirected or unsupported' in (ansible_failed_result | to_json)"
+            - name: Record expected refusal
+              ansible.builtin.set_fact:
+                qubix_test_wezterm_home_refused: true
+        - name: Require redirected configuration rejection before writes
+          ansible.builtin.assert:
+            that: [qubix_test_wezterm_home_refused]
+      always:
+        - name: Remove only the disposable account data
+          ansible.builtin.file:
+            path: '{{ qubix_test_wezterm_home.path }}'
+            state: absent

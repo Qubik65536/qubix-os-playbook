@@ -13,3 +13,8 @@ window-rule {
     geometry-corner-radius 16
     clip-to-geometry true
 }
+// Keep focus-ring fill from masking the terminal's own background transparency.
+window-rule {
+    match app-id=r#"^org\.wezfurlong\.wezterm$"#
+    draw-border-with-background false
+}

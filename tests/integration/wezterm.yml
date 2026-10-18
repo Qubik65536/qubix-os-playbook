@@ -8,9 +8,12 @@
       ansible.builtin.assert:
         that: [not ansible_check_mode]
   tasks:
+    - name: Read the measured account home for native configuration validation
+      ansible.builtin.setup:
+        gather_subset: ['!all', min]
     - name: Validate the installed production configuration without fallback errors
       ansible.builtin.command:
-        argv: [/usr/share/qubix/bin/qubix-validate-wezterm, /etc/qubix/wezterm/wezterm.lua]
+        argv: [/usr/share/qubix/bin/qubix-validate-wezterm, '{{ ansible_facts.user_dir }}/.config/wezterm/wezterm.lua']
       changed_when: false
 
     - name: Create a private native-control directory

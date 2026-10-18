@@ -27,6 +27,12 @@
     name: qubix_niri
   when: qubix_profile_resolved.niri.enabled
 
+- name: Validate the requested account terminal configuration before writes
+  ansible.builtin.include_role:
+    name: qubix_niri
+    tasks_from: wezterm-user-plan
+  when: qubix_profile_resolved.niri.enabled
+
 - name: Prepare enabled shell defaults
   ansible.builtin.include_role:
     name: qubix_shell

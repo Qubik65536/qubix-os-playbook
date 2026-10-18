@@ -1,6 +1,18 @@
 # Project status
 
-Updated: 2026-10-17. Stage: **MVP candidate; acceptance In Progress**.
+Updated: 2026-10-18. Stage: **MVP candidate; acceptance In Progress**.
+WezTerm home configuration/transparency correction **Implemented and Tested**:
+one canonical Lua is deployed with both palettes to the measured account's
+`~/.config/wezterm`, with timestamped backups before replacing existing regular files.
+Native home installation/validation passes; combined reapplication passes 116 tasks/
+zero changes. Account backup/refusal fixture passes 40 tasks/eight temporary changes/
+one expected refusal. Native controls/rendering pass 12 tasks/five temporary changes;
+the composed nested-scene test passes nine tasks/four temporary changes. Niri's scoped
+border-background correction reveals red/blue scenes through the same 0.75-opacity
+terminal; pixel controls prove the previous solid backdrop and corrected mixing.
+Live reload preserves Niri/apps/personal settings and boot identity. See
+[updated screenshots, source and evidence](wezterm-home-test-results.md). Earlier system-layout evidence below is historical.
+
 Supplied WezTerm defaults **Implemented; controller/native installation, parser,
 rendering, activation and reapplication Tested**: the operator-supplied Lua/palettes
 ship by default with personal-config precedence, integrated shortcuts/desktop entry,

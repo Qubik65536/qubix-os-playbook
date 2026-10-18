@@ -195,6 +195,14 @@ See the [package and terminal contract](../components/package-management.md).
 
 Enabled Niri now includes the supplied [WezTerm appearance defaults](../components/wezterm.md):
 managed Lua/palettes and a personal-config-aware launcher/desktop entry. They ship by
-default without a separate switch; native personal/explicit config retains precedence.
+default without a separate switch; native explicit config retains precedence; the three requested account files are managed with backups.
 The package desktop file stays Preserved; its same-ID local default override uses
 protected baselines. No account dotfiles are installed or adopted.
+
+The 2026-10-18 user-directed exception manages only `~/.config/wezterm/wezterm.lua`
+and its two supplied palettes in the measured non-root connection account. Changed
+regular files receive timestamped Ansible backups before replacement; symlinks fail
+preflight. All other personal files remain Preserved. Direct native WezTerm loading
+now replaces the earlier system-config fallback wrapper. See the [home configuration
+and transparency contract](../components/wezterm.md). Generic system restoration does
+not reverse these account copies; recover using the retained home-file backups.

@@ -1,25 +1,4 @@
 #!/usr/bin/env bash
-# Add Qubix defaults only when native explicit/personal configuration is absent.
+# Compatibility entrypoint; native WezTerm loads the managed account configuration.
 set -euo pipefail
-qubix_skip_value=false
-for qubix_argument in "$@"; do
-  if "$qubix_skip_value"; then
-    qubix_skip_value=false
-    continue
-  fi
-  case "$qubix_argument" in
-    --config-file|--config-file=*|--skip-config|-n)
-      exec /usr/bin/wezterm "$@"
-      ;;
-    --config|-c) qubix_skip_value=true ;;
-    -*) ;;
-    *) break ;;
-  esac
-done
-if [[ "${WEZTERM_CONFIG_FILE+x}" == x ]] ||
-   [[ -e "${XDG_CONFIG_HOME:-$HOME/.config}/wezterm/wezterm.lua" || -L "${XDG_CONFIG_HOME:-$HOME/.config}/wezterm/wezterm.lua" ]] ||
-   [[ -e "$HOME/.config/wezterm/wezterm.lua" || -L "$HOME/.config/wezterm/wezterm.lua" ]] ||
-   [[ -e "$HOME/.wezterm.lua" || -L "$HOME/.wezterm.lua" ]]; then
-  exec /usr/bin/wezterm "$@"
-fi
-exec /usr/bin/wezterm --config-file /etc/qubix/wezterm/wezterm.lua "$@"
+exec /usr/bin/wezterm "$@"

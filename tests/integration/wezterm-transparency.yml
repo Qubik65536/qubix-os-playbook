@@ -1,0 +1,53 @@
+---
+- name: Compare actual composed WezTerm transparency without personal desktop content
+  hosts: qubix_targets
+  gather_facts: false
+  tasks:
+    - name: Require real rendering rather than a check-mode simulation
+      ansible.builtin.assert:
+        that: [not ansible_check_mode]
+    - name: Create a private nested-scene directory
+      ansible.builtin.tempfile:
+        state: directory
+        path: /tmp
+        prefix: qubix-wezterm-scene-
+      register: qubix_wezterm_scene
+    - name: Capture controlled before and after scenes with cleanup
+      block:
+        - name: Copy the actual compositor theme candidate
+          ansible.builtin.copy:
+            src: '{{ playbook_dir }}/../../roles/qubix_niri/templates/theme.kdl.j2'
+            dest: '{{ qubix_wezterm_scene.path }}/theme.kdl'
+            mode: '0600'
+        - name: Render only a private nested compositor and synthetic terminal
+          ansible.builtin.script: 'files/wezterm-transparency.py {{ qubix_wezterm_scene.path }}'
+          args:
+            executable: /usr/bin/python3
+          changed_when: true
+          register: qubix_wezterm_scene_result
+        - name: Fetch composed output comparisons
+          ansible.builtin.fetch:
+            src: '{{ qubix_wezterm_scene.path }}/{{ item }}.png'
+            dest: '{{ playbook_dir }}/../../.cache/wezterm-transparency/{{ inventory_hostname }}/{{ item }}.png'
+            flat: true
+          loop: [before-red, before-blue, after-red, after-blue]
+        - name: Require background-dependent pixels inside the corrected terminal
+          ansible.builtin.command:
+            argv:
+              - '{{ ansible_playbook_python }}'
+              - '{{ playbook_dir }}/../static/check_wezterm_transparency.py'
+              - '{{ playbook_dir }}/../../.cache/wezterm-transparency/{{ inventory_hostname }}'
+          delegate_to: localhost
+          changed_when: false
+          register: qubix_wezterm_scene_pixels
+        - name: Report pixel verification
+          ansible.builtin.debug:
+            var: qubix_wezterm_scene_pixels.stdout
+        - name: Report the isolated scene evidence
+          ansible.builtin.debug:
+            var: qubix_wezterm_scene_result.stdout_lines
+      always:
+        - name: Remove only private scene assets after owned processes exit
+          ansible.builtin.file:
+            path: '{{ qubix_wezterm_scene.path }}'
+            state: absent

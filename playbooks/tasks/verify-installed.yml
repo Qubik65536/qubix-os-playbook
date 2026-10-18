@@ -45,3 +45,9 @@
     apply:
       become: true
   when: qubix_profile_resolved.plymouth.enabled
+
+- name: Verify requested account terminal configuration without writes
+  ansible.builtin.include_role:
+    name: qubix_niri
+    tasks_from: wezterm-user-verify
+  when: qubix_profile_resolved.niri.enabled

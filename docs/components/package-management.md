@@ -36,8 +36,8 @@ This gives the stock CachyOS Niri installation a single terminal, WezTerm; it do
 purge arbitrary personal software. No running terminal or session is terminated.
 
 The Qubix session selects `/usr/share/qubix/bin/qubix-wezterm` for TERMINAL and
-Super+T/Super+Return. The wrapper supplies the [imported WezTerm defaults](wezterm.md)
-while explicit/native personal configuration retains precedence. Legacy Foot resources
+Super+T/Super+Return. Native WezTerm loads the [managed account configuration](wezterm.md) under
+`~/.config/wezterm`; the wrapper no longer forces system defaults. Legacy Foot resources
 remain inert with
 existing recovery receipts. Native Niri configuration and personal shortcuts remain
 preserved. Reload/select the Qubix session to activate changed shortcuts and log out/in
