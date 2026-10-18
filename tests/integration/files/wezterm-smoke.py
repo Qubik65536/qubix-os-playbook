@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
+import signal
 import hashlib
 import shutil
 import time
@@ -64,9 +65,20 @@ try:
             assert image.is_file() and image.stat().st_size > 1000
             results[name] = {'app_id': window['app_id'], 'screenshot': str(image)}
         finally:
-            if window:
-                run(['niri', 'msg', 'action', 'close-window', '--id', str(window['id'])])
-            process.wait(timeout=15)
+            # Only this Popen owns the private process group; do not invoke an interactive close prompt.
+            try:
+                os.killpg(process.pid, signal.SIGTERM)
+            except ProcessLookupError:
+                pass
+            try:
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                os.killpg(process.pid, signal.SIGKILL)
+                process.wait(timeout=5)
+            for attempt in range(50):
+                if not any(w.get('app_id') == app_id for w in json.loads(run(['niri', 'msg', '--json', 'windows']))):
+                    break
+                time.sleep(0.1)
     if focused is not None:
         run(['niri', 'msg', 'action', 'focus-window', '--id', str(focused)])
     after = {(w['id'], w.get('pid')) for w in json.loads(run(['niri', 'msg', '--json', 'windows']))}
@@ -79,5 +91,7 @@ try:
     results['directory'] = str(root)
     print(json.dumps(results))
 except Exception:
+    if focused is not None:
+        run(['niri', 'msg', 'action', 'focus-window', '--id', str(focused)])
     shutil.rmtree(root)
     raise

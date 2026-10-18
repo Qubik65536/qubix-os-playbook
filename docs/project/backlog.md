@@ -234,7 +234,9 @@ application actions. Follow the [component acceptance contract](../components/pa
 
 ## F — Supplied WezTerm appearance (Feature/Testing)
 
-Status: In Progress. Follow the [component contract](../components/wezterm.md): vendor
-source and both palettes, preserve personal-config precedence, validate native positive/
-negative controls, capture native/customized synthetic windows and deploy/reapply on
-the authorized SSH instance. Verify parser, file, session and preservation gates separately.
+Status: Implemented; source/provenance, supplied palettes, personal-config precedence,
+exact native file installation, font selection, parser controls, rendering, activation
+and reapplication Tested on the authorized SSH instance. See [comparison/evidence](wezterm-test-results.md)
+and the [component contract](../components/wezterm.md). Remaining manual gates: physical
+shortcuts and launcher selection, both Alt keys, transparency over the chosen background,
+and fallback glyph coverage. Do not treat this as new login/boot acceptance.

@@ -1,10 +1,17 @@
 # Project status
 
 Updated: 2026-10-17. Stage: **MVP candidate; acceptance In Progress**.
-Supplied WezTerm defaults **In Progress**: vendored source/provenance, managed Lua and
-palettes, personal-config-aware terminal/desktop integration. Native parser positive/
-negative controls, SSH deployment/rendering and reapplication are the focused gates.
-See the [contract](../components/wezterm.md).
+Supplied WezTerm defaults **Implemented; controller/native installation, parser,
+rendering, activation and reapplication Tested**: the operator-supplied Lua/palettes
+ship by default with personal-config precedence, integrated shortcuts/desktop entry,
+Oxocarbon Dark, Krypton/IBM Plex fallbacks and 75% opacity. Eight-resource installation
+passes 218 tasks/24 changes; reapplication 210/zero changes. Native negative controls
+catch a CLI fallback issue; corrected validator installation/reapplication passes
+18/two changes and 18/zero changes. Final corrected-source verification passes
+76 tasks/zero changes; native parser/rendering comparison passes 11 tasks/six temporary
+changes. Niri/application windows, 11 native/personal configuration hashes and boot
+identity remain preserved. See [source, screenshots and limits](wezterm-test-results.md).
+Physical key/launcher input, Alt behavior and fallback glyph coverage remain manual gates.
 
 CachyOS package-manager/terminal preparation **Implemented; native installation,
 rendering, activation and zero-change reapplication Tested**: the operator-authorized

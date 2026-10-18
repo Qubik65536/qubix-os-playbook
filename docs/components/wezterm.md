@@ -1,6 +1,6 @@
 # WezTerm defaults from the supplied personal configuration
 
-Status: **Implemented; controller checks Tested; SSH acceptance In Progress**. Focused task: vendor the operator-supplied WezTerm Lua and
+Status: **Implemented; controller/native installation, parser, rendering, activation and idempotency Tested**. Focused task: vendor the operator-supplied WezTerm Lua and
 both colour schemes, make them the Qubix Niri defaults, and validate/deploy/render
 on the authorized SSH instance. Acceptance: source provenance and adaptations recorded,
 all assets installed with protected baselines, native parser positive/negative controls,
@@ -40,3 +40,9 @@ See [upstream configuration lookup](https://wezterm.org/config/files.html) for n
 precedence. File installation, native parser validation and graphical rendering are
 separate evidence gates. Transparency reflects content behind a window; test captures
 must use a sanitized backdrop and synthetic content rather than reveal personal windows.
+
+The [SSH evidence and comparison captures](../project/wezterm-test-results.md) record
+native positive/negative controls, real Krypton resolution, exact installed bytes/modes,
+zero-change reapplication and preserved settings/windows/boot identity. The validator
+uses `ls-fonts` with error diagnostics; `show-keys` is not a configuration-load control.
+Physical key/launcher input and fallback glyph coverage remain manual acceptance gates.

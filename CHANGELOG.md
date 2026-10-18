@@ -8,6 +8,9 @@ Changes are grouped by release. Bootstrap has no release tag.
   Enable Oxocarbon Dark, Krypton/IBM Plex fallback fonts, 75% opacity and compact
   decorations through a personal-config-aware launcher and same-ID desktop override.
   Preserve account dotfiles, guard macOS blur and reject native parser fallback errors.
+  SSH installation/activation, corrected native positive/negative controls, exact installed
+  verification, rendering comparison and zero-change reapplication pass; Niri, existing
+  application windows, personal settings and boot identity remain preserved.
 
 - Add explicit CachyOS package preparation for Paru, Homebrew on Linux and WezTerm.
   Pin/verify the official Brew installer and keep it non-root; preserve personal files

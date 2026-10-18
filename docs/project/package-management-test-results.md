@@ -5,6 +5,10 @@ validation, synthetic terminal rendering, active-shell selection and zero-change
 reapplication Tested**. Fresh Homebrew bootstrap and physical shortcut input remain
 separate acceptance gates. Source revision: `ee71994` on 2026-10-17.
 
+This records the initial package/terminal migration. The later [supplied WezTerm
+appearance deployment](wezterm-test-results.md) supersedes its native-default appearance
+and direct-binary launch selection; this historical evidence remains unchanged.
+
 The operator explicitly requested deployment to the existing SSH instance. Environment:
 CachyOS x86-64, active Qubix Niri PID 1145, 1920×1080 display at 100% scale,
 standalone private Noctalia, ordinary account with sudo. Bootloader/Plymouth and login

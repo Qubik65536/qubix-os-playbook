@@ -11,7 +11,7 @@ Status: **Noctalia integration Implemented; native grammar and isolated renderin
 | Launcher | Fuzzel INI | Noctalia launcher |
 | Notifications | Mako | Noctalia notification daemon |
 | Wallpaper | Swaybg | Noctalia wallpaper layer with attributed Qubix artwork |
-| Terminal | Foot INI | WezTerm with preserved user settings |
+| Terminal | Foot INI | WezTerm with supplied Oxocarbon/Krypton defaults and preserved personal overrides |
 | Clipboard, settings, window switcher | Not integrated | Noctalia panels and IPC |
 | Prompt | Optional Starship | Existing additive Bash/Zsh defaults; Fish remains preserved |
 
