@@ -1,0 +1,18 @@
+---
+- name: Reset the expected preflight refusal
+  ansible.builtin.set_fact:
+    qubix_test_keyring_preflight_refused: false
+
+- name: Attempt unsupported native KWallet preflight
+  block:
+    - name: Prepare unsupported keyring prerequisites
+      ansible.builtin.include_role:
+        name: qubix_keyring
+  rescue:
+    - name: Record the expected preflight refusal
+      ansible.builtin.set_fact:
+        qubix_test_keyring_preflight_refused: true
+
+- name: Require preflight to reject rather than skip
+  ansible.builtin.assert:
+    that: [qubix_test_keyring_preflight_refused]

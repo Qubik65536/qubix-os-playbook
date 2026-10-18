@@ -189,3 +189,12 @@ Status: Implemented; local asset validation Tested; native gates pending. Reduce
 steel-blue text accent. See the authoritative [design and acceptance](../architecture/boot-design.md#subtle-bottom-wordmark-refinement).
 Complete deterministic asset validation, native preview, exact image installation/reapplication and
 console observation on the already authorized target; preserve original logo colours and prompt controls.
+
+## F05b — KWallet password storage (Feature)
+
+Status: Implemented; native PAM/Secret Service and KDE API roundtrips, live three-entry
+migration, installation, installed verification, zero-change reapplication and disposable recovery Tested. Scope and acceptance are in the [keyring contract](../components/keyring.md).
+Opt in through `keyring.enabled`, prepare native packages separately and preserve original
+encrypted stores. Retain GNOME Keyring while required by the CachyOS desktop package;
+no forced package removals. Next: operator password logout/login acceptance; retain both encrypted stores for recovery. See
+[test evidence](keyring-test-results.md) and the [guide](../user/keyring.md).

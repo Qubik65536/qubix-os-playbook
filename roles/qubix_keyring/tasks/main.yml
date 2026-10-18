@@ -1,0 +1,107 @@
+---
+- name: Require measured active greetd for optional KWallet integration
+  ansible.builtin.assert:
+    that:
+      - qubix_discovery_report.evidence.display_manager.active_units == ['greetd']
+    fail_msg: 'KWallet login integration requires only greetd active; no manager switch is performed.'
+
+- name: Inspect native KWallet prerequisites and PAM without following redirects
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}{{ item }}'
+    follow: false
+  loop:
+    - /usr/bin/ksecretd
+    - /usr/bin/kwalletd6
+    - /usr/lib/security/pam_kwallet5.so
+    - /usr/lib/pam_kwallet_init
+    - /etc/pam.d/greetd
+  register: qubix_keyring_prerequisites
+
+- name: Require existing regular native prerequisites
+  ansible.builtin.assert:
+    that:
+      - item.stat.isreg | default(false)
+      - not item.stat.islnk | default(false)
+  loop: '{{ qubix_keyring_prerequisites.results }}'
+  loop_control:
+    label: '{{ item.item }}'
+
+- name: Read only the existing greetd PAM policy
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}/etc/pam.d/greetd'
+  register: qubix_keyring_pam_bytes
+
+- name: Prepare a narrowly bounded PAM candidate
+  ansible.builtin.import_tasks: pam.yml
+
+- name: Inspect explicit GNOME reenable marker
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/etc/qubix/allow-gnome-keyring'
+    follow: false
+  register: qubix_keyring_gnome_marker
+
+- name: Refuse conflicting GNOME activation before writes
+  ansible.builtin.assert:
+    that: [not qubix_keyring_gnome_marker.stat.exists]
+    fail_msg: 'Remove the explicit GNOME enable marker before choosing KWallet.'
+
+- name: Authorize only the validated greetd keyring exception
+  ansible.builtin.set_fact:
+    qubix_keyring_authorized: true
+
+- name: Define backed-up KWallet defaults and provider selection
+  ansible.builtin.set_fact:
+    qubix_keyring_resources:
+      - path: /etc/pam.d/greetd
+        component: keyring
+        content: '{{ qubix_keyring_pam_candidate }}'
+        mode: '{{ qubix_keyring_prerequisites.results[-1].stat.mode }}'
+      - path: /usr/local/share/dbus-1/services/org.freedesktop.secrets.service
+        component: keyring
+        mode: '0644'
+        content: |
+          [D-BUS Service]
+          Name=org.freedesktop.secrets
+          Exec=/usr/bin/ksecretd
+      - path: /etc/xdg/autostart/qubix-kwallet-pam.desktop
+        component: keyring
+        mode: '0644'
+        content: |
+          [Desktop Entry]
+          Type=Application
+          Name=Qubix KWallet login unlock
+          Exec=/usr/lib/pam_kwallet_init
+          OnlyShowIn=niri;
+          NoDisplay=true
+      - path: /etc/xdg/autostart/gnome-keyring-secrets.desktop
+        component: keyring
+        mode: '0644'
+        content: |
+          [Desktop Entry]
+          Type=Application
+          Name=GNOME Keyring secrets (superseded by KWallet)
+          Hidden=true
+      - path: /etc/xdg/autostart/gnome-keyring-pkcs11.desktop
+        component: keyring
+        mode: '0644'
+        content: |
+          [Desktop Entry]
+          Type=Application
+          Name=GNOME Keyring PKCS11 (disabled with KWallet)
+          Hidden=true
+      - path: /etc/systemd/user/gnome-keyring-daemon.service.d/qubix-kwallet.conf
+        component: keyring
+        mode: '0644'
+        content: |
+          [Unit]
+          ConditionPathExists=/etc/qubix/allow-gnome-keyring
+      - path: /etc/systemd/user/gnome-keyring-daemon.socket.d/qubix-kwallet.conf
+        component: keyring
+        mode: '0644'
+        content: |
+          [Unit]
+          ConditionPathExists=/etc/qubix/allow-gnome-keyring
+
+- name: Prepare the existing Qubix Niri handshake for component-only deployments
+  ansible.builtin.include_tasks: niri.yml
+  when: not (qubix_profile_resolved.niri | default({})).get('enabled', false)

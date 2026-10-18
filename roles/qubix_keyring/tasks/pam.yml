@@ -1,0 +1,38 @@
+---
+- name: Decode preserved authentication policy
+  ansible.builtin.set_fact:
+    qubix_keyring_pam_original: '{{ qubix_keyring_pam_bytes.content | b64decode }}'
+
+- name: Strip only measured optional keyring hooks
+  ansible.builtin.set_fact:
+    qubix_keyring_pam_preserved: >-
+      {{ qubix_keyring_pam_original | regex_replace(
+      '(?m)^-?auth[ \t]+optional[ \t]+pam_gnome_keyring\.so[ \t]*\n', '')
+      | regex_replace('(?m)^-?session[ \t]+optional[ \t]+pam_gnome_keyring\.so[ \t]+auto_start[ \t]*\n', '')
+      | regex_replace('(?m)^-?auth[ \t]+optional[ \t]+pam_kwallet5\.so[ \t]*\n', '')
+      | regex_replace('(?m)^-?session[ \t]+optional[ \t]+pam_kwallet5\.so[ \t]+'
+      ~ 'auto_start[ \t]+(?:force_run[ \t]+)?kwalletd=/usr/bin/ksecretd[ \t]*\n', '') }}
+
+- name: Reject ambiguous policy or unsupported keyring customization before writes
+  ansible.builtin.assert:
+    that:
+      - qubix_keyring_pam_preserved is not search('pam_(gnome_keyring|kwallet)')
+      - >-
+        qubix_keyring_pam_preserved
+        | regex_findall('(?m)^auth[ \t]+include[ \t]+system-local-login[ \t]*$') | length == 1
+      - >-
+        qubix_keyring_pam_preserved
+        | regex_findall('(?m)^session[ \t]+include[ \t]+system-local-login[ \t]*$') | length == 1
+      - qubix_keyring_pam_preserved.endswith('\n')
+    fail_msg: 'Unreviewed greetd PAM policy; preserve and review before enabling KWallet.'
+
+- name: Add optional KWallet hooks after the existing password authentication stack
+  ansible.builtin.set_fact:
+    qubix_keyring_pam_candidate: >-
+      {{ qubix_keyring_pam_preserved | regex_replace(
+      '(?m)^(auth[ \t]+include[ \t]+system-local-login[ \t]*\n)',
+      '\1-auth      optional     pam_kwallet5.so\n')
+      ~ qubix_keyring_session_hook }}
+  vars:
+    qubix_keyring_session_hook: |
+      -session   optional     pam_kwallet5.so auto_start force_run kwalletd=/usr/bin/ksecretd

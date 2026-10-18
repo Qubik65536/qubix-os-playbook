@@ -19,6 +19,8 @@ login:
   theme_source: breeze
   activation: existing
   compact: false
+keyring:
+  enabled: false
 bootloader:
   enabled: false
   backend: auto

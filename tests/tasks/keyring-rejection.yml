@@ -1,0 +1,21 @@
+---
+- name: Seed an unsupported PAM policy
+  ansible.builtin.set_fact:
+    qubix_keyring_pam_bytes:
+      content: '{{ qubix_test_keyring_bad | b64encode }}'
+    qubix_test_keyring_refused: false
+
+- name: Require unsupported authentication policy rejection
+  block:
+    - name: Attempt unreviewed policy planning
+      ansible.builtin.include_role:
+        name: qubix_keyring
+        tasks_from: pam
+  rescue:
+    - name: Record expected refusal
+      ansible.builtin.set_fact:
+        qubix_test_keyring_refused: true
+
+- name: Assert refusal before resource construction
+  ansible.builtin.assert:
+    that: [qubix_test_keyring_refused]

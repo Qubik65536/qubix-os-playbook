@@ -10,6 +10,8 @@
 
 - name: Validate restoration target and reject redirected resources
   ansible.builtin.import_tasks: guard.yml
+  vars:
+    qubix_files_restoring: true
 
 - name: Read last applied checksum if available
   ansible.builtin.stat:

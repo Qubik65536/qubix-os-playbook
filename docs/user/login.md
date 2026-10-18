@@ -215,3 +215,9 @@ Before a generic boot restoration, run this same task with `-e qubix_menu_displa
 This reverses the display title first so the normal preserved-entry guard still protects boot data;
 general restoration then returns original defaults. Native snapshot/kernel changes still require
 the existing reviewed recovery procedure rather than overwriting a stale config.
+
+## Password storage
+
+For automatic password-encrypted wallet unlocking and KDE application compatibility, use
+the explicit [KWallet option](keyring.md). It has separate package preparation, migration,
+backed-up PAM integration and actual password-login acceptance. Appearance alone preserves PAM.

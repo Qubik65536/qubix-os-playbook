@@ -7,6 +7,7 @@
     qubix_niri_resources: []
     qubix_shell_resources: []
     qubix_login_resources: []
+    qubix_keyring_resources: []
     qubix_bootloader_resources: []
     qubix_plymouth_resources: []
 
@@ -38,6 +39,13 @@
       become: true
   when: qubix_profile_resolved.login.enabled
 
+- name: Prepare explicitly authorized KWallet login integration
+  ansible.builtin.include_role:
+    name: qubix_keyring
+    apply:
+      become: true
+  when: qubix_profile_resolved.keyring.enabled
+
 - name: Validate and prepare the explicitly confirmed bootloader
   ansible.builtin.include_role:
     name: qubix_bootloader
@@ -56,7 +64,7 @@
   ansible.builtin.set_fact:
     qubix_deployment_resources: >-
       {{ qubix_fonts_resources + qubix_branding_resources + qubix_niri_resources + qubix_shell_resources +
-      qubix_login_resources +
+      qubix_login_resources + qubix_keyring_resources +
       ((qubix_bootloader_resources | rejectattr('path', 'equalto', '/boot/limine.conf') | list +
       [qubix_plymouth_limine_config_resource]) if qubix_profile_resolved.plymouth.enabled and
       qubix_plymouth_limine_required | default(false) else qubix_bootloader_resources) + qubix_plymouth_resources }}

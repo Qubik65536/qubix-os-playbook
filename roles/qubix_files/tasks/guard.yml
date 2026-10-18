@@ -4,12 +4,18 @@
     that:
       - >-
         qubix_files_resource.path is match('^/(etc/|usr/share/|boot/|efi/)') or
+        (qubix_files_resource.component == 'keyring' and
+        qubix_files_resource.path == '/usr/local/share/dbus-1/services/org.freedesktop.secrets.service') or
         (qubix_files_resource.component == 'login' and
         qubix_files_resource.path == '/var/lib/noctalia-greeter/greeter.toml')
       - "'..' not in qubix_files_resource.path.split('/')"
       - "'//' not in qubix_files_resource.path"
       - qubix_files_resource.path not in ['/etc/os-release', '/etc/passwd', '/etc/shadow']
-      - not qubix_files_resource.path is match('^/etc/pam.d/')
+      - >-
+        not qubix_files_resource.path is match('^/etc/pam.d/') or
+        (qubix_files_resource.component == 'keyring' and
+        qubix_files_resource.path == '/etc/pam.d/greetd' and
+        (qubix_keyring_authorized | default(false) or qubix_files_restoring | default(false)))
     fail_msg: 'Refusing resource outside Qubix customization boundaries.'
 
 - name: Resolve file and protected state paths

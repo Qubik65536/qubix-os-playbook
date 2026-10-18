@@ -4,6 +4,13 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Add opt-in KWallet Secret Service selection and greetd password-unlock integration,
+  native package preparation, backed-up provider/PAM resources and restoration fixtures.
+  Preserve personal encrypted stores and unrelated authentication; keep GNOME Keyring
+  installed when required by the distribution desktop package. Native migration and
+  separate login acceptance are documented in the keyring guide. Native migration and both
+  APIs pass; installed verification passes 67 tasks/zero changes and reapplication 209/zero changes.
+
 - Add pinned official GitHub Monaspace NF installation (all 210 faces) with independently
   configurable Krypton UI defaults for Fontconfig, GTK schema defaults and Qubix Noctalia.
   Preserve saved user preferences, application font choices and boot typography. Add offline

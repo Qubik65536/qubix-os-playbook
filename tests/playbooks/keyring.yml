@@ -1,0 +1,174 @@
+---
+- name: Test bounded KWallet PAM planning without touching host authentication
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Define representative greetd authentication and unrelated settings
+      ansible.builtin.set_fact:
+        qubix_test_keyring_native: |
+          #%PAM-1.0
+          auth required pam_securetty.so
+          auth include system-local-login
+          account include system-local-login
+          session include system-local-login
+          session required pam_systemd.so
+
+    - name: Define existing optional hooks with real newlines
+      ansible.builtin.set_fact:
+        qubix_test_keyring_hooks: |
+          -auth optional pam_gnome_keyring.so
+          -session optional pam_gnome_keyring.so auto_start
+
+    - name: Seed existing GNOME Keyring hooks
+      ansible.builtin.set_fact:
+        qubix_keyring_pam_bytes:
+          content: >-
+            {{ (qubix_test_keyring_native ~ qubix_test_keyring_hooks) | b64encode }}
+
+    - name: Plan only the explicitly supported keyring replacement
+      ansible.builtin.include_role:
+        name: qubix_keyring
+        tasks_from: pam
+
+    - name: Require preserved authentication and exact optional KWallet hooks
+      ansible.builtin.assert:
+        that:
+          - qubix_keyring_pam_preserved == qubix_test_keyring_native
+          - qubix_keyring_pam_candidate is search('pam_kwallet5.so auto_start force_run kwalletd=/usr/bin/ksecretd')
+          - qubix_keyring_pam_candidate is not search('pam_gnome_keyring')
+
+    - name: Retain the initial candidate for reapplication comparison
+      ansible.builtin.set_fact:
+        qubix_test_keyring_candidate: '{{ qubix_keyring_pam_candidate }}'
+        qubix_keyring_pam_bytes:
+          content: '{{ qubix_keyring_pam_candidate | b64encode }}'
+
+    - name: Replan an already integrated policy
+      ansible.builtin.include_role:
+        name: qubix_keyring
+        tasks_from: pam
+
+    - name: Require byte-identical reapplication
+      ansible.builtin.assert:
+        that: [qubix_keyring_pam_candidate == qubix_test_keyring_candidate]
+
+    - name: Exercise refusal of required or customized keyring hooks
+      ansible.builtin.include_tasks: ../tasks/keyring-rejection.yml
+      loop:
+        - '{{ qubix_test_keyring_native }}auth required pam_gnome_keyring.so\n'
+        - '{{ qubix_test_keyring_native }}session optional pam_kwallet5.so auto_start\n'
+        - '{{ qubix_test_keyring_native | replace("system-local-login", "other-policy") }}'
+        - '{{ qubix_test_keyring_native.rstrip() }}'
+        - '{{ qubix_test_keyring_native }}auth include system-local-login'
+      loop_control:
+        loop_var: qubix_test_keyring_bad
+
+    - name: Exercise strict profile selections for the new component
+      ansible.builtin.include_tasks: ../tasks/profile_case.yml
+      loop:
+        - name: Explicit KWallet selection
+          input: {keyring: {enabled: true}}
+        - name: Reject string KWallet selection
+          input: {keyring: {enabled: 'true'}}
+          error: 'must be a YAML boolean'
+        - name: Reject undocumented keyring options
+          input: {keyring: {enabled: true, provider: guessed}}
+          error: 'Unknown option'
+      loop_control:
+        loop_var: qubix_test_case
+
+    - name: Seed an unsupported active manager
+      ansible.builtin.set_fact:
+        qubix_discovery_report:
+          evidence:
+            display_manager:
+              active_units: [sddm]
+
+    - name: Require unsupported-manager rejection before filesystem probes
+      ansible.builtin.include_tasks: ../tasks/keyring-preflight-rejection.yml
+
+    - name: Create disposable Qubix session fixture even in check mode
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-keyring-niri-
+      check_mode: false
+      register: qubix_test_keyring_niri
+
+    - name: Exercise the component-only Niri startup integration
+      block:
+        - name: Select greetd with missing native prerequisites
+          ansible.builtin.set_fact:
+            qubix_root: '{{ qubix_test_keyring_niri.path }}'
+            qubix_discovery_report:
+              evidence:
+                display_manager:
+                  active_units: [greetd]
+
+        - name: Require missing-prerequisite refusal before resource writes
+          ansible.builtin.include_tasks: ../tasks/keyring-preflight-rejection.yml
+
+        - name: Create disposable session parent
+          ansible.builtin.file:
+            path: '{{ qubix_test_keyring_niri.path }}/etc/niri/qubix'
+            state: directory
+            mode: '0755'
+          check_mode: false
+
+        - name: Seed a Qubix-owned session with unrelated settings
+          ansible.builtin.copy:
+            dest: '{{ qubix_test_keyring_niri.path }}/etc/niri/qubix/config.kdl'
+            content: |
+              // Qubix Niri: native /etc/niri and personal dotfiles remain preserved.
+              input { keyboard { xkb {}; }; }
+            mode: '0644'
+          check_mode: false
+
+        - name: Select isolated session resources
+          ansible.builtin.set_fact:
+            qubix_root: '{{ qubix_test_keyring_niri.path }}'
+            qubix_keyring_resources: []
+
+        - name: Plan only the native handshake addition
+          ansible.builtin.include_role:
+            name: qubix_keyring
+            tasks_from: niri
+
+        - name: Require unchanged session bytes plus exactly one native startup line
+          ansible.builtin.assert:
+            that:
+              - qubix_keyring_resources | length == 1
+              - >-
+                qubix_keyring_resources[0].content ==
+                (qubix_keyring_niri_bytes.content | b64decode) ~ qubix_test_keyring_handshake
+              - qubix_keyring_resources[0].component == 'niri'
+          vars:
+            qubix_test_keyring_handshake: |
+              spawn-at-startup "/bin/sh" "-c" "if [ -x /usr/lib/pam_kwallet_init ]; then /usr/lib/pam_kwallet_init; fi"
+        - name: Retain and seed the installed handshake candidate
+          ansible.builtin.copy:
+            dest: '{{ qubix_test_keyring_niri.path }}/etc/niri/qubix/config.kdl'
+            content: '{{ qubix_keyring_resources[0].content }}'
+            mode: '0644'
+          check_mode: false
+
+        - name: Save the installed candidate and clear resource planning
+          ansible.builtin.set_fact:
+            qubix_test_keyring_niri_candidate: '{{ qubix_keyring_resources[0].content }}'
+            qubix_keyring_resources: []
+
+        - name: Replan a session already containing the native handshake
+          ansible.builtin.include_role:
+            name: qubix_keyring
+            tasks_from: niri
+
+        - name: Require byte-identical Niri reapplication
+          ansible.builtin.assert:
+            that:
+              - qubix_keyring_resources[0].content == qubix_test_keyring_niri_candidate
+      always:
+        - name: Remove only the disposable session fixture
+          ansible.builtin.file:
+            path: '{{ qubix_test_keyring_niri.path }}'
+            state: absent
+          check_mode: false

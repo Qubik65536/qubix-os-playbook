@@ -1,6 +1,13 @@
 # Project status
 
-Updated: 2026-10-16. Stage: **MVP candidate; acceptance In Progress**.
+Updated: 2026-10-17. Stage: **MVP candidate; acceptance In Progress**.
+KWallet integration **Implemented; native isolated PAM unlock, live three-entry migration,
+Secret Service/KDE API roundtrips, installation, verification, reapplication and recovery Tested**. The opt-in keyring component preserves
+unrelated authentication and encrypted originals; GNOME Keyring stays installed because
+CachyOS's desktop package requires it. See [keyring evidence](keyring-test-results.md).
+Production installed verification passes 67 tasks/zero changes and identical reapplication
+209 tasks/zero changes. Real password logout/login remains the final operator gate.
+
 Monaspace NF / configurable Krypton UI **Implemented; controller/native rendering, installation,
 active shell, installed verification and zero-change reapplication Tested**. All 210 official faces are pinned separately from the boot subset.
 Fontconfig aliases, GTK system schema defaults and Qubix Noctalia share the boolean switch;

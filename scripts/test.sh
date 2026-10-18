@@ -67,6 +67,20 @@ printf '%s\n' 'SDDM clone and unsupported-manager fixtures passed.'
 for mode in normal check; do
   set --
   if [[ "$mode" == check ]]; then set -- --check; fi
+  if ! ansible-playbook tests/playbooks/keyring.yml "$@" >".cache/tests/keyring-$mode.log" 2>&1; then
+    cat ".cache/tests/keyring-$mode.log"
+    exit 1
+  fi
+done
+if ! ansible-playbook tests/playbooks/keyring-files.yml >.cache/tests/keyring-files.log 2>&1; then
+  cat .cache/tests/keyring-files.log
+  exit 1
+fi
+printf '%s\n' 'KWallet PAM preservation/refusal and disposable file recovery fixtures passed.'
+
+for mode in normal check; do
+  set --
+  if [[ "$mode" == check ]]; then set -- --check; fi
   if ! ansible-playbook tests/playbooks/noctalia-greeter.yml "$@" >".cache/tests/greeter-$mode.log" 2>&1; then
     cat ".cache/tests/greeter-$mode.log"
     exit 1

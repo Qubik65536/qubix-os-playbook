@@ -24,6 +24,8 @@ qubix:
     theme_source: breeze
     activation: existing
     compact: false
+  keyring:
+    enabled: false
   bootloader:
     enabled: false
     backend: auto
@@ -86,3 +88,9 @@ Active-image binding: each image may additionally declare both limine_image and 
 Both default true in this profile. Set only `krypton_ui: false` to keep the fonts and
 remove the alias preference on reapplication. See the authoritative [font contract](../components/fonts.md)
 for preparation, preserved application/user choices, cache handling and activation limits.
+
+`keyring.enabled: true` explicitly opts into KWallet on an existing greetd system.
+This is the narrow exception to preserved PAM: only measured optional keyring hooks in
+`/etc/pam.d/greetd` are replaced, after native package preparation and operator secret migration.
+All other authentication and personal stores stay preserved. Disabled does not undo an earlier
+activation; use backed-up restoration. See the [keyring contract](../components/keyring.md).

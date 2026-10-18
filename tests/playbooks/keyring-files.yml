@@ -1,0 +1,105 @@
+---
+- name: Test KWallet file installation and first-baseline restoration in a disposable root
+  hosts: localhost
+  gather_facts: true
+  gather_subset: ['!all', min]
+  vars:
+    qubix_files_owner: '{{ ansible_facts.user_id }}'
+    qubix_files_group: '{{ ansible_facts.user_gid | string }}'
+    qubix_profile_resolved:
+      niri: {enabled: true}
+    qubix_discovery_report:
+      evidence:
+        display_manager:
+          active_units: [greetd]
+    qubix_test_keyring_original: |
+      #%PAM-1.0
+      auth include system-local-login
+      account include system-local-login
+      session include system-local-login
+  tasks:
+    - name: Create disposable fixture root
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-keyring-
+      register: qubix_test_keyring_root
+
+    - name: Exercise bounded resources with guaranteed cleanup
+      block:
+        - name: Select the disposable root
+          ansible.builtin.set_fact:
+            qubix_root: '{{ qubix_test_keyring_root.path }}'
+
+        - name: Create synthetic prerequisite directories
+          ansible.builtin.file:
+            path: '{{ qubix_root }}{{ item }}'
+            state: directory
+            mode: '0755'
+          loop: [/usr/bin, /usr/lib/security, /etc/pam.d]
+
+        - name: Seed no-effect native prerequisites
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}{{ item }}'
+            content: 'fixture only; never executed'
+            mode: '0644'
+          loop: [/usr/bin/ksecretd, /usr/bin/kwalletd6, /usr/lib/security/pam_kwallet5.so, /usr/lib/pam_kwallet_init]
+
+        - name: Seed original authentication bytes
+          ansible.builtin.copy:
+            dest: '{{ qubix_root }}/etc/pam.d/greetd'
+            content: '{{ qubix_test_keyring_original }}'
+            mode: '0644'
+
+        - name: Prepare supported KWallet definitions
+          ansible.builtin.include_role:
+            name: qubix_keyring
+
+        - name: Install protected KWallet resources
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_resources: '{{ qubix_keyring_resources }}'
+
+        - name: Verify all installed resource bytes
+          ansible.builtin.include_role:
+            name: qubix_files
+            tasks_from: verify
+          vars:
+            qubix_files_resources: '{{ qubix_keyring_resources }}'
+
+        - name: Reapply identical protected resources
+          ansible.builtin.include_role:
+            name: qubix_files
+          vars:
+            qubix_files_resources: '{{ qubix_keyring_resources }}'
+
+        - name: Clear planning authorization to exercise independent recovery
+          ansible.builtin.set_fact:
+            qubix_keyring_authorized: false
+
+        - name: Restore all original bytes and original absences
+          ansible.builtin.include_role:
+            name: qubix_files
+            tasks_from: restore
+
+        - name: Read restored authentication bytes
+          ansible.builtin.slurp:
+            src: '{{ qubix_root }}/etc/pam.d/greetd'
+          register: qubix_test_keyring_restored
+
+        - name: Inspect original absence of provider override
+          ansible.builtin.stat:
+            path: '{{ qubix_root }}/usr/local/share/dbus-1/services/org.freedesktop.secrets.service'
+          register: qubix_test_keyring_provider
+
+        - name: Require exact PAM restoration and provider removal
+          ansible.builtin.assert:
+            that:
+              - qubix_test_keyring_restored.content | b64decode == qubix_test_keyring_original
+              - not qubix_test_keyring_provider.stat.exists
+      always:
+        - name: Remove only disposable fixture data
+          ansible.builtin.file:
+            path: '{{ qubix_test_keyring_root.path }}'
+            state: absent

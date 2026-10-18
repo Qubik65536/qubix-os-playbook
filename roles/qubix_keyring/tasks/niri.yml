@@ -1,0 +1,49 @@
+---
+- name: Inspect the existing Qubix session configuration
+  ansible.builtin.stat:
+    path: '{{ qubix_root | default("") }}/etc/niri/qubix/config.kdl'
+    follow: false
+  register: qubix_keyring_niri
+
+- name: Require a real installed Qubix Niri session
+  ansible.builtin.assert:
+    that:
+      - qubix_keyring_niri.stat.isreg | default(false)
+      - not qubix_keyring_niri.stat.islnk | default(false)
+    fail_msg: 'Enable niri deployment or install the Qubix Niri session before KWallet integration.'
+
+- name: Read only the Qubix-owned configuration
+  ansible.builtin.slurp:
+    src: '{{ qubix_root | default("") }}/etc/niri/qubix/config.kdl'
+  register: qubix_keyring_niri_bytes
+
+- name: Preserve the existing session while removing only exact supported handshakes
+  ansible.builtin.set_fact:
+    qubix_keyring_niri_preserved: >-
+      {{ qubix_keyring_niri_bytes.content | b64decode
+      | replace(qubix_keyring_guarded_hook ~ qubix_keyring_newline, '')
+      | replace('spawn-at-startup "/usr/lib/pam_kwallet_init"' ~ qubix_keyring_newline, '') }}
+  vars:
+    qubix_keyring_newline: "\n"
+    qubix_keyring_guarded_hook: >-
+      spawn-at-startup "/bin/sh" "-c" "if [ -x /usr/lib/pam_kwallet_init ]; then /usr/lib/pam_kwallet_init; fi"
+
+- name: Refuse personal or unreviewed session configuration
+  ansible.builtin.assert:
+    that:
+      - >-
+        qubix_keyring_niri_preserved.startswith(
+        '// Qubix Niri: native /etc/niri and personal dotfiles remain preserved.')
+      - qubix_keyring_niri_preserved is not search('pam_kwallet')
+      - qubix_keyring_niri_preserved.endswith('\n')
+    fail_msg: 'Only the Qubix-owned Niri configuration can receive the native wallet startup handshake.'
+
+- name: Reuse the Niri baseline for the exact additional native startup command
+  ansible.builtin.set_fact:
+    qubix_keyring_resources: >-
+      {{ qubix_keyring_resources + [{'path': '/etc/niri/qubix/config.kdl', 'component': 'niri',
+      'content': qubix_keyring_niri_preserved ~ qubix_keyring_handshake,
+      'mode': qubix_keyring_niri.stat.mode, 'validate': '/usr/bin/niri validate --config %s'}] }}
+  vars:
+    qubix_keyring_handshake: |
+      spawn-at-startup "/bin/sh" "-c" "if [ -x /usr/lib/pam_kwallet_init ]; then /usr/lib/pam_kwallet_init; fi"

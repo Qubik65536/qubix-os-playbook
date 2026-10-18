@@ -75,3 +75,4 @@ binds {
     XF86MonBrightnessUp hotkey-overlay-title="Media / Brightness up" allow-when-locked=true { spawn "/usr/share/qubix/bin/qubix-noctalia" "msg" "brightness-up" "all" "5"; }
     XF86MonBrightnessDown hotkey-overlay-title="Media / Brightness down" allow-when-locked=true { spawn "/usr/share/qubix/bin/qubix-noctalia" "msg" "brightness-down" "all" "5"; }
 }
+spawn-at-startup "/bin/sh" "-c" "if [ -x /usr/lib/pam_kwallet_init ]; then /usr/lib/pam_kwallet_init; fi"
