@@ -1,10 +1,16 @@
 # Project status
 
 Updated: 2026-10-17. Stage: **MVP candidate; acceptance In Progress**.
+Bootloader/Plymouth default enablement **Implemented; controller gates Tested**: both now
+resolve enabled; machine-specific confirmations and mappings remain required. Actual adapter
+refusal/opt-out fixtures pass 46 tasks/zero changes and two expected refusals in normal/check
+mode. Schema/discovery regression passes 882 tasks/zero changes (46 profile cases, 11 discovery,
+seven identity; 38 expected refusals). No native boot writes or reboot are part of this change.
+
 Default-profile preparation **Implemented; controller resolution/schema/static checks Tested**: fingerprint setup, Qubix captions, compact
 existing Noctalia/greetd login and KWallet now ship enabled alongside fonts/branding/desktop/shell.
 The [configuration reference](../architecture/configuration.md) explains every effective value,
-default-on development policy and boot/personal-preservation exceptions. Full-profile deployment
+default-on development policy, explicit boot confirmations and personal preservation. Full-profile deployment
 requires separate package/build preparation and reviewed manager/secret transitions; automatic
 fresh-machine onboarding remains Planned. Normal/check-mode fixtures each pass 860 tasks/zero
 changes (45 profile, 11 discovery and seven identity cases; 38 expected refusals). KWallet

@@ -35,8 +35,8 @@ def main():
     assert set(defaults) == {"profile", *schema}, "Default components differ from the schema"
     for name, keys in schema.items():
         assert set(defaults[name]) == set(keys), f"Default keys differ for {name}"
-    assert defaults["bootloader"]["enabled"] is False, "Bootloader must remain opt-in"
-    assert defaults["plymouth"]["enabled"] is False, "Plymouth must remain opt-in"
+    assert defaults["bootloader"]["confirm_active"] is False, "Never ship loader confirmation"
+    assert defaults["plymouth"]["confirm_active"] is False, "Never ship image-generator confirmation"
     for path in (ROOT / "config/profiles").glob("*.yml"):
         profile = yaml.safe_load(path.read_text())
         assert profile["profile"] == path.stem, f"{path}: profile identity mismatch"
@@ -56,11 +56,15 @@ def main():
         f"{component}.{key}" for component, keys in schema.items() for key in keys
     }
     assert documented_inputs == effective_inputs, "Every effective default needs an explanation"
-    # New implemented components ship enabled; only documented machine-bound boot work is opt-in.
+    # Every implemented component ships enabled; machine-specific confirmations remain explicit.
     for component in schema:
-        assert expected[component]["enabled"] is (component not in {"bootloader", "plymouth"}), (
-            f"{component}: default-on feature policy or documented boot exception violated"
+        assert expected[component]["enabled"] is True, (
+            f"{component}: default-on feature policy violated"
         )
+    assert expected["bootloader"]["confirm_active"] is False
+    assert expected["plymouth"]["confirm_active"] is False
+    assert expected["bootloader"]["config_path"] == ""
+    assert expected["plymouth"]["images"] == []
     manifest = load("assets/branding/manifest.yml")
     assert manifest["license"] == "Apache-2.0"
     assert len(manifest["revision"]) == 40

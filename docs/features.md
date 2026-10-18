@@ -12,7 +12,7 @@ Evidence is current as of **2026-10-17**; see [project status](project/status.md
 for exact revisions and test results. The shipped profile enables implemented desktop,
 compact Noctalia login, fingerprint setup, captions and KWallet; review the
 [effective defaults and preparation requirements](architecture/configuration.md).
-Boot/splash retain explicit selection; fresh-machine setup is not automatic.
+Boot/splash also default enabled and require explicit machine-specific mappings/confirmations; fresh-machine setup is not automatic.
 
 ## Desktop and everyday use
 

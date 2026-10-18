@@ -214,3 +214,11 @@ Status: Planned. Automatic fresh-machine onboarding requires a separate implemen
 are separate commands; manager selection and migration of existing secrets require operator
 steps. A future workflow needs its own documented privileged preparation/activation contract;
 profile defaults alone must never claim automatic installation or manager cutover.
+
+## F12 — Boot and splash default selection (Feature)
+
+Status: Implemented; controller normal/check-mode gates Tested (46 tasks/zero changes,
+two expected refusals each); schema/discovery regression 882 tasks/zero changes.
+Default both components on as requested; preserve explicit target
+confirmations and mappings. Acceptance: resolved defaults/opt-outs and first-task adapter
+refusals in normal/check mode, plus static documentation agreement. No physical boot change.

@@ -27,13 +27,13 @@ qubix:
   keyring:
     enabled: true
   bootloader:
-    enabled: false
+    enabled: true
     backend: auto
     config_path: ''
     confirm_active: false
     limine_version: 0
   plymouth:
-    enabled: false
+    enabled: true
     initramfs_backend: auto
     confirm_active: false
     force_rebuild: false
@@ -48,7 +48,8 @@ Resolution order is `config/defaults.yml` (complete schema fallbacks), then
 with no overrides; the false values in the fallback file alone are not the shipped behavior.
 
 The current profile enables fonts/Krypton, branding, Qubix Niri, fingerprint setup,
-Qubix captions, shell defaults, compact Noctalia/greetd appearance and KWallet integration. Its [desktop design](desktop-design.md) uses measured standalone Noctalia with separate Qubix defaults and GUI state; desktop shell selection is fixed for this initial profile. All candidate components have implementations; unsupported selections still fail explicitly. Bootloader and Plymouth retain explicit target confirmation and authorization. No fallback from a mistyped profile or backend.
+Qubix captions, shell defaults, compact Noctalia/greetd appearance, KWallet, bootloader
+appearance and Plymouth integration. Its [desktop design](desktop-design.md) uses measured standalone Noctalia with separate Qubix defaults and GUI state; desktop shell selection is fixed for this initial profile. All candidate components have implementations; unsupported selections still fail explicitly. Bootloader and Plymouth are enabled and require explicit target confirmation and authorization. No fallback from a mistyped profile or backend.
 
 Booleans must be YAML booleans, not strings. Each nested mapping allows only documented keys. `user_config` initially accepts only `preserve`; an adoption interface requires its own consent and recovery design. `change_default_shell` must be false during bootstrap. Login backend allows `auto`, `sddm`, `greetd`, `gdm`, `lightdm`; bootloader allows `auto`, `grub`, `limine`; initramfs allows `auto`, `dracut`, `mkinitcpio`. Allowing a value in the schema does not implement an adapter.
 
@@ -72,12 +73,12 @@ Booleans must be YAML booleans, not strings. Each nested mapping allows only doc
 | `login.activation` | `existing` | Require the active supported launcher; inactive preparation is a separate explicit selection. |
 | `login.compact` | `true` | Select the prepared compact private greeter client through its backed-up wrapper. |
 | `keyring.enabled` | `true` | Select KWallet, replace only measured greetd keyring hooks and suppress GNOME Keyring startup. |
-| `bootloader.enabled` | `false` | Wait for confirmed target boot configuration and authorization. |
+| `bootloader.enabled` | `true` | Select boot appearance; require confirmed target configuration before writes. |
 | `bootloader.backend` | `auto` | Unresolved placeholder; activation needs explicit `grub` or `limine`. |
 | `bootloader.config_path` | `''` | No guessed active configuration path. |
 | `bootloader.confirm_active` | `false` | No default confirmation of the loader running in firmware. |
 | `bootloader.limine_version` | `0` | Unknown major; Limine activation requires the observed supported major. |
-| `plymouth.enabled` | `false` | Wait for confirmed image/generator mappings and authorization. |
+| `plymouth.enabled` | `true` | Select splash integration; require confirmed image/generator mappings before writes. |
 | `plymouth.initramfs_backend` | `auto` | Unresolved placeholder; activation needs explicit `dracut` or `mkinitcpio`. |
 | `plymouth.confirm_active` | `false` | No default confirmation of active initramfs selection. |
 | `plymouth.force_rebuild` | `false` | Rebuild only when required; no forced repeat generation. |
@@ -87,11 +88,15 @@ Booleans must be YAML booleans, not strings. Each nested mapping allows only doc
 
 `qubix_discovery_privileged` is an operational input outside `qubix`, default false.
 True authorizes read-only privileged metadata probes; it does not enable a component or
-confirm any boot selection. Credentials, inventory and personal machine mappings never ship.
+confirm any boot selection. Enabled boot components also require privileged metadata reads,
+so full-profile inspection may need `--ask-become-pass`. Credentials, inventory and personal
+machine mappings never ship.
 
 ## Default feature policy and final-deployment preparation
 
-Status: Implemented; controller resolution, opt-out and schema/static fixtures Tested.
+Status: Implemented; boot-default refusal/opt-out fixtures Tested in normal/check mode. Focused acceptance: both components resolve
+enabled without overrides, explicit false overrides work, and unresolved boot inputs fail
+both adapters before filesystem writes in normal/check mode.
 
 Focused task: promote implemented desktop/login/storage capabilities into the shipped
 CachyOS Niri profile and explain every effective input. Acceptance: profile resolution
@@ -115,11 +120,13 @@ the profile never infers permission to switch its manager. Fresh-machine setup i
 automated by `deploy`; preparation playbooks are separate commands and manager/secret
 transitions retain their operator steps. See [preparation](../user/getting-started.md).
 
-Exceptions to default enablement:
+Explicit target selections and preserved defaults:
 
-- `bootloader.enabled` and `plymouth.enabled` remain false: deployment needs a confirmed
-  active loader, generator, paths, versions and exact image/kernel mappings, plus the existing
-  disposable-VM authorization policy. GRUB, Limine, dracut and mkinitcpio remain mandatory MVP work.
+- `bootloader.enabled` and `plymouth.enabled` now default true as explicitly requested.
+  Selection still requires confirmed active loader/generator paths, versions and image/kernel
+  mappings before writes. The disposable-VM authorization policy remains in effect; enabling
+  a profile flag does not confirm a specific machine. Explicitly set either flag false to opt out.
+  GRUB, Limine, dracut and mkinitcpio remain mandatory MVP work.
 - Boot/splash `confirm_active` remains false; `backend: auto`, empty paths/images/presets and
   `limine_version: 0` are unresolved placeholders, never authorization or guessed hardware values.
 - `plymouth.early_graphics: preserve` retains existing hardware behavior. Selecting `simpledrm`

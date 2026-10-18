@@ -122,6 +122,8 @@ qubix_test_profiles:
     input: {shell: {enabled: true}}
   - name: supported login component
     input: {login: {enabled: true}}
+  - name: explicit boot and splash opt-out
+    input: {bootloader: {enabled: false}, plymouth: {enabled: false}}
   - name: bootloader schema accepts explicit selection
     input: {bootloader: {enabled: true}}
   - name: splash schema permits explicit selection

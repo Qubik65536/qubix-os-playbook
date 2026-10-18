@@ -1,5 +1,5 @@
 ---
-# Implemented features ship enabled; documented safety exceptions retain explicit selection.
+# Implemented features ship enabled; machine-specific inputs and confirmations remain explicit.
 # Prepare packages, pinned UI builds, existing greetd and secret migration before deployment.
 profile: cachyos-niri
 fonts:
@@ -20,4 +20,8 @@ login:
   activation: existing
   compact: true
 keyring:
+  enabled: true
+bootloader:
+  enabled: true
+plymouth:
   enabled: true

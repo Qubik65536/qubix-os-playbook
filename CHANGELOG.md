@@ -4,6 +4,10 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Enable bootloader appearance and Plymouth in the shipped profile too. Keep loader/generator
+  confirmations false and machine mappings unresolved; reject unprepared activation before
+  writes. Document explicit desktop-only opt-outs and test normal/check-mode safety gates.
+
 - Enable fingerprint setup, Qubix captions, compact existing Noctalia/greetd login and
   KWallet in the shipped CachyOS Niri profile. Explain every effective default, resolution
   order, explicit opt-outs and separate fresh-machine preparation. Require future implemented

@@ -1,0 +1,78 @@
+---
+- name: Verify enabled boot defaults cannot activate an unspecified machine
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - qubix_profile
+  tasks:
+    - name: Require shipped selection without invented machine confirmations
+      ansible.builtin.assert:
+        that:
+          - qubix_profile_resolved.bootloader.enabled
+          - qubix_profile_resolved.plymouth.enabled
+          - not qubix_profile_resolved.bootloader.confirm_active
+          - not qubix_profile_resolved.plymouth.confirm_active
+          - qubix_profile_resolved.bootloader.backend == 'auto'
+          - qubix_profile_resolved.bootloader.config_path == ''
+          - qubix_profile_resolved.plymouth.initramfs_backend == 'auto'
+          - qubix_profile_resolved.plymouth.images == []
+
+    - name: Initialize evidence and expected refusals without probing the host
+      ansible.builtin.set_fact:
+        qubix_discovery_report:
+          evidence:
+            binaries: {}
+            kernel_command_line: ''
+        qubix_test_loader_refused: false
+        qubix_test_splash_refused: false
+
+    - name: Attempt unresolved bootloader planning
+      block:
+        - name: Invoke the actual loader preflight
+          ansible.builtin.include_role:
+            name: qubix_bootloader
+      rescue:
+        - name: Verify the expected loader confirmation error
+          ansible.builtin.assert:
+            that:
+              - "'Boot branding requires an explicit backend' in ansible_failed_result.msg"
+        - name: Record expected loader refusal
+          ansible.builtin.set_fact:
+            qubix_test_loader_refused: true
+
+    - name: Attempt unresolved splash planning
+      block:
+        - name: Invoke the actual splash preflight
+          ansible.builtin.include_role:
+            name: qubix_plymouth
+      rescue:
+        - name: Verify the expected splash confirmation error
+          ansible.builtin.assert:
+            that:
+              - "'Plymouth requires installed tools, confirmed generator' in ansible_failed_result.msg"
+        - name: Record expected splash refusal
+          ansible.builtin.set_fact:
+            qubix_test_splash_refused: true
+
+    - name: Require both components to refuse before defining writable resources
+      ansible.builtin.assert:
+        that:
+          - qubix_test_loader_refused and qubix_test_splash_refused
+          - qubix_bootloader_resources is not defined
+          - qubix_plymouth_resources is not defined
+
+    - name: Select explicit desktop-only opt-outs
+      ansible.builtin.set_fact:
+        qubix:
+          bootloader: {enabled: false}
+          plymouth: {enabled: false}
+
+    - name: Resolve explicit opt-outs through the real profile merger
+      ansible.builtin.include_role:
+        name: qubix_profile
+
+    - name: Require explicit opt-outs to override the shipped defaults
+      ansible.builtin.assert:
+        that:
+          - not qubix_profile_resolved.bootloader.enabled
+          - not qubix_profile_resolved.plymouth.enabled

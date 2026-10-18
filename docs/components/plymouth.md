@@ -12,6 +12,10 @@ The subtle wordmark revision makes the original-colour logo and steel-blue lette
 lower and more widely spaced. See the [design and acceptance](../architecture/boot-design.md#subtle-bottom-wordmark-refinement).
 Native installation and boot acceptance remain separate gates.
 
+`plymouth.enabled` is true in the shipped profile. Explicit generator/image/kernel mappings
+and `confirm_active: true` are still required before writes; unresolved defaults fail preflight.
+Set `enabled: false` for a staged deployment that excludes splash work.
+
 ## Early graphics repair
 
 Status: **Implemented; native mkinitcpio installation, exact image checks, unchanged

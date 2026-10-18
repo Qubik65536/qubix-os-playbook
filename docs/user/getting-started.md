@@ -50,7 +50,7 @@ Test `ssh YOUR_VM_USER@192.168.64.10`. With password-only SSH, add `--ask-pass` 
 ## 2. Inspect without deploying
 
 ```bash
-./bootstrap.sh verify -i inventory/target.local.ini
+./bootstrap.sh verify -i inventory/target.local.ini --ask-become-pass
 ```
 
 The report must show CachyOS, Linux/systemd, Pacman and Niri. It lists measured companion binaries and manager activity. Bootloader and image generator stay `unresolved` until you confirm them. Package presence is insufficient proof of the firmware's active loader.
@@ -69,7 +69,9 @@ If help is needed, use [collecting target information](collecting-target-info.md
 
 The shipped `cachyos-niri` profile now selects the complete implemented desktop set:
 Monaspace NF/Krypton, branding, Niri, fingerprint setup, Qubix captions, shell defaults,
-compact Noctalia/greetd appearance and KWallet. Bootloader and Plymouth remain disabled.
+compact Noctalia/greetd appearance, KWallet, bootloader appearance and Plymouth.
+Boot components require explicit machine-specific mappings and confirmations; the desktop-only
+trial below deliberately disables them.
 The [complete defaults reference](../architecture/configuration.md) explains every value.
 
 **Fresh-machine setup is not automatic.** `deploy` validates prerequisites and installs
@@ -84,6 +86,7 @@ Before using the full defaults:
 | Noctalia Greeter packages | `playbooks/prepare-login.yml` while greetd is inactive; see [login](login.md). |
 | Active greetd/native wrapper | Separately authorized operator cutover in the login guide; never automatic during deployment. |
 | Private caption/compact builds and enrollment prerequisites | `playbooks/prepare-ui.yml`, followed by the native isolated UI checks in the login guide. |
+| Active boot chain and initramfs | Confirm loader/generator, paths, versions and image/kernel mappings using sections 6–7; otherwise explicitly disable both components. |
 | KWallet packages and existing secrets | `playbooks/prepare-keyring.yml`, then reviewed migration where needed; see [keyrings](keyring.md). |
 
 For a staged desktop-only trial before manager/UI preparation, save these **explicit opt-outs**
@@ -259,7 +262,7 @@ For the default Noctalia Greeter instead of an explicit SDDM override, follow th
 The [fingerprint guide](fingerprint.md) covers local enrollment, desktop unlock and optional
 greetd authentication without automatic PAM changes.
 
-Plymouth is independent of the loader. Keep it disabled until the active generator, existing image paths and kernel mapping are known. The current boot must already contain `splash`; Qubix never inserts kernel arguments. An installed two-step plugin is required. UKIs, signing changes and complex mkinitcpio configurations are unsupported.
+Plymouth is independent of the loader. It defaults enabled; explicitly disable it for staged trials until the active generator, existing image paths and kernel mapping are known. The current boot must already contain `splash`; Qubix never inserts kernel arguments. An installed two-step plugin is required. UKIs, signing changes and complex mkinitcpio configurations are unsupported.
 
 For dracut, merge this section with your **actual** version and paths:
 
