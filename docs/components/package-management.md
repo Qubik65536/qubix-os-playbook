@@ -1,6 +1,6 @@
 # CachyOS package management and terminal preparation
 
-Status: **Implemented; controller selection/refusal fixtures Tested; native acceptance pending**. Focused task: add an explicit CachyOS preparation step for
+Status: **Implemented; controller fixtures and native existing-manager/WezTerm deployment Tested; fresh Brew/physical input pending**. Focused task: add an explicit CachyOS preparation step for
 Paru, Homebrew on Linux (formerly Linuxbrew), and WezTerm; retire Alacritty and Foot.
 Acceptance: CachyOS-only preflight, non-root Homebrew ownership, pinned installer,
 check-mode transaction preview, idempotent package selection, dependency-safe removal,
@@ -47,3 +47,8 @@ instructions; personal shell configuration is never edited automatically.
 Check mode performs read-only package resolution and reports planned installation/removal;
 it does not download/run the installer or prove a future package transaction will succeed.
 No native installation, parser, session, screenshot or boot result is implied by controller tests.
+
+The operator-authorized SSH installation now passes native parser/rendering, active-shell
+selection and zero-change package/file reapplication. See [deployment evidence and
+comparison captures](../project/package-management-test-results.md). This target already
+had working Brew; fresh-install acceptance remains open.

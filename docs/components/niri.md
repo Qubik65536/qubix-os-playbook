@@ -36,8 +36,9 @@ Restore returns the first system-file baselines. Old Qubix classic-companion fil
 The profile's configurable [Krypton typography](fonts.md) supplies `shell.font_family`
 through the managed Noctalia defaults. User GUI font choices remain preserved; WezTerm uses native/personal font settings. No terminal dotfiles change.
 
-The current WezTerm migration is Implemented with controller checks; historical Foot
-grammar/rendering results do not establish WezTerm session acceptance. Run the
+The current WezTerm migration is Implemented with controller checks and [native
+installation/rendering/activation evidence](../project/package-management-test-results.md).
+Physical shortcut input remains pending; historical Foot results are kept separately. Run the
 [CachyOS preparation step](package-management.md) before deploying this revision.
 No Foot configuration is installed by new deployments. Both terminal bindings use
 `wezterm start`; the session terminal environment selects `/usr/bin/wezterm`.

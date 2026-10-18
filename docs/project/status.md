@@ -1,15 +1,18 @@
 # Project status
 
 Updated: 2026-10-17. Stage: **MVP candidate; acceptance In Progress**.
-CachyOS package-manager/terminal preparation **Implemented; controller fixtures Tested**:
-explicit preparation selects Paru, Homebrew on Linux and WezTerm and dependency-safe
-removal of Alacritty/Foot. The official installer is checksum-pinned and non-root;
-Qubix Niri requires WezTerm and both terminal shortcuts/session terminal environment
-select it. See the [contract](../components/package-management.md). Native installation,
-repeat application, WezTerm session/launcher checks and comparison captures are pending;
-historical Foot results do not validate this migration. Package/prefix fixtures pass
-28 tasks/zero changes with three expected refusals in normal/check modes; desktop
-fixtures pass 69 tasks/zero changes with seven expected refusals.
+CachyOS package-manager/terminal preparation **Implemented; native installation,
+rendering, activation and zero-change reapplication Tested**: the operator-authorized
+SSH deployment retains working Paru/Homebrew, installs WezTerm and removes Alacritty/Foot.
+Package preparation passes 54 tasks/two changes; reapplication 50/zero changes.
+Targeted installation of the two terminal session resources passes 107 tasks/four changes;
+reapplication 107/zero changes. Niri/Bash parsers pass, both shortcuts select WezTerm,
+and the active Noctalia environment selects it after a guarded shell-only restart.
+Niri/application windows, 11 configuration hashes and boot ID are preserved. Sanitized
+native-reference/WezTerm captures and limits are in the [deployment evidence](package-management-test-results.md).
+Fresh Homebrew bootstrap and physical shortcut input remain pending. Controller package/prefix
+fixtures pass 28 tasks/zero changes with three expected refusals in normal/check modes;
+desktop fixtures pass 69 tasks/zero changes with seven expected refusals.
 
 Bootloader/Plymouth default enablement **Implemented; controller gates Tested**: both now
 resolve enabled; machine-specific confirmations and mappings remain required. Actual adapter

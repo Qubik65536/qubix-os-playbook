@@ -8,7 +8,9 @@ Changes are grouped by release. Bootstrap has no release tag.
   Pin/verify the official Brew installer and keep it non-root; preserve personal files
   and existing Brew. Remove Alacritty/Foot only through dependency-safe Pacman removal.
   Require WezTerm for Qubix Niri and launch it from both terminal shortcuts and the
-  session terminal environment. Native VM installation and session acceptance remain pending.
+  session terminal environment. Operator-authorized SSH installation/removal, native
+  rendering/parser checks, guarded shell activation and zero-change reapplication pass;
+  comparison captures are recorded. Fresh Brew bootstrap and physical input remain pending.
 
 - Enable bootloader appearance and Plymouth in the shipped profile too. Keep loader/generator
   confirmations false and machine mappings unresolved; reject unprepared activation before

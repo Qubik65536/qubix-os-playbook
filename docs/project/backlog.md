@@ -225,9 +225,9 @@ refusals in normal/check mode, plus static documentation agreement. No physical 
 
 ## F — CachyOS package managers and WezTerm acceptance (Testing)
 
-Status: Implemented; controller package-selection/prefix/desktop fixtures Tested; native acceptance Planned.
-Use [package-management acceptance](../components/package-management.md). In a disposable CachyOS VM,
-verify fresh and existing Homebrew, repeat with zero changes, exercise dependency-blocked removal,
-and verify both terminal shortcuts, launcher terminal applications and personal configuration
-preservation. Capture sanitized stock/customized terminal comparisons with revision/environment
-captions. Record installation, parser and session evidence separately; no boot test is implied.
+Status: Native existing-manager preservation, installation/removal, terminal rendering,
+parser checks, active-shell selection and zero-change reapplication Tested on the
+operator-authorized SSH instance. See [evidence and comparison captures](package-management-test-results.md).
+Remaining: exercise fresh Homebrew bootstrap, incomplete-prefix recovery and dependency-blocked
+removal in a disposable CachyOS VM; confirm physical shortcuts and terminal-launching
+application actions. Follow the [component acceptance contract](../components/package-management.md).
