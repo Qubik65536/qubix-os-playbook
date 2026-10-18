@@ -15,6 +15,9 @@ recovery tests remain acceptance gates. See [actual evidence](docs/project/statu
 
 Get started:
 
+- [Download and deploy](docs/user/deployment.md): CI/prerelease archives, preparation, every enabled feature and recovery.
+- [Packaging and manual releases](docs/development/releases.md): validated CI artifacts and manually triggered candidate publication.
+
 - [Implemented features](docs/features.md): a plain-language inventory with implementation links and testing limits.
 - [User getting-started guide](docs/user/getting-started.md): prepare the target, deploy and test the desktop, review full-profile preparation or explicitly trial desktop-only settings, then opt into boot/splash tests.
 - [Noctalia Greeter](docs/user/login.md) and [fingerprints](docs/user/fingerprint.md): compact login, QubixOS captions, graphical enrollment and password fallback.

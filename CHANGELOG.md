@@ -4,6 +4,12 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Package the complete committed playbook with exported revision and SHA256 checksum
+  after CI validation; add manually triggered GitHub candidate prereleases. Support
+  deployment-state recording from extracted archives without claiming a clean Git tree.
+  Add download-to-recovery deployment instructions and a complete enabled-feature summary;
+  correct stale login/boot defaults and terminal prerequisites in older guides.
+
 - Consolidate WezTerm to one canonical Lua and deploy it with both palettes into the
   measured account's `~/.config/wezterm`, backing up changed originals. Use native
   config discovery. Scope Niri's disabled border-background fill to WezTerm so its

@@ -4,9 +4,9 @@ Status: Implemented candidate; native desktop procedure Tested; main-session and
 
 Follow the [user getting-started guide](getting-started.md). Use existing CachyOS Niri; the project installs neither Linux nor an ISO. A Mac/Linux controller needs Python 3.12+ and locked tools. The target needs Python, exact CachyOS identity, Linux/systemd, Pacman and Niri.
 
-Ansible transfers repository assets over SSH. Use the existing checkout: unpublished candidate commits are not in a GitHub clone. Default inventory selects localhost; always provide your VM inventory from a Mac. Keep host-key checking enabled.
+Ansible transfers repository assets over SSH. Use a Git checkout or the packaged CI/prerelease archive; see [download and deployment](deployment.md). Default inventory selects localhost; always provide your VM inventory from a Mac. Keep host-key checking enabled.
 
-Prepare standalone Noctalia >=5.2.0 and <6.0.0, Foot, jq and optional Starship manually; preview the transaction and account for native Snapper/Limine hooks. Deployment does not install packages, replace managers/loaders or change the default shell. See [compatibility](../architecture/compatibility.md) for optional prerequisites.
+Prepare standalone Noctalia >=5.2.0 and <6.0.0, WezTerm, jq and Starship manually; preview the transaction and account for native Snapper/Limine hooks. Deployment does not install packages, replace managers/loaders or change the default shell. See [compatibility](../architecture/compatibility.md) for optional prerequisites.
 
 Inspect with `./bootstrap.sh verify -i inventory/target.local.ini`. Default inspection uses ordinary readable facts without escalation. Installed boot/splash checks may need sudo. Read [configuration](configuration.md), [deployment](deployment.md) and [recovery](restoration.md).
 

@@ -1,4 +1,11 @@
 ---
+- name: Detect a controller Git checkout without searching parent directories
+  ansible.builtin.stat:
+    path: '{{ role_path }}/../../.git'
+  delegate_to: localhost
+  become: false
+  register: qubix_state_git
+
 - name: Read controller source revision
   ansible.builtin.command:
     argv: [git, rev-parse, HEAD]
@@ -7,6 +14,7 @@
   become: false
   check_mode: false
   changed_when: false
+  when: qubix_state_git.stat.exists
   register: qubix_state_revision
 
 - name: Detect uncommitted source modifications
@@ -17,7 +25,20 @@
   become: false
   check_mode: false
   changed_when: false
+  when: qubix_state_git.stat.exists
   register: qubix_state_dirty
+
+- name: Read exported archive identity when Git metadata is absent
+  ansible.builtin.set_fact:
+    qubix_state_archive_revision: '{{ lookup("file", role_path + "/../../SOURCE_REVISION") | trim }}'
+  when: not qubix_state_git.stat.exists
+
+- name: Require an exported full source revision
+  ansible.builtin.assert:
+    that:
+      - qubix_state_archive_revision is match('^[0-9a-f]{40}$')
+    fail_msg: Use the packaged source archive with its exported SOURCE_REVISION or a Git checkout.
+  when: not qubix_state_git.stat.exists
 
 - name: Record verified deployment revision and configuration
   ansible.builtin.copy:
@@ -27,8 +48,9 @@
     mode: '0600'
   vars:
     qubix_state_manifest:
-      revision: '{{ qubix_state_revision.stdout }}'
-      dirty: '{{ qubix_state_dirty.stdout | length > 0 }}'
+      revision: '{{ qubix_state_revision.stdout if qubix_state_git.stat.exists else qubix_state_archive_revision }}'
+      source_kind: '{{ "git" if qubix_state_git.stat.exists else "archive" }}'
+      dirty: '{{ (qubix_state_dirty.stdout | length > 0) if qubix_state_git.stat.exists else none }}'
       configuration_sha256: '{{ qubix_profile_resolved | to_json | hash("sha256") }}'
       components: '{{ qubix_profile_enabled }}'
       status: files-verified

@@ -30,3 +30,13 @@ Recovery stores content, metadata, original absence and target paths before over
 Current deployment validates all selected component prerequisites first, then escalates for backed-up named file installation and verification. `verify` inspects by default; `verify --tags branding` explicitly checks deployed assets. The wrapper reserves tags for verification; configure enabled components in YAML. A successful file deployment records revision and configuration digest; graphical and boot verification remain false until actual acceptance.
 
 A transient deployment-pending.json is recorded before mutation. Failures retain diagnostics alongside the previous successful deployment.json; only complete file/archive verification clears pending and updates success. This bookkeeping never asserts graphical/reboot acceptance. Image rebuild pending state is independent and triggers retry.
+
+## Packaged source identity
+
+The complete tracked playbook can also deploy from the CI/prerelease source archive.
+The [packaging contract](../development/releases.md) defines contents, checksums and
+commit substitution. State checks `.git` at the source root explicitly, avoiding an
+unrelated parent checkout. Git sources retain measured revision/dirty status; archives
+require a full exported `SOURCE_REVISION` and record `source_kind: archive`, `dirty: null`.
+Archive identity is provenance, not proof of unchanged extracted files. Installation,
+parser, session and boot acceptance remain separate.

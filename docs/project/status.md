@@ -1,6 +1,17 @@
 # Project status
 
 Updated: 2026-10-18. Stage: **MVP candidate; acceptance In Progress**.
+Packaging/manual prereleases and archive deployment **Implemented; local checks Tested**.
+The complete committed source is packaged after controller CI and exposed as an artifact;
+a manual Release workflow validates again and publishes an explicitly requested candidate
+tag. The [deployment guide](../user/deployment.md) covers extraction, prerequisites,
+all enabled features, verification and recovery; the exhaustive defaults contract remains
+unchanged. Archive state records exported commit and unknown dirty status. Static validation,
+12-task archive fixture/malformed-revision control and 233-task Git recovery regression
+pass (four/18 disposable changes; two expected recovery refusals). Remote Actions,
+artifact download and actual publication remain untested; no push/tag/release is performed.
+See the [release contract](../development/releases.md).
+
 WezTerm home configuration/transparency correction **Implemented and Tested**:
 one canonical Lua is deployed with both palettes to the measured account's
 `~/.config/wezterm`, with timestamped backups before replacing existing regular files.
@@ -332,7 +343,7 @@ among native boot files. Pending markers and the temporary target inhibitor are 
   relevant, physical shortcuts/locking/portals and current desktop/boot restoration in disposable VMs.
 - Fixed image/kernel mappings require reinspection after package updates. Stale native pins and
   narrower earlier appearance ownership fail safely; reviewed rebasing remains backlog work.
-- Boot components remain opt-in. The operator approved this physical-target Plymouth test and
+- Boot components default enabled but require explicit machine-specific confirmation. The operator approved this physical-target Plymouth test and
   subsequently requested Limine/startup/native-style corrections; other boot work retains VM policy.
 - Backups preserve bytes, UID/GID/mode and absence, not ACLs/xattrs or whole-system state. Restore is
   per resource; Limine config precedes stage removal. Concurrent deployment/package updates are unsupported.

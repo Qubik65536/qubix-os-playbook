@@ -6,7 +6,7 @@ Status: **Implemented MVP candidate; desktop file lifecycle and nested rendering
 
 For a quick overview before deploying, read [implemented features](../features.md).
 
-Use the existing repository checkout on your Mac or Linux controller. The candidate commits are local: cloning GitHub does not include them until they are published. Ansible transfers files over SSH, so the VM does not need a repository checkout.
+Use a Git checkout or extract the named CI/prerelease package on your Mac or Linux controller; see [download instructions](deployment.md#obtain-the-playbook). Only published commits are available remotely. Ansible transfers files over SSH, so the VM does not need a repository checkout.
 
 On the controller, use Python 3.12 or newer (the validated environment uses 3.13):
 
@@ -165,7 +165,7 @@ export ANSIBLE_PIPELINING=true
 
 The font preparation command downloads the pinned official archive only to the controller. It requires about 315 MiB for the archive and 476 MiB extracted. Set `fonts.krypton_ui: false` to keep the fonts with generic UI defaults; see the [font contract](../components/fonts.md).
 
-Missing prerequisites stop deployment before component writes. The native Niri, Foot and Noctalia parsers validate candidate files before activation. Standalone Noctalia >=5.2.0 and <6.0.0 is required; legacy Quickshell/v4 does not satisfy this profile. A parser failure may leave earlier inert files installed; backups support recovery. Check mode performs no backup/state writes and cannot validate files it has not installed.
+Missing prerequisites stop deployment before component writes. The native Niri, WezTerm and Noctalia parsers validate candidate files before activation. Standalone Noctalia >=5.2.0 and <6.0.0 is required; legacy Quickshell/v4 does not satisfy this profile. A parser failure may leave earlier inert files installed; backups support recovery. Check mode performs no backup/state writes and cannot validate files it has not installed.
 
 Existing personal dotfiles and `/etc/niri/config.kdl` remain intact. The additional session uses `/etc/niri/qubix/config.kdl` explicitly, so it does not inherit your personal Niri configuration. Qubix installs named resources, not a replacement operating system.
 
@@ -189,7 +189,7 @@ Run this from a free TTY, not inside an existing graphical session. In a tempora
 
 | Key | Action |
 |---|---|
-| Super+T or Super+Return | Foot terminal |
+| Super+T or Super+Return | WezTerm terminal |
 | Super+Space or Super+D | Noctalia launcher |
 | Super+V | Clipboard history |
 | Super+Comma | Noctalia settings |
@@ -216,7 +216,7 @@ Resize shortcuts use 5% steps. Tiled windows in one column share its width; heig
 
 Check wallpaper, bar, notifications, launcher, terminal and keyboard navigation visually. A successful file install is not graphical verification. Review session logs if companions fail. Native user services may start a second bar or notification service; collect their status before changing anything. When upgrading the classic Qubix session, log out and select it again: reloading KDL alone does not replace existing Waybar/Mako/Swaybg processes.
 
-Noctalia provides the shell's Polkit agent; test GUI privilege prompts and lock/unlock manually. Its Qubix defaults use rounded windows/panels and the #56728b accent. The complete [appearance and shortcut contract](../architecture/desktop-design.md) explains shell ownership. GUI changes are stored in the Qubix-only user state namespace and override managed defaults; native Noctalia settings remain preserved. Noctalia app-theme templates are disabled. Foot starts a login shell. Bash receives additive system defaults; existing user Starship configuration takes precedence and personal initialization runs normally. For Zsh, optional adoption is a manual decision: after backing up your own `.zshrc`, you can add `source /usr/share/qubix/shell/qubix.zsh`. The playbook never edits it or runs `chsh`.
+Noctalia provides the shell's Polkit agent; test GUI privilege prompts and lock/unlock manually. Its Qubix defaults use rounded windows/panels and the #56728b accent. The complete [appearance and shortcut contract](../architecture/desktop-design.md) explains shell ownership. GUI changes are stored in the Qubix-only user state namespace and override managed defaults; native Noctalia settings remain preserved. Noctalia app-theme templates are disabled. WezTerm uses the supplied shell configuration. Bash receives additive system defaults; existing user Starship configuration takes precedence and personal initialization runs normally. For Zsh, optional adoption is a manual decision: after backing up your own `.zshrc`, you can add `source /usr/share/qubix/shell/qubix.zsh`. The playbook never edits it or runs `chsh`.
 
 Fish remains your existing shell when it is the account default; automatic Fish prompt integration is not implemented. To explicitly try the Qubix Starship prompt in one Fish terminal after deployment, without editing dotfiles:
 

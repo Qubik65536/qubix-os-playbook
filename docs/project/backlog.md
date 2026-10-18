@@ -14,6 +14,15 @@ Status: Implemented; local scripts Tested. GitHub workflow execution pending.
 
 Objective: repeatable local/CI checks. Scope: pinned controller dependencies, YAML/Ansible/ShellCheck/Markdown consistency checks and Actions. Acceptance: local commands and workflow agree; checks pass. Depends on documentation. Tests: execute available validators and record missing tools explicitly. Docs: environment/testing/installation.
 
+## M02 — Source distribution and manual candidate releases (Maintenance)
+
+Status: Implemented; static/archive/recovery checks Tested locally; remote Actions pending.
+Scope and acceptance: [release contract](../development/releases.md). CI packages the
+tracked source only after checks; manual publication always creates a prerelease.
+Next: after authorized push, run Validate, download/verify its artifact, then manually
+publish an authorized candidate and verify its assets. Stable MVP publication remains
+blocked on the independent native acceptance matrix, not on source packaging.
+
 ## F02 — Shared artwork (Feature)
 
 Status: Implemented; isolated filesystem and normal/check-mode acceptance Tested. Native CachyOS installation, verification, idempotency and original-absence restoration pass.

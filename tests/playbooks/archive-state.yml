@@ -1,0 +1,52 @@
+---
+- name: Record extracted archive state in a disposable root
+  hosts: localhost
+  gather_facts: false
+  become: false
+  vars:
+    qubix_profile_resolved: {profile: fixture}
+    qubix_profile_enabled: [fixture]
+  tasks:
+    - name: Create isolated state root
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: qubix-archive-state-
+      register: qubix_archive_root
+
+    - name: Exercise archive identity and guarantee cleanup
+      block:
+        - name: Select disposable state root
+          ansible.builtin.set_fact:
+            qubix_root: '{{ qubix_archive_root.path }}'
+
+        - name: Prepare fixture state directory
+          ansible.builtin.file:
+            path: '{{ qubix_root }}/var/lib/qubix'
+            state: directory
+            mode: '0700'
+
+        - name: Record completed fixture deployment
+          ansible.builtin.include_role:
+            name: qubix_state
+
+        - name: Read recorded archive deployment
+          ansible.builtin.slurp:
+            src: '{{ qubix_root }}/var/lib/qubix/deployment.json'
+          register: qubix_archive_manifest
+
+        - name: Require accurate archive provenance without asserting a clean tree
+          ansible.builtin.assert:
+            that:
+              - qubix_archive_state.source_kind == 'archive'
+              - qubix_archive_state.revision == lookup('file', '../../SOURCE_REVISION') | trim
+              - qubix_archive_state.dirty == none
+              - qubix_archive_state.status == 'files-verified'
+              - not qubix_archive_state.graphical_session_verified
+              - not qubix_archive_state.boot_verified
+          vars:
+            qubix_archive_state: '{{ qubix_archive_manifest.content | b64decode | from_json }}'
+      always:
+        - name: Remove disposable state root
+          ansible.builtin.file:
+            path: '{{ qubix_archive_root.path }}'
+            state: absent

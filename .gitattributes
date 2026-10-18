@@ -4,3 +4,6 @@ assets/ui/*.patch whitespace=-blank-at-eol
 
 # Preserve the pinned upstream Monaspace license verbatim.
 assets/fonts/Monaspace-NF-LICENSE.txt whitespace=-blank-at-eol
+
+# Embed the exact source commit in deployable git archives.
+SOURCE_REVISION export-subst

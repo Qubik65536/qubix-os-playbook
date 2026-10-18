@@ -1,0 +1,54 @@
+---
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'New prerelease tag (for example v0.1.0-rc.1)'
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ inputs.tag }}
+  cancel-in-progress: false
+jobs:
+  validation:
+    uses: ./.github/workflows/validate.yml
+  release:
+    needs: validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Check out validated source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Package and publish manually requested candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-[A-Za-z0-9][A-Za-z0-9.-]*$ ]]
+          # A missing tag is expected; other API failures must stop publication.
+          gh api --paginate "repos/$GH_REPO/git/matching-refs/tags/$RELEASE_TAG" > "$RUNNER_TEMP/tags.json"
+          if jq -e --arg ref "refs/tags/$RELEASE_TAG" 'any(.[]; .ref == $ref)' "$RUNNER_TEMP/tags.json"; then
+            echo 'Release tag already exists; choose a new tag.' >&2
+            exit 1
+          fi
+          ./scripts/package.sh
+          {
+            echo "Complete Qubix OS Playbook source at $GITHUB_SHA."
+            echo
+            echo 'MVP candidate: native login, independent boot combinations and recovery acceptance remain open.'
+            echo 'Verify SHA256SUMS before extraction; follow docs/user/deployment.md in the archive.'
+            echo
+            cat CHANGELOG.md
+          } > "$RUNNER_TEMP/release-notes.md"
+          gh release create "$RELEASE_TAG" .cache/dist/*.tar.gz .cache/dist/SHA256SUMS \
+            --target "$GITHUB_SHA" --title "$RELEASE_TAG" --prerelease --latest=false \
+            --notes-file "$RUNNER_TEMP/release-notes.md"

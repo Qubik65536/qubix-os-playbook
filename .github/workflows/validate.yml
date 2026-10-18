@@ -4,6 +4,7 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+  workflow_call:
 permissions:
   contents: read
 jobs:
@@ -35,3 +36,16 @@ jobs:
         run: ./scripts/validate.sh
       - name: Run non-destructive contract fixtures
         run: ./scripts/test.sh
+      - name: Package committed source and test extracted deployment state
+        run: |
+          ./scripts/package.sh
+          bash tests/shell/package.sh
+      - name: Upload complete playbook archive and checksum
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: qubix-os-playbook-${{ github.sha }}
+          path: |
+            .cache/dist/*.tar.gz
+            .cache/dist/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 14

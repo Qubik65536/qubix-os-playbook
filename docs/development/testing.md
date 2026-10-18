@@ -30,7 +30,7 @@ No real session/power command executes. These fixtures do not prove native event
 
 The suite exercises 25 profile, 11 host, seven exact-identity cases and evidence normalization, with zero changes. Expected failures are rescued only when the matching diagnostic appears. macOS `./bootstrap.sh verify` rejects the real controller as unsupported with zero changes. In a restricted sandbox Ansible local RPC may require execution approval; fixtures do not deploy to the host.
 
-Basic Markdown checks validate local links, fences, final newlines and whitespace. Consistency checks require schema, profile and authoritative documented defaults to agree and boot/splash to remain opt-in. No privileged deployment belongs in CI.
+Basic Markdown checks validate local links, fences, final newlines and whitespace. Consistency checks require schema, profile and authoritative documented defaults to agree and boot/splash to resolve enabled while machine confirmations remain false. No privileged deployment belongs in CI.
 
 Meaningful fixture tests must exercise discovery classification, profile merging, invalid profile/options/types, unsupported platforms, missing Niri/Pacman, and unsupported enabled combinations. Tests may inject evidence into classification task files, but production discovery must read the host. Fictional fixture facts cannot establish real host compatibility.
 
@@ -121,3 +121,14 @@ Fontconfig/Pango tree and compares the same Noctalia binary/configuration with g
 and Krypton text. It validates both TOML candidates, captures launcher/Control Center,
 preserves personal settings/main Niri and removes preview processes. Full installed-font
 validation/resolution, system aliases and live shell activation are separate checks.
+
+## Source archive smoke test
+
+After `./scripts/package.sh`, run `bash tests/shell/package.sh` (also run by CI).
+It verifies the checksum, source commit, tracked runtime/docs/licenses, executable
+bootstrap mode and absence of Git/cache/local configuration. It extracts outside a
+checkout and runs `tests/playbooks/archive-state.yml` against a disposable root:
+archive revision is recorded, dirty state is null, graphical/boot flags remain false.
+A malformed-revision control must fail with the intended diagnostic. This is state/file
+validation, not a native deployment, session or boot check. The existing recovery
+fixture separately exercises Git-source recording and pending-state lifecycle.

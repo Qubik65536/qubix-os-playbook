@@ -206,3 +206,7 @@ preflight. All other personal files remain Preserved. Direct native WezTerm load
 now replaces the earlier system-config fallback wrapper. See the [home configuration
 and transparency contract](../components/wezterm.md). Generic system restoration does
 not reverse these account copies; recover using the retained home-file backups.
+
+The user-facing [deployment defaults summary](../user/deployment.md#enabled-by-default)
+links to the exhaustive table above. Packaging changes no effective feature defaults;
+package caches, private builds and machine inputs still require separate preparation.
