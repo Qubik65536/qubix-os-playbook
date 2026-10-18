@@ -4,6 +4,11 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Import the supplied WezTerm Lua and both colour schemes with source digests.
+  Enable Oxocarbon Dark, Krypton/IBM Plex fallback fonts, 75% opacity and compact
+  decorations through a personal-config-aware launcher and same-ID desktop override.
+  Preserve account dotfiles, guard macOS blur and reject native parser fallback errors.
+
 - Add explicit CachyOS package preparation for Paru, Homebrew on Linux and WezTerm.
   Pin/verify the official Brew installer and keep it non-root; preserve personal files
   and existing Brew. Remove Alacritty/Foot only through dependency-safe Pacman removal.

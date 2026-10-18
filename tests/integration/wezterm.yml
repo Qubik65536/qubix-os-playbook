@@ -1,0 +1,75 @@
+---
+- name: Validate installed WezTerm defaults and render sanitized comparison windows
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  pre_tasks:
+    - name: Require actual native validation rather than check-mode simulation
+      ansible.builtin.assert:
+        that: [not ansible_check_mode]
+  tasks:
+    - name: Validate the installed production configuration without fallback errors
+      ansible.builtin.command:
+        argv: [/usr/share/qubix/bin/qubix-validate-wezterm, /etc/qubix/wezterm/wezterm.lua]
+      changed_when: false
+
+    - name: Create a private native-control directory
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: qubix-wezterm-controls-
+      register: qubix_wezterm_controls
+
+    - name: Reject invalid controls and render only synthetic content
+      block:
+        - name: Write invalid Lua and unsupported-option controls
+          ansible.builtin.copy:
+            dest: '{{ qubix_wezterm_controls.path }}/{{ item.name }}.lua'
+            content: '{{ item.content }}'
+            mode: '0600'
+          loop:
+            - {name: syntax, content: 'this is invalid Lua {'}
+            - name: schema
+              content: >-
+                local w = require("wezterm"); local c = w.config_builder();
+                c.qubix_invalid_option = true; return c
+
+        - name: Require native diagnostic validation to reject both controls
+          ansible.builtin.command:
+            argv: [/usr/share/qubix/bin/qubix-validate-wezterm, '{{ qubix_wezterm_controls.path }}/{{ item }}.lua']
+          loop: [syntax, schema]
+          register: qubix_wezterm_negative
+          changed_when: false
+          failed_when: qubix_wezterm_negative.rc == 0
+
+        - name: Render native and supplied configurations while preserving the session
+          ansible.builtin.script: files/wezterm-smoke.py
+          args:
+            executable: /usr/bin/python3
+          register: qubix_wezterm_render
+          changed_when: true
+
+        - name: Read the synthetic rendering artifact paths
+          ansible.builtin.set_fact:
+            qubix_wezterm_artifacts: '{{ qubix_wezterm_render.stdout | trim | from_json }}'
+
+        - name: Retain sanitized comparison captures on the controller
+          ansible.builtin.fetch:
+            src: '{{ qubix_wezterm_artifacts.directory }}/{{ item }}.png'
+            dest: '{{ playbook_dir }}/../../.cache/wezterm-native/{{ inventory_hostname }}/{{ item }}.png'
+            flat: true
+          loop: [reference, customized]
+
+        - name: Report rendering and preservation evidence
+          ansible.builtin.debug:
+            var: qubix_wezterm_artifacts
+      always:
+        - name: Remove only the native-control directory
+          ansible.builtin.file:
+            path: '{{ qubix_wezterm_controls.path }}'
+            state: absent
+
+        - name: Remove only the rendering directory created by this test
+          ansible.builtin.file:
+            path: '{{ qubix_wezterm_artifacts.directory }}'
+            state: absent
+          when: qubix_wezterm_artifacts.directory is defined

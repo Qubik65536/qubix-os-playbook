@@ -56,6 +56,38 @@
       validate: /usr/bin/bash -n %s
       mode: '0755'
 
+- name: Install native-validation support and supplied terminal assets before activation
+  ansible.builtin.set_fact:
+    qubix_niri_resources: >-
+      {{ qubix_niri_resources + [{'path': item.path, 'component': 'niri',
+      'content': lookup('file', role_path ~ '/files/wezterm/' ~ item.source, rstrip=false),
+      'mode': item.mode | default('0644')}
+      | combine({'validate': item.validate} if item.validate is defined else {})] }}
+  loop:
+    - path: /usr/share/qubix/bin/qubix-validate-wezterm
+      source: validate.sh
+      mode: '0755'
+      validate: /usr/bin/bash -n %s
+    - {path: /etc/qubix/wezterm/colors/KAMSuperuser.toml, source: colors/KAMSuperuser.toml}
+    - {path: /etc/qubix/wezterm/colors/oxocarbon-dark.toml, source: colors/oxocarbon-dark.toml}
+    - path: /etc/qubix/wezterm/wezterm.lua
+      source: wezterm.lua
+      validate: /usr/share/qubix/bin/qubix-validate-wezterm %s
+
+- name: Render terminal launch integration after its configuration
+  ansible.builtin.set_fact:
+    qubix_niri_resources: >-
+      {{ qubix_niri_resources + [{'path': item.path, 'component': 'niri',
+      'content': lookup('template', item.template), 'mode': item.mode | default('0644')}
+      | combine({'validate': item.validate} if item.validate is defined else {})] }}
+  loop:
+    - path: /usr/share/qubix/bin/qubix-wezterm
+      template: wezterm.sh.j2
+      mode: '0755'
+      validate: /usr/bin/bash -n %s
+    - path: /usr/local/share/applications/org.wezfurlong.wezterm.desktop
+      template: wezterm.desktop.j2
+
 - name: Place parser-validated configuration before session activation
   ansible.builtin.set_fact:
     qubix_niri_resources: >-

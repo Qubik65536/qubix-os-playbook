@@ -71,7 +71,10 @@ For Fish, run `/home/linuxbrew/.linuxbrew/bin/brew shellenv fish | source`.
 For persistent access, add that initialization to your own shell configuration after
 review; Qubix preserves dotfiles. Paru and WezTerm are already on the system PATH.
 After deployment, select/reload Qubix Niri for Super+T and Super+Return to launch
-WezTerm; log out/in to refresh the launcher terminal environment.
+the managed WezTerm launcher; log out/in to refresh the launcher terminal environment.
+Deployment also installs the [supplied WezTerm appearance](../components/wezterm.md):
+Oxocarbon Dark, Krypton/IBM Plex fallback fonts and 75% opacity. Existing personal or
+explicit WezTerm configuration takes precedence; no dotfiles are overwritten.
 
 ## 2. Inspect without deploying
 

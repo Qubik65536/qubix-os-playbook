@@ -231,3 +231,10 @@ operator-authorized SSH instance. See [evidence and comparison captures](package
 Remaining: exercise fresh Homebrew bootstrap, incomplete-prefix recovery and dependency-blocked
 removal in a disposable CachyOS VM; confirm physical shortcuts and terminal-launching
 application actions. Follow the [component acceptance contract](../components/package-management.md).
+
+## F — Supplied WezTerm appearance (Feature/Testing)
+
+Status: In Progress. Follow the [component contract](../components/wezterm.md): vendor
+source and both palettes, preserve personal-config precedence, validate native positive/
+negative controls, capture native/customized synthetic windows and deploy/reapply on
+the authorized SSH instance. Verify parser, file, session and preservation gates separately.

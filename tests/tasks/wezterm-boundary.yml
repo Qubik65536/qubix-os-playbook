@@ -1,0 +1,22 @@
+---
+- name: Initialize boundary-refusal evidence
+  ansible.builtin.set_fact:
+    qubix_test_wezterm_refused: false
+- name: Exercise the actual native resource boundary
+  block:
+    - name: Validate unsupported local resource
+      ansible.builtin.include_role:
+        name: qubix_files
+        tasks_from: guard
+      vars:
+        qubix_files_resource: '{{ item }}'
+  rescue:
+    - name: Require the ownership-boundary refusal
+      ansible.builtin.assert:
+        that: "'outside Qubix customization boundaries' in ansible_failed_result.msg"
+    - name: Record expected refusal
+      ansible.builtin.set_fact:
+        qubix_test_wezterm_refused: true
+- name: Require unsupported path or component rejection
+  ansible.builtin.assert:
+    that: [qubix_test_wezterm_refused]

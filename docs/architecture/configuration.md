@@ -61,7 +61,7 @@ Booleans must be YAML booleans, not strings. Each nested mapping allows only doc
 | `fonts.enabled` | `true` | Install all 210 pinned official Monaspace NF faces after controller preparation. |
 | `fonts.krypton_ui` | `true` | Prefer Krypton for generic UI/monospace defaults and Qubix shell text; saved choices win. |
 | `branding.enabled` | `true` | Install shared original-colour Qubix artwork and attribution. |
-| `niri.enabled` | `true` | Install the separate Qubix Niri/Noctalia session and its managed defaults. |
+| `niri.enabled` | `true` | Install the Qubix Niri/Noctalia session, supplied WezTerm appearance and terminal integration defaults. |
 | `niri.user_config` | `preserve` | Keep native/personal Niri files; no automatic dotfile adoption. |
 | `niri.fingerprint_setup` | `true` | Install the enrollment application; never enroll a finger or enable fingerprint PAM automatically. |
 | `niri.presentation` | `qubix` | Select prepared, version-pinned Qubix caption builds; retain native system identity. |
@@ -192,3 +192,9 @@ checks. This explicit preparation command has no additional feature toggle; Niri
 requires WezTerm by default. Bootstrap/deploy continue to validate prepared packages
 without running package transactions. Personal terminal settings remain Preserved.
 See the [package and terminal contract](../components/package-management.md).
+
+Enabled Niri now includes the supplied [WezTerm appearance defaults](../components/wezterm.md):
+managed Lua/palettes and a personal-config-aware launcher/desktop entry. They ship by
+default without a separate switch; native personal/explicit config retains precedence.
+The package desktop file stays Preserved; its same-ID local default override uses
+protected baselines. No account dotfiles are installed or adopted.

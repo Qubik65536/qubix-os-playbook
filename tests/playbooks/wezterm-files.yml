@@ -1,0 +1,54 @@
+---
+- name: Test bounded terminal desktop override installation and restoration
+  hosts: localhost
+  gather_facts: true
+  gather_subset: ['!all', min]
+  vars:
+    qubix_files_owner: '{{ ansible_facts.user_id }}'
+    qubix_files_group: '{{ ansible_facts.user_gid | string }}'
+  tasks:
+    - name: Create a disposable filesystem
+      ansible.builtin.tempfile:
+        state: directory
+        path: '{{ playbook_dir }}/../../.cache/tests'
+        prefix: qubix-wezterm-files-
+      register: qubix_test_wezterm_root
+    - name: Exercise the exact desktop exception with cleanup
+      block:
+        - name: Select fixture paths and resource
+          ansible.builtin.set_fact:
+            qubix_root: '{{ qubix_test_wezterm_root.path }}'
+            qubix_files_resources:
+              - path: /usr/local/share/applications/org.wezfurlong.wezterm.desktop
+                component: niri
+                content: 'managed fixture desktop default'
+        - name: Install only the permitted local desktop override
+          ansible.builtin.include_role:
+            name: qubix_files
+        - name: Reapply the same desktop override
+          ansible.builtin.include_role:
+            name: qubix_files
+        - name: Require unchanged reapplication
+          ansible.builtin.assert:
+            that: [not qubix_files_write.changed]
+        - name: Restore recorded original absence
+          ansible.builtin.include_role:
+            name: qubix_files
+            tasks_from: restore
+        - name: Inspect restored desktop absence
+          ansible.builtin.stat:
+            path: '{{ qubix_root }}/usr/local/share/applications/org.wezfurlong.wezterm.desktop'
+          register: qubix_test_wezterm_restored
+        - name: Require the override removed by restoration
+          ansible.builtin.assert:
+            that: [not qubix_test_wezterm_restored.stat.exists]
+        - name: Reject other local desktop resources and unrelated components
+          ansible.builtin.include_tasks: ../tasks/wezterm-boundary.yml
+          loop:
+            - {path: /usr/local/share/applications/other.desktop, component: niri}
+            - {path: /usr/local/share/applications/org.wezfurlong.wezterm.desktop, component: shell}
+      always:
+        - name: Remove only disposable fixture data
+          ansible.builtin.file:
+            path: '{{ qubix_test_wezterm_root.path }}'
+            state: absent

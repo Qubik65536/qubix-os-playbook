@@ -21,7 +21,7 @@
     - name: Require validated resources and preserved native ownership
       ansible.builtin.assert:
         that:
-          - qubix_niri_resources | length == 14
+          - qubix_niri_resources | length == 20
           - "'/etc/niri/config.kdl' not in (qubix_niri_resources | map(attribute='path') | list)"
           - qubix_niri_resources[-2].validate == '/usr/bin/niri validate --config %s'
           - "'--config /etc/niri/qubix/config.kdl' in qubix_niri_resources[-1].content"
@@ -33,11 +33,17 @@
           - "'polkit-kde-authentication-agent-1' not in qubix_niri_resources[-2].content"
           - "'geometry-corner-radius 16' in qubix_niri_resources[-2].content"
           - qubix_shell_resources | length == 3
-          - "'TERMINAL \"/usr/bin/wezterm\"' in qubix_niri_config_content"
-          - qubix_niri_config_content.count('spawn "/usr/bin/wezterm" "start"') == 2
+          - >-
+            (qubix_niri_resources | selectattr('path', 'equalto', '/etc/qubix/wezterm/wezterm.lua')
+            | first).validate == '/usr/share/qubix/bin/qubix-validate-wezterm %s'
+          - >-
+            'Oxocarbon Dark' in (qubix_niri_resources | selectattr('path', 'equalto',
+            '/etc/qubix/wezterm/wezterm.lua') | first).content
+          - "'TERMINAL \"/usr/share/qubix/bin/qubix-wezterm\"' in qubix_niri_config_content"
+          - qubix_niri_config_content.count('spawn "/usr/share/qubix/bin/qubix-wezterm" "start"') == 2
           - "'/usr/bin/foot' not in qubix_niri_config_content"
           - >-
-            'TERMINAL=/usr/bin/wezterm' in (qubix_niri_resources | selectattr('path', 'equalto',
+            'TERMINAL=/usr/share/qubix/bin/qubix-wezterm' in (qubix_niri_resources | selectattr('path', 'equalto',
             '/usr/share/qubix/bin/qubix-noctalia') | first).content
           - "'/etc/qubix/foot.ini' not in (qubix_niri_resources | map(attribute='path') | list)"
 

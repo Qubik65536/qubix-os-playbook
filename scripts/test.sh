@@ -9,6 +9,7 @@ mkdir -p .cache/tests
 python3 tests/static/check_power.py
 bash tests/shell/defaults.sh
 bash tests/shell/bootstrap.sh
+bash tests/shell/wezterm.sh
 bash tests/shell/noctalia.sh
 bash tests/shell/output-defaults.sh
 
@@ -21,6 +22,11 @@ for mode in normal check; do
   fi
 done
 printf '%s\n' 'Package selection fixtures passed without native transactions.'
+if ! ansible-playbook tests/playbooks/wezterm-files.yml >.cache/tests/wezterm-files.log 2>&1; then
+  cat .cache/tests/wezterm-files.log
+  exit 1
+fi
+printf '%s\n' 'WezTerm local desktop boundary, installation, idempotency and restore passed.'
 
 for mode in normal check; do
   set --

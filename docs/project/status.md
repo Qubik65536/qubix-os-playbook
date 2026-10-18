@@ -1,6 +1,11 @@
 # Project status
 
 Updated: 2026-10-17. Stage: **MVP candidate; acceptance In Progress**.
+Supplied WezTerm defaults **In Progress**: vendored source/provenance, managed Lua and
+palettes, personal-config-aware terminal/desktop integration. Native parser positive/
+negative controls, SSH deployment/rendering and reapplication are the focused gates.
+See the [contract](../components/wezterm.md).
+
 CachyOS package-manager/terminal preparation **Implemented; native installation,
 rendering, activation and zero-change reapplication Tested**: the operator-authorized
 SSH deployment retains working Paru/Homebrew, installs WezTerm and removes Alacritty/Foot.

@@ -15,7 +15,7 @@ icon and searchable entry add six. Both follow the [refinement contract](../arch
 
 ## Managed resources and activation
 
-Fourteen base named resources comprise the desktop: wallpaper, Niri theme/configuration, Noctalia TOML/palette, a minimal profile launcher, an output-scale helper, a Power options application entry, the session entry, three shortcut-plugin files (manifest, presenter and generated data) and two power-plugin files (manifest and panel). Noctalia reads managed defaults from /etc/qubix/noctalia/. The launcher sets Noctalia-specific state/data roots beneath the user's XDG roots' qubix/ namespace. Native configuration and ordinary application XDG paths remain intact. Noctalia cache follows XDG_CACHE_HOME; GUI overrides are user-owned and survive Ansible deployment/restoration. App-theme generators are disabled. The profile launcher keeps Noctalia 5.2's automatic GSettings dark-mode write in memory and restores the original backend for applications launched by Noctalia.
+Twenty base named resources comprise the desktop: wallpaper, Niri theme/configuration, Noctalia TOML/palette, a minimal profile launcher, an output-scale helper, a Power options application entry, the session entry, three shortcut-plugin files (manifest, presenter and generated data) two power-plugin files (manifest and panel), and six [WezTerm default/integration resources](wezterm.md). Noctalia reads managed defaults from /etc/qubix/noctalia/. The launcher sets Noctalia-specific state/data roots beneath the user's XDG roots' qubix/ namespace. Native configuration and ordinary application XDG paths remain intact. Noctalia cache follows XDG_CACHE_HOME; GUI overrides are user-owned and survive Ansible deployment/restoration. App-theme generators are disabled. The profile launcher keeps Noctalia 5.2's automatic GSettings dark-mode write in memory and restores the original backend for applications launched by Noctalia.
 
 Ansible validates Niri with niri validate --config %s, Noctalia with noctalia config validate %s, and the launcher with bash -n. Native tests additionally require Noctalia's production TOML to have no schema warnings, because its CLI can return zero for unknown-section warnings. Palette roles, required terminal colours and cross-component accent consistency are checked locally. The session entry is installed last; parser failures leave earlier inert files recoverable.
 
@@ -34,11 +34,11 @@ The native grammar workflow validates production candidates and rejects invalid 
 Restore returns the first system-file baselines. Old Qubix classic-companion files remain inert on upgrade and retain their existing backup receipts; restoration includes recorded legacy resources. Packages and user-owned Qubix GUI overrides remain. When its entry is retained, switching to the native session restores native shell preferences without overwriting them. An operator-directed native-entry retirement is outside normal deployment/restoration; restore that entry first using the [documented private backup](../project/live-test-plan.md#operator-authorized-native-session-retirement-and-reboot). Qubix requires the compositor package; personal configuration stays intact. Test the Noctalia primary session and second-deploy idempotency before recording full desktop acceptance.
 
 The profile's configurable [Krypton typography](fonts.md) supplies `shell.font_family`
-through the managed Noctalia defaults. User GUI font choices remain preserved; WezTerm uses native/personal font settings. No terminal dotfiles change.
+through the managed Noctalia defaults. User GUI font choices remain preserved; WezTerm uses the supplied Krypton/IBM Plex defaults unless personal settings take precedence. No terminal dotfiles change.
 
 The current WezTerm migration is Implemented with controller checks and [native
 installation/rendering/activation evidence](../project/package-management-test-results.md).
 Physical shortcut input remains pending; historical Foot results are kept separately. Run the
 [CachyOS preparation step](package-management.md) before deploying this revision.
 No Foot configuration is installed by new deployments. Both terminal bindings use
-`wezterm start`; the session terminal environment selects `/usr/bin/wezterm`.
+`qubix-wezterm start`; the session terminal environment selects the managed wrapper.

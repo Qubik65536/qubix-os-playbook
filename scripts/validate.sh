@@ -12,6 +12,8 @@ for playbook in playbooks/*.yml tests/playbooks/*.yml tests/integration/*.yml; d
   ansible-playbook "$playbook" --syntax-check
 done
 shellcheck bootstrap.sh scripts/*.sh roles/qubix_shell/files/qubix.sh tests/shell/*.sh
+shellcheck roles/qubix_niri/files/wezterm/validate.sh
+shellcheck --shell=bash roles/qubix_niri/templates/wezterm.sh.j2
 shellcheck --shell=bash roles/qubix_niri/templates/noctalia.sh.j2
 shellcheck --shell=bash roles/qubix_niri/templates/output-defaults.sh.j2
 python3 -m py_compile tests/integration/files/*.py scripts/*.py
