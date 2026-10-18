@@ -7,7 +7,7 @@
       branding: {enabled: true}
     qubix_discovery_report:
       evidence:
-        binaries: {niri: true, foot: true, noctalia: true, jq: true}
+        binaries: {niri: true, wezterm: true, noctalia: true, jq: true}
         noctalia_version: noctalia v5.2.1
   tasks:
     - name: Render complete desktop candidate
@@ -21,7 +21,7 @@
     - name: Require validated resources and preserved native ownership
       ansible.builtin.assert:
         that:
-          - qubix_niri_resources | length == 15
+          - qubix_niri_resources | length == 14
           - "'/etc/niri/config.kdl' not in (qubix_niri_resources | map(attribute='path') | list)"
           - qubix_niri_resources[-2].validate == '/usr/bin/niri validate --config %s'
           - "'--config /etc/niri/qubix/config.kdl' in qubix_niri_resources[-1].content"
@@ -33,6 +33,13 @@
           - "'polkit-kde-authentication-agent-1' not in qubix_niri_resources[-2].content"
           - "'geometry-corner-radius 16' in qubix_niri_resources[-2].content"
           - qubix_shell_resources | length == 3
+          - "'TERMINAL \"/usr/bin/wezterm\"' in qubix_niri_config_content"
+          - qubix_niri_config_content.count('spawn "/usr/bin/wezterm" "start"') == 2
+          - "'/usr/bin/foot' not in qubix_niri_config_content"
+          - >-
+            'TERMINAL=/usr/bin/wezterm' in (qubix_niri_resources | selectattr('path', 'equalto',
+            '/usr/share/qubix/bin/qubix-noctalia') | first).content
+          - "'/etc/qubix/foot.ini' not in (qubix_niri_resources | map(attribute='path') | list)"
 
     - name: Require generated shortcut data to cover the actual labelled KDL bindings
       ansible.builtin.set_fact:
@@ -87,32 +94,32 @@
     - name: Reject missing or unsupported installed Noctalia
       ansible.builtin.include_tasks: ../tasks/noctalia-rejection.yml
       loop:
-        - name: missing Foot
+        - name: missing WezTerm
           binaries: {niri: true, noctalia: true, jq: true}
           version: noctalia v5.2.1
-          error: requires installed foot
+          error: requires installed wezterm
         - name: missing Noctalia
-          binaries: {niri: true, foot: true, jq: true}
+          binaries: {niri: true, wezterm: true, jq: true}
           version: unknown
           error: requires installed noctalia
         - name: legacy shell
-          binaries: {niri: true, foot: true, noctalia: true, jq: true}
+          binaries: {niri: true, wezterm: true, noctalia: true, jq: true}
           version: noctalia v4.9.0
           error: requires standalone Noctalia
         - name: older v5
-          binaries: {niri: true, foot: true, noctalia: true, jq: true}
+          binaries: {niri: true, wezterm: true, noctalia: true, jq: true}
           version: noctalia v5.1.0
           error: requires standalone Noctalia
         - name: unknown major
-          binaries: {niri: true, foot: true, noctalia: true, jq: true}
+          binaries: {niri: true, wezterm: true, noctalia: true, jq: true}
           version: noctalia v6.0.0
           error: requires standalone Noctalia
         - name: no version proof
-          binaries: {niri: true, foot: true, noctalia: true, jq: true}
+          binaries: {niri: true, wezterm: true, noctalia: true, jq: true}
           version: unknown
           error: requires standalone Noctalia
         - name: missing scale JSON parser
-          binaries: {niri: true, foot: true, noctalia: true}
+          binaries: {niri: true, wezterm: true, noctalia: true}
           version: noctalia v5.2.1
           error: requires installed jq
       loop_control:

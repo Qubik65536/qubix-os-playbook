@@ -54,7 +54,6 @@
         - name: Validate available native companion grammars
           ansible.builtin.include_tasks: ../tasks/native-companion.yml
           loop:
-            - {name: foot, path: /etc/qubix/foot.ini}
             - {name: noctalia, path: /etc/qubix/noctalia/config.toml}
           loop_control:
             loop_var: qubix_native_companion
@@ -63,7 +62,7 @@
         - name: Report syntax scope accurately
           ansible.builtin.debug:
             msg: >-
-              Native Niri syntax and available Foot/Noctalia grammars passed.
+              Native Niri syntax and available Noctalia grammars passed.
               Companion startup, session appearance and deployed files are not tested here.
       always:
         - name: Remove only the test-created private directory

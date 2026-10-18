@@ -21,7 +21,7 @@ On the VM, keep its existing Niri installation and display manager.
 Preview the selected desktop transaction before installation, especially on a physical machine:
 
 ```bash
-pacman -Sp --needed --print-format '%n %v' noctalia foot jq starship fontconfig gsettings-desktop-schemas
+pacman -Sp --needed --print-format '%n %v' noctalia wezterm jq starship fontconfig gsettings-desktop-schemas
 ```
 
 Native CachyOS Snapper/Limine package hooks can create snapshots and refresh menu entries. Those effects occurred in the [recorded native desktop test](../project/desktop-test-results.md); they are package preparation effects, independently of Qubix boot branding. Review the actual transaction and keep normal hooks enabled.
@@ -29,14 +29,14 @@ Native CachyOS Snapper/Limine package hooks can create snapshots and refresh men
 Install the selected desktop companions and SSH prerequisites yourself:
 
 ```bash
-sudo pacman -S --needed python openssh noctalia foot jq starship fontconfig gsettings-desktop-schemas
+sudo pacman -S --needed python openssh noctalia wezterm jq starship fontconfig gsettings-desktop-schemas
 noctalia --version
 sudo systemctl enable --now sshd
 ip -brief address
 whoami
 ```
 
-These are manual VM preparation commands; the playbook does not install packages or enable services. Use an ordinary account with sudo access. Enable SSH only on your test network and retain the hypervisor console. Verify the SSH host key when connecting. Do not share passwords or private keys.
+These are manual VM preparation commands; deployment does not install packages or enable services. Use an ordinary account with sudo access. Enable SSH only on your test network and retain the hypervisor console. Verify the SSH host key when connecting. Do not share passwords or private keys.
 
 Create an ignored controller inventory at `inventory/target.local.ini`, substituting your VM values:
 
@@ -46,6 +46,32 @@ qubix-vm ansible_host=192.168.64.10 ansible_user=YOUR_VM_USER ansible_port=22
 ```
 
 Test `ssh YOUR_VM_USER@192.168.64.10`. With password-only SSH, add `--ask-pass` to Ansible commands and enter the password interactively; the pinned controller uses native SSH askpass. Keep the password out of inventory. SSH keys are convenient for repeated tests. Keep one VM in this inventory while testing boot changes.
+
+Before deploying the desktop, run the explicit package preparation (use the same
+local configuration/boot opt-outs as inspection where applicable):
+
+```bash
+.venv/bin/ansible-playbook -i inventory/target.local.ini playbooks/prepare-packages.yml --check --ask-become-pass
+.venv/bin/ansible-playbook -i inventory/target.local.ini playbooks/prepare-packages.yml --ask-become-pass
+```
+
+This CachyOS-only step installs Paru, Homebrew on Linux and WezTerm, then removes
+Alacritty and Foot with Pacman's dependency checks. Run against an ordinary account
+with sudo access, after a normal full system update; snapshot first. Existing Brew
+must belong to that connection account. See the [package contract](../components/package-management.md)
+for refusal/recovery boundaries. Package changes do not roll back with file restoration.
+
+For immediate Brew use in Bash/Zsh:
+
+```bash
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+```
+
+For Fish, run `/home/linuxbrew/.linuxbrew/bin/brew shellenv fish | source`.
+For persistent access, add that initialization to your own shell configuration after
+review; Qubix preserves dotfiles. Paru and WezTerm are already on the system PATH.
+After deployment, select/reload Qubix Niri for Super+T and Super+Return to launch
+WezTerm; log out/in to refresh the launcher terminal environment.
 
 ## 2. Inspect without deploying
 
@@ -81,6 +107,7 @@ Before using the full defaults:
 
 | Preparation | Existing workflow |
 |---|---|
+| Paru, Homebrew, WezTerm; remove stock terminals | `playbooks/prepare-packages.yml` as shown in section 1. |
 | Native desktop companions and SSH | Manual target setup in section 1 above. |
 | Pinned font cache | `playbooks/prepare-fonts.yml` on the controller. |
 | Noctalia Greeter packages | `playbooks/prepare-login.yml` while greetd is inactive; see [login](login.md). |

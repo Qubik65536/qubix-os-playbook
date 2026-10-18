@@ -1,0 +1,63 @@
+---
+- name: Test CachyOS package selection without native mutations
+  hosts: localhost
+  gather_facts: false
+  vars:
+    ansible_facts:
+      user_uid: 1000
+  tasks:
+    - name: Accept an absent Homebrew prefix
+      ansible.builtin.include_role:
+        name: qubix_packages
+        tasks_from: prefix
+      vars:
+        qubix_packages_brew_paths:
+          results:
+            - stat: {exists: false}
+            - stat: {exists: false}
+            - stat: {exists: false}
+
+    - name: Accept an existing ordinary-account installation
+      ansible.builtin.include_role:
+        name: qubix_packages
+        tasks_from: prefix
+      vars:
+        qubix_packages_brew_paths:
+          results:
+            - stat: {exists: true, isdir: true, islnk: false}
+            - stat: {exists: true, isdir: true, islnk: false, uid: 1000}
+            - stat: {exists: true, isreg: true, islnk: false, executable: true}
+
+    - name: Reject unsafe existing prefixes without mutations
+      ansible.builtin.include_tasks: ../tasks/packages-prefix.yml
+      loop:
+        - {exists: true, isdir: true, islnk: false, uid: 0}
+        - {exists: true, isdir: true, islnk: true, uid: 1000}
+        - {exists: true, isdir: false, islnk: false, uid: 1000}
+
+    - name: Resolve stock terminal replacement
+      ansible.builtin.include_role:
+        name: qubix_packages
+        tasks_from: plan
+      vars:
+        qubix_packages_installed: [alacritty, foot, git, kitty]
+
+    - name: Require explicit additions and bounded removals
+      ansible.builtin.assert:
+        that:
+          - qubix_packages_remove | sort == ['alacritty', 'foot']
+          - qubix_packages_missing | sort == ['base-devel', 'curl', 'file', 'paru', 'procps-ng', 'wezterm']
+          - "'kitty' not in qubix_packages_remove"
+
+    - name: Resolve an already prepared system
+      ansible.builtin.include_role:
+        name: qubix_packages
+        tasks_from: plan
+      vars:
+        qubix_packages_installed: [paru, wezterm, base-devel, procps-ng, curl, file, git]
+
+    - name: Require an empty repeat package transaction
+      ansible.builtin.assert:
+        that:
+          - qubix_packages_missing == []
+          - qubix_packages_remove == []

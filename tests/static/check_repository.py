@@ -175,13 +175,13 @@ def main():
     assert all(re.fullmatch(r'#[0-9a-fA-F]{6}', palette[key]) for key in roles)
     focus = re.search(r'active-color "(#[0-9a-fA-F]+)"', (desktop / 'theme.kdl.j2').read_text())[1]
     assert focus.lower() == palette['mPrimary'].lower(), 'Compositor and shell accents differ'
-    foot = configparser.ConfigParser()
-    foot.read(desktop / 'foot.ini.j2')
     for name in ('foreground', 'background'):
-        assert palette['terminal'][name] == '#' + foot['colors-dark'][name]
-    for index, name in enumerate(('black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white')):
-        for kind, prefix in (('normal', 'regular'), ('bright', 'bright')):
-            assert palette['terminal'][kind][name] == '#' + foot['colors-dark'][prefix + str(index)]
+        assert re.fullmatch(r'#[0-9a-fA-F]{6}', palette['terminal'][name])
+    for kind in ('normal', 'bright'):
+        assert set(palette['terminal'][kind]) == {
+            'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'}
+        assert all(re.fullmatch(r'#[0-9a-fA-F]{6}', value)
+                   for value in palette['terminal'][kind].values())
     print(f"Repository consistency passed ({len(documents)} Markdown files, profile/default/schema agreement).")
 
 

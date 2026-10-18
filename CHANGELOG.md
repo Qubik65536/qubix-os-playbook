@@ -4,6 +4,12 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Add explicit CachyOS package preparation for Paru, Homebrew on Linux and WezTerm.
+  Pin/verify the official Brew installer and keep it non-root; preserve personal files
+  and existing Brew. Remove Alacritty/Foot only through dependency-safe Pacman removal.
+  Require WezTerm for Qubix Niri and launch it from both terminal shortcuts and the
+  session terminal environment. Native VM installation and session acceptance remain pending.
+
 - Enable bootloader appearance and Plymouth in the shipped profile too. Keep loader/generator
   confirmations false and machine mappings unresolved; reject unprepared activation before
   writes. Document explicit desktop-only opt-outs and test normal/check-mode safety gates.

@@ -23,7 +23,7 @@ export GSETTINGS_BACKEND=memory
 export NOCTALIA_CONFIG_HOME=/etc/qubix
 export NOCTALIA_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}/qubix"
 export NOCTALIA_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/qubix"
-export TERMINAL=/usr/bin/foot
+export TERMINAL=/usr/bin/wezterm
 qubix_shell_binary='{{ "/usr/share/qubix/bin/noctalia" if (qubix_profile_resolved.niri | default({})).get("presentation", "native") == "qubix" else "/usr/bin/noctalia" }}'
 if [[ "$qubix_shell_binary" == /usr/share/qubix/bin/noctalia ]]; then
   qubix_native_sha256='{{ qubix_niri_ui_native_sha256 | default("") }}'

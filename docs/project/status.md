@@ -1,6 +1,16 @@
 # Project status
 
 Updated: 2026-10-17. Stage: **MVP candidate; acceptance In Progress**.
+CachyOS package-manager/terminal preparation **Implemented; controller fixtures Tested**:
+explicit preparation selects Paru, Homebrew on Linux and WezTerm and dependency-safe
+removal of Alacritty/Foot. The official installer is checksum-pinned and non-root;
+Qubix Niri requires WezTerm and both terminal shortcuts/session terminal environment
+select it. See the [contract](../components/package-management.md). Native installation,
+repeat application, WezTerm session/launcher checks and comparison captures are pending;
+historical Foot results do not validate this migration. Package/prefix fixtures pass
+28 tasks/zero changes with three expected refusals in normal/check modes; desktop
+fixtures pass 69 tasks/zero changes with seven expected refusals.
+
 Bootloader/Plymouth default enablement **Implemented; controller gates Tested**: both now
 resolve enabled; machine-specific confirmations and mappings remain required. Actual adapter
 refusal/opt-out fixtures pass 46 tasks/zero changes and two expected refusals in normal/check

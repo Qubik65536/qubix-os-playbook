@@ -39,7 +39,6 @@
         - name: Define exact candidate paths within the owned test directory
           ansible.builtin.set_fact:
             qubix_smoke_paths:
-              /etc/qubix/foot.ini: foot.ini
               /etc/qubix/noctalia/config.toml: config/noctalia/config.toml
               /etc/qubix/noctalia/palettes/Qubix.json: config/noctalia/palettes/Qubix.json
               /usr/share/qubix/bin/qubix-noctalia: qubix-noctalia
@@ -64,7 +63,6 @@
             content: >-
               {{ item.content
               | replace('/usr/share/qubix/wallpaper.png', qubix_smoke_directory.path ~ '/assets/wallpaper.png')
-              | replace('/etc/qubix/foot.ini', qubix_smoke_directory.path ~ '/foot.ini')
               | replace('/usr/share/qubix/bin/qubix-noctalia', qubix_smoke_directory.path ~ '/qubix-noctalia')
               | replace('/usr/share/qubix/noctalia/plugins', qubix_smoke_directory.path ~ '/plugins')
               | replace('NOCTALIA_CONFIG_HOME=/etc/qubix',

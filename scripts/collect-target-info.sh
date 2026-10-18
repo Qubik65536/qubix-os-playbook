@@ -33,7 +33,7 @@ probe cat /etc/os-release
 probe cat /proc/cmdline
 probe ip -brief address
 probe niri --version
-probe pacman -Q niri foot fuzzel waybar mako swaybg starship sddm greetd gdm lightdm grub limine plymouth dracut mkinitcpio
+probe pacman -Q paru wezterm niri foot fuzzel waybar mako swaybg starship sddm greetd gdm lightdm grub limine plymouth dracut mkinitcpio
 for unit in display-manager sddm greetd gdm lightdm; do
   probe systemctl show "$unit.service" --property=Id,LoadState,ActiveState
 done

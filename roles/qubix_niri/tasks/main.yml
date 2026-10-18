@@ -6,7 +6,7 @@
     fail_msg: >-
       Qubix Niri requires installed {{ item }}.
       Install missing prerequisites on the test VM, then inspect again.
-  loop: [niri, foot, noctalia, jq]
+  loop: [niri, wezterm, noctalia, jq]
 
 - name: Extract measured standalone Noctalia version
   ansible.builtin.set_fact:

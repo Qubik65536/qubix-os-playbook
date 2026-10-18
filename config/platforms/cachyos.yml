@@ -1,6 +1,8 @@
 ---
 qubix_discovery_binary_paths:
   pacman: /usr/bin/pacman
+  paru: /usr/bin/paru
+  brew: /home/linuxbrew/.linuxbrew/bin/brew
   polkit-kde-agent: /usr/lib/polkit-kde-authentication-agent-1
   niri: /usr/bin/niri
   noctalia: /usr/bin/noctalia
@@ -44,6 +46,7 @@ qubix_discovery_evidence_paths:
   - /etc/xdg/quickshell/noctalia-shell
   - /usr/share/quickshell/noctalia-shell
 qubix_discovery_package_names:
+  - paru
   - niri
   - cachyos-niri
   - quickshell

@@ -185,3 +185,10 @@ This is the narrow exception to preserved PAM: only measured optional keyring ho
 `/etc/pam.d/greetd` are replaced, after native package preparation and operator secret migration.
 All other authentication and personal stores stay preserved. Disabled does not undo an earlier
 activation; use backed-up restoration. See the [keyring contract](../components/keyring.md).
+
+The standard CachyOS package preparation now installs Paru, Homebrew on Linux and
+WezTerm and removes the two stock terminals, Alacritty and Foot, with dependency
+checks. This explicit preparation command has no additional feature toggle; Niri
+requires WezTerm by default. Bootstrap/deploy continue to validate prepared packages
+without running package transactions. Personal terminal settings remain Preserved.
+See the [package and terminal contract](../components/package-management.md).

@@ -39,7 +39,7 @@ Add --ask-pass with password SSH. The guide includes explicit read privilege for
 1. Edit `roles/qubix_niri/templates/config.kdl.j2` in this checkout. Give each binding a `hotkey-overlay-title="Category / Action"` immediately after its key combination, on the same line. Use **Applications**, **Windows**, **Navigation**, **Session** or **Media** as the category. Bindings with the same category/action are grouped as alternative keys.
 
    ```kdl
-   Mod+T hotkey-overlay-title="Applications / Terminal" { spawn "/usr/bin/foot" "--config=/etc/qubix/foot.ini"; }
+   Mod+T hotkey-overlay-title="Applications / Terminal" { spawn "/usr/bin/wezterm" "start"; }
    ```
 
 2. Check the generated list with the desktop fixture:

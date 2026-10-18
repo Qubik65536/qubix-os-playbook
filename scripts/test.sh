@@ -15,6 +15,16 @@ bash tests/shell/output-defaults.sh
 for mode in normal check; do
   set --
   if [[ "$mode" == check ]]; then set -- --check; fi
+  if ! ansible-playbook tests/playbooks/packages.yml "$@" >".cache/tests/packages-$mode.log" 2>&1; then
+    cat ".cache/tests/packages-$mode.log"
+    exit 1
+  fi
+done
+printf '%s\n' 'Package selection fixtures passed without native transactions.'
+
+for mode in normal check; do
+  set --
+  if [[ "$mode" == check ]]; then set -- --check; fi
   if ! ansible-playbook tests/playbooks/default-boot.yml "$@" >".cache/tests/default-boot-$mode.log" 2>&1; then
     cat ".cache/tests/default-boot-$mode.log"
     exit 1

@@ -11,7 +11,7 @@ Status: **Noctalia integration Implemented; native grammar and isolated renderin
 | Launcher | Fuzzel INI | Noctalia launcher |
 | Notifications | Mako | Noctalia notification daemon |
 | Wallpaper | Swaybg | Noctalia wallpaper layer with attributed Qubix artwork |
-| Terminal | Foot INI | Foot with the Qubix palette |
+| Terminal | Foot INI | WezTerm with preserved user settings |
 | Clipboard, settings, window switcher | Not integrated | Noctalia panels and IPC |
 | Prompt | Optional Starship | Existing additive Bash/Zsh defaults; Fish remains preserved |
 
@@ -136,7 +136,7 @@ are separate gates. Never run a real power action during verification.
 | Main-session shortcut | Action |
 |---|---|
 | Super+Space; Super+D | Launcher |
-| Super+T; Super+Return | Foot terminal |
+| Super+T; Super+Return | WezTerm terminal |
 | Super+V | Clipboard history |
 | Super+Comma | Noctalia settings |
 | Super+N | Notification centre |
@@ -162,7 +162,7 @@ Audio, microphone, media and brightness keys call Noctalia's installed IPC comma
 
 ## Acceptance and migration
 
-Require measured Niri, Foot, jq and supported Noctalia before component writes. Validate generated Niri KDL, Foot INI and Noctalia TOML using their installed parsers; check all palette roles and include complete terminal colours, required by the Noctalia 5.2 palette loader. A custom palette name alone does not prove that its colours loaded. Install the session entry last. Existing Qubix baselines remain immutable.
+Require measured Niri, WezTerm, jq and supported Noctalia before component writes. Validate generated Niri KDL and Noctalia TOML using their installed parsers; check all palette roles and include complete terminal colours, required by the Noctalia 5.2 palette loader. A custom palette name alone does not prove that its colours loaded. Install the session entry last. Existing Qubix baselines remain immutable.
 
 The native nested test must use a distinct Wayland display/private D-Bus session and temporary Qubix state/data/cache. It must support the existing Niri process whether launched by a user service or directly by SDDM. Disable test-only Polkit registration and clipboard persistence, prove shell/bar/wallpaper/launcher/power-menu/notification/window rendering and IPC, plus dock absence, preserve the original compositor and clean up temporary processes. Main-session physical shortcuts, application launching, authentication, lock/unlock and portal behaviour require operator verification.
 

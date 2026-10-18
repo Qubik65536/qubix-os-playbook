@@ -1,0 +1,29 @@
+---
+- name: Initialize expected prefix refusal
+  ansible.builtin.set_fact:
+    qubix_packages_refused: false
+
+- name: Exercise actual prefix guard with unsafe metadata
+  block:
+    - name: Validate the unsafe fixture
+      ansible.builtin.include_role:
+        name: qubix_packages
+        tasks_from: prefix
+      vars:
+        qubix_packages_brew_paths:
+          results:
+            - stat: {exists: true, isdir: true, islnk: false}
+            - stat: '{{ item }}'
+            - stat: {exists: true, isreg: true, islnk: false, executable: true}
+  rescue:
+    - name: Require the prefix preservation diagnostic
+      ansible.builtin.assert:
+        that: "'Preserving unexpected or incomplete' in ansible_failed_result.msg"
+
+    - name: Record expected refusal
+      ansible.builtin.set_fact:
+        qubix_packages_refused: true
+
+- name: Require unsafe prefix rejection
+  ansible.builtin.assert:
+    that: [qubix_packages_refused]

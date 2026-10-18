@@ -222,3 +222,12 @@ two expected refusals each); schema/discovery regression 882 tasks/zero changes.
 Default both components on as requested; preserve explicit target
 confirmations and mappings. Acceptance: resolved defaults/opt-outs and first-task adapter
 refusals in normal/check mode, plus static documentation agreement. No physical boot change.
+
+## F — CachyOS package managers and WezTerm acceptance (Testing)
+
+Status: Implemented; controller package-selection/prefix/desktop fixtures Tested; native acceptance Planned.
+Use [package-management acceptance](../components/package-management.md). In a disposable CachyOS VM,
+verify fresh and existing Homebrew, repeat with zero changes, exercise dependency-blocked removal,
+and verify both terminal shortcuts, launcher terminal applications and personal configuration
+preservation. Capture sanitized stock/customized terminal comparisons with revision/environment
+captions. Record installation, parser and session evidence separately; no boot test is implied.

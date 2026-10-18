@@ -1,0 +1,165 @@
+---
+- name: Prepare CachyOS package managers and the single stock terminal
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  roles:
+    - qubix_profile
+    - qubix_discovery
+  tasks:
+    - name: Require an ordinary CachyOS x86-64 connection account
+      ansible.builtin.assert:
+        that:
+          - qubix_discovery_report.evidence.distribution_id == 'cachyos'
+          - ansible_facts.architecture == 'x86_64'
+          - ansible_facts.user_uid | int > 0
+          - ansible_facts.user_id != 'root'
+        fail_msg: 'Package preparation requires CachyOS x86-64 and a non-root connection account with sudo access.'
+
+    - name: Inspect prefix directories and resolve the Homebrew executable
+      ansible.builtin.stat:
+        path: '{{ item }}'
+        follow: "{{ item == '/home/linuxbrew/.linuxbrew/bin/brew' }}"
+        get_checksum: false
+        get_mime: false
+      become: true
+      loop:
+        - /home/linuxbrew
+        - /home/linuxbrew/.linuxbrew
+        - /home/linuxbrew/.linuxbrew/bin/brew
+      register: qubix_packages_brew_paths
+
+    - name: Validate the existing Homebrew prefix before writing
+      ansible.builtin.include_role:
+        name: qubix_packages
+        tasks_from: prefix
+
+    - name: Verify an existing Homebrew installation before package writes
+      ansible.builtin.command:
+        argv: [/home/linuxbrew/.linuxbrew/bin/brew, --version]
+      environment:
+        HOMEBREW_NO_AUTO_UPDATE: '1'
+      changed_when: false
+      check_mode: false
+      when: qubix_packages_brew_paths.results[2].stat.exists
+
+    - name: Read installed native package names
+      ansible.builtin.command:
+        argv: [/usr/bin/pacman, -Qq]
+      register: qubix_packages_query
+      changed_when: false
+      check_mode: false
+
+    - name: Resolve the native package selection
+      ansible.builtin.include_role:
+        name: qubix_packages
+        tasks_from: plan
+      vars:
+        qubix_packages_installed: '{{ qubix_packages_query.stdout_lines }}'
+
+    - name: Resolve missing packages before writing
+      ansible.builtin.command:
+        argv: '{{ ["/usr/bin/pacman", "-Sp", "--print-format", "%n %v", "--"] + qubix_packages_missing }}'
+      changed_when: false
+      check_mode: false
+      when: qubix_packages_missing | length > 0
+
+    - name: Check dependency-safe terminal removal before writing
+      ansible.builtin.command:
+        argv: '{{ ["/usr/bin/pacman", "-Rp", "--print-format", "%n %v", "--"] + qubix_packages_remove }}'
+      changed_when: false
+      check_mode: false
+      when: qubix_packages_remove | length > 0
+
+    - name: Report the explicit package and Homebrew preparation plan
+      ansible.builtin.debug:
+        msg:
+          install: '{{ qubix_packages_missing }}'
+          remove_after_verification: '{{ qubix_packages_remove }}'
+          install_homebrew: '{{ not qubix_packages_brew_paths.results[2].stat.exists }}'
+          homebrew_owner: '{{ ansible_facts.user_id }}'
+          hooks: 'Native package hooks remain enabled; no database refresh or full upgrade is performed.'
+
+    - name: Install only missing native prerequisites
+      ansible.builtin.command:
+        argv: '{{ ["/usr/bin/pacman", "-S", "--needed", "--noconfirm", "--"] + qubix_packages_missing }}'
+      become: true
+      changed_when: true
+      when: qubix_packages_missing | length > 0
+
+    - name: Install Homebrew as the connection account without editing personal files
+      when:
+        - not ansible_check_mode
+        - not qubix_packages_brew_paths.results[2].stat.exists
+      block:
+        - name: Create a private installer download directory
+          ansible.builtin.tempfile:
+            state: directory
+            prefix: qubix-brew-
+          register: qubix_brew_download
+
+        - name: Download the checksum-pinned official Homebrew installer
+          ansible.builtin.get_url:
+            url: https://raw.githubusercontent.com/Homebrew/install/be041513824fd2666a0e93cf5c3b0ca3bb0eb4b6/install.sh
+            dest: '{{ qubix_brew_download.path }}/install.sh'
+            checksum: sha256:5f333bbe53bc490e51e7ccb1df8779b3dd6ee73a1a7379efda216edb08ccb148
+            mode: '0600'
+
+        - name: Create the standard Homebrew parent when absent
+          ansible.builtin.file:
+            path: /home/linuxbrew
+            state: directory
+            owner: root
+            group: root
+            mode: '0755'
+          become: true
+          when: not qubix_packages_brew_paths.results[0].stat.exists
+
+        - name: Provision the fresh prefix for its ordinary owner
+          ansible.builtin.file:
+            path: /home/linuxbrew/.linuxbrew
+            state: directory
+            owner: '{{ ansible_facts.user_id }}'
+            group: '{{ ansible_facts.user_gid }}'
+            mode: '0755'
+          become: true
+
+        - name: Run the official installer without nested sudo or prompts
+          ansible.builtin.command:
+            argv: [/usr/bin/bash, '{{ qubix_brew_download.path }}/install.sh']
+            creates: /home/linuxbrew/.linuxbrew/bin/brew
+          environment:
+            NONINTERACTIVE: '1'
+            HOMEBREW_NO_SUDO: '1'
+            HOMEBREW_PREFIX: /home/linuxbrew/.linuxbrew
+            HOMEBREW_BREW_GIT_REMOTE: https://github.com/Homebrew/brew
+            HOMEBREW_CORE_GIT_REMOTE: https://github.com/Homebrew/homebrew-core
+            HOMEBREW_NO_ANALYTICS: '1'
+            HOME: '{{ ansible_facts.user_dir }}'
+            USER: '{{ ansible_facts.user_id }}'
+          changed_when: true
+      always:
+        - name: Remove only the temporary installer download
+          ansible.builtin.file:
+            path: '{{ qubix_brew_download.path }}'
+            state: absent
+          when: qubix_brew_download.path is defined
+
+    - name: Verify prepared package manager and terminal executables before removal
+      ansible.builtin.command:
+        argv: ['{{ item }}', --version]
+      loop:
+        - /usr/bin/paru
+        - /usr/bin/wezterm
+        - /home/linuxbrew/.linuxbrew/bin/brew
+      environment:
+        HOMEBREW_NO_AUTO_UPDATE: '1'
+      changed_when: false
+      when: not ansible_check_mode
+
+    - name: Remove only the two installed stock terminals with native dependency checks
+      ansible.builtin.command:
+        argv: '{{ ["/usr/bin/pacman", "-R", "--noconfirm", "--"] + qubix_packages_remove }}'
+      become: true
+      changed_when: true
+      when: qubix_packages_remove | length > 0

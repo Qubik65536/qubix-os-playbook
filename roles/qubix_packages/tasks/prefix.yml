@@ -1,0 +1,18 @@
+---
+- name: Refuse unexpected ownership symlinks and incomplete existing installations
+  ansible.builtin.assert:
+    that:
+      - >-
+        not qubix_packages_brew_paths.results[0].stat.exists or
+        (qubix_packages_brew_paths.results[0].stat.isdir | default(false) and
+        not qubix_packages_brew_paths.results[0].stat.islnk | default(false))
+      - >-
+        not qubix_packages_brew_paths.results[1].stat.exists or
+        (qubix_packages_brew_paths.results[1].stat.isdir | default(false) and
+        not qubix_packages_brew_paths.results[1].stat.islnk | default(false) and
+        qubix_packages_brew_paths.results[1].stat.uid == ansible_facts.user_uid | int and
+        qubix_packages_brew_paths.results[2].stat.isreg | default(false) and
+        qubix_packages_brew_paths.results[2].stat.executable | default(false))
+    fail_msg: >-
+      Preserving unexpected or incomplete /home/linuxbrew installation;
+      inspect ownership and contents before retrying.

@@ -1,4 +1,7 @@
 // Qubix Niri: native /etc/niri and personal dotfiles remain preserved.
+environment {
+    TERMINAL "/usr/bin/wezterm"
+}
 input {
     keyboard { xkb {}; }
     touchpad { tap; natural-scroll; }
@@ -10,8 +13,8 @@ hotkey-overlay { skip-at-startup; }
 spawn-at-startup "/usr/share/qubix/bin/qubix-output-defaults"
 spawn-at-startup "/usr/share/qubix/bin/qubix-noctalia"
 binds {
-    Mod+T hotkey-overlay-title="Applications / Terminal" { spawn "/usr/bin/foot" "--config=/etc/qubix/foot.ini"; }
-    Mod+Return hotkey-overlay-title="Applications / Terminal" { spawn "/usr/bin/foot" "--config=/etc/qubix/foot.ini"; }
+    Mod+T hotkey-overlay-title="Applications / Terminal" { spawn "/usr/bin/wezterm" "start"; }
+    Mod+Return hotkey-overlay-title="Applications / Terminal" { spawn "/usr/bin/wezterm" "start"; }
     Mod+Space hotkey-overlay-title="Applications / App launcher" { spawn "/usr/share/qubix/bin/qubix-noctalia" "msg" "panel-toggle" "launcher"; }
     Mod+D hotkey-overlay-title="Applications / App launcher" { spawn "/usr/share/qubix/bin/qubix-noctalia" "msg" "panel-toggle" "launcher"; }
     Mod+V hotkey-overlay-title="Applications / Clipboard history" { spawn "/usr/share/qubix/bin/qubix-noctalia" "msg" "panel-toggle" "clipboard"; }
