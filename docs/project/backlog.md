@@ -23,6 +23,14 @@ Next: after authorized push, run Validate, download/verify its artifact, then ma
 publish an authorized candidate and verify its assets. Stable MVP publication remains
 blocked on the independent native acceptance matrix, not on source packaging.
 
+## M04 — Automatic candidate release versions (Maintenance)
+
+Status: Implemented; eight mocked workflow-shell cases and static checks Tested; remote publication pending.
+Scope/acceptance: [automatic versioning](../development/releases.md#automatic-versioning-acceptance).
+Next: after an authorized push, manually dispatch Release with the tag empty and verify
+its generated UTC version/title, exact source commit and packaged assets. Do not treat
+calendar numbering as stable MVP acceptance.
+
 ## D02 — Separate local user onboarding and developer SSH testing (Documentation)
 
 Status: Implemented; static/link/example checks and local inventory inspection Tested.

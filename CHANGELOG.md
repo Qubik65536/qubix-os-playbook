@@ -4,6 +4,10 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Generate release tags/titles automatically from UTC timestamp and GitHub run/attempt
+  when the manual tag input is empty. Keep explicit prerelease-tag overrides, validation
+  gates and refusal to overwrite existing tags/releases; archive identity stays commit-based.
+
 - Remove unused alternative-shell executable/package discovery entries and external
   shortcut-source references throughout the playbook and documentation. Keep the
   supported Niri/Noctalia actions and effective feature defaults unchanged.

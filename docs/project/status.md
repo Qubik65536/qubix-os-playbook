@@ -1,6 +1,15 @@
 # Project status
 
 Updated: 2026-10-18. Stage: **MVP candidate; acceptance In Progress**.
+Automatic release versioning **Implemented; local workflow/static checks Tested**.
+Manual Release now defaults to a UTC calendar-version tag/title with unique run/attempt
+suffixes; an explicit prerelease tag remains optional. Source archive names retain the
+commit SHA. Validation and existing-tag refusal still gate publication; no release is
+published as part of this change. Eight mocked executions of the actual workflow
+shell pass, including input/refusal cases and same-timestamp run/retry uniqueness.
+YAML, workflow ShellCheck and `./scripts/validate.sh` pass; remote publication remains
+untested. See [version contract](../development/releases.md#automatic-versioning-acceptance).
+
 Unused alternative-shell cleanup **Implemented; static/discovery/native audit Tested**.
 Removed its binary/package discovery entries and historical/current shortcut-source
 references. No related installer, launcher, service or imported runtime code was found.

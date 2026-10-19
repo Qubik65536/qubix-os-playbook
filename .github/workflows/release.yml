@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'New prerelease tag (for example v0.1.0-rc.1)'
-        required: true
+        description: 'Optional prerelease tag; leave empty for an automatic UTC timestamp version'
+        required: false
         type: string
 permissions:
   contents: read
 concurrency:
-  group: release-${{ inputs.tag }}
+  group: release-${{ inputs.tag || github.run_id }}
   cancel-in-progress: false
 jobs:
   validation:
@@ -33,7 +33,14 @@ jobs:
           RELEASE_TAG: ${{ inputs.tag }}
         run: |
           set -euo pipefail
-          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-[A-Za-z0-9][A-Za-z0-9.-]*$ ]]
+          if [[ -z "$RELEASE_TAG" ]]; then
+            RELEASE_TAG="v$(date -u +'%Y.%m.%d-%H%M%S')-r${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          fi
+          echo "Release version: $RELEASE_TAG"
+          if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-[A-Za-z0-9][A-Za-z0-9.-]*$ ]]; then
+            echo 'Expected a prerelease tag such as v0.1.0-rc.1 or an automatic calendar version.' >&2
+            exit 2
+          fi
           # A missing tag is expected; other API failures must stop publication.
           gh api --paginate "repos/$GH_REPO/git/matching-refs/tags/$RELEASE_TAG" > "$RUNNER_TEMP/tags.json"
           if jq -e --arg ref "refs/tags/$RELEASE_TAG" 'any(.[]; .ref == $ref)' "$RUNNER_TEMP/tags.json"; then
