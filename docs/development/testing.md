@@ -1,6 +1,23 @@
 # Testing strategy
 
-Status: **Implemented local checks and GitHub Actions workflow**. Run `./scripts/validate.sh` for all static checks and `./scripts/test.sh` for normal/check-mode fixtures. The scripts prefer `.venv/bin` and keep controller caches in `.cache/`. GitHub Actions runs the same scripts on Ubuntu/Python 3.13 with locked tools; the remote workflow has not run during bootstrap.
+Status: **Implemented local checks and GitHub Actions workflow**. Run `./scripts/validate.sh` for all static checks and `./scripts/test.sh` for normal/check-mode fixtures. The scripts prefer `.venv/bin` and keep controller caches in `.cache/`. GitHub Actions runs the same scripts on Ubuntu/Python 3.13 with locked tools.
+
+### CI validation time budget
+
+The reusable validation job has a 60-minute limit, including when Release calls it.
+The serial fixture step has a 50-minute limit, leaving time for setup, static checks,
+diagnostics and packaging. A measured successful run used 20m28s for fixtures; run
+39186195082 passed static checks and reached the final Limine image fixtures before
+the former 30-minute job limit cancelled it. The limit accommodates runner variation
+and suite growth without removing checks.
+
+Acceptance: both entry points use the same 60-minute job, fixtures retain all existing
+normal/check-mode cases, and publication/archive upload still require every check.
+Upload `.cache/tests/*.log` as a separate 14-day diagnostic artifact after the fixture
+step, including on failure or step timeout. Whole-job cancellation can prevent uploads;
+the earlier fixture deadline leaves headroom for that cleanup. Validate workflow YAML,
+run local static checks and inspect these gates; after an authorized push, confirm a
+complete remote run and archive. Raising the budget alone does not prove remote success.
 
 Equivalent individual commands, with the virtual environment active:
 
@@ -103,7 +120,7 @@ preservation, reapplication, actual referenced archive dispatch, config-first re
 refusal after cached image/kernel drift. Smaller controls cover missing/duplicate/wrong bindings,
 no persistent preview state, compatible appearance-baseline alias enrollment and FAT permission
 planning. Their fake generators/digest tools inspect only disposable roots; native boot remains
-separate. Shared CI invokes these through scripts/test.sh with a 30-minute job timeout.
+separate. Shared CI invokes these through scripts/test.sh with the time budget above.
 
 The graphical fixture also seeds the exact earlier 15-key recovery contract, tests font/help
 ownership enrollment, retains unknown original metadata fields and checks exact restoration.

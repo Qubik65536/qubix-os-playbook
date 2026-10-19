@@ -4,6 +4,10 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Raise shared Validate/Release validation from 30 to 60 minutes; give serial fixtures
+  50 minutes and retain their logs as a separate diagnostic artifact. Keep all checks
+  and successful-validation requirements for archive upload and release publication.
+
 - Generate release tags/titles automatically from UTC timestamp and GitHub run/attempt
   when the manual tag input is empty. Keep explicit prerelease-tag overrides, validation
   gates and refusal to overwrite existing tags/releases; archive identity stays commit-based.

@@ -10,7 +10,7 @@ permissions:
 jobs:
   validation:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - name: Check out source
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -35,7 +35,17 @@ jobs:
       - name: Run YAML, Ansible, shell, Markdown and consistency checks
         run: ./scripts/validate.sh
       - name: Run non-destructive contract fixtures
+        timeout-minutes: 50
         run: ./scripts/test.sh
+      - name: Upload fixture diagnostics
+        if: always()
+        timeout-minutes: 2
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: fixture-logs-${{ github.sha }}
+          path: .cache/tests/*.log
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Package committed source and test extracted deployment state
         run: |
           ./scripts/package.sh

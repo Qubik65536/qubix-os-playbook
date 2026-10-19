@@ -1,6 +1,18 @@
 # Project status
 
 Updated: 2026-10-18. Stage: **MVP candidate; acceptance In Progress**.
+CI validation timeout correction **Implemented; local static/workflow checks Tested**.
+Remote run 39186195082 passed static checks in 81 seconds, progressed through the
+boot/initramfs fixtures and was cancelled during final Limine image fixtures at the
+30-minute job deadline. Earlier run 39179598252 succeeded in 21m41s total, including
+20m28s of fixtures. Shared Validate/Release validation now has a 60-minute budget,
+50-minute fixture deadline and separate diagnostic log upload. All checks and archive/
+publication gates remain enabled. See [acceptance](../development/testing.md#ci-validation-time-budget).
+`./scripts/validate.sh` passes; focused workflow assertions verify both budgets,
+shared Release validation, diagnostic upload and unchanged success gates. No fixture,
+target installation, native parser, session or boot behavior changes in this correction.
+The revised remote workflow has not run; no push, dispatch or publication is performed.
+
 Automatic release versioning **Implemented; local workflow/static checks Tested**.
 Manual Release now defaults to a UTC calendar-version tag/title with unique run/attempt
 suffixes; an explicit prerelease tag remains optional. Source archive names retain the
@@ -281,7 +293,8 @@ pass 752/232 tasks. These fixture results remain separate from native reboot and
 
 `./scripts/validate.sh` passes YAML, Ansible syntax/lint, ShellCheck, Python helper compilation,
 Markdown/local links, manifests/configuration consistency and diff whitespace. Shared scripts/CI
-include the image-binding fixtures; the expanded CI timeout is 30 minutes. Fake generators and
+include the image-binding fixtures; shared CI allows 60 minutes with a 50-minute fixture
+deadline and diagnostic log upload. Fake generators and
 inspectors establish dispatch, preservation and recovery contracts, not native boot validity.
 
 The native-style Plymouth preview loads the real two-step plugin, rejects an invalid-module control,
