@@ -23,6 +23,16 @@ Next: after authorized push, run Validate, download/verify its artifact, then ma
 publish an authorized candidate and verify its assets. Stable MVP publication remains
 blocked on the independent native acceptance matrix, not on source packaging.
 
+## D02 — Separate local user onboarding and developer SSH testing (Documentation)
+
+Status: Implemented; static/link/example checks and local inventory inspection Tested.
+Acceptance: [deployment transport contract](../architecture/deployment.md#user-deployment-and-developer-transport).
+User commands run on the destination machine as its desktop account; SSH is developer
+VM testing. Preserve preparation/default/boot confirmation and recovery requirements.
+Next: walk through the packaged user-local procedure in an explicitly authorized
+CachyOS Niri disposable VM; record file/parser/session/boot evidence separately.
+Historical SSH success does not establish that local walkthrough.
+
 ## F02 — Shared artwork (Feature)
 
 Status: Implemented; isolated filesystem and normal/check-mode acceptance Tested. Native CachyOS installation, verification, idempotency and original-absence restoration pass.

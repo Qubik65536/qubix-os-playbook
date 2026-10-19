@@ -210,3 +210,9 @@ not reverse these account copies; recover using the retained home-file backups.
 The user-facing [deployment defaults summary](../user/deployment.md#enabled-by-default)
 links to the exhaustive table above. Packaging changes no effective feature defaults;
 package caches, private builds and machine inputs still require separate preparation.
+
+User preparation and deployment run locally on the machine being customized, using
+`inventory/local.ini` as the ordinary desktop account. In that mode the Ansible
+controller and target are the same machine: font/UI preparation caches stay there,
+Homebrew belongs to that account, and its WezTerm files receive the documented backups.
+SSH is reserved for developer testing; see the [deployment transport policy](deployment.md#user-deployment-and-developer-transport).

@@ -8,11 +8,11 @@ Preparation keeps SDDM active. Bootstrap never switches display managers.
 
 ## Install prerequisites and theme
 
-After the usual [controller setup](installation.md), inspect the package transaction:
+After the usual [local setup](installation.md), inspect the package transaction:
 
 ```bash
 ANSIBLE_HOME="$PWD/.cache/ansible" .venv/bin/ansible-playbook playbooks/prepare-login.yml \
-  -i inventory/target.local.ini -e '{"qubix_discovery_privileged":true}' --check --ask-become-pass
+  -i inventory/local.ini -e '{"qubix_discovery_privileged":true}' --check --ask-become-pass
 ```
 
 Remove `--check` to install. The separate preparation playbook installs missing `greetd` and
@@ -47,7 +47,7 @@ qubix:
 ```
 
 Run the usual `bootstrap.sh deploy --check --diff`, `deploy` and `verify --tags installed` with
-that file, your inventory and sudo authentication. The existing branding/Niri/shell selections
+that file, `inventory/local.ini` and sudo authentication. The existing branding/Niri/shell selections
 remain enabled by the profile. This staged example explicitly opts out of private UI,
 enrollment and KWallet until their separate prerequisites and active greetd are ready.
 Only select `activation: prepare` while greetd is inactive.
@@ -69,7 +69,7 @@ Run the optional native comparison on an already-running Niri desktop:
 
 ```bash
 ANSIBLE_HOME="$PWD/.cache/ansible" .venv/bin/ansible-playbook tests/integration/login.yml \
-  -i inventory/target.local.ini -e @config/login.local.yml --ask-become-pass
+  -i inventory/local.ini -e @config/login.local.yml --ask-become-pass
 ```
 
 This displays a temporary nested window. It uses the real greeter binary with fake user data,
@@ -85,7 +85,7 @@ DRM/VT path, a real greetd conversation, password input or login. See the
 The repository prohibits replacing a display manager for branding. A real cutover needs an explicit
 operator exception after reviewing the prepared theme, console recovery and native configuration.
 Do not stop SDDM while relying on its current graphical session. Keep an independent root-capable
-TTY/SSH shell, record whether SDDM and its alias were enabled, and take a VM snapshot where possible.
+local TTY shell, record whether SDDM and its alias were enabled, and take a VM snapshot where possible.
 
 Inspect and back up `/etc/greetd/config.toml` with its original ownership/mode. Merge only the
 `[default_session]` example in `/usr/share/qubix/login/greetd-default-session.toml`; retain the native
@@ -147,7 +147,7 @@ menu title separately from that heading; entry IDs, snapshots and boot payloads 
 
 The optional [presentation variants](../../assets/ui/README.md) are pinned UI-only builds of
 Noctalia 5.3.0 and Greeter 1.6.0. They are installed separately from native package executables.
-Use the ordinary controller/inventory setup and an ignored desktop-only configuration:
+Use the ordinary [local setup](installation.md) and an ignored desktop-only configuration:
 
 ```yaml
 qubix_discovery_privileged: true
@@ -170,9 +170,9 @@ requires Noctalia's native wrapper already selected; it does not perform the man
 
 ```bash
 ANSIBLE_HOME="$PWD/.cache/ansible" .venv/bin/ansible-playbook playbooks/prepare-ui.yml \
-  -i inventory/target.local.ini -e @config/ui.local.yml --ask-become-pass
+  -i inventory/local.ini -e @config/ui.local.yml --ask-become-pass
 ANSIBLE_HOME="$PWD/.cache/ansible" .venv/bin/ansible-playbook tests/integration/ui.yml \
-  -i inventory/target.local.ini -e @config/ui.local.yml --ask-become-pass
+  -i inventory/local.ini -e @config/ui.local.yml --ask-become-pass
 ```
 
 Preparation installs missing build/GJS prerequisites, verifies source/patch checksums and
@@ -208,7 +208,7 @@ Preview before applying:
 
 ```bash
 ANSIBLE_HOME="$PWD/.cache/ansible" .venv/bin/ansible-playbook playbooks/menu-label.yml \
-  -i inventory/target.local.ini -e '{"qubix_discovery_privileged":true,"qubix_menu_confirm":true,"qubix_menu_config":"/boot/limine.conf"}' \
+  -i inventory/local.ini -e '{"qubix_discovery_privileged":true,"qubix_menu_confirm":true,"qubix_menu_config":"/boot/limine.conf"}' \
   --check --diff --ask-become-pass
 ```
 
@@ -226,3 +226,27 @@ the existing reviewed recovery procedure rather than overwriting a stale config.
 For automatic password-encrypted wallet unlocking and KDE application compatibility, use
 the explicit [KWallet option](keyring.md). It has separate package preparation, migration,
 backed-up PAM integration and actual password-login acceptance. Appearance alone preserves PAM.
+
+## Alternative: an existing SDDM/Breeze setup
+
+The shipped login selection is compact Noctalia on existing greetd. To deliberately
+use an already-active supported SDDM instead, merge these overrides into your local
+configuration (keep the rest of your component selections):
+
+```yaml
+qubix:
+  login:
+    enabled: true
+    backend: sddm
+    theme_source: breeze
+    activation: existing
+    compact: false
+  keyring:
+    enabled: false
+```
+
+KWallet integration currently requires greetd, so this alternative disables it.
+The compatible installed Breeze tree is required. Preview, deploy and verify locally
+using [the deployment commands](deployment.md#inspect-preview-deploy-and-verify).
+Deployment does not restart SDDM; test authentication and recovery separately on the
+snapshot-backed VM. Do not replace a manager solely for branding.

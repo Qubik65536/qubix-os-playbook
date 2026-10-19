@@ -1,6 +1,18 @@
 # Project status
 
 Updated: 2026-10-18. Stage: **MVP candidate; acceptance In Progress**.
+Local user onboarding **Implemented; static/documentation checks Tested**.
+User procedures now run Ansible directly on the destination CachyOS Niri machine
+with `inventory/local.ini`, as the ordinary desktop account with task-scoped sudo.
+Developer controller/SSH access, remote VM testing and network recovery are separate
+from user setup/deployment/desktop/boot guides. No feature defaults or runtime
+transports change; earlier SSH evidence remains historical native testing evidence.
+`./scripts/validate.sh` passes, including 87-document link/default agreement and
+32 JavaScript cases. Inventory inspection confirms localhost/local transport; 29 Bash
+examples, 11 YAML examples and 12 referenced heading fragments pass focused checks.
+No runtime files changed. The user-local path has not received new native deployment,
+parser, session or boot acceptance; that disposable-VM walkthrough is the next gate.
+
 Packaging/manual prereleases and archive deployment **Implemented; local checks Tested**.
 The complete committed source is packaged after controller CI and exposed as an artifact;
 a manual Release workflow validates again and publishes an explicitly requested candidate

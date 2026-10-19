@@ -22,6 +22,8 @@ Git checkouts record revision and dirty status as before. Extracted archives rec
 no trustworthy dirty-tree comparison. A missing/malformed revision fails state recording.
 The outer SHA256 verifies the downloaded package before extraction; it is not a signature.
 Keep extracted sources unchanged and retain the checksum/revision with deployment evidence.
+User deployment extracts and runs the archive directly on the destination machine;
+SSH/controller deployment is reserved for [developer tests](ssh-testing.md).
 
 ## CI artifact
 

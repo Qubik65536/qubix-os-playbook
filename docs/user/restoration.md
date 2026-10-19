@@ -6,14 +6,14 @@ Snapshot the VM and retain console access before login/boot changes. Private `/v
 
 ## Normal restoration
 
-Use the deployment inventory:
+Run from the local playbook root as the same desktop account used for deployment:
 
 ```bash
-./bootstrap.sh restore -i inventory/target.local.ini -e @config/local.yml --check --diff --ask-become-pass
-./bootstrap.sh restore -i inventory/target.local.ini -e @config/local.yml --ask-become-pass
+./bootstrap.sh restore -i inventory/local.ini -e @config/local.yml --check --diff --ask-become-pass
+./bootstrap.sh restore -i inventory/local.ini -e @config/local.yml --ask-become-pass
 ```
 
-Use the same local overrides for private /boot discovery; add --ask-pass with password SSH. Restore handles **all recorded baselines**, independently of enabled components. Original files/images return; originally absent files are removed. Unlisted files/directories, retained backups and prerequisite packages remain. Empty directories created by deployment are not removed. Disabling a component alone does not uninstall it. Empty baseline sets fail explicitly.
+Use the same local overrides for private /boot discovery. Restore handles **all recorded baselines**, independently of enabled components. Original files/images return; originally absent files are removed. Unlisted files/directories, retained backups and prerequisite packages remain. Empty directories created by deployment are not removed. Disabling a component alone does not uninstall it. Empty baseline sets fail explicitly.
 
 Local drift/unreceipted partial changes stop restore. Inspect the target/receipt/original before intentionally adding `-e qubix_files_force_restore=true`. Restoration is per resource; a later failure may leave earlier resources restored. Concurrent deployment is unsupported.
 

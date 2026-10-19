@@ -4,6 +4,12 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Separate user onboarding from developer setup and SSH VM testing. Require user
+  preparation, deployment, verification and recovery to run directly on the destination
+  machine with local inventory and the normal desktop account. Split desktop usage and
+  bootloader configuration into focused user guides; retain developer SSH access and
+  interruption procedures separately. Record the policy in agent/architecture guidance.
+
 - Package the complete committed playbook with exported revision and SHA256 checksum
   after CI validation; add manually triggered GitHub candidate prereleases. Support
   deployment-state recording from extracted archives without claiming a clean Git tree.

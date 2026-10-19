@@ -6,7 +6,7 @@ This guide assumes you want to understand, change and test Qubix OS Playbook. Yo
 
 Start with [implemented features](../features.md) for a user-facing overview and links into the implementation.
 
-Use the existing local checkout for this candidate; its commits have not been pushed. Once published, ordinary Git cloning is sufficient. Work from the repository root:
+Use a Git checkout of the reviewed development revision. Only published commits can be cloned remotely. Work from the repository root:
 
 ```bash
 python3 -m venv .venv
@@ -54,7 +54,7 @@ not automate package preparation, manager switching or personal secret migration
 4. Run focused tests, then the shared validation commands. Keep documentation, CHANGELOG, status and backlog accurate in the same logical commit.
 5. Inspect the diff and stage only the related files. Use a Conventional Commit; do not push, amend history or tag without authorization.
 
-For example, changing a Niri binding needs a valid KDL candidate and its user-visible description. Keep each hotkey-overlay-title in the form Category / Action; Ansible derives the shortcut panel's JSON from these bindings. The [README regeneration guide](../../README.md#regenerate-the-shortcut-cheatsheet) gives the edit/check/deploy/reopen procedure. The local Noctalia presenter lives in roles/qubix_niri/files/shortcuts/, with no separate runtime dependency. Noctalia 5.2 pins use the application's filename stem: qubix-power for qubix-power.desktop. Its native smoke test checks manifest/entry paths, rendering, search and close. Changing backup semantics needs fault/restore fixtures. A boot change needs adapter-specific VM acceptance before being called Tested on a real platform.
+For example, changing a Niri binding needs a valid KDL candidate and its user-visible description. Keep each hotkey-overlay-title in the form Category / Action; Ansible derives the shortcut panel's JSON from these bindings. The [shortcut development guide](shortcuts.md) gives the edit/check/deploy/reopen procedure. The local Noctalia presenter lives in roles/qubix_niri/files/shortcuts/, with no separate runtime dependency. Noctalia 5.2 pins use the application's filename stem: qubix-power for qubix-power.desktop. Its native smoke test checks manifest/entry paths, rendering, search and close. Changing backup semantics needs fault/restore fixtures. A boot change needs adapter-specific VM acceptance before being called Tested on a real platform.
 
 ## Understand test evidence
 
@@ -62,7 +62,7 @@ For example, changing a Niri binding needs a valid KDL candidate and its user-vi
 
 `./scripts/test.sh` runs production roles against synthetic evidence and isolated filesystem roots under `.cache/tests`. It covers profile rejection, identity/discovery, branding preview/reapplication, backups/drift/restoration/failure state, desktop definitions, SDDM cloning, both loader plans, both image-generator dispatches, incomplete rebuilds, kernel-aware restore and Plymouth no-write preview.
 
-Plymouth fixtures use **fake executable tools** and fake archive listings. They prove orchestration and guards, not a real initramfs. Desktop fixtures do not run the native Niri/Foot/Noctalia parsers. All fixtures must avoid actual host `/etc`, `/boot` and personal configuration. Logs identify expected rescued failures; unexpected failures stop the suite. See [testing](testing.md).
+Plymouth fixtures use **fake executable tools** and fake archive listings. They prove orchestration and guards, not a real initramfs. Desktop fixtures do not run the native Niri/WezTerm/Noctalia parsers. All fixtures must avoid actual host `/etc`, `/boot` and personal configuration. Logs identify expected rescued failures; unexpected failures stop the suite. See [testing](testing.md).
 
 For a focused run:
 
@@ -79,9 +79,9 @@ ansible-playbook tests/playbooks/plymouth-preview.yml --check
 
 ## Test on the VM
 
-Follow the [user getting-started guide](../user/getting-started.md), and collect [target evidence](../user/collecting-target-info.md) first. Keep host inventory and overrides ignored. Never run boot deployment against the development controller.
+Follow [developer SSH VM testing](ssh-testing.md), and collect [target evidence](ssh-access.md) first. User onboarding now runs the playbook directly on the destination machine; SSH/controller setup lives only in developer procedures. Keep host inventory and overrides ignored. Never run boot deployment against the development controller.
 
-Test desktop first. Capture native parser output, preserved-file checksums, actual companion behaviour and the second deployment recap. With Noctalia/Foot installed and a main Niri compositor running, the optional native smoke workflow renders the production candidates into temporary paths, opens a nested window and saves evidence without changing the main session. Direct SDDM launches and user-service launches are supported:
+Test desktop first. Capture native parser output, preserved-file checksums, actual companion behaviour and the second deployment recap. With Noctalia/WezTerm installed and a main Niri compositor running, the optional native smoke workflow renders the production candidates into temporary paths, opens a nested window and saves evidence without changing the main session. Direct SDDM launches and user-service launches are supported:
 
 ```bash
 ansible-playbook tests/integration/niri.yml -i inventory/target.local.ini -e @config/local.yml --ask-pass --ask-become-pass

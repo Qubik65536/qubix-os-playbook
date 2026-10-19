@@ -11,7 +11,7 @@ qubix:
     enabled: false
 ```
 
-Run `./bootstrap.sh verify -e @config/local.yml` (add `-i inventory.ini` for remote targets). Defaults, allowlisted profile, then overrides are recursively merged. Unknown keys, malformed types, unsupported profiles and unsupported enabled combinations fail before host configuration writes. Omitted siblings retain defaults; YAML booleans must be unquoted.
+Run `./bootstrap.sh verify -i inventory/local.ini -e @config/local.yml` on this machine. Defaults, allowlisted profile, then overrides are recursively merged. Unknown keys, malformed types, unsupported profiles and unsupported enabled combinations fail before host configuration writes. Omitted siblings retain defaults; YAML booleans must be unquoted.
 
 Branding is enabled by the profile. The override above disables branding; default inspection remains read-only with desktop selections enabled. The profile enables fonts, Niri, shell, fingerprint setup, private captions, compact Noctalia/greetd login, KWallet, bootloader appearance and Plymouth. Omitted options stay enabled: a branding-only deployment must explicitly disable the other components, both font options, fingerprint setup and compact login, and choose native presentation. See the [complete defaults](../architecture/configuration.md#every-effective-default) and [deployment preparation](deployment.md). Personal configuration is preserved apart from the documented three-file WezTerm account exception. There is no adoption mechanism or automatic default-shell change. Backend names express intent; they do not establish active boot-chain evidence. Never commit credentials.
 

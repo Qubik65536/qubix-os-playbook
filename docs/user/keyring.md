@@ -7,11 +7,11 @@ See the [component contract](../components/keyring.md) and [test evidence](../pr
 
 ## Preparation and deployment
 
-Install native prerequisites separately, using the normal controller/inventory setup:
+Install native prerequisites separately, using the normal [local setup](installation.md):
 
 ```bash
 ANSIBLE_HOME="$PWD/.cache/ansible" .venv/bin/ansible-playbook playbooks/prepare-keyring.yml \
-  -i inventory/target.local.ini --check --ask-become-pass
+  -i inventory/local.ini --check --ask-become-pass
 ```
 
 Review the transaction, then remove `--check`. Native package hooks can create snapshots.

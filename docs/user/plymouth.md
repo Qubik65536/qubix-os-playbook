@@ -25,6 +25,9 @@ The subtle wordmark revision makes the original-colour logo and steel-blue lette
 lower and more widely spaced. See the [design and acceptance](../architecture/boot-design.md#subtle-bottom-wordmark-refinement).
 Native installation and boot acceptance remain separate gates.
 
+Run all playbook commands below directly on the authorized test machine as your
+ordinary desktop account; see [local deployment](deployment.md).
+
 ## Preview without activation
 
 ### Blank startup or three-square fallback
@@ -48,7 +51,7 @@ startup observation.
 On a target with a running Niri session, Plymouth/two-step/X11 plugins, bubblewrap, Xwayland, ImageMagick and Python already installed:
 
 ```bash
-.venv/bin/ansible-playbook -i inventory/target.local.ini tests/integration/plymouth.yml -e @config/local.yml --ask-pass --ask-become-pass
+.venv/bin/ansible-playbook -i inventory/local.ini tests/integration/plymouth.yml -e @config/local.yml --ask-become-pass
 ```
 
 This explicitly opens a temporary preview window. It runs the native module and theme in private user/mount/PID/network namespaces, with a private daemon socket, pseudoterminal and X11 server. Host files are read-only; no DRM or physical virtual-terminal devices are exposed. Evidence is fetched to ignored `.cache/native-plymouth/`; temporary processes/files are removed. Missing prerequisites fail. This test neither selects the host theme nor generates an image. It does not establish an actual boot, encryption unlock or poweroff result.
@@ -110,9 +113,9 @@ snapshot integration just to keep the rolling copy unchanged.
 Preview, review the predicted selection/integration changes, then activate only on an authorized target:
 
 ```bash
-./bootstrap.sh deploy -i inventory/target.local.ini -e @.cache/plymouth.local.yml --check --diff --ask-pass --ask-become-pass
-./bootstrap.sh deploy -i inventory/target.local.ini -e @.cache/plymouth.local.yml --ask-pass --ask-become-pass
-./bootstrap.sh verify -i inventory/target.local.ini -e @.cache/plymouth.local.yml --tags installed --ask-pass --ask-become-pass
+./bootstrap.sh deploy -i inventory/local.ini -e @.cache/plymouth.local.yml --check --diff --ask-become-pass
+./bootstrap.sh deploy -i inventory/local.ini -e @.cache/plymouth.local.yml --ask-become-pass
+./bootstrap.sh verify -i inventory/local.ini -e @.cache/plymouth.local.yml --tags installed --ask-become-pass
 ```
 
 Prepare that override in the ignored .cache directory, keeping the rest of your desktop selections. After approval/testing, retain the same mappings in ignored config/local.yml for normal future deployment commands. Check mode does not rebuild, back up images or prove the resulting archives. Activation snapshots affected resources and images before rebuilding. Mkinitcpio uses `--nopost -p` for selected presets; the preserved snapshot-hook append remains active without rerunning Limine post hooks. Dracut uses the explicit images and kernels. Native archive checks inspect generator outputs and actual Limine-referenced staged images; they require the watermark, spinner/input assets, definition, daemon, two-step/label plugins and fonts. A failed check leaves pending state visible.
@@ -122,3 +125,27 @@ Reapply the identical configuration before reboot: unchanged inputs should skip 
 ## Recover
 
 Use the [restoration guide](restoration.md). Backups are per-resource rather than a complete rollback; changed kernels block restoring stale images. Limine configuration is restored before staged images are deleted; changed native cache/kernel hashes or unrelated entry drift block restoring stale pins even under force. The standard restore command restores **all** recorded components. If the native Niri login entry was retired, restore that entry before removing the Qubix session. Recover a failed VM from its snapshot first. Physical activation needs the explicit exception and recovery plan described in the [target plan](../project/plymouth-test-plan.md).
+
+## Other confirmed generators
+
+For dracut, merge the following into the existing `qubix` mapping using inspected
+paths and kernel version. These example paths are not hardware detection:
+
+```yaml
+  plymouth:
+    enabled: true
+    initramfs_backend: dracut
+    confirm_active: true
+    force_rebuild: false
+    images:
+      - path: /boot/initramfs-linux-cachyos.img
+        kernel: REPLACE_WITH_INSTALLED_MODULE_VERSION
+        kernel_image: /boot/vmlinuz-linux-cachyos
+    presets: []
+```
+
+For mkinitcpio, select `initramfs_backend: mkinitcpio` and the existing preset names
+without `.preset`; map every output of each selected preset, including fallback images.
+Do not copy Limine cache fields onto a different loader/layout. Review the
+[component contract](../components/plymouth.md) for supported combinations and refusal
+gates. An installed generator alone does not confirm image ownership.

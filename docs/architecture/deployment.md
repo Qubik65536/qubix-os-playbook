@@ -40,3 +40,20 @@ unrelated parent checkout. Git sources retain measured revision/dirty status; ar
 require a full exported `SOURCE_REVISION` and record `source_kind: archive`, `dirty: null`.
 Archive identity is provenance, not proof of unchanged extracted files. Installation,
 parser, session and boot acceptance remain separate.
+
+## User deployment and developer transport
+
+User deployment MUST run the playbook directly on the CachyOS Niri machine being
+customized. The same machine holds the extracted archive/checkout, Python environment,
+prepared caches and local overrides. Run as the normal desktop account, never with
+`sudo ./bootstrap.sh` or a root Ansible process; individual tasks request sudo as needed.
+Use the shipped `inventory/local.ini` (`localhost ansible_connection=local`). SSH is a
+developer testing transport for explicitly selected test targets, not a user setup step.
+The [user entry point](../user/getting-started.md) and
+[developer SSH guide](../development/ssh-testing.md) maintain that separation.
+
+Focused documentation task acceptance: user setup/deploy/restore/preparation commands
+use local transport, development retains remote VM testing procedures, all default
+selections and machine-specific confirmation gates remain documented, and repository
+link/default/shell checks pass. This changes the documented operating procedure, not
+Ansible's supported transports or native acceptance evidence.

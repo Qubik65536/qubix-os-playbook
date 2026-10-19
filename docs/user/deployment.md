@@ -1,8 +1,9 @@
 # Deploy Qubix OS Playbook
 
 Status: **Implemented MVP candidate**. Use an existing CachyOS Niri installation,
-initially a disposable VM with a snapshot and console access. Ansible runs on a
-Mac/Linux controller and copies resources over SSH; the target needs no checkout.
+initially a disposable VM with a snapshot and console access. Run Ansible directly
+on that machine, as the normal desktop account with task-scoped sudo. The playbook,
+Python environment, caches and configuration all live on the machine being customized.
 Installation, parser validation, graphical session acceptance and boot acceptance
 are separate checks. See [actual evidence and open gates](../project/status.md).
 
@@ -14,10 +15,10 @@ project repository's own release/run. Keep only the selected archive and checksu
 in a new directory. GitHub's automatically generated “Source code” downloads are
 not the tested package; use the named playbook asset.
 
-In that directory on the controller:
+In that directory on the CachyOS Niri machine:
 
 ```bash
-shasum -a 256 -c SHA256SUMS
+sha256sum -c SHA256SUMS
 # Substitute the full commit shown in the downloaded filename.
 tar -xzf qubix-os-playbook-COMMIT.tar.gz
 cd qubix-os-playbook-COMMIT
@@ -30,45 +31,84 @@ python3 -m venv .venv
 Python 3.12+ is required (CI uses 3.13). A Git checkout works too. Always run commands
 from this root so Ansible finds its configuration. The archive contains all tracked
 source/assets/docs, but excludes downloaded fonts, private compiled UI clients,
-controller dependencies, credentials and your machine's configuration. Preparation
+Python dependencies, credentials and your machine's configuration. Preparation
 therefore requires network access. Keep the archive unchanged: deployment records its
 exported commit and `dirty: null`, since Git-free sources cannot prove a clean tree.
 
 ## Prepare and configure the target
 
-Follow [getting started, sections 1–3](getting-started.md) for native desktop/SSH
-prerequisites, a non-root sudo account, and host-key verification. Create your own
-`inventory/target.local.ini` with exactly the intended VM:
+Complete [installation prerequisites](installation.md) on this machine. Use the shipped
+`inventory/local.ini`; it selects localhost over local transport. Run as the desktop
+account, never `sudo ./bootstrap.sh` or a root Ansible process. Individual privileged
+tasks use sudo with `--ask-become-pass`.
 
-```ini
-[qubix_targets]
-qubix-vm ansible_host=192.168.64.10 ansible_user=YOUR_VM_USER ansible_port=22
-```
-
-Always pass this inventory: the repository's fallback inventory selects localhost.
-Store overrides in `config/local.yml`; never put passwords in inventory or commit
-local files. Full defaults require each preparation step below:
+Save overrides in `config/local.yml` and keep credentials out of it. Full defaults
+require each preparation step below:
 
 | Requirement | Procedure |
 |---|---|
-| Native Noctalia/Niri companions and SSH | [Target setup](getting-started.md#1-prepare-your-controller-and-vm) |
+| Native Noctalia/Niri companions | [Local prerequisites](installation.md) |
 | Paru, Homebrew, WezTerm; dependency-safe Alacritty/Foot removal | Preview then run `playbooks/prepare-packages.yml` against the inventory, with sudo prompting |
-| Pinned 210-face Monaspace NF source | `.venv/bin/ansible-playbook playbooks/prepare-fonts.yml` on the controller |
+| Pinned 210-face Monaspace NF source | `.venv/bin/ansible-playbook playbooks/prepare-fonts.yml` on this machine |
 | Noctalia Greeter packages and existing greetd launcher | [Login preparation/cutover](login.md); `playbooks/prepare-login.yml` does not switch the active manager |
 | Exact supported caption/compact builds, GJS/GTK/fprintd | `playbooks/prepare-ui.yml`; follow the [login guide](login.md) for version/native checks |
 | KWallet packages and reviewed existing-secret migration | `playbooks/prepare-keyring.yml` and the [keyring guide](keyring.md) |
-| Active bootloader and generator/image mappings | [Boot examples](getting-started.md#6-test-the-existing-bootloader) and [Plymouth guide](plymouth.md); confirm measured paths, kernels and active loader |
+| Active bootloader and generator/image mappings | [Boot examples](bootloader.md) and [Plymouth guide](plymouth.md); confirm measured paths, kernels and active loader |
 
-Remote preparation playbooks use `.venv/bin/ansible-playbook -i
-inventory/target.local.ini -e @config/local.yml playbooks/prepare-NAME.yml
---ask-become-pass` (one shell command). Review each guide before running it.
-Package transactions may invoke native snapshot/boot hooks and are outside file
-restoration. `deploy` never invokes preparation, migrates secrets or switches managers.
+Create `config/local.yml` using the trial example below or your reviewed full
+configuration before running preparation. Preview and apply package preparation locally:
 
-For a first desktop-only trial, copy the complete explicit opt-out configuration in
-[getting started, section 3](getting-started.md#3-preview-and-deploy-the-desktop).
-It disables login, keyring, fingerprint/private presentation and boot work pending
-preparation; these are deliberate overrides of the shipped defaults.
+```bash
+.venv/bin/ansible-playbook -i inventory/local.ini -e @config/local.yml playbooks/prepare-packages.yml --check --ask-become-pass
+.venv/bin/ansible-playbook -i inventory/local.ini -e @config/local.yml playbooks/prepare-packages.yml --ask-become-pass
+```
+
+This installs Paru, Homebrew on Linux and WezTerm, then removes Alacritty/Foot
+with dependency checks. Full-profile login/UI/keyring preparation has separate
+commands in the linked component guides; do not skip those prerequisites.
+Font preparation is a separate local command:
+
+```bash
+.venv/bin/ansible-playbook playbooks/prepare-fonts.yml
+```
+
+It downloads about 315 MiB and extracts about 476 MiB into this machine's cache.
+Read each guide before preparation: login requires inactive greetd for package setup,
+UI builds require the exact supported versions, and KWallet needs reviewed secret migration.
+Package hooks may update native snapshots/boot menus; package transactions are outside
+file restoration. `deploy` does not invoke preparation or switch managers.
+
+For a first desktop-only trial, save this complete **explicit opt-out** configuration
+as `config/local.yml`. It deliberately differs from the shipped full defaults:
+
+```yaml
+qubix_discovery_privileged: true
+qubix:
+  profile: cachyos-niri
+  niri:
+    fingerprint_setup: false
+    presentation: native
+  login:
+    enabled: false
+    compact: false
+  keyring:
+    enabled: false
+  bootloader:
+    enabled: false
+  plymouth:
+    enabled: false
+```
+
+This retains fonts/Krypton, branding, Niri/Noctalia/WezTerm and shell defaults.
+Prepare the native companions, `prepare-packages.yml` and fonts before this trial.
+For full deployment, remove those opt-outs only after satisfying the table above,
+then add the measured bootloader/Plymouth mappings from their guides. Missing overrides
+retain the enabled profile defaults; never invent boot confirmations or kernel paths.
+
+After preparation, Bash/Zsh can use Brew immediately with
+`eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"`; Fish uses
+`/home/linuxbrew/.linuxbrew/bin/brew shellenv fish | source`. Persistent shell setup is
+your choice; the playbook does not edit shell dotfiles. Existing working Brew is preserved.
 
 ## Enabled by default
 
@@ -105,15 +145,15 @@ All exceptions and ownership details live in the configuration reference.
 After preparation and configuration:
 
 ```bash
-./bootstrap.sh verify -i inventory/target.local.ini -e @config/local.yml --ask-become-pass
-./bootstrap.sh deploy -i inventory/target.local.ini -e @config/local.yml --check --diff --ask-become-pass
-./bootstrap.sh deploy -i inventory/target.local.ini -e @config/local.yml --ask-become-pass
-./bootstrap.sh verify -i inventory/target.local.ini -e @config/local.yml --tags installed --ask-become-pass
+./bootstrap.sh verify -i inventory/local.ini -e @config/local.yml --ask-become-pass
+./bootstrap.sh deploy -i inventory/local.ini -e @config/local.yml --check --diff --ask-become-pass
+./bootstrap.sh deploy -i inventory/local.ini -e @config/local.yml --ask-become-pass
+./bootstrap.sh verify -i inventory/local.ini -e @config/local.yml --tags installed --ask-become-pass
 ```
 
-Add `--ask-pass` for password SSH. For private boot metadata, set the YAML boolean
-`qubix_discovery_privileged: true` outside `qubix` as shown in the getting-started
-example; this permits read-only privileged probes and confirms no boot selection.
+For private boot metadata, set the YAML boolean `qubix_discovery_privileged: true`
+outside `qubix` as in the trial example. This permits read-only privileged probes;
+it confirms no boot selection. No SSH authentication is involved.
 Use YAML component selections; the wrapper rejects deploy/restore tags.
 
 Check mode is an approximation and cannot validate files it has not installed.
@@ -124,7 +164,7 @@ package updates/deployments are unsupported.
 
 Repeat the same deployment to check idempotency. When convenient, log out and select
 **Qubix Niri**, preserving native Niri as fallback. No manager restart/current-session
-switch happens during deployment. Check the terminal, launcher, shortcuts, lock and
+switch happens during deployment. Follow [desktop usage](desktop.md), then check the terminal, launcher, shortcuts, lock and
 login separately using the [verification checklist](verification.md). File receipts
 never assert graphical/boot success. Only reboot an authorized test VM after reviewing
 its boot mappings and recovery plan; test each loader/generator combination separately.
@@ -134,8 +174,8 @@ its boot mappings and recovery plan; test each loader/generator combination sepa
 Review [restoration and its limits](restoration.md), then preview:
 
 ```bash
-./bootstrap.sh restore -i inventory/target.local.ini -e @config/local.yml --check --diff --ask-become-pass
-./bootstrap.sh restore -i inventory/target.local.ini -e @config/local.yml --ask-become-pass
+./bootstrap.sh restore -i inventory/local.ini -e @config/local.yml --check --diff --ask-become-pass
+./bootstrap.sh restore -i inventory/local.ini -e @config/local.yml --ask-become-pass
 ```
 
 Restoration uses protected first baselines, not whole-system rollback. Packages and

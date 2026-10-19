@@ -13,55 +13,44 @@ adds a scaled desktop-cube background; renewed console acceptance is pending.
 Independent loader/generator, authentication and current boot
 recovery tests remain acceptance gates. See [actual evidence](docs/project/status.md).
 
-Get started:
+## For users
 
-- [Download and deploy](docs/user/deployment.md): CI/prerelease archives, preparation, every enabled feature and recovery.
-- [Packaging and manual releases](docs/development/releases.md): validated CI artifacts and manually triggered candidate publication.
+Start with the [user guide](docs/user/getting-started.md). Run the playbook directly
+on the CachyOS Niri machine you want to customize, as your normal desktop account.
+The [deployment guide](docs/user/deployment.md) covers downloads, local preparation,
+all enabled features and recovery. SSH is reserved for developer testing.
 
-- [Implemented features](docs/features.md): a plain-language inventory with implementation links and testing limits.
-- [User getting-started guide](docs/user/getting-started.md): prepare the target, deploy and test the desktop, review full-profile preparation or explicitly trial desktop-only settings, then opt into boot/splash tests.
-- [Noctalia Greeter](docs/user/login.md) and [fingerprints](docs/user/fingerprint.md): compact login, QubixOS captions, graphical enrollment and password fallback.
-- [Human developer getting-started guide](docs/development/getting-started.md): set up tools, understand the code and run fixtures.
-- [SSH access and target information](docs/user/collecting-target-info.md): share connection details so the agent can inspect your test machine.
-- [Boot and poweroff splash guide](docs/user/plymouth.md): preview native-style spinner branding, review image mappings and plan activation/recovery.
-
-After controller setup, a remote inventory with a `qubix_targets` group and the guide’s `config/local.yml`:
+After local setup/preparation and saving the guide's `config/local.yml`:
 
 ```bash
-./bootstrap.sh verify -i inventory/target.local.ini -e @config/local.yml --ask-become-pass
-.venv/bin/ansible-playbook playbooks/prepare-fonts.yml
-./bootstrap.sh deploy -i inventory/target.local.ini -e @config/local.yml --check --diff --ask-become-pass
-./bootstrap.sh deploy -i inventory/target.local.ini -e @config/local.yml --ask-become-pass
-./bootstrap.sh verify -i inventory/target.local.ini -e @config/local.yml --tags installed --ask-become-pass
+./bootstrap.sh verify -i inventory/local.ini -e @config/local.yml --ask-become-pass
+./bootstrap.sh deploy -i inventory/local.ini -e @config/local.yml --check --diff --ask-become-pass
+./bootstrap.sh deploy -i inventory/local.ini -e @config/local.yml --ask-become-pass
+./bootstrap.sh verify -i inventory/local.ini -e @config/local.yml --tags installed --ask-become-pass
 ```
 
-Add --ask-pass with password SSH. The guide includes explicit read privilege for private /boot metadata. The default profile selects fonts, the complete Qubix desktop, compact Noctalia/greetd login and KWallet. Full-profile deployment requires the separate package/build preparation, an already-selected greetd launcher and reviewed secret migration; fresh-machine setup is not automatic. The guide provides explicit desktop-only trial overrides. Set `qubix.fonts.krypton_ui: false` to keep the fonts without switching UI defaults. Choose **Qubix Niri** at login or start it from a free TTY. Native Niri, personal dotfiles, distribution identity, boot entries and kernel arguments remain preserved. Bootloader and Plymouth also default enabled; deployment requires explicit boot paths/version/image mappings and confirmations. Set their enabled flags false for a desktop-only deployment. See the [complete defaults and feature policy](docs/architecture/configuration.md). Candidate commits are local and have not been pushed.
+The default profile enables fonts/Krypton, branding, Niri/Noctalia/WezTerm, shell,
+fingerprint setup, private captions, compact greetd login, KWallet, bootloader
+appearance and Plymouth. Packages/builds, existing-manager preparation, reviewed secrets
+and explicit boot paths/mappings/confirmations remain prerequisites. The guide includes
+deliberate desktop-only opt-outs; see the [complete defaults](docs/architecture/configuration.md).
+
+- [Features](docs/features.md) and [desktop use](docs/user/desktop.md)
+- [Login](docs/user/login.md), [fingerprints](docs/user/fingerprint.md) and [KWallet](docs/user/keyring.md)
+- [Bootloader](docs/user/bootloader.md), [Plymouth](docs/user/plymouth.md) and [recovery](docs/user/restoration.md)
+
+## For developers
+
+Start with [developer onboarding](docs/development/getting-started.md) for source,
+tools, fixtures and contribution rules. Use [SSH VM testing](docs/development/ssh-testing.md)
+and [SSH access/evidence collection](docs/development/ssh-access.md) for remote tests.
+[Packaging and manual releases](docs/development/releases.md) covers validated artifacts
+and manually triggered candidate publication.
 
 ## Regenerate the shortcut cheatsheet
 
-1. Edit `roles/qubix_niri/templates/config.kdl.j2` in this checkout. Give each binding a `hotkey-overlay-title="Category / Action"` immediately after its key combination, on the same line. Use **Applications**, **Windows**, **Navigation**, **Session** or **Media** as the category. Bindings with the same category/action are grouped as alternative keys.
-
-   ```kdl
-   Mod+T hotkey-overlay-title="Applications / Terminal" { spawn "/usr/share/qubix/bin/qubix-wezterm" "start"; }
-   ```
-
-2. Check the generated list with the desktop fixture:
-
-   ```bash
-   .venv/bin/ansible-playbook tests/playbooks/desktop.yml
-   ```
-
-3. Deploy using the inventory and configuration from your normal desktop deployment:
-
-   ```bash
-   ./bootstrap.sh deploy -i inventory/target.local.ini -e @config/local.yml --ask-become-pass
-   ```
-
-   Add `--ask-pass` for password SSH. Keep `niri.enabled: true`; use your existing component selections. Deployment regenerates `/usr/share/qubix/noctalia/plugins/shortcuts/bindings.json` from the managed KDL and installs both together.
-
-4. Close and reopen the panel with **Super+Shift+/** or its bar button. It reads the regenerated list each time it opens.
-
-Regeneration happens during deployment. Personal configuration changes and application-specific shortcuts are outside this generated list. The [user guide](docs/user/getting-started.md) covers deployment/verification, and the [developer guide](docs/development/getting-started.md) covers native parser and rendering tests.
+Binding edits and regeneration are developer work; follow the
+[shortcut development guide](docs/development/shortcuts.md).
 
 ## Project documentation
 
