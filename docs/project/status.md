@@ -1,6 +1,19 @@
 # Project status
 
 Updated: 2026-10-18. Stage: **MVP candidate; acceptance In Progress**.
+Unused alternative-shell cleanup **Implemented; static/discovery/native audit Tested**.
+Removed its binary/package discovery entries and historical/current shortcut-source
+references. No related installer, launcher, service or imported runtime code was found.
+The shortcut actions remain native Niri/Noctalia; effective defaults are unchanged.
+The operator-selected SSH CachyOS target has no matching installed packages, executable
+commands, running processes, user/system units or shell installation directories. Startup
+configuration inspection finds only unrelated translated text in a distribution-owned
+XDG updater; similarly named native device-mapper tools remain preserved. Three completed
+read-only audits total six tasks/zero changes; no uninstall or service restart is needed.
+`./scripts/validate.sh` passes, tracked-source search finds zero related references,
+and existing discovery normalization passes five tasks/zero changes in normal/check mode.
+This records package/process/startup inspection, not new parser/session/boot activation.
+
 Local user onboarding **Implemented; static/documentation checks Tested**.
 User procedures now run Ansible directly on the destination CachyOS Niri machine
 with `inventory/local.ini`, as the ordinary desktop account with task-scoped sudo.

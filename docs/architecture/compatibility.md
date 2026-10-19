@@ -27,7 +27,7 @@ may stretch the picture and need separate visual acceptance.
 
 Discovery measures identity/version, binaries/packages, kernel arguments, alias/standalone manager activity, paths and hints. SSH hints can be absent. Tools alone cannot establish firmware selection or image ownership; operator confirmation is required.
 
-The inspected CachyOS installation uses standalone Noctalia 5.2.1; the reference uses DMS. The [new desktop design](desktop-design.md) uses the installed Noctalia shell with Qubix-specific defaults/state and DMS-inspired shortcuts. Noctalia supplies its own Polkit agent. Legacy Quickshell/v4 is unsupported by this profile. Native preferences remain preserved; earlier classic-companion evidence below is historical.
+The inspected CachyOS installation uses standalone Noctalia 5.2.1. The [new desktop design](desktop-design.md) uses the installed Noctalia shell with Qubix-specific defaults/state and Niri desktop shortcuts. Noctalia supplies its own Polkit agent. Legacy Quickshell/v4 is unsupported by this profile. Native preferences remain preserved; earlier classic-companion evidence below is historical.
 
 Probe failures stay errors, not absence. Record combinations here only after [VM acceptance](../user/verification.md). Partial native desktop evidence is recorded below; no full MVP combination has passed yet.
 
@@ -45,3 +45,15 @@ A stock CachyOS target may mount /boot mode 0700. Ordinary discovery must fail p
 Use a typed extra variable with --ask-become-pass for privileged inspection. All other discovery probes remain ordinary user reads. Native acceptance requires zero reported changes and accurate candidate evidence on a real protected /boot target.
 
 Observed physical target: CachyOS with Niri 26.04, Noctalia 5.2.1, Alacritty 0.17.0, SDDM 0.21.0, Limine 12.9.3 and mkinitcpio 42.2. Privileged read-only discovery passes with zero changes. Desktop install/verify/reapplication/absence restoration and isolated nested rendering also pass with Foot 1.28.0, Fuzzel 1.15.0, Waybar 0.15.0, Mako 1.11.0, Swaybg 1.2.2 and Starship 1.26.0. Native Fish/Noctalia/Alacritty configuration remains preserved. Breeze and the optional KDE agent are absent, so login is disabled and GUI privilege prompts remain unverified. Main-session and independent boot acceptance remain open. See [actual test evidence](../project/desktop-test-results.md).
+
+## Unused shell discovery cleanup
+
+Focused task: remove unused alternative-shell binary/package probes and shortcut-source
+references from the tracked playbook and documentation. Acceptance: no related executable,
+package, launcher, source URL or vendor-specific shortcut dependency remains in tracked
+files; supported Niri/Noctalia actions and effective defaults remain unchanged; static
+and discovery-normalization checks pass. Discovery removal does not uninstall software
+on an independently installed system; native package/process state needs a separate
+inspection on the identified CachyOS machine. The operator-selected SSH target audit
+finds no related installation or startup integration, so no target mutation is required;
+see [recorded status](../project/status.md).

@@ -131,7 +131,7 @@ are separate gates. Never run a real power action during verification.
 
 ## Shortcut contract
 
-`Mod` is Super in the main session and Alt in a nested Niri test. DMS's [published Niri bindings](https://github.com/AvengeMedia/DankMaterialShell/blob/master/core/internal/config/embedded/niri-binds.kdl) inform the core map. Noctalia IPC implements shell actions. These are desktop shortcuts; application copy/paste remains Ctrl+C/V.
+`Mod` is Super in the main session and Alt in a nested Niri test. Noctalia IPC implements shell actions. These are desktop shortcuts; application copy/paste remains Ctrl+C/V.
 
 | Main-session shortcut | Action |
 |---|---|
@@ -147,7 +147,7 @@ are separate gates. Never run a real power action during verification.
 | Super+H/J/K/L or arrow keys | Navigate tiled windows |
 | Super+Shift+H/J/K/L or arrow keys | Move tiled windows |
 | Super+Shift+T | Toggle floating |
-| Super+Ctrl+W | Toggle tabbed column; relocated from DMS's Super+W |
+| Super+Ctrl+W | Toggle tabbed column |
 | Super+Ctrl+Left/Right or H/L | Decrease/increase column width in 5% steps |
 | Super+Ctrl+Up/Down or K/J | Decrease/increase window height in 5% steps |
 | Super+Ctrl+R | Reset automatic window height |

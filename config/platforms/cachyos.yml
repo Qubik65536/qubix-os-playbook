@@ -8,7 +8,6 @@ qubix_discovery_binary_paths:
   noctalia: /usr/bin/noctalia
   jq: /usr/bin/jq
   qs: /usr/bin/qs
-  dms: /usr/bin/dms
   waybar: /usr/bin/waybar
   mako: /usr/bin/mako
   swaync: /usr/bin/swaync
@@ -52,8 +51,6 @@ qubix_discovery_package_names:
   - quickshell
   - noctalia
   - jq
-  - dms
-  - dank
   - waybar
   - mako
   - swaync

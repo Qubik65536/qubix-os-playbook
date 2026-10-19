@@ -33,6 +33,14 @@ Next: walk through the packaged user-local procedure in an explicitly authorized
 CachyOS Niri disposable VM; record file/parser/session/boot evidence separately.
 Historical SSH success does not establish that local walkthrough.
 
+## M03 — Remove unused alternative-shell references (Maintenance)
+
+Status: Implemented; static/discovery checks and operator-selected SSH target audit Tested.
+Scope/acceptance: [discovery cleanup](../architecture/compatibility.md#unused-shell-discovery-cleanup).
+The target has no related package/process/startup installation; zero target changes
+are required. Next: keep platform evidence limited to supported dependencies when
+adding components; retain native Niri/Noctalia checks in the normal acceptance matrix.
+
 ## F02 — Shared artwork (Feature)
 
 Status: Implemented; isolated filesystem and normal/check-mode acceptance Tested. Native CachyOS installation, verification, idempotency and original-absence restoration pass.

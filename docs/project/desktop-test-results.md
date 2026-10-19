@@ -56,7 +56,7 @@ Breeze and the optional KDE Polkit agent are absent on this machine. Login brand
 
 ## Noctalia redesign
 
-The accepted [desktop design](../architecture/desktop-design.md) replaces the classic companions with the installed standalone Noctalia 5.2.1. It retains Niri and Foot, uses #56728b as the shell/compositor accent, adds clipped 16 px windows, rounded floating bar/panels/dock and DMS/macOS-inspired shortcuts. Native personal settings remain preserved; application theme generation is disabled and Noctalia's automatic GSettings write is transient.
+The accepted [desktop design](../architecture/desktop-design.md) replaces the classic companions with the installed standalone Noctalia 5.2.1. It retains Niri and Foot, uses #56728b as the shell/compositor accent, adds clipped 16 px windows, rounded floating bar/panels/dock and desktop/macOS-inspired shortcuts. Native personal settings remain preserved; application theme generation is disabled and Noctalia's automatic GSettings write is transient.
 
 The native grammar workflow passes: 63 tasks, eight private setup/cleanup changes, zero failures. The final candidates are checked before activation. Noctalia reports unknown sections as warnings with exit zero, so the negative control uses an invalid typed setting and the positive control rejects schema warnings.
 

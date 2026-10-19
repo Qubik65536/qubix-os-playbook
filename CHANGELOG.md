@@ -4,6 +4,10 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Remove unused alternative-shell executable/package discovery entries and external
+  shortcut-source references throughout the playbook and documentation. Keep the
+  supported Niri/Noctalia actions and effective feature defaults unchanged.
+
 - Separate user onboarding from developer setup and SSH VM testing. Require user
   preparation, deployment, verification and recovery to run directly on the destination
   machine with local inventory and the normal desktop account. Split desktop usage and
@@ -155,7 +159,7 @@ Changes are grouped by release. Bootstrap has no release tag.
 - Separated Noctalia bar widgets into rounded capsules on a transparent surface; native preview and preservation checks pass.
 - Added a searchable Noctalia shortcut panel with category cards/keycaps, generated from managed Niri bindings; open it from the bar or Super+Shift+/.
 
-- Adopted a Noctalia 5 desktop profile with #56728b accents, rounded windows/bar/dock and DMS/macOS-inspired shortcuts.
+- Adopted a Noctalia 5 desktop profile with #56728b accents, rounded windows/bar/dock and desktop/macOS-inspired shortcuts.
 - Added measured Noctalia version guards, native TOML validation and palette/terminal colour consistency checks.
 - Isolated Qubix shell state/data and Noctalia dark-mode writes while preserving application settings.
 - Updated the native preview for production candidates, direct SDDM launches, Noctalia IPC and native configuration preservation.
