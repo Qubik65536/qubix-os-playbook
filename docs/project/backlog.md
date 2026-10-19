@@ -10,12 +10,15 @@ Objective: safely inspect CachyOS Niri and resolve the profile. Scope: schema, r
 
 ## M01 — Tooling and CI (Maintenance)
 
-Status: Implemented; local scripts Tested. Earlier remote validation passed; later
-runs exhausted the 30-minute limit during fixtures. Shared validation now allows
-60 minutes with a 50-minute fixture deadline and diagnostic log upload. Acceptance:
-[CI validation time budget](../development/testing.md#ci-validation-time-budget).
-Next: after an authorized push, confirm full Validate/Release validation completion,
-diagnostic logs and the gated archive with the new budget.
+Status: Implemented; local static/dispatch/core checks Tested; remote timing pending.
+Earlier remote runs passed,
+but slower runners exhausted the serial 30-minute limit. Four isolated fixture groups
+now run alongside static validation within 30-minute jobs, preserving every test/mode.
+Acceptance: [CI validation time budget](../development/testing.md#ci-validation-time-budget).
+Mocked execution confirms all 38 original invocations and failure propagation;
+static validation and the real core group pass.
+Next: after an authorized push, measure full Validate/Release validation completion,
+verify per-group diagnostic logs and the archive gated on all matrix jobs.
 
 Objective: repeatable local/CI checks. Scope: pinned controller dependencies, YAML/Ansible/ShellCheck/Markdown consistency checks and Actions. Acceptance: local commands and workflow agree; checks pass. Depends on documentation. Tests: execute available validators and record missing tools explicitly. Docs: environment/testing/installation.
 

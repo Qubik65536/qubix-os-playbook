@@ -4,20 +4,29 @@ Status: **Implemented local checks and GitHub Actions workflow**. Run `./scripts
 
 ### CI validation time budget
 
-The reusable validation job has a 60-minute limit, including when Release calls it.
-The serial fixture step has a 50-minute limit, leaving time for setup, static checks,
-diagnostics and packaging. A measured successful run used 20m28s for fixtures; run
-39186195082 passed static checks and reached the final Limine image fixtures before
-the former 30-minute job limit cancelled it. The limit accommodates runner variation
-and suite growth without removing checks.
+CI runs static validation and four fixture groups on separate runners: `core`,
+`desktop`, `boot` and `images`. Each job retains the original 30-minute budget;
+fixture steps have 25 minutes, leaving time to upload logs. `./scripts/test.sh`
+still runs every fixture sequentially locally; pass a group name for a focused run.
+Groups use the same commands and normal/check modes, with no skipped coverage.
 
-Acceptance: both entry points use the same 60-minute job, fixtures retain all existing
-normal/check-mode cases, and publication/archive upload still require every check.
-Upload `.cache/tests/*.log` as a separate 14-day diagnostic artifact after the fixture
-step, including on failure or step timeout. Whole-job cancellation can prevent uploads;
-the earlier fixture deadline leaves headroom for that cleanup. Validate workflow YAML,
-run local static checks and inspect these gates; after an authorized push, confirm a
-complete remote run and archive. Raising the budget alone does not prove remote success.
+Investigation of the first slow revision, `449c5f2`, found no changes to scripts,
+fixtures, locked dependencies or CI; only discovery entries and documentation changed.
+The passing run 39179598252 spent 20m28s on fixtures. Run 39182660630 shows broadly
+slower execution (framework normal: 37s to 56s; graphical Limine: 114s to 184s)
+on the same runner image. This is consistent with runner performance variation,
+not evidence that removing discovery entries caused the slowdown. The serial workload
+had insufficient headroom. Splitting independent fixtures reduces elapsed CI time.
+
+Acceptance: the union of groups executes each original fixture invocation exactly once,
+including all normal/check modes and framework zero-change checks. Static checks and
+all groups must pass before a separate packaging job tests and uploads the archive;
+Release still requires the entire reusable workflow. A group failure must propagate,
+without cancelling other groups (`fail-fast: false`). Diagnostic artifacts have distinct
+group names and retain `.cache/tests/*.log` for 14 days, including after step failure.
+Validate dispatch/coverage/failure propagation with mocked tools, run local static checks
+and real focused fixtures, and confirm remote elapsed time after an authorized push.
+Local tests cannot establish hosted-runner timing or native session/boot acceptance.
 
 Equivalent individual commands, with the virtual environment active:
 

@@ -1,17 +1,24 @@
 # Project status
 
 Updated: 2026-10-18. Stage: **MVP candidate; acceptance In Progress**.
-CI validation timeout correction **Implemented; local static/workflow checks Tested**.
-Remote run 39186195082 passed static checks in 81 seconds, progressed through the
-boot/initramfs fixtures and was cancelled during final Limine image fixtures at the
-30-minute job deadline. Earlier run 39179598252 succeeded in 21m41s total, including
-20m28s of fixtures. Shared Validate/Release validation now has a 60-minute budget,
-50-minute fixture deadline and separate diagnostic log upload. All checks and archive/
-publication gates remain enabled. See [acceptance](../development/testing.md#ci-validation-time-budget).
-`./scripts/validate.sh` passes; focused workflow assertions verify both budgets,
-shared Release validation, diagnostic upload and unchanged success gates. No fixture,
-target installation, native parser, session or boot behavior changes in this correction.
-The revised remote workflow has not run; no push, dispatch or publication is performed.
+CI validation parallelization **Implemented; local static/dispatch/core checks Tested**.
+The first slow revision `449c5f2` changes no fixture/script/dependency/workflow source;
+logs show broadly slower execution across unrelated tests on the same runner image
+(framework normal 37s to 56s; graphical Limine 114s to 184s). This supports runner
+performance variation rather than a demonstrated discovery regression. Four isolated
+fixture jobs now run alongside static validation, restoring 30-minute job limits and
+25-minute fixture deadlines. Packaging waits for every matrix job; Release still waits
+for the reusable workflow. The temporary 60-minute serial workaround is superseded.
+Mocked execution against the pre-regression script proves all 38 original invocations,
+including normal/check modes, occur exactly once across groups; default/all dispatch,
+invalid input, each group's failure and framework zero-change gates pass.
+`./scripts/validate.sh` and real `./scripts/test.sh core` pass, including normal/check
+framework zero-change checks and disposable font/branding installation/recovery. The
+first sandboxed core attempt was blocked by Ansible RPC; the approved retry completed.
+Other groups retain their unchanged fixture bodies; they were exercised with mocked
+dispatch, not rerun in full locally. No native parser, session or boot checks were run.
+See [acceptance](../development/testing.md#ci-validation-time-budget).
+Remote elapsed time for the new matrix remains untested; no push or dispatch performed.
 
 Automatic release versioning **Implemented; local workflow/static checks Tested**.
 Manual Release now defaults to a UTC calendar-version tag/title with unique run/attempt
@@ -293,9 +300,9 @@ pass 752/232 tasks. These fixture results remain separate from native reboot and
 
 `./scripts/validate.sh` passes YAML, Ansible syntax/lint, ShellCheck, Python helper compilation,
 Markdown/local links, manifests/configuration consistency and diff whitespace. Shared scripts/CI
-include the image-binding fixtures; shared CI allows 60 minutes with a 50-minute fixture
-deadline and diagnostic log upload. Fake generators and
-inspectors establish dispatch, preservation and recovery contracts, not native boot validity.
+include the image-binding fixtures; shared CI runs four isolated fixture groups alongside
+static validation with 30-minute job limits, 25-minute fixture deadlines and diagnostic logs.
+Fake generators and inspectors establish dispatch, preservation and recovery contracts, not native boot validity.
 
 The native-style Plymouth preview loads the real two-step plugin, rejects an invalid-module control,
 animates boot/reboot/shutdown, renders the native password prompt and leaves zero processes.

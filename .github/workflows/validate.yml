@@ -10,7 +10,11 @@ permissions:
 jobs:
   validation:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [static, core, desktop, boot, images]
     steps:
       - name: Check out source
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -25,27 +29,50 @@ jobs:
           python -m venv .venv
           .venv/bin/python -m pip install -r requirements-dev.txt
       - name: Install JSON fixture prerequisite
+        if: matrix.suite == 'core'
         run: sudo apt-get update && sudo apt-get install --yes jq
       - name: Install pinned controller-only Luau fixture interpreter
+        if: matrix.suite == 'core'
         run: |
           mkdir -p .cache/luau
           curl -fsSL https://github.com/luau-lang/luau/releases/download/0.742/luau-ubuntu.zip -o .cache/luau.zip
           echo '152058b98c60ff1f5b5ec9bca0b8eb37793cae161dd3a05608cc3d8738ba1a4d  .cache/luau.zip' | sha256sum -c -
           unzip -q .cache/luau.zip -d .cache/luau
       - name: Run YAML, Ansible, shell, Markdown and consistency checks
+        if: matrix.suite == 'static'
         run: ./scripts/validate.sh
       - name: Run non-destructive contract fixtures
-        timeout-minutes: 50
-        run: ./scripts/test.sh
+        if: matrix.suite != 'static'
+        timeout-minutes: 25
+        env:
+          FIXTURE_SUITE: ${{ matrix.suite }}
+        run: ./scripts/test.sh "$FIXTURE_SUITE"
       - name: Upload fixture diagnostics
-        if: always()
+        if: always() && matrix.suite != 'static'
         timeout-minutes: 2
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: fixture-logs-${{ github.sha }}
+          name: fixture-logs-${{ matrix.suite }}-${{ github.sha }}
           path: .cache/tests/*.log
           if-no-files-found: ignore
           retention-days: 14
+  package:
+    needs: validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out validated source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Set up controller Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - name: Install locked controller tools
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install -r requirements-dev.txt
       - name: Package committed source and test extracted deployment state
         run: |
           ./scripts/package.sh

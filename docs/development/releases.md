@@ -28,8 +28,10 @@ SSH/controller deployment is reserved for [developer tests](ssh-testing.md).
 ## CI artifact
 
 [Validate](../../.github/workflows/validate.yml) runs on push, pull request and manual
-invocation, and is reusable by Release. After static checks, fixtures and the archive
-smoke test pass, it uploads the tarball and `SHA256SUMS` as `qubix-os-playbook-SHA`
+invocation, and is reusable by Release. Static checks and four isolated fixture groups
+run concurrently; the separate packaging job requires every group to pass. See the
+[validation budget](testing.md#ci-validation-time-budget). After the archive smoke test
+passes, it uploads the tarball and `SHA256SUMS` as `qubix-os-playbook-SHA`
 for 14 days. Download the artifact from the successful Actions run and unzip that
 artifact container before following the [deployment guide](../user/deployment.md).
 Artifacts are test candidates; passing controller CI does not establish native acceptance.
