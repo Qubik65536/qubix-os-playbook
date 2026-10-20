@@ -44,6 +44,7 @@
         qubix_test_case.input.get('login', {}).get('theme_source', 'noctalia')
       - qubix_profile_resolved.login.compact == qubix_test_case.input.get('login', {}).get('compact', true)
       - qubix_profile_resolved.keyring.enabled == qubix_test_case.input.get('keyring', {}).get('enabled', true)
+      - qubix_profile_resolved.hotspot.enabled == qubix_test_case.input.get('hotspot', {}).get('enabled', true)
       - not qubix_profile_resolved.shell.change_default_shell
       - qubix_profile_resolved.bootloader.enabled == qubix_test_case.input.get('bootloader', {}).get('enabled', true)
       - qubix_profile_resolved.plymouth.enabled == qubix_test_case.input.get('plymouth', {}).get('enabled', true)

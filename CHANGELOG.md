@@ -4,6 +4,9 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Add default-enabled optional native Share Wi-Fi launcher with prerequisite preflight,
+  separate package preparation and hardware-dependent explicit runtime activation.
+
 - Shorten shared Validate/Release validation by running static checks and four isolated
   fixture groups concurrently. Restore 30-minute job limits, preserve every fixture/mode,
   retain per-group diagnostic logs and gate the separate archive job on all results.

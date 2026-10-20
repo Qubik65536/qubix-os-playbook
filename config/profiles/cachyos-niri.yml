@@ -19,6 +19,8 @@ login:
   theme_source: noctalia
   activation: existing
   compact: true
+hotspot:
+  enabled: true
 keyring:
   enabled: true
 bootloader:

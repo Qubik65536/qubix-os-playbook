@@ -20,6 +20,8 @@ login:
   theme_source: breeze
   activation: existing
   compact: false
+hotspot:
+  enabled: false
 keyring:
   enabled: false
 bootloader:

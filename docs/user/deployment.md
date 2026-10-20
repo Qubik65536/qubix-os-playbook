@@ -52,6 +52,7 @@ require each preparation step below:
 | Pinned 210-face Monaspace NF source | `.venv/bin/ansible-playbook playbooks/prepare-fonts.yml` on this machine |
 | Noctalia Greeter packages and existing greetd launcher | [Login preparation/cutover](login.md); `playbooks/prepare-login.yml` does not switch the active manager |
 | Exact supported caption/compact builds, GJS/GTK/fprintd | `playbooks/prepare-ui.yml`; follow the [login guide](login.md) for version/native checks |
+| Wi-Fi sharing GUI/backend | Prepare `linux-wifi-hotspot`; see [hotspot setup](hotspot.md) |
 | KWallet packages and reviewed existing-secret migration | `playbooks/prepare-keyring.yml` and the [keyring guide](keyring.md) |
 | Active bootloader and generator/image mappings | [Boot examples](bootloader.md) and [Plymouth guide](plymouth.md); confirm measured paths, kernels and active loader |
 

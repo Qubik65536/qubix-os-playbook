@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Share Wi-Fi
+Comment=Share a connection through a Wi-Fi hotspot on supported adapters
+Exec=/usr/bin/wihotspot
+TryExec=/usr/bin/wihotspot
+Icon=network-wireless
+Terminal=false
+Categories=Network;Settings;
+Keywords=Wi-Fi;Hotspot;Internet;Sharing;

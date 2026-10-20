@@ -24,6 +24,8 @@ qubix:
     theme_source: noctalia
     activation: existing
     compact: true
+  hotspot:
+    enabled: true
   keyring:
     enabled: true
   bootloader:
@@ -72,6 +74,7 @@ Booleans must be YAML booleans, not strings. Each nested mapping allows only doc
 | `login.theme_source` | `noctalia` | Use the native Noctalia Greeter appearance interface and shared palette/wallpaper. |
 | `login.activation` | `existing` | Require the active supported launcher; inactive preparation is a separate explicit selection. |
 | `login.compact` | `true` | Select the prepared compact private greeter client through its backed-up wrapper. |
+| `hotspot.enabled` | `true` | Add the native Share Wi-Fi launcher after separate package preparation; starting/sharing requires runtime adapter support and user action. |
 | `keyring.enabled` | `true` | Select KWallet, replace only measured greetd keyring hooks and suppress GNOME Keyring startup. |
 | `bootloader.enabled` | `true` | Select boot appearance; require confirmed target configuration before writes. |
 | `bootloader.backend` | `auto` | Unresolved placeholder; activation needs explicit `grub` or `limine`. |
@@ -216,3 +219,7 @@ User preparation and deployment run locally on the machine being customized, usi
 controller and target are the same machine: font/UI preparation caches stay there,
 Homebrew belongs to that account, and its WezTerm files receive the documented backups.
 SSH is reserved for developer testing; see the [deployment transport policy](deployment.md#user-deployment-and-developer-transport).
+
+`hotspot.enabled` adds the [native Wi-Fi sharing launcher](../components/hotspot.md).
+Prepare `linux-wifi-hotspot` separately; no service or hotspot starts during deployment.
+Hardware/driver/channel support is checked by the native application when starting.

@@ -1,0 +1,9 @@
+---
+- name: Inspect native hotspot prerequisites without changing networking
+  ansible.builtin.stat:
+    path: '/usr/bin/{{ item }}'
+  loop: [wihotspot, create_ap, iw, hostapd, dnsmasq, iptables]
+  register: qubix_hotspot_prerequisites
+
+- name: Validate dependencies and prepare the launcher
+  ansible.builtin.include_tasks: plan.yml

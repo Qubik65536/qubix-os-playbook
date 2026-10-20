@@ -26,6 +26,10 @@ if [[ "$suite" == all || "$suite" == core ]]; then
   for mode in normal check; do
     set --
     if [[ "$mode" == check ]]; then set -- --check; fi
+    if ! ansible-playbook tests/playbooks/hotspot.yml "$@" >".cache/tests/hotspot-$mode.log" 2>&1; then
+      cat ".cache/tests/hotspot-$mode.log"
+      exit 1
+    fi
     if ! ansible-playbook tests/playbooks/packages.yml "$@" >".cache/tests/packages-$mode.log" 2>&1; then
       cat ".cache/tests/packages-$mode.log"
       exit 1

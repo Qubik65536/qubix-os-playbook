@@ -1,0 +1,17 @@
+---
+- name: Require prepared native hotspot application and dependencies
+  ansible.builtin.assert:
+    that:
+      - item.stat.exists
+      - item.stat.executable | default(false)
+    fail_msg: 'Prepare linux-wifi-hotspot and its dependencies locally; missing executable {{ item.item }}.'
+  loop: '{{ qubix_hotspot_prerequisites.results }}'
+  loop_control:
+    label: '{{ item.item }}'
+
+- name: Prepare the explicit native Wi-Fi sharing launcher
+  ansible.builtin.set_fact:
+    qubix_hotspot_resources:
+      - path: /usr/share/applications/qubix-hotspot.desktop
+        component: hotspot
+        content: '{{ lookup("file", role_path ~ "/files/hotspot.desktop", rstrip=false) }}'

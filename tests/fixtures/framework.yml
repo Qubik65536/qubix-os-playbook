@@ -1,5 +1,10 @@
 ---
 qubix_test_profiles:
+  - name: hotspot opt-out
+    input: {hotspot: {enabled: false}}
+  - name: hotspot string refused
+    input: {hotspot: {enabled: 'true'}}
+    error: hotspot.enabled must be a YAML boolean
   - name: defaults
     input: {}
   - name: partial recursive override

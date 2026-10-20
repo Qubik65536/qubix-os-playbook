@@ -292,3 +292,10 @@ ownership/bytes, native parser controls, reapplication and app/session/boot pres
 pass. See [native evidence](wezterm-home-test-results.md).
 See the [contract](../components/wezterm.md). Account-file recovery uses timestamped
 copy backups; integration into generic system restoration is Planned separately.
+
+## F16 — Wi-Fi hotspot sharing (Feature)
+
+Status: Implemented; native acceptance pending.
+Scope/acceptance: [hotspot contract](../components/hotspot.md).
+Next: inspect the reachable ThinkPad driver, prepare packages, verify protected
+installation/reapplication/restoration and test a real client with upstream preserved.

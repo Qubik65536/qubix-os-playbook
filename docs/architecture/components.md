@@ -14,6 +14,7 @@ Status: **Candidate components Implemented; packages/system automation Planned; 
 | Bootloader | Minimal appearance configuration | Managed theme; boot entries Preserved | Selected proven GRUB/Limine adapter |
 | Plymouth | Splash installation and selection | Managed theme; unrelated settings Preserved | Installed Plymouth; initramfs adapter |
 | Packages/system (Planned) | Narrow explicitly required dependencies/defaults | Managed named resources | CachyOS adapter |
+| Hotspot | Native Wi-Fi sharing launcher; runtime support handled by native backend | Managed launcher; network configuration Preserved | Prepared linux-wifi-hotspot and dependencies |
 | State/recovery | Revision manifest, backups, verified restoration | Managed manifest | Resource ownership records |
 
 ```mermaid

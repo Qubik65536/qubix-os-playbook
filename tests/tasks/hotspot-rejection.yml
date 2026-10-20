@@ -1,0 +1,31 @@
+---
+- name: Reset expected dependency failure
+  ansible.builtin.set_fact:
+    qubix_hotspot_rejected: false
+    qubix_hotspot_resources: []
+
+- name: Exercise actual dependency boundary
+  block:
+    - name: Plan with invalid executable evidence
+      ansible.builtin.include_role:
+        name: qubix_hotspot
+        tasks_from: plan
+      vars:
+        qubix_hotspot_prerequisites:
+          results:
+            - item: wihotspot
+              stat: '{{ qubix_hotspot_test_stat }}'
+  rescue:
+    - name: Require actionable native package preparation error
+      ansible.builtin.assert:
+        that:
+          - "'Prepare linux-wifi-hotspot' in (ansible_failed_result | to_json)"
+    - name: Record expected rejection
+      ansible.builtin.set_fact:
+        qubix_hotspot_rejected: true
+
+- name: Confirm refusal before any launcher resource is offered
+  ansible.builtin.assert:
+    that:
+      - qubix_hotspot_rejected
+      - qubix_hotspot_resources == []
