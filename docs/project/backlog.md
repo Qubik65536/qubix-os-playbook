@@ -295,7 +295,8 @@ copy backups; integration into generic system restoration is Planned separately.
 
 ## F16 — Wi-Fi hotspot sharing (Feature)
 
-Status: Implemented; native acceptance pending.
+Status: Implemented; native installation/parser/GUI/backend startup Tested; second-client acceptance pending.
 Scope/acceptance: [hotspot contract](../components/hotspot.md).
-Next: inspect the reachable ThinkPad driver, prepare packages, verify protected
-installation/reapplication/restoration and test a real client with upstream preserved.
+Native installation/reapplication/isolated restoration and timed AP startup pass;
+see [evidence](hotspot-test-results.md). Next: test association, DHCP, DNS and Internet
+from a second physical client on a permitted shared channel, then stop sharing.

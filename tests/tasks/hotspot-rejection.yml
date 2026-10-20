@@ -13,7 +13,7 @@
       vars:
         qubix_hotspot_prerequisites:
           results:
-            - item: wihotspot
+            - item: wihotspot-gui
               stat: '{{ qubix_hotspot_test_stat }}'
   rescue:
     - name: Require actionable native package preparation error

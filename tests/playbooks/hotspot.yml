@@ -10,7 +10,7 @@
       vars:
         qubix_hotspot_prerequisites:
           results:
-            - item: wihotspot
+            - item: wihotspot-gui
               stat: {exists: true, executable: true}
 
     - name: Require an additive unprivileged native launcher without credentials
@@ -18,7 +18,7 @@
         that:
           - qubix_hotspot_resources | length == 1
           - qubix_hotspot_resources[0].path == '/usr/share/applications/qubix-hotspot.desktop'
-          - "'Exec=/usr/bin/wihotspot\n' in qubix_hotspot_resources[0].content"
+          - "'Exec=/usr/bin/wihotspot-gui\n' in qubix_hotspot_resources[0].content"
           - "'password' not in qubix_hotspot_resources[0].content"
           - "'sudo' not in qubix_hotspot_resources[0].content"
 

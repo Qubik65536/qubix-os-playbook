@@ -4,6 +4,10 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Fix the hotspot launcher/preflight to use the Arch package's `wihotspot-gui` binary.
+  Record native AX200 installation, parser, GUI, recovery and timed concurrent AP tests;
+  second-client connectivity remains pending.
+
 - Add default-enabled optional native Share Wi-Fi launcher with prerequisite preflight,
   separate package preparation and hardware-dependent explicit runtime activation.
 

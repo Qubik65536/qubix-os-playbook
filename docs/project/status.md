@@ -2,13 +2,16 @@
 
 Updated: 2026-10-19. Stage: **MVP candidate; acceptance In Progress**.
 
-Wi-Fi sharing launcher **Implemented; controller fixtures Tested; native acceptance pending**. Default-on
-`hotspot.enabled` validates prepared native tools and adds only a protected desktop
-entry. Runtime concurrency/channel checks remain with the native backend. SSH target
-was unreachable during this task; adapter support, installation and connected-client
-Internet sharing have not been verified. Normal/check hotspot fixtures each pass
-16 tasks/zero changes with two expected prerequisite refusals; both profile modes
-pass 917 tasks/zero changes each. Full static validation passes. See the [contract](../components/hotspot.md).
+Wi-Fi sharing **Implemented; native installation/parser/GUI/backend startup Tested**.
+The reachable ThinkPad AX200 supports concurrent client/AP on one channel. Native
+package testing found the AUR removes `wihotspot`; the launcher/preflight now use
+`wihotspot-gui`. Installation passes 28 tasks/three changes, reapplication 27/zero;
+isolated protected recovery passes 47/eight disposable changes. Native desktop parser
+and bounded Wayland GUI startup pass. Channel 52 correctly refuses transmission;
+channel 161 reaches AP-ENABLED with hostapd/dnsmasq and upstream HTTPS 200 while sharing.
+The timed test stops and removes its AP. Second-client association/DHCP/DNS/Internet
+acceptance remains pending. See [native evidence](hotspot-test-results.md).
+
 CI validation parallelization **Implemented; local static/dispatch/core checks Tested**.
 The first slow revision `449c5f2` changes no fixture/script/dependency/workflow source;
 logs show broadly slower execution across unrelated tests on the same runner image

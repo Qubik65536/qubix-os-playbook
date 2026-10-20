@@ -2,8 +2,8 @@
 Type=Application
 Name=Share Wi-Fi
 Comment=Share a connection through a Wi-Fi hotspot on supported adapters
-Exec=/usr/bin/wihotspot
-TryExec=/usr/bin/wihotspot
+Exec=/usr/bin/wihotspot-gui
+TryExec=/usr/bin/wihotspot-gui
 Icon=network-wireless
 Terminal=false
 Categories=Network;Settings;

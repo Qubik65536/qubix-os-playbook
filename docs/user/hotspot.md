@@ -28,3 +28,6 @@ The ThinkPad T14 Gen 1 AMD is not automatically certified by its model name.
 Test from another device: connect, obtain an address, resolve DNS and browse while
 the laptop remains connected upstream. Stop sharing and verify upstream still works.
 See the [component contract](../components/hotspot.md) for ownership and acceptance.
+
+The tested AX200 supports one shared channel: channel 52 was refused, while channel
+161 reached AP-ENABLED. See [measured evidence](../project/hotspot-test-results.md).
