@@ -286,6 +286,12 @@ and fallback glyph coverage. Do not treat this as new login/boot acceptance.
 
 ## F — WezTerm home configuration and actual scene transparency (Feature/Testing)
 
+Primary-session correction: the 2026-10-18 nested result did not prove live activation;
+the focused deployment missed the rendered session configuration. See the
+[repair acceptance and evidence](wezterm-home-test-results.md#primary-session-repair-2026-10-20).
+Next: retain the installed-configuration gate when repeating native acceptance;
+physical input and fullscreen appearance remain manual checks.
+
 Status: Implemented and Tested. One canonical Lua, backed-up home deployment, scoped
 compositor fill correction, contrasting composed scenes/pixel controls, exact account
 ownership/bytes, native parser controls, reapplication and app/session/boot preservation

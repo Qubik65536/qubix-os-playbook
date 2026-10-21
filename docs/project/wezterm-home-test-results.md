@@ -1,5 +1,57 @@
 # WezTerm home configuration and composed transparency correction
 
+## Primary-session repair (2026-10-20)
+
+The earlier **live transparency activation claim below is superseded**. Diagnosis
+against source `6b96c99` found `/etc/niri/qubix/theme.kdl` corrected, but the active
+`/usr/bin/niri --session --config /etc/niri/qubix/config.kdl` still loaded an older
+embedded theme without the rule. The earlier focused resource selection omitted
+`config.kdl`; nested rendering tested the candidate theme, hiding that deployment gap.
+The installed Lua still requested 0.75 opacity. Its user-edited decoration setting
+is preserved by this compositor-only repair.
+
+Acceptance: reconcile only the rendered managed session configuration using existing
+backup/receipt handling; validate/reload it; prove background mixing with a synthetic
+terminal in the primary session; preserve account files, applications and boot identity;
+require the installed session config to contain the candidate theme before future
+nested acceptance. The new integration assertion rejects the unfixed target with
+two successful tasks, zero changes and one expected failure before rendering.
+
+Environment remains CachyOS x86-64, Niri 26.04 and WezTerm
+`20260716-195552-76b606ec`, primary Niri PID 1145, same boot ID recorded below.
+The preview proves the only config difference is the five-line scoped WezTerm rule.
+File installation/verification passes 89 tasks/two changes (config and checksum
+receipt); existing recovery metadata is retained. Identical-source reapplication
+passes 89 tasks/zero changes. Native Niri validation and live
+rule reload pass. No session/application restart is needed. Controller
+`./scripts/validate.sh` passes. The revised native integration passes 11 tasks/five
+temporary changes, including installed-theme verification and the same red/blue
+pixel controls recorded below. No boot activation or reboot is performed.
+
+Primary-session screenshots contain only a synthetic terminal and the managed
+wallpaper. Bar/notification areas are cropped away. The terminal occupies half the
+output before and the full available width after the temporary nested-window test;
+this geometry difference is incidental. For 240 blank interior samples in their
+common region, the before pixels are uniformly `(38,45,51)`; after pixels match
+75% `#161616` plus 25% of the separately captured actual wallpaper within one RGB
+level. At `(100,400)` the wallpaper is `(18,24,27)` and corrected terminal `(21,22,23)`.
+The wallpaper geometry is visible through the corrected terminal. These are live
+primary-session captures, distinct from the isolated comparison below.
+
+![Primary session before repair](../assets/wezterm-transparency/primary-before.png)
+
+Reference: source `6b96c99`, stale embedded session theme, solid fill obscures the
+wallpaper inside the half-width terminal. Other visible content is managed wallpaper.
+
+![Primary session after repair](../assets/wezterm-transparency/primary-after.png)
+
+Customized: same source plus rendered session-rule repair; primary-session wallpaper
+shows through at supplied 0.75 opacity. Wider geometry follows the temporary nested
+test. Account Lua, personal Niri/dconf hashes and boot ID remain unchanged. The owned
+synthetic terminal is stopped after capture and the original empty window set restored.
+
+### Historical nested evidence
+
 Status: **Implemented and Tested on the operator-authorized SSH target**, 2026-10-18.
 Source candidate is based on `4c90254`. Canonical Lua SHA-256:
 `bcdf3f0e2af2a50cf1e047c033be178f6d9576b34f1e85b1590231ab9511d464`;

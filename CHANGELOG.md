@@ -4,6 +4,10 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Repair WezTerm transparency in the SSH target's actual rendered Niri session
+  configuration. Require that installed configuration to contain the theme before
+  nested transparency acceptance, catching the earlier standalone-theme-only repair.
+
 - Fix the hotspot launcher/preflight to use the Arch package's `wihotspot-gui` binary.
   Record native AX200 installation, parser, GUI, recovery and timed concurrent AP tests;
   second-client connectivity remains pending.

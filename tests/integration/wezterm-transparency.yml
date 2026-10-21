@@ -6,6 +6,17 @@
     - name: Require real rendering rather than a check-mode simulation
       ansible.builtin.assert:
         that: [not ansible_check_mode]
+    - name: Read the installed session configuration rather than only its standalone theme
+      ansible.builtin.slurp:
+        src: /etc/niri/qubix/config.kdl
+      register: qubix_wezterm_active_config
+    - name: Require the transparency correction in the configuration the Qubix session loads
+      ansible.builtin.assert:
+        that:
+          - >-
+            lookup('file', playbook_dir ~ '/../../roles/qubix_niri/templates/theme.kdl.j2')
+            in (qubix_wezterm_active_config.content | b64decode)
+        fail_msg: Reconcile /etc/niri/qubix/config.kdl too; updating theme.kdl alone cannot fix the active session.
     - name: Create a private nested-scene directory
       ansible.builtin.tempfile:
         state: directory

@@ -1,6 +1,19 @@
 # Project status
 
-Updated: 2026-10-19. Stage: **MVP candidate; acceptance In Progress**.
+Updated: 2026-10-20. Stage: **MVP candidate; acceptance In Progress**.
+
+WezTerm primary-session transparency repair **Implemented; installation/parser/live
+composition Tested**. The earlier focused deployment updated standalone `theme.kdl`
+but omitted the rendered `config.kdl` actually loaded by Niri. Reconcile only that
+managed config, preserving the user's edited Lua. Preview shows only the scoped
+rule; installation passes 89 tasks/two changes, reapplication 89/zero changes,
+native validation/live reload pass.
+The revised native regression fails against the stale config before writes and passes
+11 tasks/five temporary changes afterward. Primary screenshots and 240 pixel samples
+prove actual wallpaper mixing at 75% terminal opacity. Static validation passes;
+personal hashes, original window set, Niri PID and boot identity remain preserved.
+The earlier live-activation claim is superseded; nested evidence remains valid.
+See [repair evidence](wezterm-home-test-results.md#primary-session-repair-2026-10-20).
 
 Wi-Fi sharing **Implemented; native installation/parser/GUI/backend startup Tested**.
 The reachable ThinkPad AX200 supports concurrent client/AP on one channel. Native

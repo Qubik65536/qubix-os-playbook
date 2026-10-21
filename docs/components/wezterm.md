@@ -39,6 +39,14 @@ Acceptance uses a nested compositor and contrasting synthetic scene backgrounds;
 capture the composed output, not only the terminal surface. The previous background
 fill is the negative control. Personal content must not appear in captures.
 
+The theme is embedded at Ansible render time in `/etc/niri/qubix/config.kdl`;
+Niri does not read the standalone `theme.kdl` from that configuration. Any scoped
+theme repair must reconcile the rendered session configuration as well, validate it
+and reload the running session. Acceptance requires the installed session config to
+contain the current theme before the nested comparison runs. Preserve edited account
+Lua during a compositor-only repair. The 2026-10-18 focused deployment omitted this
+rendered resource; its nested test passed while the primary session remained unfixed.
+
 Monaspace NF already ships enabled. Missing IBM Plex faces use native fallback; this
 component does not install extra font packages. Native validation uses `ls-fonts` plus
 error diagnostics, because CLI exit status alone can hide fallback. Installation,
