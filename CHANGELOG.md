@@ -4,6 +4,12 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Recheck Slack with the operator's PipeWire/automatic Ozone flags, confirming
+  working rendering/microphone with GPU acceleration enabled. Replace the earlier
+  account-only `--disable-gpu` launcher with those flags and retain its backup.
+  Trace four distinct Slack-originated capture requests behind repeated choosers;
+  repeated prompts remain unresolved in the application.
+
 - Start Qubix Niri through the native session launcher with its explicit config,
   activating the graphical-session target required by GNOME screen-sharing portals.
   Diagnose stalled Slack microphone capture separately and recover the running

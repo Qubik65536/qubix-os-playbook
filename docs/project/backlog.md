@@ -7,9 +7,12 @@ Local bootstrap planning; later mirror substantial tasks to GitHub Issues. Categ
 Status: Implemented; controller/installation/parser/current-session portal and audio capture Tested.
 Contract: [native session lifecycle](../components/niri.md#native-session-lifecycle-and-huddles-repair).
 Evidence: [Huddle diagnostics and repair](huddle-test-results.md).
-Operator confirms microphone, rendering and sharing; the account Slack launcher
-retains the measured software-rendering workaround. Next: track the remaining
-repeated chooser prompts upstream, confirm participant reception, and test native service
+Operator confirms microphone/rendering with GPU enabled; the account Slack launcher
+now retains the tested PipeWire/automatic Ozone flags, superseding software rendering.
+Four distinct capture-session requests are traced to Slack's main process; the final
+video link is active. Next: resolve repeated prompts in Slack's capture-request
+flow (no verified host-setting fix), investigate the observed stopped message if
+it interrupts the final stream, confirm participant reception, and test native service
 startup/target teardown at a convenient fresh login. If capture stalls again,
 investigate `pipewire-pulse` logs; no recurring service restart workaround is installed.
 

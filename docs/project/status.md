@@ -2,6 +2,17 @@
 
 Updated: 2026-10-22. Stage: **MVP candidate; acceptance In Progress**.
 
+Slack GPU-enabled follow-up **Installation/parser/primary process and operator
+rendering/microphone Tested**. A clean launch with
+`--enable-features=WebRTCPipeWireCapturer --ozone-platform-hint=auto` uses Wayland
+and reports GPU compositing/WebGL enabled. The account launcher now retains these
+flags, with a backup of the earlier `--disable-gpu` override; saved preferences and
+native resources stay preserved. The earlier inference that disabling GPU was
+necessary is superseded. A metadata-only trace maps four separate capture-session
+requests to Slack's main PID during the retry, and the final video link is active.
+Repeated prompts and one operator-observed sharing-stopped message remain unresolved;
+there is no proven host-setting fix. See [follow-up evidence](huddle-test-results.md#gpu-enabled-comparison-and-repeated-chooser-trace).
+
 Slack Huddle session repair **Implemented; controller/installation/parser/live portal
 and audio capture Tested; operator Huddle audio/rendering/sharing confirmed**. The Qubix
 login entry now uses native `niri-session` with the explicit Qubix config, activating
@@ -14,9 +25,10 @@ installation is checksum/ownership/numbered-backup verified; Slack participant
 reception and fresh-login lifecycle remain separate acceptance items.
 The first Slack retry still produces black Huddle windows and a desktop mute message;
 the operator confirms microphone, window rendering and sharing on the `--disable-gpu`
-retry. A new account-only Slack launcher preserves this measured workaround without
+retry. An account-only Slack launcher initially preserves this measured workaround without
 changing saved preferences or the native entry. Occasional repeated chooser prompts
 remain an upstream-consistent limitation, not a resolved issue.
+The GPU-enabled follow-up above supersedes this initial launch workaround.
 See [evidence and limits](huddle-test-results.md).
 
 Simplified shortcuts/adaptive cheatsheet **Implemented; controller normal/check and

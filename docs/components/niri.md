@@ -40,13 +40,28 @@ WirePlumber, PulseAudio compatibility and GNOME/GTK desktop portals. Keep the
 distribution's Niri portal selection. Do not weaken portal dependencies or install
 global permission grants to hide a missing session target.
 
-For this operator-requested repair, a successful `--disable-gpu` Slack retry
-is persisted with an additive account launcher at `~/.local/share/applications/slack.desktop`
-copied from the native entry with only that argument added to `Exec`. Create it
+For this operator-requested repair, the account launcher at
+`~/.local/share/applications/slack.desktop` is copied from the native entry with
+`--enable-features=WebRTCPipeWireCapturer --ozone-platform-hint=auto` added to `Exec`.
+The clean operator retry confirms rendering/microphone operation with GPU
+compositing enabled; the earlier `--disable-gpu` workaround is superseded. Create it
 only when no personal override exists; validate its syntax and preserve Slack's
 saved preferences, native entry and package. Removing this new override restores
-the packaged launcher. This measured application workaround is not a global Niri
-default: it trades GPU acceleration for working Huddle rendering on this machine.
+the packaged launcher. Changes to a Qubix-created override require checking its
+expected content and retaining a backup. This is an account-specific launch policy,
+not a global Niri feature or a guarantee that either flag caused the improvement.
+
+Follow-up task (Tested): compare the operator's previous
+`--enable-features=WebRTCPipeWireCapturer --ozone-platform-hint=auto` launch with
+the software-rendering workaround, then trace repeated ScreenCast requests.
+Acceptance: establish effective GPU/Ozone flags, obtain an operator Huddle
+rendering/audio/sharing retry, and retain GPU acceleration when that path works.
+Count only portal method metadata during one sharing attempt; do not capture
+content, tokens or private messages. Preserve the working launcher until the
+alternative passes; back up that Qubix-created override before changing it.
+Treat an unsupported/obsolete Chromium feature name as unproven rather than
+inferring it works from the absence of a startup error. Repeated prompts remain
+unresolved until behavior or a verified upstream limitation explains them.
 
 Twenty-four system resources and three account configuration files comprise the desktop: wallpaper, Niri theme/configuration, Noctalia TOML/palette, a minimal profile launcher, Fcitx profile/global defaults/launcher, shared candidate UI defaults and three theme assets, an output-scale helper, a Power options application entry, the session entry, three shortcut-plugin files (manifest, presenter and generated data) two power-plugin files (manifest and panel), and three system integration resources and three home files for [WezTerm](wezterm.md). Noctalia reads managed defaults from /etc/qubix/noctalia/. The launcher sets Noctalia-specific state/data roots beneath the user's XDG roots' qubix/ namespace. Native configuration and ordinary application XDG paths remain intact. Noctalia cache follows XDG_CACHE_HOME; GUI overrides are user-owned and survive Ansible deployment/restoration. App-theme generators are disabled. The profile launcher keeps Noctalia 5.2's automatic GSettings dark-mode write in memory and restores the original backend for applications launched by Noctalia.
 

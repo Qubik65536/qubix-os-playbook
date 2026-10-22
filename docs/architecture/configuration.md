@@ -251,11 +251,12 @@ This needs no new profile input or resource. Native service units, portal select
 Slack settings and audio-device choices remain Preserved. See the
 [session lifecycle contract](../components/niri.md#native-session-lifecycle-and-huddles-repair).
 
-The operator-selected ThinkPad has a measured Slack GPU rendering failure. Its
-new account-only Slack launcher uses `--disable-gpu` after successful Huddle
-acceptance. This application-specific exception is not a global profile default:
-other hardware has not demonstrated the failure, and disabling GPU acceleration
-can increase CPU work. Native Slack resources and saved preferences stay preserved.
+The operator-selected ThinkPad has an account-only Slack launcher using
+`--enable-features=WebRTCPipeWireCapturer --ozone-platform-hint=auto` after a
+clean operator retry with GPU compositing enabled. This supersedes `--disable-gpu`;
+the earlier test did not establish that GPU acceleration caused the rendering
+failure. This account-specific policy is not a global profile default or a new
+playbook feature. Native Slack resources and saved preferences stay preserved.
 See [evidence and recovery](../project/huddle-test-results.md).
 
 The default Niri directional controls use at most two modifiers: Super for

@@ -114,3 +114,80 @@ the Qubix config and shuts down the target on logout. Do not restart the current
 desktop merely to obtain this evidence. If audio stalls again, collect service
 logs and investigate the compatibility-service failure rather than periodically
 restarting it. No new visual customization or boot acceptance is claimed.
+
+## GPU-enabled comparison and repeated chooser trace
+
+Follow-up on 2026-10-22, source base `910137f`. This supersedes the earlier
+inference that disabling GPU acceleration was necessary. The operator reports
+previously successful terminal launches; the narrowly filtered Slack command
+history confirms both:
+
+```bash
+slack --enable-features=WebRTCPipeWireCapturer --ozone-platform-hint=auto
+slack --enable-features=WebRTCPipeWireCapturer,WaylandWindowCapturer --ozone-platform-hint=auto
+```
+
+Tested the first combination with native `--gtk-version=3`, without `--disable-gpu`.
+The initial launch request reuses the existing process and is **not** comparison
+evidence. An initial process check misses Slack because it flattens its process
+title into one argv entry; checking `comm` and splitting that entry detects the
+old `--disable-gpu` process. After the operator fully quits Slack, the guarded
+relaunch establishes a new main PID 247533 with the intended flags. Its GPU
+process selects `--ozone-platform=wayland`; fresh startup telemetry reports
+`gpu_compositing: enabled` and `webgl: enabled`. The saved
+`useHwAcceleration` preference is true and remains unchanged.
+
+The operator confirms rendering and microphone work, while reporting multiple
+choosers and one desktop sharing-stopped message. An active Niri-to-Slack video
+link remains afterward. These results establish that the earlier software-rendering
+workaround is unnecessary for this retry. They do not isolate which flag, audio
+recovery or clean application restart explains the original improvement. Slack's
+child-process flags already enabled `WebRTCPipeWireCapturer` during the prior run.
+The second command's additional `WaylandWindowCapturer` is not tested or needed
+for the demonstrated result.
+
+Installed the validated GPU-enabled account launcher only after that confirmation.
+It replaces only the exact Qubix-created content; unexpected personal edits or a
+symlink would stop replacement. The earlier file is backed up at
+`~/.cache/qubix-huddle/slack-disable-gpu-20261022T232216Z.desktop`. Native
+`desktop-file-validate` and Gio desktop lookup pass, with mode 0644. The saved Exec
+retains `-s %U` and the native GTK selection, adding only the two tested flags.
+Native package entry and saved preferences remain preserved. No current-call
+restart is performed for installation. Direct terminal launches may use the
+tested command above; removing the new account override restores native launch.
+
+A three-minute transient diagnostic service pipes `dbus-monitor` into a filter
+that retains only ScreenCast method headers, discarding all argument lines and
+screen content. The clean-retry trace records four public `CreateSession`, four
+`SelectSources`, four `Start` and three `OpenPipeWireRemote` calls. Their sender
+is the same bus connection, `:1.353`; `GetConnectionUnixProcessID` maps it to
+Slack main PID 247533. Backend calls mirror the four frontend requests.
+
+| Session | Public CreateSession timestamp (EDT) | Start requested | PipeWire remote opened |
+|---|---|---|---|
+| 1 | 19:20:48.666 | Yes | Yes |
+| 2 | 19:20:52.681 | Yes | Not observed |
+| 3 | 19:20:53.689 | Yes | Yes |
+| 4 | 19:20:55.471 | Yes | Yes |
+
+This establishes multiple separate requests from Slack, rather than the host
+spontaneously reopening one chooser. Inspection of the native packaged
+`app.asar` finds a preview/listing helper using `desktopCapturer.getSources` and
+a Wayland `setDisplayMediaRequestHandler` which calls
+`getSources({types:["window","screen"]})` before invoking the callback with the
+selected source. This corroborates the application-level extra-session explanation
+in [Electron issue 30652](https://github.com/electron/electron/issues/30652).
+It does not prove which compiled call site initiated each recorded request.
+No application package is modified. The metadata trace omits Session.Close and
+response arguments, so the operator's stopped message cannot be conclusively
+assigned to a preview ending, a cancellation or an actual share interruption.
+
+The portal stays running and the final video link is active. Existing parent-window
+association and nonfatal Vulkan swapchain warnings remain. No verified launcher
+flag or portal setting suppresses Slack's redundant requests. The application-side
+fix must avoid/reuse unnecessary capture sessions while retaining the intended
+chooser. Repeated prompts and the stopped message remain unresolved, with explicit
+participant reception and next-login lifecycle acceptance still separate.
+[Current Slack release notes](https://slack.com/release-notes/linux) list 4.52.182
+after installed 4.52.178, but do not document a repeated-chooser fix; no package
+upgrade is performed or claimed as a solution.
