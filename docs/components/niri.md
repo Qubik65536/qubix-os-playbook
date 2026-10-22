@@ -40,6 +40,14 @@ WirePlumber, PulseAudio compatibility and GNOME/GTK desktop portals. Keep the
 distribution's Niri portal selection. Do not weaken portal dependencies or install
 global permission grants to hide a missing session target.
 
+For this operator-requested repair, a successful `--disable-gpu` Slack retry
+is persisted with an additive account launcher at `~/.local/share/applications/slack.desktop`
+copied from the native entry with only that argument added to `Exec`. Create it
+only when no personal override exists; validate its syntax and preserve Slack's
+saved preferences, native entry and package. Removing this new override restores
+the packaged launcher. This measured application workaround is not a global Niri
+default: it trades GPU acceleration for working Huddle rendering on this machine.
+
 Twenty-four system resources and three account configuration files comprise the desktop: wallpaper, Niri theme/configuration, Noctalia TOML/palette, a minimal profile launcher, Fcitx profile/global defaults/launcher, shared candidate UI defaults and three theme assets, an output-scale helper, a Power options application entry, the session entry, three shortcut-plugin files (manifest, presenter and generated data) two power-plugin files (manifest and panel), and three system integration resources and three home files for [WezTerm](wezterm.md). Noctalia reads managed defaults from /etc/qubix/noctalia/. The launcher sets Noctalia-specific state/data roots beneath the user's XDG roots' qubix/ namespace. Native configuration and ordinary application XDG paths remain intact. Noctalia cache follows XDG_CACHE_HOME; GUI overrides are user-owned and survive Ansible deployment/restoration. App-theme generators are disabled. The profile launcher keeps Noctalia 5.2's automatic GSettings dark-mode write in memory and restores the original backend for applications launched by Noctalia.
 
 Ansible validates Niri with niri validate --config %s, Noctalia with noctalia config validate %s, and the launcher with bash -n. Native tests additionally require Noctalia's production TOML to have no schema warnings, because its CLI can return zero for unknown-section warnings. Palette roles, required terminal colours and cross-component accent consistency are checked locally. The session entry is installed last; parser failures leave earlier inert files recoverable.

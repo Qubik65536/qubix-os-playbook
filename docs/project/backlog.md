@@ -4,12 +4,12 @@ Local bootstrap planning; later mirror substantial tasks to GitHub Issues. Categ
 
 ## B17 — Slack Huddle session lifecycle and stalled audio (Bug)
 
-Status: Implemented; controller/parser/current-session portal and audio capture Tested.
+Status: Implemented; controller/installation/parser/current-session portal and audio capture Tested.
 Contract: [native session lifecycle](../components/niri.md#native-session-lifecycle-and-huddles-repair).
 Evidence: [Huddle diagnostics and repair](huddle-test-results.md).
-Next: complete the staged root-owned login entry installation with local sudo,
-resolve the operator's remaining black Huddle windows (temporary software rendering
-under evaluation), confirm Slack sharing/microphone reception, and test native service
+Operator confirms microphone, rendering and sharing; the account Slack launcher
+retains the measured software-rendering workaround. Next: track the remaining
+repeated chooser prompts upstream, confirm participant reception, and test native service
 startup/target teardown at a convenient fresh login. If capture stalls again,
 investigate `pipewire-pulse` logs; no recurring service restart workaround is installed.
 

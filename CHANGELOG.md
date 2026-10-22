@@ -8,6 +8,9 @@ Changes are grouped by release. Bootstrap has no release tag.
   activating the graphical-session target required by GNOME screen-sharing portals.
   Diagnose stalled Slack microphone capture separately and recover the running
   PulseAudio compatibility service without restarting Niri or enabling a camera.
+  Confirm Huddle audio/rendering/sharing with the operator and add an account-only
+  software-rendering Slack launcher on the affected ThinkPad; retain upstream
+  repeated-picker behavior as a known limitation.
 
 - Simplify directional controls to Super for focus, Shift for tiled movement,
   Ctrl for resizing and Alt for screen transfers, with arrows/HJKL throughout.

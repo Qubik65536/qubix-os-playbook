@@ -2,17 +2,21 @@
 
 Updated: 2026-10-22. Stage: **MVP candidate; acceptance In Progress**.
 
-Slack Huddle session repair **Implemented; controller/parser/live portal and audio
-capture Tested; persistent installation and operator acceptance pending**. The Qubix
+Slack Huddle session repair **Implemented; controller/installation/parser/live portal
+and audio capture Tested; operator Huddle audio/rendering/sharing confirmed**. The Qubix
 login entry now uses native `niri-session` with the explicit Qubix config, activating
 the graphical target required by GNOME portal. A transient anchor repairs the existing
 session without replacing Niri. Public portal session creation succeeds. Restarting
 the stalled PulseAudio compatibility service restores microphone samples independently
 of Slack; saved input settings remain preserved. Desktop fixtures pass normal/check
-modes, each 86 tasks/zero changes; static validation passes. Root entry installation
-needs local sudo; Slack participant reception and fresh-login lifecycle remain pending.
-The first Slack retry still produces black Huddle windows and a mute message;
-a temporary `--disable-gpu` run is under evaluation, with saved preferences preserved.
+modes, each 86 tasks/zero changes; static validation passes. Operator local-sudo
+installation is checksum/ownership/numbered-backup verified; Slack participant
+reception and fresh-login lifecycle remain separate acceptance items.
+The first Slack retry still produces black Huddle windows and a desktop mute message;
+the operator confirms microphone, window rendering and sharing on the `--disable-gpu`
+retry. A new account-only Slack launcher preserves this measured workaround without
+changing saved preferences or the native entry. Occasional repeated chooser prompts
+remain an upstream-consistent limitation, not a resolved issue.
 See [evidence and limits](huddle-test-results.md).
 
 Simplified shortcuts/adaptive cheatsheet **Implemented; controller normal/check and

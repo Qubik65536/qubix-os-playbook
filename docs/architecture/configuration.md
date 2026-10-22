@@ -251,6 +251,13 @@ This needs no new profile input or resource. Native service units, portal select
 Slack settings and audio-device choices remain Preserved. See the
 [session lifecycle contract](../components/niri.md#native-session-lifecycle-and-huddles-repair).
 
+The operator-selected ThinkPad has a measured Slack GPU rendering failure. Its
+new account-only Slack launcher uses `--disable-gpu` after successful Huddle
+acceptance. This application-specific exception is not a global profile default:
+other hardware has not demonstrated the failure, and disabling GPU acceleration
+can increase CPU work. Native Slack resources and saved preferences stay preserved.
+See [evidence and recovery](../project/huddle-test-results.md).
+
 The default Niri directional controls use at most two modifiers: Super for
 window/screen focus, Shift to move tiles, Ctrl to resize and Alt to send a window
 to another screen. Both arrows and H/J/K/L work; Super+Escape locks. These replace

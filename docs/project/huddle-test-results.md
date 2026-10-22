@@ -47,13 +47,15 @@ The underlying cause of the stalled compatibility service remains undetermined.
   `desktop-file-validate` after omitting `DesktopNames` from a temporary parser
   copy. The validator rejects that pre-existing display-manager session key;
   the actual candidate retains `DesktopNames=niri` for portal selection.
-- **Persistent installation pending:** corrected entry staged at
-  `~/.cache/qubix-huddle/qubix-niri.desktop`, SHA256
+- **Persistent installation Tested:** the operator installs the staged
+  `~/.cache/qubix-huddle/qubix-niri.desktop` with local sudo. The installed
+  `/usr/share/wayland-sessions/qubix-niri.desktop` has SHA256
   `7a76a9a9988182955715b28b8dd5e6a6d28d012db1154adaa0efe1205e52a1fc`.
-  The root-owned installed entry still has the old hash. Noninteractive sudo
-  requires a password; the operator has the exact local `sudo install` command
-  with a numbered backup. Normal playbook deployment manages the same resource
-  through its existing baseline/receipt lifecycle.
+  Remote verification confirms mode 0644/root:root and the numbered backup
+  `qubix-niri.desktop.~1~`. Installation does not restart the desktop or prove a
+  fresh login. This scoped manual install does not update deployment receipts;
+  normal playbook reconciliation manages the same resource through its existing
+  baseline/receipt lifecycle, preserving original recovery baselines.
 - **Controller Tested:** `scripts/validate.sh` passes. The desktop fixture passes
   normal/check modes, each 86 tasks, zero changes and eight expected refusals.
   The initial sandboxed fixture fails to start Ansible RPC; authorized execution
@@ -71,12 +73,42 @@ The system default microphone remains unmuted. Slack logs report its renderer
 was killed; they do not establish why its windows turned black. This supersedes
 any inference that successful backend probes establish usable Slack Huddles.
 Reopened the closed app with `--disable-gpu` for a temporary software-rendering
-diagnostic; saved Slack preferences and launch entries remain unchanged. Its
-operator retry is pending. Do not enable this workaround globally without evidence.
+diagnostic; saved Slack preferences and launch entries remain unchanged. The
+operator then confirms the microphone works and identifies the earlier message
+as a small desktop popup. A live PulseAudio source-output also confirms Slack's
+capture stream. The operator subsequently confirms normal window rendering and
+working screen sharing, while reporting occasional repeated source-chooser prompts.
 
-With camera off, confirm a source chooser opens,
-sharing remains active and a participant receives it; confirm the selected input
-level responds to speech and a participant hears it. Then verify a convenient
+During the same retry, `wpctl status` shows an active Niri video output linked to
+Slack's video input, alongside active microphone capture and speaker playback.
+This establishes a live sharing connection without inspecting screen content;
+it does not establish the recipient's image or correct Huddle window rendering.
+
+After that confirmation, installed a new account-only
+`~/.local/share/applications/slack.desktop`, copied from the packaged entry with
+only `--disable-gpu` added to `Exec`. Exclusive file creation preserves any existing
+personal entry; none existed. Native desktop validation passes, mode is 0644, and
+Gio desktop lookup selects the new account entry. The native package entry and
+saved Slack preferences remain unchanged. An initial candidate validation through
+`/dev/stdin` stops before writes; validating an ordinary temporary file succeeds.
+The new launcher applies on future menu/deep-link launches; a direct `slack` command
+still needs `--disable-gpu`. To recover, remove only this newly added account entry
+and refresh the account desktop cache. No current Huddle or application restart is
+needed for installation. GPU acceleration is disabled only for this app/account,
+with a potential CPU cost; this is not a new global profile default.
+
+The repeated chooser is consistent with Electron's
+[reported redundant Wayland share dialogs affecting Slack](https://github.com/electron/electron/issues/30652)
+and its [PipeWire source-selection API constraints](https://www.electronjs.org/docs/latest/api/desktop-capturer#linux).
+This is an inference from upstream reports and the observed successful live stream,
+not a proven Slack-internal root cause or a resolved issue. The portal also logs
+parent-window association warnings and nonfatal Vulkan `VK_SUBOPTIMAL_KHR` messages.
+No portal permissions are bypassed and no Slack application code is patched.
+
+Original microphone/rendering/screen-sharing symptoms are operator-confirmed
+resolved with the above changes. Repeated chooser prompts remain a known limitation;
+track an upstream Slack/Electron correction. Explicit remote-participant reception
+is not separately recorded. Verify a convenient
 fresh Qubix login starts `niri.service` and `graphical-session.target`, selects
 the Qubix config and shuts down the target on logout. Do not restart the current
 desktop merely to obtain this evidence. If audio stalls again, collect service
