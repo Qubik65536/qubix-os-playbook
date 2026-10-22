@@ -171,3 +171,14 @@ The test also reads the actual native global configuration and requires empty fo
 backward group-switch shortcuts with Ctrl+Space retained, catching the Super+Space
 launcher conflict. Both subprocesses and temporary files are removed. This proves native parser/engine
 behavior, independently of physical GTK/Qt/Electron typing and next-login startup.
+
+## Native Rime and candidate UI exploration
+
+The optional `tests/integration/input-options.yml` workflow compares current Pinyin,
+Luna Simplified and pinned Rime Ice on a prepared SSH target with GTK 3 and Niri.
+Install the native Rime prerequisites explicitly, download the archive specified by
+`tests/integration/fixtures/input-method/ice.yml` to `.cache/rime-exploration/ice.tar.gz`,
+then run the workflow with the developer inventory. It verifies the archive SHA256,
+uses private buses/data and a nested compositor, collects synthetic candidate samples
+and UI captures, and removes its temporary directory. No live profile is selected.
+See [source, screenshots, evidence and limitations](../architecture/input-method-options.md).

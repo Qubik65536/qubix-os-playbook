@@ -2,6 +2,19 @@
 
 Updated: 2026-10-21. Stage: **MVP candidate; acceptance In Progress**.
 
+Rime/candidate UI exploration **Native prototypes Tested; production adoption Planned**.
+User priorities are candidate appearance/placement and ranking. Installed Rime packages
+support isolated Luna Simplified and pinned Ice profiles; both convert `你好`/`汉语`.
+Eight-input samples favor Ice for technical vocabulary, without claiming general accuracy.
+Native GTK/Niri captures compare current Pinyin, Ice alone, and dark horizontal/vertical
+candidates. Correcting GTK's separate XDG config/data lookup makes the custom UI visible;
+server settings alone had produced an unstyled client-side fallback. The combined workflow
+passes 17 tasks/ten temporary/artifact changes; all four GTK contexts commit `你好`.
+Personal settings and primary Niri remain preserved, preview processes/directories clear,
+and a read-only audit retains the original Fcitx daemon. Static validation passes.
+Recommend Ice plus dark horizontal candidates; the active input profile stays unchanged.
+See [options, screenshots and limits](../architecture/input-method-options.md).
+
 Pinyin shortcut conflict correction **Implemented; native settings reload and regression
 Tested**. Fcitx's built-in Super+Space/Shift+Super+Space group cycling conflicts with
 the Niri launcher. A new global defaults file clears only those shortcuts, retaining

@@ -1,0 +1,46 @@
+{
+  "screenshots": [
+    {
+      "name": "native-pinyin",
+      "commit": "\u4f60\u597d",
+      "popup_size": [
+        421,
+        34
+      ],
+      "sha256": "13f4b1cfb8b7cb6e3f33b952a971fbf0b2b578aed7770164138b8235269c4e3b"
+    },
+    {
+      "name": "rime-ice-native",
+      "commit": "\u4f60\u597d",
+      "popup_size": [
+        261,
+        30
+      ],
+      "sha256": "958e56a5a187bcf53e50250323b7c99ff8f84cf07cf349a4ca53109f393e6fd3"
+    },
+    {
+      "name": "rime-ice-horizontal",
+      "commit": "\u4f60\u597d",
+      "popup_size": [
+        295,
+        58
+      ],
+      "sha256": "0c5be5e52a79f97e48cbe9a94f499aa82c4eaf52b8f69d18495521a21d0eff95"
+    },
+    {
+      "name": "rime-ice-vertical",
+      "commit": "\u4f60\u597d",
+      "popup_size": [
+        84,
+        218
+      ],
+      "sha256": "f811a609844f50dafb7de60c098190faf6f4d38bd4463179c26e25ed3653b743"
+    }
+  ],
+  "native_gtk_commit": true,
+  "cleanup_remaining": 0,
+  "personal_settings_preserved": true,
+  "primary_niri_preserved": true,
+  "authentication_tested": false,
+  "boot_tested": false
+}

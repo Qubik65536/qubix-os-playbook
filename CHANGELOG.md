@@ -4,6 +4,11 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Compare native Pinyin, Rime Luna Simplified and pinned Rime Ice with synthetic
+  candidate samples and sanitized GTK/Niri candidate-window previews. Identify the
+  separate GTK client-side XDG theme lookup; recommend Ice plus dark horizontal UI.
+  Keep production defaults and the active input profile unchanged during exploration.
+
 - Disable Fcitx's default Super+Space/Shift+Super+Space group shortcuts to preserve
   the Niri app launcher; retain Ctrl+Space for Pinyin and personal settings precedence.
 

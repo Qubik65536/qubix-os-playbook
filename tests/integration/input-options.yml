@@ -1,0 +1,106 @@
+---
+- name: Compare native Pinyin and Rime in disposable profiles
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  vars_files:
+    - fixtures/input-method/ice.yml
+  tasks:
+    - name: Require actual native comparison
+      ansible.builtin.assert:
+        that: [not ansible_check_mode]
+    - name: Verify the pinned controller evaluation archive
+      ansible.builtin.stat:
+        path: '{{ playbook_dir }}/../../.cache/rime-exploration/ice.tar.gz'
+        checksum_algorithm: sha256
+        get_mime: false
+      delegate_to: localhost
+      register: qubix_input_archive
+    - name: Refuse a missing or different source archive
+      ansible.builtin.assert:
+        that: [qubix_input_archive.stat.checksum | default('') == sha256]
+        fail_msg: >-
+          Download the pinned URL in tests/integration/fixtures/input-method/ice.yml
+          to .cache/rime-exploration/ice.tar.gz.
+    - name: Create a private comparison directory
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: qubix-input-options.
+      register: qubix_input_options
+    - name: Compare engines with guaranteed artifact collection and cleanup
+      block:
+        - name: Create the source extraction directory
+          ansible.builtin.file:
+            path: '{{ qubix_input_options.path }}/ice'
+            state: directory
+            mode: '0700'
+        - name: Transfer the pinned evaluation archive
+          ansible.builtin.copy:
+            src: '{{ playbook_dir }}/../../.cache/rime-exploration/ice.tar.gz'
+            dest: '{{ qubix_input_options.path }}/ice.tar.gz'
+            mode: '0600'
+        - name: Extract evaluation data only in the new private directory
+          ansible.builtin.unarchive:
+            src: '{{ qubix_input_options.path }}/ice.tar.gz'
+            dest: '{{ qubix_input_options.path }}/ice'
+            remote_src: true
+            mode: 'u+rwX,go-rwx'
+        - name: Transfer the native-only engine comparison helper
+          ansible.builtin.copy:
+            src: files/input-options.py
+            dest: '{{ qubix_input_options.path }}/probe.py'
+            mode: '0600'
+        - name: Isolate bus service activation from the desktop
+          ansible.builtin.copy:
+            dest: '{{ qubix_input_options.path }}/bus.conf'
+            content: >-
+              <busconfig><type>session</type><listen>unix:tmpdir=/tmp</listen>
+              <policy context="default"><allow send_destination="*"/>
+              <allow receive_sender="*"/><allow own="*"/></policy></busconfig>
+            mode: '0600'
+        - name: Transfer the native-only UI preview helper
+          ansible.builtin.copy:
+            src: files/input-ui-preview.py
+            dest: '{{ qubix_input_options.path }}/preview.py'
+            mode: '0600'
+        - name: Transfer only the evaluation theme to the private directory
+          ansible.builtin.copy:
+            src: fixtures/input-method/theme/
+            dest: '{{ qubix_input_options.path }}/theme/'
+            mode: '0600'
+            directory_mode: '0700'
+        - name: Exercise all three native engine configurations on a private bus
+          ansible.builtin.command:
+            argv: [dbus-run-session, --config-file, '{{ qubix_input_options.path }}/bus.conf', --,
+                   python3, '{{ qubix_input_options.path }}/probe.py', '{{ qubix_input_options.path }}']
+          changed_when: false
+          timeout: 180
+        - name: Render native reference and two candidate layouts in a private nested compositor
+          ansible.builtin.command:
+            argv: [python3, '{{ qubix_input_options.path }}/preview.py', '{{ qubix_input_options.path }}']
+          changed_when: false
+          timeout: 180
+      always:
+        - name: Find available sanitized preview artifacts
+          ansible.builtin.find:
+            paths: '{{ qubix_input_options.path }}'
+            patterns: ['*.png', '*.log', '*result.json']
+          register: qubix_input_previews
+        - name: Fetch preview artifacts before cleanup
+          ansible.builtin.fetch:
+            src: '{{ item.path }}'
+            dest: '{{ playbook_dir }}/../../.cache/rime-exploration/'
+            flat: true
+          loop: '{{ qubix_input_previews.files }}'
+          loop_control:
+            label: '{{ item.path | basename }}'
+        - name: Retain the candidate samples if available
+          ansible.builtin.fetch:
+            src: '{{ qubix_input_options.path }}/comparison.json'
+            dest: '{{ playbook_dir }}/../../.cache/rime-exploration/comparison.json'
+            flat: true
+            fail_on_missing: false
+        - name: Remove only the test-created data
+          ansible.builtin.file:
+            path: '{{ qubix_input_options.path }}'
+            state: absent

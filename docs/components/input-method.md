@@ -45,3 +45,7 @@ Shortcut correction acceptance: the native global configuration reports empty fo
 backward group shortcuts, retains Ctrl+Space, and still converts Simplified Chinese.
 The primary daemon must reload those settings without a compositor restart; identical
 file reapplication must report zero changes. Physical launcher/input acceptance is separate.
+
+[Rime and candidate UI options](../architecture/input-method-options.md) now have native
+engine/GTK preview evidence. Rime Ice adoption and production UI integration remain
+Planned; ordinary deployment still uses the Pinyin defaults described above.

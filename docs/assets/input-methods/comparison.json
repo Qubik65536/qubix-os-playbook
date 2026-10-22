@@ -1,0 +1,303 @@
+[
+  {
+    "name": "pinyin",
+    "engine": "pinyin",
+    "schema": null,
+    "samples": [
+      {
+        "input": "nihao",
+        "candidates": [
+          "你好",
+          "👋",
+          "拟好",
+          "你",
+          "拟",
+          "泥",
+          "逆"
+        ],
+        "commit": "你好"
+      },
+      {
+        "input": "hanyu",
+        "candidates": [
+          "汉语",
+          "韩愈",
+          "韩语",
+          "韩娱",
+          "寒雨",
+          "寒玉",
+          "汉玉"
+        ],
+        "commit": "汉语"
+      },
+      {
+        "input": "jisuanji",
+        "candidates": [
+          "计算机",
+          "🖥",
+          "计算",
+          "🧮",
+          "肌酸",
+          "己酸",
+          "及"
+        ],
+        "commit": "计算机"
+      },
+      {
+        "input": "kaifazhe",
+        "candidates": [
+          "开发者",
+          "开发",
+          "楷法",
+          "开法",
+          "开罚",
+          "开",
+          "楷"
+        ],
+        "commit": "开发者"
+      },
+      {
+        "input": "rengongzhineng",
+        "candidates": [
+          "人工智能",
+          "人工",
+          "任公",
+          "仍",
+          "扔",
+          "人格",
+          "认购"
+        ],
+        "commit": "人工智能"
+      },
+      {
+        "input": "shurufa",
+        "candidates": [
+          "输入法",
+          "🔠",
+          "🔡",
+          "sherifa",
+          "输入",
+          "⌨",
+          "竖儒"
+        ],
+        "commit": "输入法"
+      },
+      {
+        "input": "weixin",
+        "candidates": [
+          "微信",
+          "威信",
+          "维新",
+          "违心",
+          "唯心",
+          "委心",
+          "为"
+        ],
+        "commit": "微信"
+      },
+      {
+        "input": "github",
+        "candidates": [
+          "个I太湖边",
+          "fichu",
+          "个I他湖北",
+          "个I太湖不",
+          "个",
+          "更",
+          "各"
+        ],
+        "commit": "个I太湖边"
+      }
+    ]
+  },
+  {
+    "name": "luna",
+    "engine": "rime",
+    "schema": "luna_pinyin_simp",
+    "samples": [
+      {
+        "input": "nihao",
+        "candidates": [
+          "你好",
+          "妳好",
+          "逆号",
+          "拟好",
+          "你"
+        ],
+        "commit": "你好"
+      },
+      {
+        "input": "hanyu",
+        "candidates": [
+          "汉语",
+          "韩语",
+          "韩愈",
+          "寒玉",
+          "旱烟"
+        ],
+        "commit": "汉语"
+      },
+      {
+        "input": "jisuanji",
+        "candidates": [
+          "计算机",
+          "计算",
+          "肌酸",
+          "激素",
+          "极速"
+        ],
+        "commit": "计算机"
+      },
+      {
+        "input": "kaifazhe",
+        "candidates": [
+          "开发者",
+          "开发",
+          "开法",
+          "楷法",
+          "开"
+        ],
+        "commit": "开发者"
+      },
+      {
+        "input": "rengongzhineng",
+        "candidates": [
+          "人工智能",
+          "人工",
+          "认供",
+          "任公",
+          "壬公"
+        ],
+        "commit": "人工智能"
+      },
+      {
+        "input": "shurufa",
+        "candidates": [
+          "输入法",
+          "输入",
+          "澍濡",
+          "菽乳",
+          "竖儒"
+        ],
+        "commit": "输入法"
+      },
+      {
+        "input": "weixin",
+        "candidates": [
+          "微信",
+          "威信",
+          "违心",
+          "维新",
+          "唯心"
+        ],
+        "commit": "微信"
+      },
+      {
+        "input": "github",
+        "candidates": [
+          "个",
+          "给",
+          "过",
+          "跟",
+          "更"
+        ],
+        "commit": ""
+      }
+    ]
+  },
+  {
+    "name": "ice",
+    "engine": "rime",
+    "schema": "rime_ice",
+    "samples": [
+      {
+        "input": "nihao",
+        "candidates": [
+          "你好",
+          "👋",
+          "拟好",
+          "你",
+          "尼"
+        ],
+        "commit": "你好"
+      },
+      {
+        "input": "hanyu",
+        "candidates": [
+          "汉语",
+          "韩语",
+          "韩娱",
+          "韩愈",
+          "寒雨"
+        ],
+        "commit": "汉语"
+      },
+      {
+        "input": "jisuanji",
+        "candidates": [
+          "计算机",
+          "🖥",
+          "计算",
+          "肌酸",
+          "己酸"
+        ],
+        "commit": "计算机"
+      },
+      {
+        "input": "kaifazhe",
+        "candidates": [
+          "开发者",
+          "开发",
+          "开",
+          "凯",
+          "慨"
+        ],
+        "commit": "开发者"
+      },
+      {
+        "input": "rengongzhineng",
+        "candidates": [
+          "人工智能",
+          "人工智能编程",
+          "人工智能操作系统",
+          "人工智能大模型",
+          "人工智能行业"
+        ],
+        "commit": "人工智能"
+      },
+      {
+        "input": "shurufa",
+        "candidates": [
+          "输入法",
+          "输入",
+          "书",
+          "📖",
+          "📚"
+        ],
+        "commit": "输入法"
+      },
+      {
+        "input": "weixin",
+        "candidates": [
+          "微信",
+          "威信",
+          "唯心",
+          "违心",
+          "维新"
+        ],
+        "commit": "微信"
+      },
+      {
+        "input": "github",
+        "candidates": [
+          "GitHub",
+          "GitHub Pages",
+          "GitHub Actions",
+          "GitHub Copilot",
+          "GitHub Copilot X"
+        ],
+        "commit": "GitHub"
+      }
+    ]
+  }
+]

@@ -317,3 +317,14 @@ Evidence: [SSH test results](pinyin-test-results.md).
 Next: after a fresh Qubix login, physically test Ctrl+Space, candidate selection and
 English return in GTK, Qt, WezTerm and the user's Electron/Chromium applications.
 Record application versions/flags and candidate placement; preserve existing profiles.
+
+## F25 — Rime Ice and candidate UI integration (Feature)
+
+Status: Planned for production; native engine and GTK/Niri visual prototypes Tested.
+User priorities, comparisons, recommendation and source pins are in the
+[input options document](../architecture/input-method-options.md).
+Next: implement the documented Ice/horizontal-UI default with package/source preparation,
+recoverable resources and preserved user schemas/dictionaries. Test cold schema deployment/readiness, GTK/Qt/Electron and
+terminal discovery, long candidates/paging/screen edges/HiDPI, personal precedence and
+zero-change reapplication. Retain Ctrl+Space and the existing launcher conflict fix.
+Do not describe optional evaluation fixtures as an activated production feature.
