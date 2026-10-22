@@ -14,10 +14,16 @@ The standard playbook preserves the native session entry. If you separately auth
 If your existing manager, such as a fixed-command greetd setup, does not expose a session picker, log out, open a free VM TTY, sign in as your ordinary user and run:
 
 ```bash
-niri --session --config /etc/niri/qubix/config.kdl
+NIRI_CONFIG=/etc/niri/qubix/config.kdl niri-session
 ```
 
 Run this from a free TTY, not inside an existing graphical session. In a temporary nested preview the Mod key is Alt; the main session uses Super. Qubix does not rewrite greetd's session command.
+
+The native session launcher activates the graphical session required for screen
+sharing. Slack Huddles use the GNOME portal chooser; select a screen or window
+there. Microphone access is separate: select the intended input in Slack's audio
+preferences and check its level while speaking. Camera access is optional.
+See the [session and audio repair contract](../components/niri.md#native-session-lifecycle-and-huddles-repair).
 
 | Key | Action |
 |---|---|

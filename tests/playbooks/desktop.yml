@@ -50,7 +50,10 @@
           - qubix_niri_resources | length == 24
           - "'/etc/niri/config.kdl' not in (qubix_niri_resources | map(attribute='path') | list)"
           - qubix_niri_resources[-2].validate == '/usr/bin/niri validate --config %s'
-          - "'--config /etc/niri/qubix/config.kdl' in qubix_niri_resources[-1].content"
+          - >-
+            'Exec=/usr/bin/env NIRI_CONFIG=/etc/niri/qubix/config.kdl /usr/bin/niri-session'
+            in qubix_niri_resources[-1].content
+          - "'TryExec=/usr/bin/niri-session' in qubix_niri_resources[-1].content"
           - "'spawn-at-startup \"/usr/share/qubix/bin/qubix-noctalia\"' in qubix_niri_resources[-2].content"
           - "'/usr/bin/waybar' not in qubix_niri_resources[-2].content"
           - "'/usr/bin/mako' not in qubix_niri_resources[-2].content"

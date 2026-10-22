@@ -15,13 +15,42 @@ icon and searchable entry add six. Both follow the [refinement contract](../arch
 
 ## Managed resources and activation
 
+### Native session lifecycle and Huddles repair
+
+Focused task: restore Slack Huddle screen sharing and diagnose microphone access
+without replacing the compositor, changing saved Slack permissions or enabling a camera.
+The Qubix login entry must use the distribution's `niri-session` launcher with
+`NIRI_CONFIG=/etc/niri/qubix/config.kdl`. The launcher imports the login environment,
+starts native `niri.service` and its `graphical-session.target`, waits for logout,
+then stops the graphical session. Direct `niri --session` imports environment but
+does not start that target; GNOME portal's `Requisite` consequently rejects startup.
+Native units, personal Niri configuration and portal preferences stay Preserved.
+This integration is included with enabled Niri, without another feature switch.
+
+Acceptance: controller rendering checks the launcher/config pair; native entry
+parsing passes; the current-session repair retains compositor/boot identity and
+starts the GNOME portal with its ScreenCast interface; audio sources and capture
+access are checked independently. Do not store microphone samples or capture screen
+content during diagnostics. A live Slack Huddle, chooser selection and remote
+participant audio/screen reception remain operator checks. Fresh-login service
+lifecycle acceptance is separate from repairing an already-running session.
+
+Prerequisites are the distribution's native `niri-session`/`niri.service`, PipeWire,
+WirePlumber, PulseAudio compatibility and GNOME/GTK desktop portals. Keep the
+distribution's Niri portal selection. Do not weaken portal dependencies or install
+global permission grants to hide a missing session target.
+
 Twenty-four system resources and three account configuration files comprise the desktop: wallpaper, Niri theme/configuration, Noctalia TOML/palette, a minimal profile launcher, Fcitx profile/global defaults/launcher, shared candidate UI defaults and three theme assets, an output-scale helper, a Power options application entry, the session entry, three shortcut-plugin files (manifest, presenter and generated data) two power-plugin files (manifest and panel), and three system integration resources and three home files for [WezTerm](wezterm.md). Noctalia reads managed defaults from /etc/qubix/noctalia/. The launcher sets Noctalia-specific state/data roots beneath the user's XDG roots' qubix/ namespace. Native configuration and ordinary application XDG paths remain intact. Noctalia cache follows XDG_CACHE_HOME; GUI overrides are user-owned and survive Ansible deployment/restoration. App-theme generators are disabled. The profile launcher keeps Noctalia 5.2's automatic GSettings dark-mode write in memory and restores the original backend for applications launched by Noctalia.
 
 Ansible validates Niri with niri validate --config %s, Noctalia with noctalia config validate %s, and the launcher with bash -n. Native tests additionally require Noctalia's production TOML to have no schema warnings, because its CLI can return zero for unknown-section warnings. Palette roles, required terminal colours and cross-component accent consistency are checked locally. The session entry is installed last; parser failures leave earlier inert files recoverable.
 
 Each visible bar widget has its own compact rounded module; the dock reserves no bottom area. The launcher pins Power options (Noctalia application ID qubix-power) to open the [guarded power panel](../architecture/desktop-design.md#power-action-countdown), also reached from Super+X and the bar power button. It requires holding keys 1–5 and offers cancellable click countdowns. The Control Center retains the native menu with countdown defaults. The global Session provider searches enabled native actions; /session lists them, and direct selection executes through Noctalia's native runner. The desktop entry only opens the guarded menu. User GUI overrides remain preserved. The keyboard button and Super+Shift+/ open a searchable two-column shortcut panel; Super+F1 keeps Niri's compact fallback. Super+Ctrl+arrows (with H/J/K/L aliases) resize column width/window height in 5% steps; Super+Ctrl+R resets height. Its managed local Noctalia plugin uses the existing declarative UI runtime and presents labels generated from KDL bindings. It does not execute shortcuts, fetch plugins or alter personal configuration. Native tests lint both plugin manifests/entry paths, open/filter/close the shortcut panel and capture screenshots; controller fixtures verify generated bindings and power confirmation behavior without executing actions.
 
-Select **Qubix Niri** at login. From a free TTY after logout, niri --session --config /etc/niri/qubix/config.kdl is the alternate entrypoint. The explicit configuration does not inherit personal Niri settings. An existing session can reload its window/shortcut settings, but startup commands do not switch the running companion stack; logout and session selection activate Noctalia.
+Select **Qubix Niri** at login. From a free TTY after logout,
+`NIRI_CONFIG=/etc/niri/qubix/config.kdl niri-session` is the alternate entrypoint.
+The explicit configuration does not inherit personal Niri settings. An existing
+session can reload its window/shortcut settings, but startup commands do not switch
+the running companion stack; logout and session selection activate Noctalia.
 
 Noctalia 5.2.1 can retain old plugin geometry after config-reload. Manifest size/placement upgrades
 use the [shell-only activation procedure and preservation constraints](../architecture/desktop-design.md#power-action-countdown);

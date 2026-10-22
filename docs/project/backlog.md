@@ -2,6 +2,17 @@
 
 Local bootstrap planning; later mirror substantial tasks to GitHub Issues. Categories: Feature, Bug, Documentation, Refactor, Testing, Maintenance. Dependencies are explicit; this is not a duplicate roadmap.
 
+## B17 — Slack Huddle session lifecycle and stalled audio (Bug)
+
+Status: Implemented; controller/parser/current-session portal and audio capture Tested.
+Contract: [native session lifecycle](../components/niri.md#native-session-lifecycle-and-huddles-repair).
+Evidence: [Huddle diagnostics and repair](huddle-test-results.md).
+Next: complete the staged root-owned login entry installation with local sudo,
+resolve the operator's remaining black Huddle windows (temporary software rendering
+under evaluation), confirm Slack sharing/microphone reception, and test native service
+startup/target teardown at a convenient fresh login. If capture stalls again,
+investigate `pipewire-pulse` logs; no recurring service restart workaround is installed.
+
 ## T16 — Screen shortcut interaction (Testing)
 
 Status: Simplified directional controls and adaptive keycaps Implemented;

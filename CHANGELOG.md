@@ -4,6 +4,11 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Start Qubix Niri through the native session launcher with its explicit config,
+  activating the graphical-session target required by GNOME screen-sharing portals.
+  Diagnose stalled Slack microphone capture separately and recover the running
+  PulseAudio compatibility service without restarting Niri or enabling a camera.
+
 - Simplify directional controls to Super for focus, Shift for tiled movement,
   Ctrl for resizing and Alt for screen transfers, with arrows/HJKL throughout.
   Move locking to Super+Escape and retire redundant high-modifier bindings.

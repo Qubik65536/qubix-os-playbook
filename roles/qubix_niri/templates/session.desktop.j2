@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Qubix Niri
 Comment=Qubix desktop with preserved native Niri configuration
-Exec=/usr/bin/niri --session --config /etc/niri/qubix/config.kdl
-TryExec=/usr/bin/niri
+Exec=/usr/bin/env NIRI_CONFIG=/etc/niri/qubix/config.kdl /usr/bin/niri-session
+TryExec=/usr/bin/niri-session
 Type=Application
 DesktopNames=niri

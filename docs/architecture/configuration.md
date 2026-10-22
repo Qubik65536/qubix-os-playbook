@@ -245,6 +245,12 @@ Enabled Niri includes the [screen-navigation shortcuts](desktop-design.md#simple
 by default, without a separate toggle or additional prerequisites. They use native
 monitor actions and preserve output layout and personal configuration.
 
+Enabled Niri uses the distribution's `niri-session` launcher with the explicit
+Qubix `NIRI_CONFIG`, including its native graphical-session lifecycle by default.
+This needs no new profile input or resource. Native service units, portal selection,
+Slack settings and audio-device choices remain Preserved. See the
+[session lifecycle contract](../components/niri.md#native-session-lifecycle-and-huddles-repair).
+
 The default Niri directional controls use at most two modifiers: Super for
 window/screen focus, Shift to move tiles, Ctrl to resize and Alt to send a window
 to another screen. Both arrows and H/J/K/L work; Super+Escape locks. These replace
