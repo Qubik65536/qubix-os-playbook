@@ -1,6 +1,16 @@
 # Project status
 
-Updated: 2026-10-21. Stage: **MVP candidate; acceptance In Progress**.
+Updated: 2026-10-22. Stage: **MVP candidate; acceptance In Progress**.
+
+Screen navigation **Implemented; controller/native parser and dual-screen session Tested;
+zero-change reapplication Tested**. Super+Alt+arrows focus screens;
+Super+Alt+Shift+arrows move the focused window. Eight bindings and generated panel
+entries ship with enabled Niri. Focused SSH installation passes 110 tasks/four changes;
+identical reapplication passes 110/zero changes;
+the native three-task regression passes internal/external roundtrips and no-neighbor
+Up/Down actions, restoring focus and preserving original windows, personal hashes,
+output settings, compositor and boot ID. Physical key input and vertical transfers
+remain operator checks. See [screen shortcut evidence](screen-shortcuts-test-results.md).
 
 Candidate theme **Implemented; installation/native GTK rendering/primary reload Tested**.
 Shared native Fcitx config/assets now enable the dark horizontal panel by default.

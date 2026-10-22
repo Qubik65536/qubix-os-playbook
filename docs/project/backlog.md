@@ -2,6 +2,16 @@
 
 Local bootstrap planning; later mirror substantial tasks to GitHub Issues. Categories: Feature, Bug, Documentation, Refactor, Testing, Maintenance. Dependencies are explicit; this is not a duplicate roadmap.
 
+## T16 — Screen shortcut interaction (Testing)
+
+Status: Implemented; controller/native dual-screen IPC and zero-change reapplication Tested.
+Contract: [screen navigation](../architecture/desktop-design.md#screen-navigation).
+Evidence: [SSH acceptance](screen-shortcuts-test-results.md). Native focus and
+single-window transfers pass between the actual internal/external displays; no-neighbor
+Up/Down behavior passes. Preserve personal configuration and output geometry.
+Next: verify physical Super+Alt+arrow and Super+Alt+Shift+arrow input, vertical
+screen arrangements and unplug/replug behavior. This remains separate from boot acceptance.
+
 ## F01 — Read-only foundation (Feature)
 
 Status: Implemented; fixture contracts and actual CachyOS read-only collection Tested. Protected boot metadata requires explicit privilege; the live run reports zero changes.

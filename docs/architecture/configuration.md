@@ -240,3 +240,7 @@ lives at `/etc/xdg/fcitx5/conf/classicui.conf`, with Managed theme assets in
 paths. This affects Fcitx in other sessions without personal UI settings; native
 session configuration itself stays preserved. Personal UI overrides are preserved.
 See the [input ownership and acceptance contract](../components/input-method.md).
+
+Enabled Niri includes the [screen-navigation shortcuts](desktop-design.md#screen-navigation)
+by default, without a separate toggle or additional prerequisites. They use native
+monitor actions and preserve output layout, personal bindings and existing resize keys.

@@ -32,6 +32,8 @@ Run this from a free TTY, not inside an existing graphical session. In a tempora
 | Super+Ctrl+Left/Right or H/L | Resize column width |
 | Super+Ctrl+Up/Down or K/J | Resize window height |
 | Super+Ctrl+R | Reset automatic window height |
+| Super+Alt+arrow keys | Focus the screen in that direction |
+| Super+Alt+Shift+arrow keys | Move the focused window to that screen |
 | Super+Tab or Super+O | Overview |
 | Alt+Tab | Noctalia window switcher |
 | Super+Shift+S | Screenshot |
@@ -44,6 +46,13 @@ The compact top bar groups each component in its own rounded module. The dock is
 For power controls, press **Super+X**, click the bar power button, or choose the pinned **Power options** entry in the launcher. The compact menu follows Noctalia's horizontal icon-tile layout with number badges beside the bar. Hold **1** Lock, **2** Log out, **3** Lock & Suspend, **4** Reboot or **5** Shut down for **three seconds**; releasing early cancels. Clicking a tile starts a **five-second countdown**; clicking it again cancels. Escape, the lower-right Cancel button or closing the menu cancels too. Shut Down keeps Noctalia’s destructive highlight. The lower-left prompt explains confirmation and cancellation; the selected tile shows progress and remaining seconds. Lock actions are unavailable when Noctalia locking is disabled.
 
 The Control Center's built-in power entry opens the separate native menu: its supplied five-second countdown uses tap-to-arm and a second activation confirms immediately, without release-to-cancel. Native per-row GUI overrides apply there and remain preserved. Searching **reboot**, **shutdown**, **sleep**, **lock** or **logout**, or typing **/session**, returns direct native actions that execute when selected. Those results and the dedicated Super+Alt+L lock shortcut do not use the guarded menu. See the [power confirmation contract](../architecture/desktop-design.md#power-action-countdown).
+
+Screen shortcuts follow your display layout: with the external screen to the right,
+Super+Alt+Right focuses it and Super+Alt+Shift+Right moves the focused window there.
+Use Left to return to the laptop screen. Up/Down support vertically arranged screens.
+With no screen in the requested direction, the action has no effect. Reopen the
+shortcut panel after deployment to see the updated list. No extra packages or
+connector configuration are required.
 
 Resize shortcuts use 5% steps. Tiled windows in one column share its width; height changes are easiest to see with two windows stacked in the column. The reset shortcut returns the focused window to automatic height.
 

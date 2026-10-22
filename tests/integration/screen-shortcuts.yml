@@ -1,0 +1,20 @@
+---
+- name: Test installed screen shortcuts on the selected dual-screen SSH target
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  tasks:
+    - name: Require native execution
+      ansible.builtin.assert:
+        that: [not ansible_check_mode]
+        fail_msg: 'Check mode cannot exercise screen navigation.'
+    - name: Exercise configured actions using only a temporary test window
+      ansible.builtin.script:
+        cmd: files/screen-shortcuts.py
+        executable: /usr/bin/python3
+      changed_when: false
+      timeout: 60
+      register: qubix_screen_shortcuts_result
+    - name: Report monitor movement and preservation evidence
+      ansible.builtin.debug:
+        var: qubix_screen_shortcuts_result.stdout

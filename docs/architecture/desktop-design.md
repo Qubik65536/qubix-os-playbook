@@ -146,6 +146,8 @@ are separate gates. Never run a real power action during verification.
 | Super+W; Super+Q | Close focused window; W is the macOS-inspired alias |
 | Super+H/J/K/L or arrow keys | Navigate tiled windows |
 | Super+Shift+H/J/K/L or arrow keys | Move tiled windows |
+| Super+Alt+Left/Right/Up/Down | Focus the screen in that direction |
+| Super+Alt+Shift+Left/Right/Up/Down | Move the focused window to the screen in that direction |
 | Super+Shift+T | Toggle floating |
 | Super+Ctrl+W | Toggle tabbed column |
 | Super+Ctrl+Left/Right or H/L | Decrease/increase column width in 5% steps |
@@ -159,6 +161,24 @@ are separate gates. Never run a real power action during verification.
 | Super+F1 | Compact Niri shortcut overlay |
 
 Audio, microphone, media and brightness keys call Noctalia's installed IPC commands. Window/workspace sizing and navigation remain Niri actions. No automatic suspension, logout or lock is performed during deployment/testing.
+
+### Screen navigation
+
+Status: **Implemented; controller/native horizontal dual-screen interaction Tested;
+zero-change reapplication Tested**. Native directional monitor bindings ship in the default
+Qubix session and generated shortcut panel. Internal/external screens use their
+current logical layout, without connector names, monitor configuration writes or
+new prerequisites. Moving affects the focused window rather than its whole column.
+With one screen, or no screen in the requested direction, native Niri behavior applies.
+Existing tile movement, resizing and Super+Alt+L locking remain available.
+
+Acceptance: controller binding/cheatsheet checks, native candidate parser validation,
+test-window internal/external focus and movement roundtrips, native no-neighbor
+behavior above/below the horizontal target layout, installed KDL and
+cheatsheet agreement, primary-session reload without compositor replacement or
+personal-config changes, and zero-change reapplication on the selected SSH target.
+Physical keyboard input and vertical transfers remain operator checks.
+See [native evidence](../project/screen-shortcuts-test-results.md).
 
 ## Acceptance and migration
 

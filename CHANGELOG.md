@@ -4,6 +4,9 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Add Super+Alt+arrows to focus screens and Super+Alt+Shift+arrows to move the
+  focused window between screens, with generated shortcut-panel entries.
+
 - Activate the dark horizontal Fcitx candidate theme by default, installing shared
   native client config/assets instead of leaving them in isolated previews. Preserve
   personal settings and the existing Pinyin engine; reload the primary daemon.
