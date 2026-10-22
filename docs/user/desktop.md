@@ -64,5 +64,6 @@ Run deployment again with the same revision and configuration. Expect zero manag
 
 Simplified Chinese Pinyin is included in the Qubix session. After login, focus a text
 field, press Ctrl+Space, type `nihao` and press Space to commit `你好`. Press Ctrl+Space
-again for English. Saved Fcitx profiles and shortcuts take precedence; add Pinyin to
+again for English. Super+Space stays assigned to the app launcher; Qubix disables
+Fcitx's conflicting default group shortcuts. Saved Fcitx profiles and shortcuts take precedence; add Pinyin to
 an existing profile if needed. See [input methods](../components/input-method.md).

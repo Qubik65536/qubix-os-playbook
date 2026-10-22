@@ -15,8 +15,9 @@
 - name: Add Pinyin defaults with personal configuration precedence
   ansible.builtin.set_fact:
     qubix_niri_resources: >-
-      {{ qubix_niri_resources + [{'path': '/etc/qubix/fcitx5/profile', 'component': 'niri',
-      'content': lookup('file', role_path ~ '/files/fcitx5/profile', rstrip=false), 'mode': '0644'}] }}
+      {{ qubix_niri_resources + [{'path': '/etc/qubix/fcitx5/' ~ item, 'component': 'niri',
+      'content': lookup('file', role_path ~ '/files/fcitx5/' ~ item, rstrip=false), 'mode': '0644'}] }}
+  loop: [config, profile]
 
 - name: Render canonical KDL before deriving its shortcut display data
   ansible.builtin.set_fact:

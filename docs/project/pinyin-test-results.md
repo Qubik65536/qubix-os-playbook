@@ -82,3 +82,27 @@ window placement, WezTerm and Electron/Chromium behavior still require applicati
 Already-open applications and the running shell may retain their original environment;
 logout/login activates the complete session startup path. Fresh-login autostart remains
 a separate gate. No boot test is performed or implied.
+
+## Super+Space conflict correction
+
+Source: parent `0933893` plus the correction committed with this section, same SSH
+environment. Native `GetConfig(fcitx://config/global)` reveals built-in group cycling
+on Super+Space and Shift+Super+Space, conflicting with the existing Niri launcher.
+The strengthened private-bus regression fails against that installed configuration
+before writes, specifically at the forward group shortcut assertion.
+
+An additional managed `/etc/qubix/fcitx5/config` clears only forward/backward group
+shortcuts. Personal global configuration retains precedence. Production rendering now
+includes 20 base system resources; Niri's Super+Space launcher binding remains intact.
+Focused installation of only the new file passes **92 tasks/three changes** with
+baseline recovery; identical-source reapplication passes **91 tasks/zero changes**. The running daemon's `ReloadConfig` and subsequent `GetConfig`
+report empty group shortcuts and Control+space among the retained trigger keys.
+Fcitx PID 93757 stays unchanged; personal-file hashes, Niri PIDs and boot identity
+match across live reload. No compositor or shell restart occurs.
+
+The native regression now passes **six tasks/three temporary-file changes**, including
+both empty group shortcut assertions, retained Ctrl+Space, real `你好`/`汉语` conversion
+and personal profile precedence. Desktop fixtures pass **84 tasks/zero changes/eight
+expected refusals** in normal/check mode, and static validation passes.
+Physical Super+Space launcher interaction remains an operator check; no physical input
+is injected into the primary session and no boot work is performed.

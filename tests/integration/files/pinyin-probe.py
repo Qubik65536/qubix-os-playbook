@@ -50,6 +50,12 @@ def probe(root, personal=False):
                 time.sleep(0.1)
             else:
                 raise AssertionError("Fcitx did not acquire its private bus name")
+            global_config, _ = call("/controller", "org.fcitx.Fcitx.Controller1", "GetConfig",
+                                    GLib.Variant("(s)", ("fcitx://config/global",)))
+            hotkeys = global_config["Hotkey"]
+            assert not hotkeys["EnumerateGroupForwardKeys"], hotkeys
+            assert not hotkeys["EnumerateGroupBackwardKeys"], hotkeys
+            assert "Control+space" in hotkeys["TriggerKeys"].values(), hotkeys
             # Separate client connection remains alive through context creation and all events.
             path, _ = call("/org/freedesktop/portal/inputmethod", IM_IFACE, "CreateInputContext",
                            GLib.Variant("(a(ss))", ([("program", "qubix-pinyin-test")],)))
@@ -81,7 +87,9 @@ def probe(root, personal=False):
                 assert (config / "profile").read_bytes() == original
             else:
                 assert all(handled) and commits == ["你好", "汉语"], (commits, handled)
-            return {"personal_precedence": personal, "commits": commits, "handled": handled}
+            return {"personal_precedence": personal, "commits": commits, "handled": handled,
+                    "group_shortcuts": [hotkeys["EnumerateGroupForwardKeys"],
+                                        hotkeys["EnumerateGroupBackwardKeys"]]}
         finally:
             process.terminate()
             process.wait(timeout=10)

@@ -2,6 +2,17 @@
 
 Updated: 2026-10-21. Stage: **MVP candidate; acceptance In Progress**.
 
+Pinyin shortcut conflict correction **Implemented; native settings reload and regression
+Tested**. Fcitx's built-in Super+Space/Shift+Super+Space group cycling conflicts with
+the Niri launcher. A new global defaults file clears only those shortcuts, retaining
+Ctrl+Space and personal-config precedence. The native regression fails before writes,
+then passes with both group shortcuts empty and Chinese conversion intact. Focused
+installation passes 92 tasks/three changes; reapplication passes 91/zero changes.
+Live reload preserves the daemon/compositor,
+personal hashes and boot identity. Controller normal/check fixtures and static validation
+pass. Physical launcher/input interaction remains an operator gate. See
+[shortcut evidence](pinyin-test-results.md#superspace-conflict-correction).
+
 Simplified Chinese Pinyin **Implemented; native installation/parser/engine/primary
 daemon and zero-change reapplication Tested**. Default Niri now starts Fcitx 5 with
 English/Pinyin defaults and GTK/Qt/XWayland integration, preserving personal profiles.

@@ -167,5 +167,7 @@ The installed launcher/defaults run with a private D-Bus session, configuration/
 and no connection to the compositor or X server. A synthetic client sends Ctrl+Space,
 `nihao`/`hanyu` and Space to its own input context and requires real `你好`/`汉语` commits. A second
 run seeds an English-only personal profile and requires its precedence with no conversion.
-Both subprocesses and temporary files are removed. This proves native parser/engine
+The test also reads the actual native global configuration and requires empty forward/
+backward group-switch shortcuts with Ctrl+Space retained, catching the Super+Space
+launcher conflict. Both subprocesses and temporary files are removed. This proves native parser/engine
 behavior, independently of physical GTK/Qt/Electron typing and next-login startup.

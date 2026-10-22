@@ -10,7 +10,10 @@ Niri includes Fcitx 5 by default, without a separate feature switch. Explicit pa
 preparation installs `fcitx5`, `fcitx5-chinese-addons`, `fcitx5-gtk`, `fcitx5-qt` and
 `noto-fonts-cjk`. Deployment only validates prerequisites; it never installs packages.
 The managed `/etc/qubix/fcitx5/profile` defaults to the US keyboard with Pinyin as the
-input method activated by Fcitx's native Ctrl+Space shortcut. Pinyin uses its native
+input method activated by Fcitx's native Ctrl+Space shortcut. The managed
+`/etc/qubix/fcitx5/config` clears Fcitx's built-in Super+Space and
+Shift+Super+Space group-switch shortcuts, reserving Super+Space for Niri's launcher.
+Personal global Fcitx configuration retains precedence, just like personal profiles. Pinyin uses its native
 Simplified Chinese output; no Traditional Chinese conversion is enabled by Qubix.
 
 The session starts `/usr/share/qubix/bin/qubix-fcitx5`. This launcher prepends the
@@ -37,3 +40,8 @@ Upstream references: [Fcitx setup](https://fcitx-im.org/wiki/Setup_Fcitx_5),
 [Fcitx search paths](https://github.com/fcitx/fcitx5/blob/master/src/lib/fcitx-utils/standardpath.cpp).
 
 See [native test evidence and remaining gates](../project/pinyin-test-results.md).
+
+Shortcut correction acceptance: the native global configuration reports empty forward/
+backward group shortcuts, retains Ctrl+Space, and still converts Simplified Chinese.
+The primary daemon must reload those settings without a compositor restart; identical
+file reapplication must report zero changes. Physical launcher/input acceptance is separate.

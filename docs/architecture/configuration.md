@@ -229,3 +229,7 @@ without another toggle. Separate package preparation supplies Fcitx 5, Chinese a
 GTK/Qt modules and CJK fonts. Managed defaults retain personal Fcitx precedence;
 existing profiles are deliberately preserved and may need Pinyin added manually.
 This preservation exception prevents replacing saved engines, dictionaries and shortcuts.
+
+Pinyin's managed global Fcitx defaults disable its Super+Space and Shift+Super+Space
+group-switch bindings to avoid the Niri launcher conflict; Ctrl+Space remains the input
+toggle. Existing personal global input settings retain precedence and are never rewritten.

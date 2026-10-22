@@ -18,6 +18,8 @@
     - name: Require Pinyin startup and native toolkit integration in the effective desktop
       ansible.builtin.assert:
         that:
+          - >-
+            'Mod+Space hotkey-overlay-title="Applications / App launcher"' in qubix_niri_config_content
           - "'GTK_IM_MODULE \"fcitx\"' in qubix_niri_config_content"
           - "'QT_IM_MODULE \"fcitx\"' in qubix_niri_config_content"
           - "'spawn-at-startup \"/usr/share/qubix/bin/qubix-fcitx5\"' in qubix_niri_config_content"
@@ -32,7 +34,7 @@
     - name: Require validated resources and preserved native ownership
       ansible.builtin.assert:
         that:
-          - qubix_niri_resources | length == 19
+          - qubix_niri_resources | length == 20
           - "'/etc/niri/config.kdl' not in (qubix_niri_resources | map(attribute='path') | list)"
           - qubix_niri_resources[-2].validate == '/usr/bin/niri validate --config %s'
           - "'--config /etc/niri/qubix/config.kdl' in qubix_niri_resources[-1].content"

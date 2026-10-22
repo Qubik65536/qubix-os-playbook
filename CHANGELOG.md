@@ -4,6 +4,9 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Disable Fcitx's default Super+Space/Shift+Super+Space group shortcuts to preserve
+  the Niri app launcher; retain Ctrl+Space for Pinyin and personal settings precedence.
+
 - Add default Simplified Chinese Pinyin to Qubix Niri with Fcitx 5, GTK/Qt integration,
   separately prepared native packages and preserved personal input configuration.
 

@@ -311,7 +311,8 @@ from a second physical client on a permitted shared channel, then stop sharing.
 
 Status: Implemented; controller normal/check fixtures, native installation/parser,
 private-context conversion/personal precedence, primary daemon and unchanged
-reapplication Tested. Contract/acceptance: [input methods](../components/input-method.md).
+reapplication Tested. Super+Space group-cycle conflict is corrected; native settings
+reload and regression pass, preserving the Niri launcher. Contract/acceptance: [input methods](../components/input-method.md).
 Evidence: [SSH test results](pinyin-test-results.md).
 Next: after a fresh Qubix login, physically test Ctrl+Space, candidate selection and
 English return in GTK, Qt, WezTerm and the user's Electron/Chromium applications.
