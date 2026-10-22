@@ -1,0 +1,7 @@
+---
+- name: Require prepared native Pinyin and toolkit packages before desktop writes
+  ansible.builtin.assert:
+    that:
+      - qubix_discovery_report.evidence.packages | default([]) | select('match', '^' ~ item ~ ' ') | list | length == 1
+    fail_msg: 'Qubix Pinyin requires installed {{ item }}; run playbooks/prepare-packages.yml first.'
+  loop: [fcitx5, fcitx5-chinese-addons, fcitx5-gtk, fcitx5-qt, noto-fonts-cjk]

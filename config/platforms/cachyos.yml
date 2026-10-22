@@ -45,6 +45,11 @@ qubix_discovery_evidence_paths:
   - /etc/xdg/quickshell/noctalia-shell
   - /usr/share/quickshell/noctalia-shell
 qubix_discovery_package_names:
+  - fcitx5
+  - fcitx5-chinese-addons
+  - fcitx5-gtk
+  - fcitx5-qt
+  - noto-fonts-cjk
   - paru
   - niri
   - cachyos-niri

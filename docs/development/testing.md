@@ -158,3 +158,14 @@ archive revision is recorded, dirty state is null, graphical/boot flags remain f
 A malformed-revision control must fail with the intended diagnostic. This is state/file
 validation, not a native deployment, session or boot check. The existing recovery
 fixture separately exercises Git-source recording and pending-state lifecycle.
+
+## Native Pinyin acceptance
+
+After preparing packages and deploying the three [input integration resources](../components/input-method.md),
+run `ansible-playbook tests/integration/pinyin.yml -i inventory/target.local.ini` for developer SSH testing.
+The installed launcher/defaults run with a private D-Bus session, configuration/data/cache
+and no connection to the compositor or X server. A synthetic client sends Ctrl+Space,
+`nihao`/`hanyu` and Space to its own input context and requires real `你好`/`汉语` commits. A second
+run seeds an English-only personal profile and requires its precedence with no conversion.
+Both subprocesses and temporary files are removed. This proves native parser/engine
+behavior, independently of physical GTK/Qt/Electron typing and next-login startup.

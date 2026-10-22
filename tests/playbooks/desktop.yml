@@ -8,11 +8,22 @@
     qubix_discovery_report:
       evidence:
         binaries: {niri: true, wezterm: true, noctalia: true, jq: true}
+        packages: ['fcitx5 5.1', 'fcitx5-chinese-addons 5.1', 'fcitx5-gtk 5.1', 'fcitx5-qt 5.1', 'noto-fonts-cjk 1']
         noctalia_version: noctalia v5.2.1
   tasks:
     - name: Render complete desktop candidate
       ansible.builtin.include_role:
         name: qubix_niri
+
+    - name: Require Pinyin startup and native toolkit integration in the effective desktop
+      ansible.builtin.assert:
+        that:
+          - "'GTK_IM_MODULE \"fcitx\"' in qubix_niri_config_content"
+          - "'QT_IM_MODULE \"fcitx\"' in qubix_niri_config_content"
+          - "'spawn-at-startup \"/usr/share/qubix/bin/qubix-fcitx5\"' in qubix_niri_config_content"
+          - >-
+            'DefaultIM=pinyin' in (qubix_niri_resources | selectattr('path', 'equalto',
+            '/etc/qubix/fcitx5/profile') | first).content
 
     - name: Render additive shell defaults
       ansible.builtin.include_role:
@@ -21,7 +32,7 @@
     - name: Require validated resources and preserved native ownership
       ansible.builtin.assert:
         that:
-          - qubix_niri_resources | length == 17
+          - qubix_niri_resources | length == 19
           - "'/etc/niri/config.kdl' not in (qubix_niri_resources | map(attribute='path') | list)"
           - qubix_niri_resources[-2].validate == '/usr/bin/niri validate --config %s'
           - "'--config /etc/niri/qubix/config.kdl' in qubix_niri_resources[-1].content"
@@ -95,6 +106,10 @@
     - name: Reject missing or unsupported installed Noctalia
       ansible.builtin.include_tasks: ../tasks/noctalia-rejection.yml
       loop:
+        - name: missing Pinyin packages
+          binaries: {niri: true, wezterm: true, noctalia: true, jq: true}
+          version: noctalia v5.2.1
+          error: Qubix Pinyin requires installed fcitx5
         - name: missing WezTerm
           binaries: {niri: true, noctalia: true, jq: true}
           version: noctalia v5.2.1

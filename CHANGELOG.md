@@ -4,6 +4,9 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Add default Simplified Chinese Pinyin to Qubix Niri with Fcitx 5, GTK/Qt integration,
+  separately prepared native packages and preserved personal input configuration.
+
 - Repair WezTerm transparency in the SSH target's actual rendered Niri session
   configuration. Require that installed configuration to contain the theme before
   nested transparency acceptance, catching the earlier standalone-theme-only repair.

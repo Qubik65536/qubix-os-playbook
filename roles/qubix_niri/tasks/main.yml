@@ -36,6 +36,9 @@
     qubix_niri_ui_native_version: '{{ qubix_niri_noctalia_version }}'
   when: (qubix_profile_resolved.niri | default({})).get('presentation', 'native') == 'qubix'
 
+- name: Validate default Simplified Chinese input prerequisites
+  ansible.builtin.import_tasks: input-method.yml
+
 - name: Render resources after prerequisite validation
   ansible.builtin.import_tasks: render.yml
 

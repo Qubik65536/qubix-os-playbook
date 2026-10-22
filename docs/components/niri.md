@@ -15,7 +15,7 @@ icon and searchable entry add six. Both follow the [refinement contract](../arch
 
 ## Managed resources and activation
 
-Seventeen system resources and three account configuration files comprise the desktop: wallpaper, Niri theme/configuration, Noctalia TOML/palette, a minimal profile launcher, an output-scale helper, a Power options application entry, the session entry, three shortcut-plugin files (manifest, presenter and generated data) two power-plugin files (manifest and panel), and three system integration resources and three home files for [WezTerm](wezterm.md). Noctalia reads managed defaults from /etc/qubix/noctalia/. The launcher sets Noctalia-specific state/data roots beneath the user's XDG roots' qubix/ namespace. Native configuration and ordinary application XDG paths remain intact. Noctalia cache follows XDG_CACHE_HOME; GUI overrides are user-owned and survive Ansible deployment/restoration. App-theme generators are disabled. The profile launcher keeps Noctalia 5.2's automatic GSettings dark-mode write in memory and restores the original backend for applications launched by Noctalia.
+Nineteen system resources and three account configuration files comprise the desktop: wallpaper, Niri theme/configuration, Noctalia TOML/palette, a minimal profile launcher, Fcitx defaults/launcher, an output-scale helper, a Power options application entry, the session entry, three shortcut-plugin files (manifest, presenter and generated data) two power-plugin files (manifest and panel), and three system integration resources and three home files for [WezTerm](wezterm.md). Noctalia reads managed defaults from /etc/qubix/noctalia/. The launcher sets Noctalia-specific state/data roots beneath the user's XDG roots' qubix/ namespace. Native configuration and ordinary application XDG paths remain intact. Noctalia cache follows XDG_CACHE_HOME; GUI overrides are user-owned and survive Ansible deployment/restoration. App-theme generators are disabled. The profile launcher keeps Noctalia 5.2's automatic GSettings dark-mode write in memory and restores the original backend for applications launched by Noctalia.
 
 Ansible validates Niri with niri validate --config %s, Noctalia with noctalia config validate %s, and the launcher with bash -n. Native tests additionally require Noctalia's production TOML to have no schema warnings, because its CLI can return zero for unknown-section warnings. Palette roles, required terminal colours and cross-component accent consistency are checked locally. The session entry is installed last; parser failures leave earlier inert files recoverable.
 
@@ -42,3 +42,7 @@ Physical shortcut input remains pending; historical Foot results are kept separa
 [CachyOS preparation step](package-management.md) before deploying this revision.
 No Foot configuration is installed by new deployments. Both terminal bindings use
 `qubix-wezterm start`; the session terminal environment selects the managed wrapper.
+
+Niri also starts [Simplified Chinese Pinyin](input-method.md) with native Fcitx 5
+and GTK/Qt/XWayland integration. English/Pinyin defaults are additive; saved personal
+input profiles retain precedence. Prepare the five native packages before deployment.

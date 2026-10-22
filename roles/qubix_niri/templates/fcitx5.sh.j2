@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+# Personal Fcitx configuration has precedence over Qubix defaults.
+set -euo pipefail
+export FCITX_CONFIG_DIRS="/etc/qubix/fcitx5:${FCITX_CONFIG_DIRS:-/etc/xdg/fcitx5}"
+exec /usr/bin/fcitx5 "$@"

@@ -1,6 +1,19 @@
 # Project status
 
-Updated: 2026-10-20. Stage: **MVP candidate; acceptance In Progress**.
+Updated: 2026-10-21. Stage: **MVP candidate; acceptance In Progress**.
+
+Simplified Chinese Pinyin **Implemented; native installation/parser/engine/primary
+daemon and zero-change reapplication Tested**. Default Niri now starts Fcitx 5 with
+English/Pinyin defaults and GTK/Qt/XWayland integration, preserving personal profiles.
+Controller desktop/package fixtures pass in normal/check modes. SSH installation
+passes 128 tasks/nine changes; reapplication 125/zero changes. Private-bus native
+input converts `nihao` to `你好` and `hanyu` to `汉语`; an English-only personal
+profile retains precedence. The primary daemon loads both engines with the correct
+environment; four native packages report zero altered files. Personal hashes, Niri
+PIDs and boot identity remain unchanged. Initial package attempts fail before installed
+package changes; exact-version signed Arch archive dependencies unblock preparation.
+Physical GTK/Qt/Electron typing and fresh-login startup remain pending. See
+[Pinyin evidence](pinyin-test-results.md).
 
 WezTerm primary-session transparency repair **Implemented; installation/parser/live
 composition Tested**. The earlier focused deployment updated standalone `theme.kdl`

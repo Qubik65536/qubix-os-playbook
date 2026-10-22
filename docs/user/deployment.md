@@ -48,7 +48,7 @@ require each preparation step below:
 | Requirement | Procedure |
 |---|---|
 | Native Noctalia/Niri companions | [Local prerequisites](installation.md) |
-| Paru, Homebrew, WezTerm; dependency-safe Alacritty/Foot removal | Preview then run `playbooks/prepare-packages.yml` against the inventory, with sudo prompting |
+| Paru, Homebrew, WezTerm, Fcitx/Pinyin/CJK fonts; dependency-safe Alacritty/Foot removal | Preview then run `playbooks/prepare-packages.yml` against the inventory, with sudo prompting |
 | Pinned 210-face Monaspace NF source | `.venv/bin/ansible-playbook playbooks/prepare-fonts.yml` on this machine |
 | Noctalia Greeter packages and existing greetd launcher | [Login preparation/cutover](login.md); `playbooks/prepare-login.yml` does not switch the active manager |
 | Exact supported caption/compact builds, GJS/GTK/fprintd | `playbooks/prepare-ui.yml`; follow the [login guide](login.md) for version/native checks |
@@ -64,7 +64,7 @@ configuration before running preparation. Preview and apply package preparation 
 .venv/bin/ansible-playbook -i inventory/local.ini -e @config/local.yml playbooks/prepare-packages.yml --ask-become-pass
 ```
 
-This installs Paru, Homebrew on Linux and WezTerm, then removes Alacritty/Foot
+This installs Paru, Homebrew on Linux, WezTerm and the [Pinyin prerequisites](../components/input-method.md), then removes Alacritty/Foot
 with dependency checks. Full-profile login/UI/keyring preparation has separate
 commands in the linked component guides; do not skip those prerequisites.
 Font preparation is a separate local command:
@@ -122,6 +122,7 @@ With no overrides, every implemented component is selected:
 | Fonts + Krypton UI | All 210 official Monaspace NF faces; Fontconfig/GTK/Qubix UI preferences |
 | Branding | Attributed original-colour cube/logo, wallpaper and shared palette |
 | Qubix Niri/Noctalia | Separate session, bar/launcher/notifications, 100% output scale, shortcuts and guarded power menu |
+| Pinyin (part of Niri) | Simplified Chinese via Fcitx 5; Ctrl+Space toggles English/Pinyin; saved personal input profiles take precedence |
 | WezTerm (part of Niri) | Terminal shortcuts/launcher, supplied Lua/two palettes, Oxocarbon Dark and 75% opacity; backs up the three managed account files |
 | Fingerprint setup | GTK enrollment/test application; enrollment and biometric authentication remain explicit |
 | Qubix presentation | Prepared private Noctalia caption build; native distribution identity stays intact |

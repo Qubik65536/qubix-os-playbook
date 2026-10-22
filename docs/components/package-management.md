@@ -12,7 +12,7 @@ Run `playbooks/prepare-packages.yml` before desktop deployment. It is an explici
 preparation operation, like the existing login/keyring package playbooks, and is not
 called by bootstrap or deployment. There are no new `qubix` switches: this is the
 standard package selection for CachyOS Niri. Pacman installs Paru, WezTerm and the
-Homebrew build prerequisites from configured repositories, without refreshing databases
+Homebrew build prerequisites, Fcitx 5/Chinese addons/GTK/Qt modules and CJK fonts from configured repositories, without refreshing databases
 or disabling package hooks. Bring the system fully up to date before preparation.
 Paru/AUR builds and routine Brew operations run as the ordinary account, never root.
 

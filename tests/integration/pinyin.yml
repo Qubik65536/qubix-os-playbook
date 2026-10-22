@@ -1,0 +1,36 @@
+---
+- name: Test installed Pinyin conversion and personal precedence on a private bus
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  tasks:
+    - name: Require a real native test
+      ansible.builtin.assert:
+        that: [not ansible_check_mode]
+        fail_msg: 'Check mode cannot exercise native input conversion.'
+    - name: Create a private test helper file
+      ansible.builtin.tempfile:
+        state: file
+        prefix: qubix-pinyin-probe-
+      register: qubix_pinyin_probe
+    - name: Run isolated input conversion with guaranteed cleanup
+      block:
+        - name: Transfer the native-only test helper
+          ansible.builtin.copy:
+            src: files/pinyin-probe.py
+            dest: '{{ qubix_pinyin_probe.path }}'
+            mode: '0600'
+        - name: Exercise the installed launcher and defaults on an isolated session bus
+          ansible.builtin.command:
+            argv: [/usr/bin/dbus-run-session, /usr/bin/python3, '{{ qubix_pinyin_probe.path }}']
+          changed_when: false
+          timeout: 60
+          register: qubix_pinyin_result
+        - name: Report actual conversion and personal configuration precedence
+          ansible.builtin.debug:
+            var: qubix_pinyin_result.stdout
+      always:
+        - name: Remove only this test-created helper
+          ansible.builtin.file:
+            path: '{{ qubix_pinyin_probe.path }}'
+            state: absent

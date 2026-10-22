@@ -2,6 +2,7 @@
 - name: Select missing native packages and installed stock terminals
   ansible.builtin.set_fact:
     qubix_packages_missing: >-
-      {{ ['paru', 'wezterm', 'base-devel', 'procps-ng', 'curl', 'file', 'git']
+      {{ ['paru', 'wezterm', 'base-devel', 'procps-ng', 'curl', 'file', 'git',
+      'fcitx5', 'fcitx5-chinese-addons', 'fcitx5-gtk', 'fcitx5-qt', 'noto-fonts-cjk']
       | difference(qubix_packages_installed) }}
     qubix_packages_remove: '{{ ["alacritty", "foot"] | intersect(qubix_packages_installed) }}'

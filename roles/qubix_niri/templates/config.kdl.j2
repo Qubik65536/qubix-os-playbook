@@ -1,5 +1,8 @@
 // Qubix Niri: native /etc/niri and personal dotfiles remain preserved.
 environment {
+    GTK_IM_MODULE "fcitx"
+    QT_IM_MODULE "fcitx"
+    XMODIFIERS "@im=fcitx"
     TERMINAL "/usr/share/qubix/bin/qubix-wezterm"
 }
 input {
@@ -12,6 +15,7 @@ hotkey-overlay { skip-at-startup; }
 
 spawn-at-startup "/usr/share/qubix/bin/qubix-output-defaults"
 spawn-at-startup "/usr/share/qubix/bin/qubix-noctalia"
+spawn-at-startup "/usr/share/qubix/bin/qubix-fcitx5"
 binds {
     Mod+T hotkey-overlay-title="Applications / Terminal" { spawn "/usr/share/qubix/bin/qubix-wezterm" "start"; }
     Mod+Return hotkey-overlay-title="Applications / Terminal" { spawn "/usr/share/qubix/bin/qubix-wezterm" "start"; }

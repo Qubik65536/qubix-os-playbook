@@ -1,5 +1,5 @@
 ---
-- name: Prepare CachyOS package managers and the single stock terminal
+- name: Prepare CachyOS package managers, terminal and Pinyin prerequisites
   hosts: qubix_targets
   gather_facts: false
   become: false

@@ -46,7 +46,8 @@
       ansible.builtin.assert:
         that:
           - qubix_packages_remove | sort == ['alacritty', 'foot']
-          - qubix_packages_missing | sort == ['base-devel', 'curl', 'file', 'paru', 'procps-ng', 'wezterm']
+          - qubix_packages_missing | sort == ['base-devel', 'curl', 'fcitx5', 'fcitx5-chinese-addons', 'fcitx5-gtk',
+              'fcitx5-qt', 'file', 'noto-fonts-cjk', 'paru', 'procps-ng', 'wezterm']
           - "'kitty' not in qubix_packages_remove"
 
     - name: Resolve an already prepared system
@@ -54,7 +55,8 @@
         name: qubix_packages
         tasks_from: plan
       vars:
-        qubix_packages_installed: [paru, wezterm, base-devel, procps-ng, curl, file, git]
+        qubix_packages_installed: [paru, wezterm, base-devel, procps-ng, curl, file, git,
+                                   fcitx5, fcitx5-chinese-addons, fcitx5-gtk, fcitx5-qt, noto-fonts-cjk]
 
     - name: Require an empty repeat package transaction
       ansible.builtin.assert:

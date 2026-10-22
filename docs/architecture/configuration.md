@@ -63,7 +63,7 @@ Booleans must be YAML booleans, not strings. Each nested mapping allows only doc
 | `fonts.enabled` | `true` | Install all 210 pinned official Monaspace NF faces after controller preparation. |
 | `fonts.krypton_ui` | `true` | Prefer Krypton for generic UI/monospace defaults and Qubix shell text; saved choices win. |
 | `branding.enabled` | `true` | Install shared original-colour Qubix artwork and attribution. |
-| `niri.enabled` | `true` | Install the Qubix Niri/Noctalia session, supplied WezTerm appearance and terminal integration defaults. |
+| `niri.enabled` | `true` | Install the Qubix Niri/Noctalia session, supplied WezTerm appearance, terminal integration and Simplified Chinese Pinyin defaults. |
 | `niri.user_config` | `preserve` | Keep native/personal Niri files; no automatic dotfile adoption. |
 | `niri.fingerprint_setup` | `true` | Install the enrollment application; never enroll a finger or enable fingerprint PAM automatically. |
 | `niri.presentation` | `qubix` | Select prepared, version-pinned Qubix caption builds; retain native system identity. |
@@ -223,3 +223,9 @@ SSH is reserved for developer testing; see the [deployment transport policy](dep
 `hotspot.enabled` adds the [native Wi-Fi sharing launcher](../components/hotspot.md).
 Prepare `linux-wifi-hotspot` separately; no service or hotspot starts during deployment.
 Hardware/driver/channel support is checked by the native application when starting.
+
+Enabled Niri includes [zh-Hans Pinyin](../components/input-method.md) by default,
+without another toggle. Separate package preparation supplies Fcitx 5, Chinese addons,
+GTK/Qt modules and CJK fonts. Managed defaults retain personal Fcitx precedence;
+existing profiles are deliberately preserved and may need Pinyin added manually.
+This preservation exception prevents replacing saved engines, dictionaries and shortcuts.

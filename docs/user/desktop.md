@@ -21,6 +21,7 @@ Run this from a free TTY, not inside an existing graphical session. In a tempora
 
 | Key | Action |
 |---|---|
+| Ctrl+Space | Toggle English / Simplified Chinese Pinyin |
 | Super+T or Super+Return | WezTerm terminal |
 | Super+Space or Super+D | Noctalia launcher |
 | Super+V | Clipboard history |
@@ -60,3 +61,8 @@ starship init fish | source
 This changes that terminal's prompt; closing it returns to your normal startup configuration. Existing personal prompt configuration remains available. For persistent manual adoption, back it up and review [Starship's Fish setup](https://starship.rs/guide/#step-2-set-up-your-shell-to-use-starship) first.
 
 Run deployment again with the same revision and configuration. Expect zero managed configuration changes. Record the recap and actual session behaviour using the [acceptance checklist](verification.md).
+
+Simplified Chinese Pinyin is included in the Qubix session. After login, focus a text
+field, press Ctrl+Space, type `nihao` and press Space to commit `你好`. Press Ctrl+Space
+again for English. Saved Fcitx profiles and shortcuts take precedence; add Pinyin to
+an existing profile if needed. See [input methods](../components/input-method.md).
