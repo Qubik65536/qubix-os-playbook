@@ -96,6 +96,17 @@ Run native grammar checks explicitly with `ansible-playbook tests/integration/ni
 
 The optional tests/integration/desktop.yml workflow tests rendered production candidates inside an existing main Niri compositor, supporting direct SDDM and user-service launches. It requires measured Noctalia/Foot/jq, Python, dbus-run-session, notify-send and dbus-send; standard-library Python helpers are test-only. It copies candidates with temporary path substitutions, opens a nested window on a private D-Bus session without --session/global environment import, and keeps HOME/config/state/data/cache temporary. Test-only overrides disable Polkit, clipboard collection, locking and network requests. It checks Noctalia wallpaper/bar layers and dock absence, two distinctly titled Foot windows and focus/title screenshots in a test-owned preview window expanded to the available width, 100% private output scale, IPC focus navigation, width/height changes and automatic height reset using the candidate's actual resize actions, the notification bus owner's process identity, notification rendering, launcher and notification centre IPC, the Power options desktop-entry command opening the session menu, global reboot search and /session results without executing any power action, and the local shortcut panel's manifest, open/search/close behaviour and screenshots. Desktop-file validation runs when the native validator is installed; its availability is recorded. Screenshots/logs stay in ignored .cache/native-desktop/.
 
+For a focused shortcut-panel comparison, add `-e qubix_shortcuts_preview_only=true`.
+It uses the same private compositor/state and preservation/cleanup wrapper, captures
+normal, resize, media and synthetic short/long-key views, and checks filter/close/reopen.
+An optional `qubix_shortcuts_reference_panel` points to a controller-side earlier
+`panel.luau` (export it with `git show REV:roles/qubix_niri/files/shortcuts/panel.luau`).
+Only the private presenter is replaced; both previews retain the current generated
+bindings. Set `qubix_smoke_artifact_group` to separate reference/candidate captures
+under `.cache/native-desktop/HOST/`. These are sanitized previews, not live activation;
+see the [current comparison](../project/simple-shortcuts-test-results.md).
+
+
 Acceptance requires successful native rendering, unchanged original compositor PID/session endpoints and cleanup of test processes/files. The workflow must fail when the main compositor/socket is unavailable; it never starts or replaces the main session. Native Niri/Noctalia/dconf and Qubix-only GUI settings hashes must remain unchanged. Cleanup targets only the temporary compositor process group and its distinct socket. The test does not prove physical key events, login, portals, Polkit, lock/unlock or reboot behaviour. Run it explicitly when evaluating a candidate; a visible temporary window is expected. Installed-resource verification remains a separate bootstrap.sh verify --tags installed command. Syntax checks alone do not establish these results.
 
 The power-menu entry now opens `qubix/power:menu`; native lint checks both local plugin manifests.

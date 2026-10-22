@@ -2,6 +2,14 @@
 
 Updated: 2026-10-22. Stage: **MVP candidate; acceptance In Progress**.
 
+Simplified shortcuts/adaptive cheatsheet **Implemented; controller normal/check and
+static/native comparison/installation/session and zero-change reapplication Tested**. Four directional families
+use at most two modifiers; focus crosses screen edges, Alt moves windows between
+screens and Escape locks with Super. Intrinsic keycaps replace the fixed key field.
+Scoped installation passes 127 tasks/six changes; reapplication 127/zero changes.
+See [current acceptance and screenshots](simple-shortcuts-test-results.md). The earlier shortcut
+iterations below are historical and superseded by this contract.
+
 Resize/movement aliases **Implemented; controller normal/check and static Tested;
 native parser/session and zero-change reapplication Tested**. New 10% resizing supports arrows and H/J/K/L
 with Super+Ctrl+Shift; screen focus/movement has complete Super+Ctrl+Alt aliases

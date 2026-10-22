@@ -4,7 +4,7 @@ Date: 2026-10-22. Source: parent `c310162` plus this change's managed KDL and
 native regression. Environment: operator-selected CachyOS SSH target, Niri 26.04
 (`8ed0da4`), existing Qubix session. The internal eDP-1 screen is 1920×1080 at
 (0, 0); external HDMI-A-1 is 2560×1440 at (1920, 0), both at 100% scale.
-No output configuration is changed. Contract: [screen navigation](../architecture/desktop-design.md#screen-navigation).
+No output configuration is changed. Contract: [screen navigation](../architecture/desktop-design.md#simple-directional-controls-and-adaptive-keycaps).
 
 The default bindings focus screens with Super+Alt+arrows and move only the focused
 window with Super+Alt+Shift+arrows. Labels are derived into the existing shortcut
@@ -48,7 +48,7 @@ screens and confirm the updated list after reopening Super+Shift+/.
 ## Arrow and H/J/K/L aliases with larger resizing
 
 Source: parent `5faffe0` plus this change. Same SSH target and output layout as above.
-Contract: [additional resize and movement aliases](../architecture/desktop-design.md#additional-resize-and-movement-aliases).
+Contract: [additional resize and movement aliases](../architecture/desktop-design.md#simple-directional-controls-and-adaptive-keycaps).
 The new Ctrl+Alt directional family supplies both key sets for screen focus/movement,
 retaining Alt+L locking and the old arrow bindings. Ctrl+Shift supplies 10% resize
 steps alongside the existing 5% controls. All additions ship with enabled Niri;

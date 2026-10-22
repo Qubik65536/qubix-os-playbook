@@ -4,6 +4,12 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Simplify directional controls to Super for focus, Shift for tiled movement,
+  Ctrl for resizing and Alt for screen transfers, with arrows/HJKL throughout.
+  Move locking to Super+Escape and retire redundant high-modifier bindings.
+  Size cheatsheet keycaps to each label, with individually rendered alternatives
+  and wrapping for long keys.
+
 - Add 10% resizing with Super+Ctrl+Shift+arrows/HJKL and complete screen focus/
   movement aliases using Super+Ctrl+Alt+arrows/HJKL, adding Shift to move windows.
   Preserve existing 5% resizing, tiled movement, screen arrows and lock bindings.

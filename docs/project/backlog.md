@@ -4,14 +4,13 @@ Local bootstrap planning; later mirror substantial tasks to GitHub Issues. Categ
 
 ## T16 — Screen shortcut interaction (Testing)
 
-Status: Original screen controls Implemented/Tested; new coarse resize and arrow/HJKL
-aliases Implemented; controller/native session and zero-change reapplication Tested.
-Contract: [screen navigation](../architecture/desktop-design.md#screen-navigation).
-Evidence: [SSH acceptance](screen-shortcuts-test-results.md). Native focus and
-single-window transfers pass between the actual internal/external displays; no-neighbor
-Up/Down behavior passes. Preserve personal configuration and output geometry.
-Next: verify physical arrow/H/J/K/L input for resize and screen movement, height
-resizing in stacked columns, vertical screen arrangements and unplug/replug behavior. This remains separate from boot acceptance.
+Status: Simplified directional controls and adaptive keycaps Implemented;
+controller/native comparison/installation/session and zero-change reapplication Tested.
+Contract: [simple controls and keycaps](../architecture/desktop-design.md#simple-directional-controls-and-adaptive-keycaps).
+Evidence: [current acceptance](simple-shortcuts-test-results.md).
+Next: verify physical arrow/H/J/K/L input, height resizing in stacked columns,
+vertical screen arrangements and unplug/replug behavior after native automation.
+Boot acceptance remains separate.
 
 ## F01 — Read-only foundation (Feature)
 

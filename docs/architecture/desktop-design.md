@@ -144,18 +144,15 @@ are separate gates. Never run a real power action during verification.
 | Super+Tab; Super+O | Niri overview |
 | Alt+Tab | Noctalia window switcher |
 | Super+W; Super+Q | Close focused window; W is the macOS-inspired alias |
-| Super+H/J/K/L or arrow keys | Navigate tiled windows |
+| Super+H/J/K/L or arrow keys | Focus windows; cross to another screen at the edge |
 | Super+Shift+H/J/K/L or arrow keys | Move tiled windows |
-| Super+Ctrl+Alt+arrows or H/J/K/L; Super+Alt+arrows | Focus the screen in that direction |
-| Super+Ctrl+Alt+Shift+arrows or H/J/K/L; Super+Alt+Shift+arrows | Move the focused window to the screen in that direction |
+| Super+Alt+arrows or H/J/K/L | Move the focused window to the screen in that direction |
 | Super+Shift+T | Toggle floating |
 | Super+Ctrl+W | Toggle tabbed column |
 | Super+Ctrl+Left/Right or H/L | Decrease/increase column width in 5% steps |
 | Super+Ctrl+Up/Down or K/J | Decrease/increase window height in 5% steps |
-| Super+Ctrl+Shift+Left/Right or H/L | Decrease/increase column width in 10% steps |
-| Super+Ctrl+Shift+Up/Down or K/J | Decrease/increase window height in 10% steps |
 | Super+Ctrl+R | Reset automatic window height |
-| Super+Alt+L | Lock through Noctalia |
+| Super+Escape | Lock through Noctalia |
 | Super+X | Session/power menu |
 | Super+Shift+E | Niri's confirmed session exit |
 | Super+Shift+S; Print | Niri screenshot picker |
@@ -164,40 +161,30 @@ are separate gates. Never run a real power action during verification.
 
 Audio, microphone, media and brightness keys call Noctalia's installed IPC commands. Window/workspace sizing and navigation remain Niri actions. No automatic suspension, logout or lock is performed during deployment/testing.
 
-### Additional resize and movement aliases
+### Simple directional controls and adaptive keycaps
 
-Status: **Implemented; controller/native parser/session and zero-change reapplication Tested**.
-Keep existing bindings and add 10% resize steps using
-Super+Ctrl+Shift+arrows or H/J/K/L. Add a complete equivalent screen-navigation
-family using Super+Ctrl+Alt+arrows or H/J/K/L, with Shift to move the focused
-window. The extra Ctrl avoids the existing Super+Alt+L lock binding. The earlier
-Super+Alt+arrow screen controls remain aliases. Existing 5% resizing and tiled
-focus/movement already support both directional key sets.
+Status: **Implemented; controller/native comparison/installation/session Tested;
+zero-change reapplication Tested**. Use Super alone for focus (native window-or-monitor actions
+cross screen edges), Super+Shift for tiled movement, Super+Ctrl for 5% resize,
+and Super+Alt for moving the focused window to another screen. Each family has
+arrow and H/J/K/L equivalents. Remove the redundant high-modifier screen/coarse
+resize families; Super+R still cycles preset widths. Move locking to Super+Escape
+so Alt+L can move right. These replace the earlier shortcut iterations; their
+[historical evidence](../project/screen-shortcuts-test-results.md) stays recorded.
 
-Acceptance: no duplicate keys, equivalent actions/labels for each arrow/letter
-pair, native KDL validation, actual internal/external roundtrips with both key
-sets and observable 10% column resizing on a test-owned window, two-file scoped
-deployment and zero-change reapplication. Physical keyboard input and stacked
-window height resizing retain their separate operator checks. No new packages,
-profile variables, output configuration or personal-file ownership.
+The shortcut panel uses intrinsic keycap/column widths, padding and separately
+rendered aliases; no fixed-width key field. Long labels wrap at a bounded maximum
+and increase row height instead of clipping. Action labels retain remaining space.
+Generated KDL data remains the only shortcut source; personal configuration stays
+preserved. No new packages or profile inputs.
 
-### Screen navigation
-
-Status: **Implemented; controller/native horizontal dual-screen interaction Tested;
-zero-change reapplication Tested**. Native directional monitor bindings ship in the default
-Qubix session and generated shortcut panel. Internal/external screens use their
-current logical layout, without connector names, monitor configuration writes or
-new prerequisites. Moving affects the focused window rather than its whole column.
-With one screen, or no screen in the requested direction, native Niri behavior applies.
-Existing tile movement, resizing and Super+Alt+L locking remain available.
-
-Acceptance: controller binding/cheatsheet checks, native candidate parser validation,
-test-window internal/external focus and movement roundtrips, native no-neighbor
-behavior above/below the horizontal target layout, installed KDL and
-cheatsheet agreement, primary-session reload without compositor replacement or
-personal-config changes, and zero-change reapplication on the selected SSH target.
-Physical keyboard input and vertical transfers remain operator checks.
-See [native evidence](../project/screen-shortcuts-test-results.md).
+Acceptance: paired actions/labels with at most two directional modifiers, no
+collisions, native KDL/plugin validation, live screen-focus/window roundtrips and
+measured resizing, isolated reference/customized screenshots with the same bindings
+including long-key stress cases, working filter/close/reopen, scoped installation,
+and zero-change reapplication. Preserve original windows, focus, settings and
+compositor. Physical keyboard/vertical transfer/stacked-height checks remain separate.
+See [results and captioned comparisons](../project/simple-shortcuts-test-results.md).
 
 ## Acceptance and migration
 

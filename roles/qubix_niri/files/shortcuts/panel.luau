@@ -29,22 +29,25 @@ local function matches(item)
 end
 
 local function shortcutRow(item)
-    local keyChildren = {
-        ui.row({paddingH = 9, paddingV = 6, radius = 8, fill = "#56728b40",
-                border = "#56728b88", borderWidth = 1, align = "center"}, {
-            ui.label({text = keyName(item.keys[1]), fontFamily = "monospace",
-                      fontSize = 11, color = "on_surface"}),
-        }),
-    }
-    if #item.keys > 1 then
-        local aliases = {}
-        for index = 2, #item.keys do table.insert(aliases, keyName(item.keys[index])) end
-        table.insert(keyChildren, ui.label({text = "or " .. table.concat(aliases, " · "),
-                     color = "on_surface_variant", fontSize = 10, maxLines = 2, maxWidth = 166}))
+    local keyChildren = {}
+    for index, key in ipairs(item.keys) do
+        local cap = ui.row({paddingH = 9, paddingV = 6, radius = 8,
+                fill = "#56728b40", border = "#56728b88", borderWidth = 1,
+                align = "center"}, {
+            ui.label({text = keyName(key), fontFamily = "monospace",
+                      fontSize = 11, color = "on_surface", maxWidth = 210}),
+        })
+        if index == 1 then
+            table.insert(keyChildren, cap)
+        else
+            table.insert(keyChildren, ui.row({gap = 5, align = "center"}, {
+                ui.label({text = "or", color = "on_surface_variant", fontSize = 10}), cap,
+            }))
+        end
     end
     return ui.row({gap = 12, paddingV = 3, align = "center"}, {
-        ui.column({gap = 3, width = 174, align = "start"}, keyChildren),
-        ui.label({text = item.label, color = "on_surface", fontSize = 12, maxLines = 2,
+        ui.column({gap = 3, align = "start"}, keyChildren),
+        ui.label({text = item.label, color = "on_surface", fontSize = 12,
                   flexGrow = 1}),
     })
 end
@@ -134,6 +137,7 @@ end
 function onOpen(context)
     loadBindings()
     query = tostring(context or "")
+    inputRevision += 1
     draw()
 end
 

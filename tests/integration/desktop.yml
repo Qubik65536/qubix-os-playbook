@@ -73,6 +73,13 @@
           loop_control:
             label: '{{ item.path }}'
 
+        - name: Use an explicitly supplied earlier presenter for comparison only
+          ansible.builtin.copy:
+            src: '{{ qubix_shortcuts_reference_panel }}'
+            dest: '{{ qubix_smoke_directory.path }}/plugins/shortcuts/panel.luau'
+            mode: '0600'
+          when: qubix_shortcuts_reference_panel is defined
+
         - name: Replace power dispatch only in the isolated candidate with a no-effect recorder
           ansible.builtin.replace:
             path: '{{ qubix_smoke_directory.path }}/plugins/power/panel.luau'
@@ -102,7 +109,9 @@
 
         - name: Transfer native-only test helpers
           ansible.builtin.copy:
-            src: 'files/niri-smoke-{{ item }}.py'
+            src: >-
+              files/niri-smoke-{{ "shortcuts" if item == "inner" and
+              qubix_shortcuts_preview_only | default(false) else item }}.py
             dest: '{{ qubix_smoke_directory.path }}/{{ item }}.py'
             mode: '0600'
           loop: [inner, outer]
@@ -128,7 +137,8 @@
                 src: '{{ item.path }}'
                 dest: >-
                   {{ playbook_dir }}/../../.cache/native-desktop/{{
-                  inventory_hostname | regex_replace('[^A-Za-z0-9_.-]', '_') }}/
+                  inventory_hostname | regex_replace('[^A-Za-z0-9_.-]', '_') }}/{{
+                  qubix_smoke_artifact_group | default('') | regex_replace('[^A-Za-z0-9_.-]', '_') }}/
                 flat: true
               loop: '{{ qubix_smoke_artifacts.files }}'
               loop_control:

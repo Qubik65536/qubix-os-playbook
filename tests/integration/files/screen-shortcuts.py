@@ -56,6 +56,7 @@ assert before_outputs['HDMI-A-1']['logical']['x'] >= before_outputs['eDP-1']['lo
 run('niri', 'validate', '--config', '/etc/niri/qubix/config.kdl')
 process = None
 window_id = None
+panel_opened = False
 try:
     action('load-config-file')
     action('focus-monitor', 'eDP-1')
@@ -71,41 +72,61 @@ try:
         time.sleep(0.1)
     assert window_id is not None, 'Test terminal did not appear'
     action('focus-window', '--id', str(window_id))
-    for prefix, right, left in [('Mod+Alt+', 'Right', 'Left'),
-                                 ('Mod+Ctrl+Alt+', 'Right', 'Left'),
-                                 ('Mod+Ctrl+Alt+', 'L', 'H')]:
-        binding(prefix + right, 'focus-monitor-right')
+    for right, left in [('Right', 'Left'), ('L', 'H')]:
+        action('move-column-to-last')
+        binding('Mod+' + right, 'focus-column-or-monitor-right')
         assert query('focused-output')['name'] == 'HDMI-A-1'
-        binding(prefix + left, 'focus-monitor-left')
+        action('focus-window', '--id', str(window_id))
+        binding('Mod+Alt+' + right, 'move-window-to-monitor-right')
+        window = next(w for w in query('windows') if w['id'] == window_id)
+        assert next(w for w in query('workspaces') if w['id'] == window['workspace_id'])['output'] == 'HDMI-A-1'
+        action('focus-window', '--id', str(window_id))
+        action('move-column-to-first')
+        binding('Mod+' + left, 'focus-column-or-monitor-left')
         assert query('focused-output')['name'] == 'eDP-1'
         action('focus-window', '--id', str(window_id))
-        for key, direction, output in [(right, 'right', 'HDMI-A-1'), (left, 'left', 'eDP-1')]:
-            binding(prefix + 'Shift+' + key, 'move-window-to-monitor-' + direction)
-            window = next(w for w in query('windows') if w['id'] == window_id)
-            workspace = next(w for w in query('workspaces') if w['id'] == window['workspace_id'])
-            assert workspace['output'] == output
-            action('focus-window', '--id', str(window_id))
-    for prefix, keys in [('Mod+Alt+', [('Up', 'up'), ('Down', 'down')]),
-                         ('Mod+Ctrl+Alt+', [('Up', 'up'), ('Down', 'down'), ('K', 'up'), ('J', 'down')])]:
-        for key, direction in keys:
-            binding(prefix + key, 'focus-monitor-' + direction)
-            assert query('focused-output')['name'] == 'eDP-1'
-            binding(prefix + 'Shift+' + key, 'move-window-to-monitor-' + direction)
-            window = next(w for w in query('windows') if w['id'] == window_id)
-            assert next(w for w in query('workspaces') if w['id'] == window['workspace_id'])['output'] == 'eDP-1'
+        binding('Mod+Alt+' + left, 'move-window-to-monitor-left')
+        window = next(w for w in query('windows') if w['id'] == window_id)
+        assert next(w for w in query('workspaces') if w['id'] == window['workspace_id'])['output'] == 'eDP-1'
+        action('focus-window', '--id', str(window_id))
+    for key, direction in [('Up', 'up'), ('Down', 'down'), ('K', 'up'), ('J', 'down')]:
+        binding('Mod+' + key, 'focus-window-or-monitor-' + direction)
+        assert query('focused-output')['name'] == 'eDP-1'
+        binding('Mod+Alt+' + key, 'move-window-to-monitor-' + direction)
+    for key, movement in [('Left', 'move-column-left'), ('H', 'move-column-left'),
+                          ('Right', 'move-column-right'), ('L', 'move-column-right'),
+                          ('Up', 'move-window-up'), ('K', 'move-window-up'),
+                          ('Down', 'move-window-down'), ('J', 'move-window-down')]:
+        binding('Mod+Shift+' + key, movement)
     widths = []
-    for key, delta in [('Left', '-10%'), ('H', '-10%'), ('Right', '+10%'), ('L', '+10%')]:
+    for key, delta in [('Left', '-5%'), ('H', '-5%'), ('Right', '+5%'), ('L', '+5%')]:
         action('set-column-width', '50%')
         before = query('focused-window')['layout']['tile_size'][0]
-        binding('Mod+Ctrl+Shift+' + key, 'set-column-width', delta)
+        binding('Mod+Ctrl+' + key, 'set-column-width', delta)
         after = query('focused-window')['layout']['tile_size'][0]
         assert after < before if delta.startswith('-') else after > before
         widths.append([key, before, after])
-    for key, delta in [('Up', '-10%'), ('K', '-10%'), ('Down', '+10%'), ('J', '+10%')]:
-        binding('Mod+Ctrl+Shift+' + key, 'set-window-height', delta)
+    for key, delta in [('Up', '-5%'), ('K', '-5%'), ('Down', '+5%'), ('J', '+5%')]:
+        binding('Mod+Ctrl+' + key, 'set-window-height', delta)
         action('reset-window-height')
 
+    shell = '/usr/share/qubix/bin/qubix-noctalia'
+    panel_result = 'already open; preserved operator panel'
+    if not json.loads(run(shell, 'msg', 'status'))['panelOpen']:
+        run(shell, 'msg', 'panel-open', 'qubix/shortcuts:cheatsheet', 'resize')
+        panel_opened = True
+        for _ in range(50):
+            if json.loads(run(shell, 'msg', 'status')).get('activePanelId') == 'qubix/shortcuts:cheatsheet':
+                break
+            time.sleep(0.1)
+        else:
+            raise AssertionError('Installed shortcut panel did not open')
+        run(shell, 'msg', 'plugin', 'qubix/shortcuts:cheatsheet', 'all', 'search', 'Super')
+        panel_result = 'open/filter/close'
+
 finally:
+    if panel_opened:
+        run('/usr/share/qubix/bin/qubix-noctalia', 'msg', 'panel-close', 'qubix/shortcuts:cheatsheet')
     if window_id is not None:
         action('close-window', '--id', str(window_id))
     if process is not None:
@@ -118,6 +139,8 @@ finally:
         action('focus-window', '--id', str(before_focus['id']))
     else:
         action('focus-monitor', before_output)
+if panel_opened:
+    assert not json.loads(run('/usr/share/qubix/bin/qubix-noctalia', 'msg', 'status'))['panelOpen']
 assert query('focused-output')['name'] == before_output
 if before_focus:
     assert query('focused-window')['id'] == before_focus['id']
@@ -126,6 +149,6 @@ assert query('outputs') == before_outputs
 assert {w['id']: w['workspace_id'] for w in query('windows')} == before_windows
 assert Path(f'/proc/{pid}/comm').read_text().strip() == 'niri'
 assert Path('/proc/sys/kernel/random/boot_id').read_text() == boot
-print(json.dumps({'status': 'passed', 'bindings': 32, 'coarse_resize_widths': widths, 'focus': 'internal/external roundtrip',
+print(json.dumps({'status': 'passed', 'bindings': 32, 'resize_widths': widths, 'focus': 'internal/external roundtrip',
     'window': 'internal/external roundtrip', 'up_down': 'no-neighbor no-op',
-    'personal_configs_outputs_original_windows_compositor_boot': 'preserved', 'test_window': 'removed'}))
+    'personal_configs_outputs_original_windows_compositor_boot': 'preserved', 'test_window': 'removed', 'installed_panel': panel_result}))

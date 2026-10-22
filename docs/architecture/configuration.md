@@ -241,10 +241,13 @@ paths. This affects Fcitx in other sessions without personal UI settings; native
 session configuration itself stays preserved. Personal UI overrides are preserved.
 See the [input ownership and acceptance contract](../components/input-method.md).
 
-Enabled Niri includes the [screen-navigation shortcuts](desktop-design.md#screen-navigation)
+Enabled Niri includes the [screen-navigation shortcuts](desktop-design.md#simple-directional-controls-and-adaptive-keycaps)
 by default, without a separate toggle or additional prerequisites. They use native
-monitor actions and preserve output layout, personal bindings and existing resize keys.
+monitor actions and preserve output layout and personal configuration.
 
-The default Niri shortcut set also includes 10% resizing with Ctrl+Shift and
-complete arrow/H/J/K/L screen controls with Ctrl+Alt (plus Shift for movement).
-These require no additional preparation; see the [alias contract](desktop-design.md#additional-resize-and-movement-aliases).
+The default Niri directional controls use at most two modifiers: Super for
+window/screen focus, Shift to move tiles, Ctrl to resize and Alt to send a window
+to another screen. Both arrows and H/J/K/L work; Super+Escape locks. These replace
+the earlier high-modifier aliases. The generated cheatsheet uses intrinsic keycap
+sizes and wrapping, without new prerequisites or profile inputs. See the
+[shortcut contract](desktop-design.md#simple-directional-controls-and-adaptive-keycaps).

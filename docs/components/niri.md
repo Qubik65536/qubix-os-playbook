@@ -46,3 +46,10 @@ No Foot configuration is installed by new deployments. Both terminal bindings us
 Niri also starts [Simplified Chinese Pinyin](input-method.md) with native Fcitx 5
 and GTK/Qt/XWayland integration. English/Pinyin and dark horizontal candidate defaults are additive; saved personal
 input profiles retain precedence. Prepare the five native packages before deployment.
+
+The [simple directional controls and adaptive keycaps](../architecture/desktop-design.md#simple-directional-controls-and-adaptive-keycaps)
+replace the earlier multi-modifier screen families. Focus crosses screen edges with
+native window-or-monitor actions; Shift moves tiles, Ctrl resizes and Alt transfers
+the focused window between screens. Each family supports arrows and H/J/K/L.
+Lock is Super+Escape. The presenter relies on native text measurement and bounded
+wrapping for separately displayed keys/aliases; its search resets on reopening.
