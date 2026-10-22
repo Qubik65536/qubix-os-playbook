@@ -63,7 +63,7 @@ Booleans must be YAML booleans, not strings. Each nested mapping allows only doc
 | `fonts.enabled` | `true` | Install all 210 pinned official Monaspace NF faces after controller preparation. |
 | `fonts.krypton_ui` | `true` | Prefer Krypton for generic UI/monospace defaults and Qubix shell text; saved choices win. |
 | `branding.enabled` | `true` | Install shared original-colour Qubix artwork and attribution. |
-| `niri.enabled` | `true` | Install the Qubix Niri/Noctalia session, supplied WezTerm appearance, terminal integration and Simplified Chinese Pinyin defaults. |
+| `niri.enabled` | `true` | Install the Qubix Niri/Noctalia session, supplied WezTerm appearance, terminal integration and Simplified Chinese Pinyin with dark horizontal candidate defaults. |
 | `niri.user_config` | `preserve` | Keep native/personal Niri files; no automatic dotfile adoption. |
 | `niri.fingerprint_setup` | `true` | Install the enrollment application; never enroll a finger or enable fingerprint PAM automatically. |
 | `niri.presentation` | `qubix` | Select prepared, version-pinned Qubix caption builds; retain native system identity. |
@@ -233,3 +233,10 @@ This preservation exception prevents replacing saved engines, dictionaries and s
 Pinyin's managed global Fcitx defaults disable its Super+Space and Shift+Super+Space
 group-switch bindings to avoid the Niri launcher conflict; Ctrl+Space remains the input
 toggle. Existing personal global input settings retain precedence and are never rewritten.
+
+The Niri candidate UI is default-enabled alongside Pinyin. Its shared Fcitx Default
+lives at `/etc/xdg/fcitx5/conf/classicui.conf`, with Managed theme assets in
+`/usr/share/fcitx5/themes/qubix/`, because GTK client rendering uses standard XDG
+paths. This affects Fcitx in other sessions without personal UI settings; native
+session configuration itself stays preserved. Personal UI overrides are preserved.
+See the [input ownership and acceptance contract](../components/input-method.md).

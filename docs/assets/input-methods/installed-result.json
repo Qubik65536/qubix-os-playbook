@@ -1,0 +1,19 @@
+{
+  "screenshots": [
+    {
+      "name": "installed-qubix",
+      "commit": "\u4f60\u597d",
+      "popup_size": [
+        424,
+        58
+      ],
+      "sha256": "b5d1b8836b428cf083633bfeea1e3dc9ce692b24b10b52baeedd92bab86a9b74"
+    }
+  ],
+  "native_gtk_commit": true,
+  "cleanup_remaining": 0,
+  "personal_settings_preserved": true,
+  "primary_niri_preserved": true,
+  "authentication_tested": false,
+  "boot_tested": false
+}

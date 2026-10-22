@@ -4,6 +4,10 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Activate the dark horizontal Fcitx candidate theme by default, installing shared
+  native client config/assets instead of leaving them in isolated previews. Preserve
+  personal settings and the existing Pinyin engine; reload the primary daemon.
+
 - Compare native Pinyin, Rime Luna Simplified and pinned Rime Ice with synthetic
   candidate samples and sanitized GTK/Niri candidate-window previews. Identify the
   separate GTK client-side XDG theme lookup; recommend Ice plus dark horizontal UI.

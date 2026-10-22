@@ -320,10 +320,10 @@ Record application versions/flags and candidate placement; preserve existing pro
 
 ## F25 — Rime Ice and candidate UI integration (Feature)
 
-Status: Planned for production; native engine and GTK/Niri visual prototypes Tested.
+Status: Horizontal candidate theme Implemented; native installed rendering/primary reload/zero-change reapplication Tested; Rime production adoption Planned; native engine and GTK/Niri visual prototypes Tested.
 User priorities, comparisons, recommendation and source pins are in the
 [input options document](../architecture/input-method-options.md).
-Next: implement the documented Ice/horizontal-UI default with package/source preparation,
+Next: implement the documented Ice engine default with package/source preparation,
 recoverable resources and preserved user schemas/dictionaries. Test cold schema deployment/readiness, GTK/Qt/Electron and
 terminal discovery, long candidates/paging/screen edges/HiDPI, personal precedence and
 zero-change reapplication. Retain Ctrl+Space and the existing launcher conflict fix.

@@ -1,0 +1,56 @@
+---
+- name: Verify installed candidate defaults in a fresh native GTK context
+  hosts: qubix_targets
+  gather_facts: false
+  become: false
+  tasks:
+    - name: Require actual native rendering
+      ansible.builtin.assert:
+        that: [not ansible_check_mode]
+    - name: Create a private rendering directory
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: qubix-input-options.
+      register: qubix_input_options
+    - name: Render installed resources without private theme substitutes
+      block:
+        - name: Transfer the isolated native rendering helper
+          ansible.builtin.copy:
+            src: files/input-ui-preview.py
+            dest: '{{ qubix_input_options.path }}/preview.py'
+            mode: '0600'
+        - name: Select installed defaults and disable bus activation
+          ansible.builtin.copy:
+            dest: '{{ qubix_input_options.path }}/{{ item.name }}'
+            content: '{{ item.content }}'
+            mode: '0600'
+          loop:
+            - {name: installed-theme, content: 'true'}
+            - name: bus.conf
+              content: >-
+                <busconfig><type>session</type><listen>unix:tmpdir=/tmp</listen>
+                <policy context="default"><allow send_destination="*"/>
+                <allow receive_sender="*"/><allow own="*"/></policy></busconfig>
+        - name: Resolve installed theme in native Fcitx and GTK
+          ansible.builtin.command:
+            argv: [python3, '{{ qubix_input_options.path }}/preview.py', '{{ qubix_input_options.path }}']
+          changed_when: false
+          timeout: 180
+      always:
+        - name: Find sanitized rendering evidence
+          ansible.builtin.find:
+            paths: '{{ qubix_input_options.path }}'
+            patterns: ['*.png', '*.log', '*result.json']
+          register: qubix_input_previews
+        - name: Retain evidence before cleanup
+          ansible.builtin.fetch:
+            src: '{{ item.path }}'
+            dest: '{{ playbook_dir }}/../../.cache/input-theme/'
+            flat: true
+          loop: '{{ qubix_input_previews.files }}'
+          loop_control:
+            label: '{{ item.path | basename }}'
+        - name: Remove only the test-created directory
+          ansible.builtin.file:
+            path: '{{ qubix_input_options.path }}'
+            state: absent

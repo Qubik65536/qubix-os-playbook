@@ -21,7 +21,7 @@ managed directory to Fcitx's configuration search path only for that process.
 Personal `~/.config/fcitx5` (or `FCITX_CONFIG_HOME`) retains priority, including saved
 engine selections, learned words and shortcuts. Existing profiles must add Pinyin
 through Fcitx configuration if absent; deployment never overwrites them. No locale,
-keyboard layout, personal dotfile, global XDG search path or native session is changed.
+keyboard layout, personal dotfile or global XDG search path is changed.
 Fcitx may save its selected defaults into its own user configuration at runtime.
 
 Qubix Niri sets GTK_IM_MODULE/QT_IM_MODULE to `fcitx` and XMODIFIERS to `@im=fcitx`
@@ -47,5 +47,20 @@ The primary daemon must reload those settings without a compositor restart; iden
 file reapplication must report zero changes. Physical launcher/input acceptance is separate.
 
 [Rime and candidate UI options](../architecture/input-method-options.md) now have native
-engine/GTK preview evidence. Rime Ice adoption and production UI integration remain
-Planned; ordinary deployment still uses the Pinyin defaults described above.
+engine/GTK preview evidence. Rime Ice adoption remains Planned; ordinary deployment still uses Pinyin.
+
+Candidate theme activation (Implemented; native settings/rendering and zero-change reapplication Tested): install a horizontal dark candidate panel
+with Noto Sans CJK SC 14 as part of enabled Niri. The shared Default
+`/etc/xdg/fcitx5/conf/classicui.conf` and Managed theme assets under
+`/usr/share/fcitx5/themes/qubix/` serve both daemon and GTK client renderers.
+These shared Fcitx defaults also affect other sessions using Fcitx without a personal
+UI override. Personal `fcitx5/conf/classicui.conf` retains precedence. The ordinary
+baseline/receipt engine backs up existing system files before replacement.
+No new packages are required beyond the existing Pinyin prerequisites.
+
+Acceptance: installed bytes/modes and zero-change reapplication pass; the primary
+Fcitx daemon reloads `classicui` without restart and reports the selected theme/font;
+a fresh GTK context resolves the actual installed system defaults and assets,
+shows a horizontal padded popup and commits `你好`. Capture a sanitized native/system
+comparison. Existing GTK processes may cache their configuration and need reopening.
+Qt/Electron, screen edges, paging, long candidates and HiDPI remain separate gates.

@@ -63,9 +63,9 @@
             src: files/input-ui-preview.py
             dest: '{{ qubix_input_options.path }}/preview.py'
             mode: '0600'
-        - name: Transfer only the evaluation theme to the private directory
+        - name: Transfer the canonical theme only to the private evaluation directory
           ansible.builtin.copy:
-            src: fixtures/input-method/theme/
+            src: ../../roles/qubix_niri/files/fcitx5/theme/
             dest: '{{ qubix_input_options.path }}/theme/'
             mode: '0600'
             directory_mode: '0700'

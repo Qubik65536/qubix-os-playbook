@@ -106,3 +106,50 @@ and personal profile precedence. Desktop fixtures pass **84 tasks/zero changes/e
 expected refusals** in normal/check mode, and static validation passes.
 Physical Super+Space launcher interaction remains an operator check; no physical input
 is injected into the primary session and no boot work is performed.
+
+## Candidate theme activation
+
+Source: follow-up to `856fd90`, using the production theme assets in this change.
+Environment: the same CachyOS SSH target, Niri 26.04 (`8ed0da4`), Fcitx 5.1.23,
+GTK 3.24.52, 100% nested output. The user reported that the candidate theme was
+absent: the previous Rime exploration copied it only into private preview roots.
+Read-only inspection found no system or personal `classicui.conf`.
+
+The installed-resource regression (`tests/integration/input-theme.yml`) seeds only
+an isolated Pinyin profile. It does not copy private theme assets or UI config:
+both native renderers must resolve the actual system paths. Before installation it
+fails the horizontal padded-popup gate with an unthemed 395×34 popup. Its private
+bus/processes/directory are cleaned up even after this expected failure.
+
+Installation, primary daemon reload, native rendering and zero-change reapplication
+are separate acceptance gates. No physical keyboard, Qt/Electron, authentication,
+logout/login or boot acceptance is inferred from the synthetic GTK test.
+
+| Native reference | Actual installed Qubix theme |
+| --- | --- |
+| ![Native Fcitx Pinyin](../assets/input-methods/native-pinyin.png) | ![Installed Fcitx Pinyin theme](../assets/input-methods/installed-qubix.png) |
+
+Left: synthetic Pinyin/native reference from `856fd90`, Sans 10, unthemed compact
+panel. Right: fresh GTK/Pinyin context in nested Niri resolving this change's real
+`/etc/xdg` and `/usr/share` resources, larger CJK font, dark rounded panel, blue-grey
+selection and horizontal layout. These are sanitized 892×488 nested captures, not
+captures of personal application content. The right image verifies installed assets;
+it is not a capture of an existing primary-session application's cached UI.
+
+- File installation: 149 tasks/14 changes, installed bytes/modes verified by the
+  baseline/receipt engine for the UI default and three theme assets.
+- Reapplication: the same four selected resources pass 143 tasks/zero changes.
+- Parser/settings: native `GetConfig` resolves `Theme=qubix`, `Font=Noto Sans CJK SC 14`
+  and horizontal layout; the actual GTK renderer loads the theme assets.
+- Primary session: `ReloadAddonConfig(classicui)` succeeds, Fcitx PID 93757 remains,
+  Ctrl+Space stays enabled and both Super+Space group shortcuts remain empty.
+- Installed rendering: 8 tasks/five temporary/artifact changes, zero failures;
+  popup 424×58, dark panel pixel gate passes, `nihao` commits `你好`. Personal hashes
+  and primary Niri remain unchanged; cleanup reports zero remaining test processes
+  and the workflow removes its private directory. [Result and screenshot digest](../assets/input-methods/installed-result.json).
+- Controller desktop fixtures: normal/check modes each pass 86 tasks/zero changes;
+  static validation passes. Boot/authentication and physical typing remain untested.
+
+Reopen existing GTK applications to pick up shared defaults if they retain the old
+cached candidate panel. Personal UI configuration remains authoritative. Rime is
+still installed for exploration; this change does not switch the active engine.

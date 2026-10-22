@@ -64,7 +64,8 @@ configuration before running preparation. Preview and apply package preparation 
 .venv/bin/ansible-playbook -i inventory/local.ini -e @config/local.yml playbooks/prepare-packages.yml --ask-become-pass
 ```
 
-This installs Paru, Homebrew on Linux, WezTerm and the [Pinyin prerequisites](../components/input-method.md), then removes Alacritty/Foot
+This installs Paru, Homebrew on Linux, WezTerm and the [Pinyin prerequisites](../components/input-method.md),
+including the candidate theme’s CJK font (no extra theme package), then removes Alacritty/Foot
 with dependency checks. Full-profile login/UI/keyring preparation has separate
 commands in the linked component guides; do not skip those prerequisites.
 Font preparation is a separate local command:
@@ -122,7 +123,7 @@ With no overrides, every implemented component is selected:
 | Fonts + Krypton UI | All 210 official Monaspace NF faces; Fontconfig/GTK/Qubix UI preferences |
 | Branding | Attributed original-colour cube/logo, wallpaper and shared palette |
 | Qubix Niri/Noctalia | Separate session, bar/launcher/notifications, 100% output scale, shortcuts and guarded power menu |
-| Pinyin (part of Niri) | Simplified Chinese via Fcitx 5; Ctrl+Space toggles English/Pinyin; saved personal input profiles take precedence |
+| Pinyin (part of Niri) | Simplified Chinese via Fcitx 5; Ctrl+Space toggles English/Pinyin; dark horizontal candidates; saved personal input settings take precedence |
 | WezTerm (part of Niri) | Terminal shortcuts/launcher, supplied Lua/two palettes, Oxocarbon Dark and 75% opacity; backs up the three managed account files |
 | Fingerprint setup | GTK enrollment/test application; enrollment and biometric authentication remain explicit |
 | Qubix presentation | Prepared private Noctalia caption build; native distribution identity stays intact |

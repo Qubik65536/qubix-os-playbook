@@ -19,6 +19,17 @@
       'content': lookup('file', role_path ~ '/files/fcitx5/' ~ item, rstrip=false), 'mode': '0644'}] }}
   loop: [config, profile]
 
+- name: Add candidate defaults visible to both Fcitx and native clients
+  ansible.builtin.set_fact:
+    qubix_niri_resources: >-
+      {{ qubix_niri_resources + [{'path': item.path, 'component': 'niri',
+      'content': lookup('file', role_path ~ '/files/fcitx5/' ~ item.source, rstrip=false), 'mode': '0644'}] }}
+  loop:
+    - {path: /etc/xdg/fcitx5/conf/classicui.conf, source: classicui.conf}
+    - {path: /usr/share/fcitx5/themes/qubix/theme.conf, source: theme/theme.conf}
+    - {path: /usr/share/fcitx5/themes/qubix/panel.svg, source: theme/panel.svg}
+    - {path: /usr/share/fcitx5/themes/qubix/selection.svg, source: theme/selection.svg}
+
 - name: Render canonical KDL before deriving its shortcut display data
   ansible.builtin.set_fact:
     qubix_niri_config_content: '{{ lookup("template", "config.kdl.j2") }}'

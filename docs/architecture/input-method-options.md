@@ -1,6 +1,6 @@
 # Input method options and UI exploration
 
-Status: **Native engine comparison and GTK/Niri visual previews Tested; production adoption Planned**. User priorities: candidate-window appearance/placement and
+Status: **Native engine comparison and GTK/Niri visual previews Tested; horizontal theme installation/native rendering Tested; Rime production adoption Planned**. User priorities: candidate-window appearance/placement and
 candidate quality/ranking. Focused task: evaluate Rime on the existing CachyOS Niri
 SSH target and compare concrete candidate UI options. Acceptance: native engine
 conversion and candidate samples, sanitized native-reference/customized previews,
@@ -147,3 +147,8 @@ Retain Ctrl+Space and the fixed launcher binding; add a discoverable native conf
 application and validate paging/selection in real applications. Optional grammar models
 remain a separate measured choice. Production adoption has **not** occurred in this
 exploration; the operator's active input profile remains unchanged.
+
+The follow-up installs the horizontal theme independently of Rime migration. See
+[production UI ownership and acceptance](../components/input-method.md). The earlier
+captures above remain isolated previews; current installed-theme evidence belongs
+in the [Pinyin test results](../project/pinyin-test-results.md).

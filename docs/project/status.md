@@ -2,6 +2,17 @@
 
 Updated: 2026-10-21. Stage: **MVP candidate; acceptance In Progress**.
 
+Candidate theme **Implemented; installation/native GTK rendering/primary reload Tested**.
+Shared native Fcitx config/assets now enable the dark horizontal panel by default.
+The regression fails before writes with the unthemed 395×34 popup, then passes with
+424×58, dark panel pixels and `你好` committed using actual installed resources.
+Installation passes 149 tasks/14 changes; reapplication 143/zero changes; native
+rendering 8/five temporary changes.
+Primary Fcitx PID 93757, shortcuts, personal hashes and Niri remain preserved.
+Controller normal/check fixtures and static validation pass. Existing GTK processes
+may need reopening. Rime adoption and broader application/physical acceptance remain
+separate. See [installed theme evidence](pinyin-test-results.md#candidate-theme-activation).
+
 Rime/candidate UI exploration **Native prototypes Tested; production adoption Planned**.
 User priorities are candidate appearance/placement and ranking. Installed Rime packages
 support isolated Luna Simplified and pinned Ice profiles; both convert `你好`/`汉语`.

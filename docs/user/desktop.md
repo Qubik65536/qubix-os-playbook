@@ -67,3 +67,8 @@ field, press Ctrl+Space, type `nihao` and press Space to commit `你好`. Press 
 again for English. Super+Space stays assigned to the app launcher; Qubix disables
 Fcitx's conflicting default group shortcuts. Saved Fcitx profiles and shortcuts take precedence; add Pinyin to
 an existing profile if needed. See [input methods](../components/input-method.md).
+
+Candidates use a dark horizontal panel with larger CJK text. Reopen applications
+that were running before the theme upgrade; GTK can cache its input UI settings.
+Personal Fcitx UI settings override this default and remain untouched. A fresh
+login also reloads the daemon for applications using its candidate renderer.

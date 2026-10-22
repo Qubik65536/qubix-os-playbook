@@ -28,6 +28,8 @@ root = Path(sys.argv[1])
 assert root.parent == Path('/tmp') and root.name.startswith('qubix-input-options.')
 assert root.is_dir() and not root.is_symlink() and root.stat().st_uid == os.getuid()
 
+installed = (root / 'installed-theme').exists()
+
 if len(sys.argv) > 2:
     import gi
     gi.require_version('Gtk', '3.0')
@@ -54,21 +56,34 @@ if len(sys.argv) > 2:
     gtk_conf = Path(os.environ['XDG_CONFIG_HOME']) / 'fcitx5/conf'
     gtk_conf.mkdir(parents=True, exist_ok=True)
     gtk_theme = Path(os.environ['XDG_DATA_HOME']) / 'fcitx5/themes/qubix-preview'
-    if not gtk_theme.exists():
+    if not installed and not gtk_theme.exists():
         shutil.copytree(root / 'theme', gtk_theme)
     shots = []
-    for name, case_name, title, vertical in [
+    cases = [
             ('native-pinyin', 'pinyin', 'Current Pinyin - native reference', None),
             ('rime-ice-native', 'ice', 'Rime Ice - native Fcitx UI', None),
             ('rime-ice-horizontal', 'ice', 'Rime Ice - dark horizontal candidates', False),
-            ('rime-ice-vertical', 'ice', 'Rime Ice - dark vertical candidates', True)]:
+            ('rime-ice-vertical', 'ice', 'Rime Ice - dark vertical candidates', True)]
+    if installed:
+        cases = [('installed-qubix', 'pinyin', 'Pinyin - installed Qubix theme', False)]
+    for name, case_name, title, vertical in cases:
         case = root / case_name
         config = case / 'config'
         data = case / 'data'
         conf = config / 'conf'
-        conf.mkdir(exist_ok=True)
+        conf.mkdir(parents=True, exist_ok=True)
+        data.mkdir(exist_ok=True)
+        if installed:
+            (config / 'profile').write_text(
+                '[Groups/0]\nName=Test\nDefault Layout=us\nDefaultIM=pinyin\n'
+                '[Groups/0/Items/0]\nName=keyboard-us\n[Groups/0/Items/1]\nName=pinyin\n'
+                '[GroupOrder]\n0=Test\n')
         classic = conf / 'classicui.conf'
-        if vertical is None:
+        if installed:
+            # No UI config or theme is seeded: both renderers must find installed defaults.
+            assert not classic.exists()
+            assert not (gtk_conf / 'classicui.conf').exists()
+        elif vertical is None:
             classic.write_text('Font=Sans 10\nTheme=default\nVertical Candidate List=False\n')
         else:
             classic.write_text(f'Vertical Candidate List={str(vertical)}\nFont=Noto Sans CJK SC 14\n'
@@ -76,7 +91,8 @@ if len(sys.argv) > 2:
             theme = data / 'themes/qubix-preview'
             if not theme.exists():
                 shutil.copytree(root / 'theme', theme)
-        (gtk_conf / 'classicui.conf').write_text(classic.read_text())
+        if not installed:
+            (gtk_conf / 'classicui.conf').write_text(classic.read_text())
         pump(0.5)
         env = dict(os.environ, FCITX_CONFIG_HOME=str(config), FCITX_DATA_HOME=str(data),
                    GTK_IM_MODULE='fcitx', GSETTINGS_BACKEND='memory')
@@ -97,6 +113,11 @@ if len(sys.argv) > 2:
                     pump(0.1)
             else:
                 raise AssertionError('Fcitx preview startup failed')
+            if installed:
+                ui, _ = controller('GetConfig', GLib.Variant('(s)', ('fcitx://config/addon/classicui',)))
+                assert ui['Theme'] == 'qubix', ui
+                assert ui['Font'] == 'Noto Sans CJK SC 14', ui
+                assert ui['Vertical Candidate List'] == 'False', ui
             os.environ['FCITX_CONFIG_HOME'] = str(config)
             os.environ['FCITX_DATA_HOME'] = str(data)
             os.environ['GTK_IM_MODULE'] = 'fcitx'
@@ -157,6 +178,15 @@ if len(sys.argv) > 2:
             target.unlink(missing_ok=True)
             run(['/usr/bin/niri', 'msg', 'action', 'screenshot-screen', '--path', str(target), '--show-pointer', 'false'])
             wait_for(target.is_file, 'Screenshot was not written')
+            if installed:
+                from gi.repository import GdkPixbuf
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(target))
+                pixels = pixbuf.get_pixels()
+                channels, stride = pixbuf.get_n_channels(), pixbuf.get_rowstride()
+                dark_pixels = sum(
+                    pixels[y * stride + x * channels:y * stride + x * channels + 3] == bytes((27, 36, 44))
+                    for y in range(pixbuf.get_height()) for x in range(pixbuf.get_width()))
+                assert dark_pixels > 1000, dark_pixels
             key(32)
             pump(0.3)
             assert entry.get_text() == '你好', (name, entry.get_text())
@@ -182,7 +212,8 @@ assert (Path('/proc') / str(main_pid) / 'comm').read_text().strip() == 'niri'
 (root / 'parent-socket').write_text(parent['NIRI_SOCKET'])
 protected = [Path.home() / relative for relative in (
     '.config/niri/config.kdl', '.config/noctalia/config.toml', '.config/dconf/user',
-    '.local/state/qubix/noctalia/settings.toml', '.config/fcitx5/config', '.config/fcitx5/profile')]
+    '.local/state/qubix/noctalia/settings.toml', '.config/fcitx5/config', '.config/fcitx5/profile',
+    '.config/fcitx5/conf/classicui.conf')]
 
 
 def hashes():

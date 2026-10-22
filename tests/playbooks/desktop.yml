@@ -27,6 +27,19 @@
             'DefaultIM=pinyin' in (qubix_niri_resources | selectattr('path', 'equalto',
             '/etc/qubix/fcitx5/profile') | first).content
 
+    - name: Require effective defaults to reach native client configuration and theme paths
+      ansible.builtin.assert:
+        that:
+          - >-
+            'Theme=qubix' in (qubix_niri_resources | selectattr('path', 'equalto',
+            '/etc/xdg/fcitx5/conf/classicui.conf') | first).content
+          - >-
+            'Font=Noto Sans CJK SC 14' in (qubix_niri_resources | selectattr('path', 'equalto',
+            '/etc/xdg/fcitx5/conf/classicui.conf') | first).content
+          - >-
+            (qubix_niri_resources | selectattr('path', 'match',
+            '^/usr/share/fcitx5/themes/qubix/') | list | length) == 3
+
     - name: Render additive shell defaults
       ansible.builtin.include_role:
         name: qubix_shell
@@ -34,7 +47,7 @@
     - name: Require validated resources and preserved native ownership
       ansible.builtin.assert:
         that:
-          - qubix_niri_resources | length == 20
+          - qubix_niri_resources | length == 24
           - "'/etc/niri/config.kdl' not in (qubix_niri_resources | map(attribute='path') | list)"
           - qubix_niri_resources[-2].validate == '/usr/bin/niri validate --config %s'
           - "'--config /etc/niri/qubix/config.kdl' in qubix_niri_resources[-1].content"
