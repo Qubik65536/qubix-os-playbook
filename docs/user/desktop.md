@@ -28,10 +28,15 @@ Run this from a free TTY, not inside an existing graphical session. In a tempora
 | Super+Comma | Noctalia settings |
 | Super+N | Notification centre |
 | Super+W or Super+Q | Close focused window |
-| Super+H/J/K/L | Navigate windows/columns |
+| Super+arrows or H/J/K/L | Navigate windows/columns |
+| Super+Shift+arrows or H/J/K/L | Move windows/columns |
 | Super+Ctrl+Left/Right or H/L | Resize column width |
 | Super+Ctrl+Up/Down or K/J | Resize window height |
+| Super+Ctrl+Shift+Left/Right or H/L | Resize column width in 10% steps |
+| Super+Ctrl+Shift+Up/Down or K/J | Resize window height in 10% steps |
 | Super+Ctrl+R | Reset automatic window height |
+| Super+Ctrl+Alt+arrows or H/J/K/L | Focus the screen in that direction |
+| Super+Ctrl+Alt+Shift+arrows or H/J/K/L | Move the focused window to that screen |
 | Super+Alt+arrow keys | Focus the screen in that direction |
 | Super+Alt+Shift+arrow keys | Move the focused window to that screen |
 | Super+Tab or Super+O | Overview |
@@ -54,7 +59,10 @@ With no screen in the requested direction, the action has no effect. Reopen the
 shortcut panel after deployment to see the updated list. No extra packages or
 connector configuration are required.
 
-Resize shortcuts use 5% steps. Tiled windows in one column share its width; height changes are easiest to see with two windows stacked in the column. The reset shortcut returns the focused window to automatic height.
+The matching H/J/K/L screen controls use Super+Ctrl+Alt (plus Shift to move);
+H is left, J down, K up and L right. Super+Alt+L remains the lock shortcut.
+
+Resize shortcuts use 5% steps; add Shift for larger 10% steps with either key set. Tiled windows in one column share its width; height changes are easiest to see with two windows stacked in the column. The reset shortcut returns the focused window to automatic height.
 
 Check wallpaper, bar, notifications, launcher, terminal and keyboard navigation visually. A successful file install is not graphical verification. Review session logs if companions fail. Native user services may start a second bar or notification service; collect their status before changing anything. When upgrading the classic Qubix session, log out and select it again: reloading KDL alone does not replace existing Waybar/Mako/Swaybg processes.
 

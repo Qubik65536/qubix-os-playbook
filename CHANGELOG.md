@@ -4,6 +4,10 @@ Changes are grouped by release. Bootstrap has no release tag.
 
 ## Unreleased
 
+- Add 10% resizing with Super+Ctrl+Shift+arrows/HJKL and complete screen focus/
+  movement aliases using Super+Ctrl+Alt+arrows/HJKL, adding Shift to move windows.
+  Preserve existing 5% resizing, tiled movement, screen arrows and lock bindings.
+
 - Add Super+Alt+arrows to focus screens and Super+Alt+Shift+arrows to move the
   focused window between screens, with generated shortcut-panel entries.
 

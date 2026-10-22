@@ -244,3 +244,7 @@ See the [input ownership and acceptance contract](../components/input-method.md)
 Enabled Niri includes the [screen-navigation shortcuts](desktop-design.md#screen-navigation)
 by default, without a separate toggle or additional prerequisites. They use native
 monitor actions and preserve output layout, personal bindings and existing resize keys.
+
+The default Niri shortcut set also includes 10% resizing with Ctrl+Shift and
+complete arrow/H/J/K/L screen controls with Ctrl+Alt (plus Shift for movement).
+These require no additional preparation; see the [alias contract](desktop-design.md#additional-resize-and-movement-aliases).

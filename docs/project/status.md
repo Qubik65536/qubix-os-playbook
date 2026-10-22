@@ -2,6 +2,12 @@
 
 Updated: 2026-10-22. Stage: **MVP candidate; acceptance In Progress**.
 
+Resize/movement aliases **Implemented; controller normal/check and static Tested;
+native parser/session and zero-change reapplication Tested**. New 10% resizing supports arrows and H/J/K/L
+with Super+Ctrl+Shift; screen focus/movement has complete Super+Ctrl+Alt aliases
+(plus Shift to move), preserving the original screen arrows and Alt+L locking.
+See [alias acceptance](screen-shortcuts-test-results.md#arrow-and-hjkl-aliases-with-larger-resizing).
+
 Screen navigation **Implemented; controller/native parser and dual-screen session Tested;
 zero-change reapplication Tested**. Super+Alt+arrows focus screens;
 Super+Alt+Shift+arrows move the focused window. Eight bindings and generated panel

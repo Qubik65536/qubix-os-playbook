@@ -44,3 +44,37 @@ using a temporary WezTerm window; it does not synthesize physical keyboard event
 Physical key input, vertically stacked output transfers and unplug/replug behavior
 remain operator checks. Next: press the new keys on both
 screens and confirm the updated list after reopening Super+Shift+/.
+
+## Arrow and H/J/K/L aliases with larger resizing
+
+Source: parent `5faffe0` plus this change. Same SSH target and output layout as above.
+Contract: [additional resize and movement aliases](../architecture/desktop-design.md#additional-resize-and-movement-aliases).
+The new Ctrl+Alt directional family supplies both key sets for screen focus/movement,
+retaining Alt+L locking and the old arrow bindings. Ctrl+Shift supplies 10% resize
+steps alongside the existing 5% controls. All additions ship with enabled Niri;
+no new prerequisites or profile inputs are needed.
+
+Controller desktop fixtures pass 86 tasks/zero changes each in normal/check modes,
+including generated-data coverage and duplicate-key refusal. Static validation passes.
+The expanded native regression fails before installation on missing
+`Mod+Ctrl+Alt+Right`, after exercising the old screen roundtrip and cleaning its
+own terminal/restoring focus. Pair inspection confirms all 24 arrow/letter action
+and label pairs match across tiled navigation/movement, 5%/10% resizing and screen
+navigation/movement, with unique keys and the original lock binding intact.
+
+Preview passes 102 tasks/two proposed changes, adding only 24 bindings and JSON
+labels, with no removed content. Installation passes 110 tasks/four changes
+(the two files and their recovery receipts). Native parser/session acceptance
+passes three tasks/zero Ansible changes: all 32 entries agree with installed KDL
+and JSON, both arrow/letter screen roundtrips pass, and no-neighbor actions pass.
+From a 942-pixel starting column, Left/H produce 751 pixels and Right/L produce
+1132 pixels, demonstrating identical measured 10% steps with either key set.
+Height actions execute and reset successfully. Original focus, window/workspace
+assignments, personal hashes, output geometry, Niri PID and boot ID are preserved;
+the test terminal exits. Identical reapplication passes 110 tasks/zero changes.
+
+The expanded helper checks all 32 screen/coarse-resize entries against installed
+KDL and JSON, exercises original arrows plus the new arrows/letters, measures
+column width changes and exercises height/reset actions on its own terminal.
+Height behavior in a stacked column and physical key events remain separate
+operator checks. No boot checks or reboot are requested.

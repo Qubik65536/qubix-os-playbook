@@ -146,12 +146,14 @@ are separate gates. Never run a real power action during verification.
 | Super+W; Super+Q | Close focused window; W is the macOS-inspired alias |
 | Super+H/J/K/L or arrow keys | Navigate tiled windows |
 | Super+Shift+H/J/K/L or arrow keys | Move tiled windows |
-| Super+Alt+Left/Right/Up/Down | Focus the screen in that direction |
-| Super+Alt+Shift+Left/Right/Up/Down | Move the focused window to the screen in that direction |
+| Super+Ctrl+Alt+arrows or H/J/K/L; Super+Alt+arrows | Focus the screen in that direction |
+| Super+Ctrl+Alt+Shift+arrows or H/J/K/L; Super+Alt+Shift+arrows | Move the focused window to the screen in that direction |
 | Super+Shift+T | Toggle floating |
 | Super+Ctrl+W | Toggle tabbed column |
 | Super+Ctrl+Left/Right or H/L | Decrease/increase column width in 5% steps |
 | Super+Ctrl+Up/Down or K/J | Decrease/increase window height in 5% steps |
+| Super+Ctrl+Shift+Left/Right or H/L | Decrease/increase column width in 10% steps |
+| Super+Ctrl+Shift+Up/Down or K/J | Decrease/increase window height in 10% steps |
 | Super+Ctrl+R | Reset automatic window height |
 | Super+Alt+L | Lock through Noctalia |
 | Super+X | Session/power menu |
@@ -161,6 +163,23 @@ are separate gates. Never run a real power action during verification.
 | Super+F1 | Compact Niri shortcut overlay |
 
 Audio, microphone, media and brightness keys call Noctalia's installed IPC commands. Window/workspace sizing and navigation remain Niri actions. No automatic suspension, logout or lock is performed during deployment/testing.
+
+### Additional resize and movement aliases
+
+Status: **Implemented; controller/native parser/session and zero-change reapplication Tested**.
+Keep existing bindings and add 10% resize steps using
+Super+Ctrl+Shift+arrows or H/J/K/L. Add a complete equivalent screen-navigation
+family using Super+Ctrl+Alt+arrows or H/J/K/L, with Shift to move the focused
+window. The extra Ctrl avoids the existing Super+Alt+L lock binding. The earlier
+Super+Alt+arrow screen controls remain aliases. Existing 5% resizing and tiled
+focus/movement already support both directional key sets.
+
+Acceptance: no duplicate keys, equivalent actions/labels for each arrow/letter
+pair, native KDL validation, actual internal/external roundtrips with both key
+sets and observable 10% column resizing on a test-owned window, two-file scoped
+deployment and zero-change reapplication. Physical keyboard input and stacked
+window height resizing retain their separate operator checks. No new packages,
+profile variables, output configuration or personal-file ownership.
 
 ### Screen navigation
 
